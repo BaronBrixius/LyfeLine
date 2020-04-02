@@ -2,7 +2,7 @@ import java.sql.*;
 
 public class Main {
     public static void main(String[] args) {
-        try {
+        /*try {
             //Class.forName("com.mysql.cj.jdbc.Driver");
             Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/sys", "Max", "Gunkle007");
             Statement statement = conn.createStatement();
@@ -14,6 +14,8 @@ public class Main {
             conn.close();
         } catch (SQLException e) {
             e.printStackTrace();
-        }
+        }*/
+
+        System.out.print("Hello Purple!");
     }
 }
