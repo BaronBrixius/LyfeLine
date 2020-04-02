@@ -4,7 +4,7 @@ public class Main {
     public static void main(String[] args) {
         /*try {
             //Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/sys", "Max", "Gunkle007");
+            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/sys", "Max", "testPass");
             Statement statement = conn.createStatement();
             ResultSet resultSet = statement.executeQuery("SELECT * FROM sys.test WHERE id = 2");
 
