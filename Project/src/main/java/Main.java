@@ -17,5 +17,6 @@ public class Main {
         }*/
 
         System.out.print("Hello Purple!");
+        System.out.print("My name is Haraldur Blöndal Kristjánsson");
     }
 }
