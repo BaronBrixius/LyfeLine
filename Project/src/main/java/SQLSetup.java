@@ -54,7 +54,7 @@ public class SQLSetup {
             //Handle errors for JDBC
             se.printStackTrace();
         }catch(Exception e){
-            //Handle errors for Class.forName
+            //Handle errors for Class.forName.
             e.printStackTrace();
         }finally{
             //finally block used to close resources
