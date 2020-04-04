@@ -2,7 +2,7 @@
 <project version="4">
   <component name="DBNavigator.Project.DataEditorManager">
     <record-view-column-sorting-type value="BY_INDEX" />
-    <value-preview-text-wrapping value="true" />
+    <value-preview-text-wrapping value="false" />
     <value-preview-pinned value="false" />
   </component>
   <component name="DBNavigator.Project.DataExportManager">
@@ -23,11 +23,15 @@
     <autoscroll-to-editor value="false" />
     <autoscroll-from-editor value="true" />
     <show-object-properties value="false" />
-    <loaded-nodes />
+    <loaded-nodes>
+      <connection connection-id="748b7744-c026-4766-b7e5-d3e0f6c45ae7">
+        <schema name="test_db" object-types="table, view, function, procedure" />
+      </connection>
+    </loaded-nodes>
   </component>
   <component name="DBNavigator.Project.DatabaseConsoleManager">
     <connection id="748b7744-c026-4766-b7e5-d3e0f6c45ae7">
-      <console name="Connection" type="STANDARD" schema="" session="Main" />
+      <console name="Connection" type="STANDARD" schema="test_db" session="Main" />
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
@@ -35,6 +39,9 @@
   </component>
   <component name="DBNavigator.Project.DatabaseSessionManager">
     <connection id="748b7744-c026-4766-b7e5-d3e0f6c45ae7" />
+  </component>
+  <component name="DBNavigator.Project.DatasetFilterManager">
+    <filter-actions connection-id="748b7744-c026-4766-b7e5-d3e0f6c45ae7" dataset="mysql.slave_master_info" active-filter-id="" />
   </component>
   <component name="DBNavigator.Project.EditorStateManager">
     <last-used-providers />
@@ -72,10 +79,10 @@
           <url-type value="DATABASE" />
           <host value="localhost" />
           <port value="3306" />
-          <database value="mysql" />
+          <database value="test_db" />
           <type value="USER_PASSWORD" />
-          <user value="root" />
-          <deprecated-pwd value="S2FsbGR1cjU=" />
+          <user value="Halli" />
+          <deprecated-pwd value="ZHJhZ29u" />
         </database>
         <properties>
           <auto-commit value="false" />
