@@ -13,7 +13,7 @@ import java.sql.*;
 //GRANT ALL ON test_db.* TO 'Halli'@'localhost'; OR YOUR USERNAME
 //quit
 
-//AFTER DOING ABOVE YOU CAN RUN THIS CODE ADN CREATE THE TABLE IN THE test_db
+//AFTER DOING ABOVE YOU CAN RUN THIS CODE ADN CREATE THE TABLE IN THE test_db.
 
 public class SQLSetup {
     // JDBC driver name and database URL
