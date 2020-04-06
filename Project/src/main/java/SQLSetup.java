@@ -1,5 +1,3 @@
-package main.java;
-
 import java.sql.*;
 
 //Changed this little bit with some example of setting up connection and create simple table in the database
