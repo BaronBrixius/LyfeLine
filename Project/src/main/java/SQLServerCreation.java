@@ -18,7 +18,7 @@ public class SQLServerCreation {
 
     public static void main(String[] args) {
         Connection conn = null;
-        Statement stmt = null;
+        Statement stmt;
 
         try {
             //STEP 2: Register JDBC driver
@@ -46,12 +46,6 @@ public class SQLServerCreation {
         } catch (SQLException | FileNotFoundException | ClassNotFoundException se) {
             se.printStackTrace();
         } finally {
-            //finally block used to close resources
-            try {
-                if (stmt != null)
-                    conn.close();
-            } catch (SQLException ignored) {
-            }
             try {
                 if (conn != null)
                     conn.close();
