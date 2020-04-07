@@ -1,11 +1,11 @@
 import java.sql.*;
 
-class SQLServer {
+class DBManager {
     static private final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
     private Connection conn = null;
     private Statement stmt = null;
 
-    SQLServer() {
+    DBManager() {
         System.out.println("Connecting to a selected database...");
         try {
             conn = DriverManager.getConnection("jdbc:mysql://localhost/Project", "root", "AJnuHA^8VKHht=uB");
@@ -15,7 +15,7 @@ class SQLServer {
         }
     }
 
-    SQLServer(String DB_URL, String schemaName, String user, String pass) {
+    DBManager(String DB_URL, String schemaName, String user, String pass) {
         try {
             //STEP 2: Register JDBC driver
             Class.forName(JDBC_DRIVER);
