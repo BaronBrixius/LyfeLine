@@ -6,7 +6,7 @@ CREATE TABLE `events` (
   `StartYear` bigint NOT NULL,
   `StartMonth` tinyint unsigned NOT NULL,
   `StartDay` tinyint unsigned NOT NULL,
-  `StartTime` time NOT NULL,
+  `StartTime` time DEFAULT NULL,
   `EndYear` bigint DEFAULT NULL,
   `EndMonth` tinyint unsigned DEFAULT NULL,
   `EndDay` tinyint unsigned DEFAULT NULL,

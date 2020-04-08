@@ -63,14 +63,14 @@ class DBManager {
         System.out.println("Goodbye!");
     }
 
-    public static <T> List<T> getObjectsFromDB(String query, DBObject<T> dbObject) {
+    public static <T> List<T> getObjectsFromDB(String query, CreatableFromDB<T> creatableFromDB) {
         List<T> outList = new ArrayList<>();
 
         try {
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(query);
             while (rs.next()) {
-                outList.add(dbObject.createFromDB(rs));
+                outList.add(creatableFromDB.createFromDB(rs));
             }
         } catch (SQLException e) {
             e.printStackTrace();

@@ -1,4 +1,5 @@
 import java.sql.SQLException;
+import java.util.List;
 
 public class Main {
     public static void main(String[] args) throws SQLException {
@@ -7,11 +8,19 @@ public class Main {
             db = new DBManager();
 
             Event now = new Event();
-            System.out.print(now.getInsertQuery());
+            System.out.println(now.getInsertQuery());
             db.insertIntoDB(now);
+
+            List<Event> newNow = Event.getAllEvents();
+            for (Event e: newNow) {
+                System.out.println(e);
+            }
         } finally {
             if (db != null)
                 db.close();
         }
+
+
+
     }
 }

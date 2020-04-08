@@ -68,6 +68,5 @@ public class SQLServerCreation {
 
         temp.delete(temp.lastIndexOf(";"), temp.length());   //cuts last ; off final statement so that ; can be used as delimiter without empty statements
         return temp.toString().split(";");
-
     }
 }
