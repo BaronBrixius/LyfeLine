@@ -8,7 +8,7 @@ import java.util.Base64;
 import java.util.Random;
 
 public class PasswordUtils {
-    private static final Random RANDOM = new SecureRandom();
+    private static final Random RANDOM = new SecureRandom();//cryptographically strong random number generator - SecureRandom must produce non-deterministic output. 
     private static final String ALPHABET = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
     private static final int ITERATIONS = 10000;
     private static final int KEY_LENGTH = 256;
