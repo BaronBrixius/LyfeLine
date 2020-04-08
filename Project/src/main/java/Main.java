@@ -16,10 +16,7 @@ class Main {
             for (Integer i : years)
                 System.out.println(i);
         } finally {
-            if (dbm != null)
                 dbm.close();
         }
-
-
     }
 }
