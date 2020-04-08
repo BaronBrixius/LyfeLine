@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Scanner;
 
-public class SQLServerCreation {
+class SQLServerCreation {
     // JDBC driver name and database URL
     static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
     static final String DB_URL = "jdbc:mysql://localhost/Project";

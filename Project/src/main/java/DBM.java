@@ -93,7 +93,7 @@ class DBM {             //Database manager class for easier connecting and inter
         return out;
     }
 
-    <T> boolean insertIntoDB(DBObject<T> insert) throws SQLException {
+    static <T> boolean insertIntoDB(DBObject<T> insert) throws SQLException {
         try {
             Statement stmt = conn.createStatement();
             stmt.execute(insert.getInsertQuery());

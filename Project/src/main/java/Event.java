@@ -33,6 +33,7 @@ class Event implements DBObject<Event> {
         this.start = start;
     }
 
+    //Some examples of working with the database
     static List<Event> getAll() throws SQLException {
         return DBM.getFromDB("SELECT * FROM events", new Event());     //blank object so functional interface method can be accessed
     }
