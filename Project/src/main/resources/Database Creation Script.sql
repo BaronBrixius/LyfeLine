@@ -15,7 +15,7 @@ CREATE TABLE `events` (
   `End` varchar(30) GENERATED ALWAYS AS (concat(abs(`EndYear`),_utf8mb4'-',lpad(`EndMonth`,2,0),_utf8mb4'-',lpad(`EndDay`,2,0),_utf8mb4' ',if((`EndYear` > 0),_utf8mb4'AD',_utf8mb4'BC'))) VIRTUAL,
   PRIMARY KEY (`EventID`),
   UNIQUE KEY `EventID_UNIQUE` (`EventID`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `groups` (
   `GroupID` int NOT NULL AUTO_INCREMENT,
@@ -38,7 +38,7 @@ CREATE TABLE `groups` (
   `End` varchar(30) GENERATED ALWAYS AS (concat(abs(`EndYear`),_utf8mb4'-',lpad(`EndMonth`,2,0),_utf8mb4'-',lpad(`EndDay`,2,0),_utf8mb4' ',if((`EndYear` > 0),_utf8mb4'AD',_utf8mb4'BC'))) VIRTUAL,
   PRIMARY KEY (`GroupID`),
   UNIQUE KEY `GroupID_UNIQUE` (`GroupID`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `groupevents` (
   `GroupID` int NOT NULL,
