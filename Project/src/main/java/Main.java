@@ -15,6 +15,12 @@ class Main {
             List<Integer> years = DBM.getFromDB("SELECT StartYear, StartMonth FROM events", rs -> rs.getInt("StartYear"));
             for (Integer i : years)
                 System.out.println(i);
+
+            User doctor = new User("BigDoc@math.biz", "Jerry Mulan", "hunter2", false);
+            //DBM.insertIntoDB(doctor);         //don't run this multiple times because email is forced to be unique in DB
+
+            List<User> userList = DBM.getFromDB("SELECT * FROM users", new User());
+
         } finally {
                 dbm.close();
         }
