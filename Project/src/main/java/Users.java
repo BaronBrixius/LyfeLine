@@ -1,6 +1,6 @@
 public interface Users extends DBObject<User> {
-    void setEmail(String email);
-    void setName(String name);
+    void setUserEmail(String userEmail);
+    void setUserName(String userName);
     void setPassword(String pass); //Takes password from user and turns it into encrypted string and corresponding salt to keep in the DB
     void isAdmin(Boolean admin);
     String getUser(String email);
