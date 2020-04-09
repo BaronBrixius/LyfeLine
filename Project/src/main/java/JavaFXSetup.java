@@ -4,7 +4,7 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
-class JavaFXSetup extends Application {
+public class JavaFXSetup extends Application {
     public static void main(String[] args) {
         launch(args);
     }
