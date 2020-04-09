@@ -16,8 +16,11 @@ class Main {
             for (Integer i : years)
                 System.out.println(i);
 
-            User doctor = new User("BigDoc@math.biz", "Jerry Mulan", "hunter2", false);
-            //DBM.insertIntoDB(doctor);         //don't run this multiple times because email is forced to be unique in DB
+            User doctor = new User("BigDoc@math.biz", "Jerry Mulan", "hunter2");
+            if (User.validateUnique(doctor.getEmail()))
+                DBM.insertIntoDB(doctor);
+            else
+                System.out.print("Not unique email!");
 
             List<User> userList = DBM.getFromDB("SELECT * FROM users", new User());
 

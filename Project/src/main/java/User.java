@@ -1,5 +1,6 @@
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 //Just example implement first and foremost to show the encryption/salting method to use.
 //Of course all kinds of exception handling needed for inputs, such as email.
@@ -19,16 +20,21 @@ public class User implements Users {
         setPassword(password);
     }
 
-    public User(String email, String name, String password, Boolean admin) {
+    public User(String email, String name, String encryptedPass, String salt, Boolean admin) {
         setEmail(email);
         setName(name);
         isAdmin(admin);
-        setPassword(password);
+        this.encryptedPass = encryptedPass;
+        this.salt = salt;
     }
 
     @Override
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getEmail(){
+        return this.email;
     }
 
     @Override
@@ -54,6 +60,17 @@ public class User implements Users {
         return null;
     }
 
+    static boolean validateUnique(String email) {
+        List<String> emailList = DBM.getFromDB("SELECT UserEmail FROM users", rs -> rs.getString("UserEmail"));
+
+        for (String s: emailList) {
+            if (email.equalsIgnoreCase(s)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     @Override
     public Boolean verifyPass(String pass, String encrypted, String salt) {
         String givenPassword = pass;
@@ -69,9 +86,10 @@ public class User implements Users {
             String name = rs.getString("UserName");
             String email = rs.getString("UserEmail");
             String encryptedPass = rs.getString("Password");
+            String salt = rs.getString("Salt");
             boolean admin = rs.getBoolean("Admin");
 
-            out = new User(email, name, encryptedPass, admin);
+            out = new User(email, name, encryptedPass, salt, admin);
 
         } catch (SQLException e) {
             e.printStackTrace();
