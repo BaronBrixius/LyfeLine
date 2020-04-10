@@ -8,106 +8,83 @@ import java.util.Scanner;
 class DBM {             //Database manager class for easier connecting and interacting
     static private final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
     //  Database credentials
-    static String DB_URL = "jdbc:mysql://localhost/Project";
+    static String DB_URL = "jdbc:mysql://localhost";
     static String USER = "root";
     static String PASS = "AJnuHA^8VKHht=uB";
-    static private Connection conn = null;
-    static private String creationScript = "Project/src/main/resources/Database Creation Script.sql";
+    static Connection conn = null;
+    static private String creationScript = "src/main/resources/Database Creation Script.sql";
     static private String schema;
 
-    DBM() {             //Connect to server with default settings
-        try {
-            //Register JDBC driver
-            Class.forName(JDBC_DRIVER);
-            System.out.println("Connecting to a selected database...");
-            conn = DriverManager.getConnection("jdbc:mysql://localhost/Project", "root", "AJnuHA^8VKHht=uB");
-            System.out.println("Connected database successfully...");
+    DBM() throws ClassNotFoundException, SQLException {             //Connect to server with default settings
+        //Register JDBC driver
+        Class.forName(JDBC_DRIVER);
+        System.out.println("Connecting to a selected database...");
+        conn = DriverManager.getConnection(DB_URL, USER, PASS);
+        System.out.println("Connected database successfully...");
 
-            //Connect to schema
-            useSchema("project");
-        } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
+        //Connect to schema
+        useSchema("project");
     }
 
-    DBM(String schemaName) {
-        try {
-            //Register JDBC driver
-            Class.forName(JDBC_DRIVER);
-            System.out.println("Connecting to a selected database...");
-            conn = DriverManager.getConnection("jdbc:mysql://localhost/Project", "root", "AJnuHA^8VKHht=uB");
-            System.out.println("Connected database successfully...");
+    DBM(String schemaName) throws ClassNotFoundException, SQLException {
+        //Register JDBC driver
+        Class.forName(JDBC_DRIVER);
+        System.out.println("Connecting to a selected database...");
+        conn = DriverManager.getConnection(DB_URL, USER, PASS);
+        System.out.println("Connected database successfully...");
 
-            //Connect to schema
-            useSchema(schemaName);
-        } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
+        //Connect to schema
+        useSchema(schemaName);
     }
 
-    DBM(String DB_URL, String user, String pass) {
-        try {
-            //Register JDBC driver
-            Class.forName(JDBC_DRIVER);
+    DBM(String DB_URL, String user, String pass) throws ClassNotFoundException, SQLException {
+        //Register JDBC driver
+        Class.forName(JDBC_DRIVER);
 
-            //Open a connection
-            System.out.println("Connecting to a selected database...");
-            conn = DriverManager.getConnection(DB_URL, user, pass);
-            System.out.println("Connected database successfully...");
+        //Open a connection
+        System.out.println("Connecting to a selected database...");
+        conn = DriverManager.getConnection(DB_URL, user, pass);
+        System.out.println("Connected database successfully...");
 
-            DBM.DB_URL = DB_URL;
-            DBM.USER = user;
-            DBM.PASS = pass;
-        } catch (SQLException | ClassNotFoundException se) {
-            se.printStackTrace();
-        }
-        System.out.println("Goodbye!");
+        DBM.DB_URL = DB_URL;
+        DBM.USER = user;
+        DBM.PASS = pass;
     }
 
-    DBM(String DB_URL, String user, String pass, String schemaName) {
-        try {
-            //Register JDBC driver
-            Class.forName(JDBC_DRIVER);
+    DBM(String DB_URL, String user, String pass, String schemaName) throws ClassNotFoundException, SQLException {
+        //Register JDBC driver
+        Class.forName(JDBC_DRIVER);
 
-            //Open a connection
-            System.out.println("Connecting to a selected database...");
-            conn = DriverManager.getConnection(DB_URL, user, pass);
-            System.out.println("Connected database successfully...");
+        //Open a connection
+        System.out.println("Connecting to a selected database...");
+        conn = DriverManager.getConnection(DB_URL, user, pass);
+        System.out.println("Connected database successfully...");
 
-            DBM.DB_URL = DB_URL;
-            DBM.USER = user;
-            DBM.PASS = pass;
+        DBM.DB_URL = DB_URL;
+        DBM.USER = user;
+        DBM.PASS = pass;
 
-            //Connect to schema
-            useSchema(schemaName);
-        } catch (SQLException | ClassNotFoundException se) {
-            se.printStackTrace();
-        }
-        System.out.println("Goodbye!");
+        //Connect to schema
+        useSchema(schemaName);
     }
 
-    static boolean createDB() {                 //creates DB from default script
-        try {
-            Statement stmt = conn.createStatement();
+    static boolean createDB() throws SQLException, FileNotFoundException {                 //creates DB from default script
+        Statement stmt = conn.createStatement();
 
-            System.out.println("Deleting and recreating schema...");
-            DBM.dropSchema();
-            DBM.useSchema(schema);
+        System.out.println("Deleting and recreating schema...");
+        DBM.dropSchema();
+        DBM.useSchema(schema);
 
-            //Read and run the database creation script
-            System.out.println("Creating table(s) in given database...");
-            String[] statements = readFile(creationScript);
-            for (String s : statements) {
-                stmt.execute(s);
-            }
-            return true;
-        } catch (SQLException | FileNotFoundException se) {
-            se.printStackTrace();
-            return false;
+        //Read and run the database creation script
+        System.out.println("Creating table(s) in given database...");
+        String[] statements = readFile(creationScript);
+        for (String s : statements) {
+            stmt.execute(s);
         }
+        return true;
     }
 
-    static boolean createDB(String newScript) {  //creates DB from alternate script
+    static boolean createDB(String newScript) throws FileNotFoundException, SQLException {  //creates DB from alternate script
         String temp = DBM.creationScript;
         DBM.creationScript = newScript;
         if (createDB())
@@ -132,109 +109,58 @@ class DBM {             //Database manager class for easier connecting and inter
         return temp.toString().split(";");
     }
 
-    static <T> List<T> getFromDB(String query, CreatableFromDB<T> creatable) {
-        //Runs query and uses Functional Interface method to parse each row into an object
-        //note: functional interfaces can either use the implementation of an object, e.g. new User() makes a blank user to call the User class's implementation,
-        //or can accept a lambda/method directly (must take in a ResultSet and output an Object, e.g. rs -> rs.getString("Name") will return String objects from the Name field)
+    //Runs PreparedStatement and uses Functional Interface method to parse each row returned into an object
+    //note: functional interfaces can either use the implementation of an object, e.g. new User() makes a blank user to call the User class's implementation,
+    //or can accept a lambda/method directly (must take in a ResultSet and output an Object, e.g. rs -> rs.getString("Name") will return String objects from the Name field)
+    static <T> List<T> getFromDB(PreparedStatement query, CreatableFromDB creatable) throws SQLException {
         List<T> out = new ArrayList<>();
 
-        try {
-            //Runs input query to get ResultSet
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(query);
-
-            //Add created object to list
-            while (rs.next()) {
-                out.add(creatable.createFromDB(rs));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        //Runs input query to get ResultSet, then adds created objects to list
+        ResultSet rs = query.executeQuery();
+        while (rs.next()) {
+            out.add((T) creatable.createFromDB(rs));
         }
-
         return out;
     }
 
-    static ResultSet executeQuery(String query) throws SQLException {           //generic executeQuery command, just already hooked to DB for convenience
-        ResultSet out = null;
-
-        try {
-            Statement stmt = conn.createStatement();
-            out = stmt.executeQuery(query);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return out;
-    }
-
-    static <T> boolean updateInDB(DBObject<T>... update) throws SQLException {      //updates the records of all inserted objects
-        try {                                                                       //DON'T INSERT OBJECTS OF DIFFERENT TYPES
-            Statement stmt = conn.createStatement();
-            for (DBObject<T> t : update) {
-                stmt.execute(t.getUpdateQuery());
-            }
-            return true;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+    static <T> void updateInDB(DBObject<T>... update) throws SQLException {      //updates the records of all inserted objects
+        PreparedStatement stmt;                                             //DON'T INSERT OBJECTS OF DIFFERENT TYPES
+        for (DBObject<T> t : update) {
+            stmt = t.getUpdateQuery();
+            stmt.execute();
         }
     }
 
-    static <T> boolean insertIntoDB(DBObject<T>... insert) throws SQLException, SQLIntegrityConstraintViolationException {
-        try {                                                                           //inserts object(s) into DB as defined in each object's class
-            Statement stmt = conn.createStatement();                                    //DON'T INSERT OBJECTS OF DIFFERENT TYPES
-            ResultSet rs;
-            for (DBObject<T> t : insert) {
-                stmt.executeUpdate(t.getInsertQuery(), Statement.RETURN_GENERATED_KEYS);
-                //after insertion, get the autogenerated ID and pass it to object that was inserted
-                rs = stmt.getGeneratedKeys();
-                if (rs != null && rs.next())
-                    t.setID(rs.getInt(1));
-            }
-            return true;
-        } catch (SQLIntegrityConstraintViolationException se) {
-            throw se;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+    static <T> void insertIntoDB(DBObject<T>... insert) throws SQLException, SQLIntegrityConstraintViolationException {
+        PreparedStatement stmt;                                         //inserts object(s) into DB as defined in each object's class
+        ResultSet rs;                                                   //DON'T INSERT OBJECTS OF DIFFERENT TYPES
+        for (DBObject<T> t : insert) {
+            stmt = t.getInsertQuery();
+            stmt.execute();
+            //after insertion, get the autogenerated ID and pass it to object that was inserted
+            rs = stmt.getGeneratedKeys();
+            if (rs != null && rs.next())
+                t.setID(rs.getInt(1));
         }
     }
 
-    static boolean useSchema(String schemaName) {                   //swaps to a different schema, creating it if it doesn't exist
-        try {                                                       //note: you may want to rerun createDB() if on a brand new schema
-            System.out.println("Connecting to schema...");
-            Statement stmt = conn.createStatement();
-            if (!stmt.executeQuery("SHOW DATABASES LIKE '" + schemaName + "';").next())
-                stmt.execute("CREATE SCHEMA `" + schemaName + "`");
-            stmt.execute("USE " + schemaName);
-            DBM.schema = schemaName;
-            System.out.println("Schema connected to successfully...");
-            return true;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
+    static void useSchema(String schemaName) throws SQLException {                   //swaps to a different schema, creating it if it doesn't exist
+        System.out.println("Connecting to schema...");          //note: you may want to rerun createDB() if on a brand new schema
+        Statement stmt = conn.createStatement();
+        if (!stmt.executeQuery("SHOW DATABASES LIKE '" + schemaName + "';").next())
+            stmt.execute("CREATE SCHEMA `" + schemaName + "`");
+        stmt.execute("USE " + schemaName);
+        DBM.schema = schemaName;
+        System.out.println("Schema connected to successfully...");
     }
 
-    static boolean dropSchema() {                                   //drop current schema
-        try {
-            Statement stmt = conn.createStatement();
-            stmt.execute("DROP DATABASE IF EXISTS " + schema);
-            return true;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
+    static void dropSchema() throws SQLException {                                   //drop current schema
+        Statement stmt = conn.createStatement();
+        stmt.execute("DROP DATABASE IF EXISTS " + schema);
     }
 
-    boolean close() {               //close the connection when you're done please
-        try {
-            if (conn != null)
-                conn.close();
-            return true;
-        } catch (SQLException se) {
-            se.printStackTrace();
-            return false;
-        }
+    void close() throws SQLException {                                  //close the connection when you're done please
+        if (conn != null)
+            conn.close();
     }
 }

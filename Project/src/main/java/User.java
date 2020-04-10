@@ -1,14 +1,12 @@
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.SQLIntegrityConstraintViolationException;
+import java.sql.*;
 import java.util.List;
 
 //Just example implement first and foremost to show the encryption/salting method to use.
 //Of course all kinds of exception handling needed for inputs, such as email.
 public class User implements Users {
     private int userID = 0;
-    private String userEmail;
     private String userName;
+    private String userEmail;
     private String encryptedPass;
     private String salt;
     private boolean admin = false;
@@ -17,23 +15,24 @@ public class User implements Users {
     }     //dummy object for access to interface methods
 
 
-    public User(String email, String name, String password) {
-        setUserEmail(email);
+    public User(String name, String email, String password) {
         setUserName(name);
+        setUserEmail(email);
+
         setPassword(password);
     }
 
-    public User(int userID, String email, String name, String encryptedPass, String salt, Boolean admin) {
+    public User(int userID, String name, String email, String encryptedPass, String salt, Boolean admin) {
         setID(userID);
-        setUserEmail(email);
         setUserName(name);
+        setUserEmail(email);
         isAdmin(admin);
         this.encryptedPass = encryptedPass;
         this.salt = salt;
     }
 
-    static boolean validateUnique(String email) {
-        List<String> dbList = DBM.getFromDB("SELECT UserEmail FROM users", rs -> rs.getString("UserEmail"));
+    static boolean validateUnique(String email) throws SQLException {
+        List<String> dbList = DBM.getFromDB(DBM.conn.prepareStatement("SELECT UserEmail FROM users"), rs -> rs.getString("UserEmail"));
 
         for (String db : dbList) {
             if (email.equalsIgnoreCase(db)) {
@@ -95,7 +94,7 @@ public class User implements Users {
             String salt = rs.getString("Salt");
             boolean admin = rs.getBoolean("Admin");
 
-            out = new User(userID, email, name, encryptedPass, salt, admin);
+            out = new User(userID, name, email, encryptedPass, salt, admin);
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -104,12 +103,17 @@ public class User implements Users {
     }
 
     @Override
-    public String getInsertQuery() throws SQLException, SQLIntegrityConstraintViolationException {
+    public PreparedStatement getInsertQuery() throws SQLException, SQLIntegrityConstraintViolationException {
         if (userID > 0)
             throw new SQLIntegrityConstraintViolationException("User is already in DB.");
-        return "INSERT INTO `users` (`UserName`, `UserEmail`, `Password`, `Salt`, `Admin`) " +
-                "VALUES ('" + userName + "', '" + userEmail + "', '" + encryptedPass + "', '" + salt + "', '" + (admin ? 1 : 0) + "');";
 
+        PreparedStatement out = DBM.conn.prepareStatement("INSERT INTO `users` (`UserName`, `UserEmail`, `Password`, `Salt`, `Admin`) VALUES (?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
+        out.setString(1, userName);
+        out.setString(2, userEmail);
+        out.setString(3, encryptedPass);
+        out.setString(4, salt);
+        out.setBoolean(5, admin);
+        return out;
     }
 
     @Override
@@ -118,13 +122,20 @@ public class User implements Users {
     }
 
     @Override
-    public String getUpdateQuery() throws SQLException {
-        return "UPDATE `users` SET `UserName` = '" + userName + "', `UserEmail` = '" + userEmail + "', `Password` = '" + encryptedPass + "', `Salt` = '" + salt + "', `Admin` = '" + (admin ? 1 : 0) + "'" +
-                " WHERE (`UserID` = '" + userID + "')";
+    public PreparedStatement getUpdateQuery() throws SQLException {
+        PreparedStatement out = DBM.conn.prepareStatement("UPDATE `users` SET `UserName` = ?, `UserEmail` = ?, `Password` = ?, `Salt` = ?, `Admin` = ? WHERE (`UserID` = ?)");
+        out.setString(1, userName);
+        out.setString(2, userEmail);
+        out.setString(3, encryptedPass);
+        out.setString(4, salt);
+        out.setBoolean(5, admin);
+        out.setInt(6, userID);
+        return out;
     }
+
     @Override
     public String toString() {
-        return "UserID: " + userID + " Name: " + userName + " Email: " + userEmail + " Encrypted Password: " + encryptedPass  + " Salt: " + salt;
+        return "UserID: " + userID + " Name: " + userName + " Email: " + userEmail + " Encrypted Password: " + encryptedPass + " Salt: " + salt;
     }
 
 }
