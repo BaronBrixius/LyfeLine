@@ -122,4 +122,9 @@ public class User implements Users {
         return "UPDATE `users` SET `UserName` = '" + userName + "', `UserEmail` = '" + userEmail + "', `Password` = '" + encryptedPass + "', `Salt` = '" + salt + "', `Admin` = '" + (admin ? 1 : 0) + "'" +
                 " WHERE (`UserID` = '" + userID + "')";
     }
+    @Override
+    public String toString() {
+        return "UserID: " + userID + " Name: " + userName + " Email: " + userEmail + " Encrypted Password: " + encryptedPass  + " Salt: " + salt;
+    }
+
 }

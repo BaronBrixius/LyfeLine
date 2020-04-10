@@ -12,7 +12,7 @@ class DBM {             //Database manager class for easier connecting and inter
     static String USER = "root";
     static String PASS = "AJnuHA^8VKHht=uB";
     static private Connection conn = null;
-    static private String creationScript = "src/main/resources/Database Creation Script.sql";
+    static private String creationScript = "Project/src/main/resources/Database Creation Script.sql";
     static private String schema;
 
     DBM() {             //Connect to server with default settings
@@ -82,13 +82,6 @@ class DBM {             //Database manager class for easier connecting and inter
             useSchema(schemaName);
         } catch (SQLException | ClassNotFoundException se) {
             se.printStackTrace();
-        } finally {
-            try {
-                if (conn != null)
-                    conn.close();
-            } catch (SQLException se) {
-                se.printStackTrace();
-            }
         }
         System.out.println("Goodbye!");
     }

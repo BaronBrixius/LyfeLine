@@ -6,8 +6,10 @@ import java.security.spec.InvalidKeySpecException;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Random;
-
+//This Password encryption class is made by Sergey K., "Encrypt User Password Example in Java",
+//Apps Developer Blog, 2017, Available: http://www.appsdeveloperblog.com/encrypt-user-password-example-java/ [Accessed: 6.4.2020} 
 public class PasswordUtils {
+
     private static final Random RANDOM = new SecureRandom();//cryptographically strong random number generator - SecureRandom must produce non-deterministic output. 
     private static final String ALPHABET = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
     private static final int ITERATIONS = 10000;
