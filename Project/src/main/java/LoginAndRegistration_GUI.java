@@ -3,8 +3,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
@@ -43,8 +42,7 @@ public class LoginAndRegistration_GUI extends Application {
         primaryStage.setTitle("Welcome Screen");
 
         //This HBox holds the three buttons: Login, Register, and Continue as guest
-        HBox menuOptions = new HBox();
-        menuOptions.setSpacing(30);
+        HBox menuOptions = new HBox(30);
         menuOptions.setPadding(new Insets(50));
         menuOptions.setAlignment(Pos.TOP_CENTER);
 
@@ -75,10 +73,9 @@ public class LoginAndRegistration_GUI extends Application {
         menuOptions.getChildren().addAll(login, register, guest);
 
         //This VBox holds the HBox that holds the buttons as well as the logo
-        VBox everything = new VBox();
-        everything.getChildren().addAll(menuOptions, logo());
+        VBox everything = new VBox(5);
+        everything.getChildren().addAll(dropDownMenus(), menuOptions, logo());
         everything.setAlignment(Pos.TOP_CENTER);
-        everything.setSpacing(60);
         everything.setStyle("-fx-background-color: #9a9a9a;");  //This changes the background color of the whole window.
 
 
@@ -87,7 +84,7 @@ public class LoginAndRegistration_GUI extends Application {
         primaryStage.show();
     }
 
-    private Scene registerScreen() {
+    private static Scene registerScreen() {
         //This GridPane holds all text on the left, all input fields on the right, and the HBox that holds the buttons under the input fields.
         GridPane pane = new GridPane();
         pane.setAlignment(Pos.CENTER);
@@ -137,8 +134,7 @@ public class LoginAndRegistration_GUI extends Application {
         cancel.setStyle("-fx-background-color: #ffffff; -fx-border-color: #000000; -fx-font-size: 1.5em;");
 
         //This HBox holds the buttons Register and Cancel
-        HBox buttons = new HBox();
-        buttons.setSpacing(20);
+        HBox buttons = new HBox(20);
         buttons.getChildren().addAll(register, cancel);
         pane.add(buttons, 1, 3);
 
@@ -146,7 +142,7 @@ public class LoginAndRegistration_GUI extends Application {
         return new Scene(pane, 600, 350);
     }
 
-    private Scene loginScreen() {
+    private static Scene loginScreen() {
         //This GridPane holds all text on the left, all input fields on the right, and the HBox that holds the buttons under the input fields.
         GridPane pane = new GridPane();
         pane.setAlignment(Pos.CENTER);
@@ -188,8 +184,7 @@ public class LoginAndRegistration_GUI extends Application {
         cancel.setStyle("-fx-background-color: #ffffff; -fx-border-color: #000000; -fx-font-size: 1.5em;");
 
         //This HBox holds the buttons Login and Cancel
-        HBox buttons = new HBox();
-        buttons.setSpacing(20);
+        HBox buttons = new HBox(20);
         buttons.getChildren().addAll(login, cancel);
         pane.add(buttons, 1, 2);
 
@@ -197,10 +192,55 @@ public class LoginAndRegistration_GUI extends Application {
         return new Scene(pane, 600, 300);
     }
 
+    //This method creates the dropdown menus in the top right of most windows
+    private static VBox dropDownMenus() {
+        //These are the items in the File dropdown menu
+        MenuItem save = new MenuItem("Save");
+        save.setOnAction(e -> System.out.println("The \"Save\" menu button has been pressed."));
+
+        MenuItem delete = new MenuItem("Delete");
+        delete.setOnAction(e -> System.out.println("The \"Delete\" menu button has been pressed."));
+
+        MenuItem zoom = new MenuItem("Zoom");
+        zoom.setOnAction(e -> System.out.println("The \"Zoom\" menu button has been pressed."));
+
+        //This is the File dropdown menu in the top left
+        Menu menuFile = new Menu("File");
+        menuFile.getItems().addAll(save, delete, zoom);
+
+        //This is the only item in the Edit dropdown menu
+        MenuItem editMode = new MenuItem("Edit Mode");
+        editMode.setOnAction(e -> System.out.println("The \"Edit Mode\" menu button has been pressed."));
+
+        //This is the Edit dropdown menu in the top left
+        Menu menuEdit = new Menu("Edit");
+        menuEdit.getItems().addAll(editMode);
+
+        //This is the only item in the View dropdown menu
+        MenuItem viewMode = new MenuItem("View Mode");
+        viewMode.setOnAction(e -> System.out.println("The \"View Mode\" menu button has been pressed."));
+
+        //This is the View dropdown menu in the top left
+        Menu menuView = new Menu("View");
+        menuView.getItems().addAll(viewMode);
+
+        //This is the bar that holds the dropdown menus in the top left
+        MenuBar bar = new MenuBar();
+        bar.getMenus().addAll(menuFile, menuEdit, menuView);
+        //The border color stuff at the end of the next line creates a box around the menu options, then colors the bottom line of that box black
+        //The other lines are set to the background color, and this is the best way I've found to put a line under the menu options
+        bar.setStyle("-fx-background-color: #9a9a9a;  -fx-font-size: 1.1em; -fx-font-weight: bold; -fx-border-color: #9a9a9a #9a9a9a black #9a9a9a; ");
+
+        
+        VBox menus = new VBox();
+        menus.getChildren().addAll(bar);
+        return menus;
+    }
+
 
     //This method creates the logo from Shapes and a Text box.
     //Almost certainly acting as placeholder art and should be replaced eventually.
-    private StackPane logo() {
+    private static Node logo() {
         Rectangle outline = new Rectangle(0, 0, 600, 300);
         outline.setFill(null);
         outline.setStroke(Color.BLACK);
