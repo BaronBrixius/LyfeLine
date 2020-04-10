@@ -1,7 +1,5 @@
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public interface DBObject<T> {
-    T createFromDB(ResultSet rs) throws SQLException;
+interface DBObject<T> extends CreatableFromDB<T> {
     String getInsertQuery() throws SQLException;
 }
