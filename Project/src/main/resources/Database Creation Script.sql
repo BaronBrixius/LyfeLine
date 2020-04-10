@@ -15,7 +15,7 @@ CREATE TABLE `events` (
   `End` varchar(30) GENERATED ALWAYS AS (concat(abs(`EndYear`),_utf8mb4'-',lpad(`EndMonth`,2,0),_utf8mb4'-',lpad(`EndDay`,2,0),_utf8mb4' ',if((`EndYear` > 0),_utf8mb4'AD',_utf8mb4'BC'))) VIRTUAL,
   PRIMARY KEY (`EventID`),
   UNIQUE KEY `EventID_UNIQUE` (`EventID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 CREATE TABLE `groups` (
   `GroupID` int NOT NULL AUTO_INCREMENT,
@@ -38,7 +38,7 @@ CREATE TABLE `groups` (
   `End` varchar(30) GENERATED ALWAYS AS (concat(abs(`EndYear`),_utf8mb4'-',lpad(`EndMonth`,2,0),_utf8mb4'-',lpad(`EndDay`,2,0),_utf8mb4' ',if((`EndYear` > 0),_utf8mb4'AD',_utf8mb4'BC'))) VIRTUAL,
   PRIMARY KEY (`GroupID`),
   UNIQUE KEY `GroupID_UNIQUE` (`GroupID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 CREATE TABLE `groupevents` (
   `GroupID` int NOT NULL,
@@ -47,7 +47,7 @@ CREATE TABLE `groupevents` (
   KEY `fk_groupevents_events1_idx` (`EventID`),
   CONSTRAINT `fk_groupevents_events1` FOREIGN KEY (`EventID`) REFERENCES `events` (`EventID`),
   CONSTRAINT `fk_groupevents_groups` FOREIGN KEY (`GroupID`) REFERENCES `groups` (`GroupID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 CREATE TABLE `users` (
   `UserID` int NOT NULL AUTO_INCREMENT,
@@ -59,4 +59,4 @@ CREATE TABLE `users` (
   PRIMARY KEY (`UserID`),
   UNIQUE KEY `UserID_UNIQUE` (`UserID`),
   UNIQUE KEY `UserEmail_UNIQUE` (`UserEmail`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

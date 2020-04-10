@@ -6,7 +6,7 @@ class Main {
     public static void main(String[] args) throws SQLException {
         DBM dbm = null;
         try {
-            dbm = new DBM();
+            dbm = new DBM("jdbc:mysql://localhost/Project", "Halli", "dragon","project");
             //DBM.createDB();       //remakes DB with default settings
 
             Event now = new Event(1, 2020, 4, 9);
@@ -37,6 +37,18 @@ class Main {
                 DBM.insertIntoDB(doctor);
             else
                 System.out.println("\nNot a unique email!");
+            //User has its own validation method so an object doesn't have to be created to validate email
+            User teacher = new User("Hans@math.biz", "Hans Ove", "IloveMath");
+            if (User.validateUnique("Hans@math.biz"))
+                DBM.insertIntoDB(teacher);
+            else
+                System.out.println("\nNot a unique email!");
+
+
+            List<User> userList = DBM.getFromDB("SELECT * FROM users",new User());    //blank object so functional interface method can be accessed
+            System.out.println("\nUser List:");
+            for (User e : userList)
+                System.out.println(e);
 
         } finally {
             if (dbm != null)
