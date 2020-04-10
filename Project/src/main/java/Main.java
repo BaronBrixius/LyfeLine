@@ -7,7 +7,7 @@ class Main {
         DBM dbm = null;
         try {
             dbm = new DBM();
-            //DBM.createDB();       //remakes DB with default settings
+            DBM.createDB();       //remakes DB with default settings
 
             Event now = new Event(1, 2020, 4, 9);
             Event then = new Event(2, -44, 3, 15);

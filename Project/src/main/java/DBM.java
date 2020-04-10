@@ -8,9 +8,9 @@ import java.util.Scanner;
 class DBM {             //Database manager class for easier connecting and interacting
     static private final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
     //  Database credentials
-    static String DB_URL = "jdbc:mysql://localhost/Project";
+    static String DB_URL = "jdbc:mysql://localhost:3306?useTimezone=true&serverTimezone=UTC";
     static String USER = "root";
-    static String PASS = "AJnuHA^8VKHht=uB";
+    static String PASS = "jan2306952431";
     static private Connection conn = null;
     static private String creationScript = "src/main/resources/Database Creation Script.sql";
     static private String schema;
@@ -20,7 +20,7 @@ class DBM {             //Database manager class for easier connecting and inter
             //Register JDBC driver
             Class.forName(JDBC_DRIVER);
             System.out.println("Connecting to a selected database...");
-            conn = DriverManager.getConnection("jdbc:mysql://localhost/Project", "root", "AJnuHA^8VKHht=uB");
+            conn = DriverManager.getConnection(DB_URL, USER, PASS);
             System.out.println("Connected database successfully...");
 
             //Connect to schema
@@ -35,7 +35,7 @@ class DBM {             //Database manager class for easier connecting and inter
             //Register JDBC driver
             Class.forName(JDBC_DRIVER);
             System.out.println("Connecting to a selected database...");
-            conn = DriverManager.getConnection("jdbc:mysql://localhost/Project", "root", "AJnuHA^8VKHht=uB");
+            conn = DriverManager.getConnection(DB_URL, USER, PASS);
             System.out.println("Connected database successfully...");
 
             //Connect to schema
