@@ -1,41 +1,63 @@
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
+import java.util.List;
 
 //Just example implement first and foremost to show the encryption/salting method to use.
 //Of course all kinds of exception handling needed for inputs, such as email.
 public class User implements Users {
-    private String email;
-    private String name;
+    private int userID = 0;
+    private String userEmail;
+    private String userName;
     private String encryptedPass;
     private String salt;
     private boolean admin = false;
 
-    public User() { }     //dummy object for access to interface methods
+    public User() {
+    }     //dummy object for access to interface methods
 
 
     public User(String email, String name, String password) {
-        setEmail(email);
-        setName(name);
+        setUserEmail(email);
+        setUserName(name);
         setPassword(password);
     }
 
-    public User(String email, String name, String password, Boolean admin) {
-        setEmail(email);
-        setName(name);
+    public User(int userID, String email, String name, String encryptedPass, String salt, Boolean admin) {
+        setID(userID);
+        setUserEmail(email);
+        setUserName(name);
         isAdmin(admin);
-        setPassword(password);
+        this.encryptedPass = encryptedPass;
+        this.salt = salt;
+    }
+
+    static boolean validateUnique(String email) {
+        List<String> dbList = DBM.getFromDB("SELECT UserEmail FROM users", rs -> rs.getString("UserEmail"));
+
+        for (String db : dbList) {
+            if (email.equalsIgnoreCase(db)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public String getUserEmail() {
+        return this.userEmail;
     }
 
     @Override
-    public void setEmail(String email) {
-        this.email = email;
+    public void setUserEmail(String userEmail) throws IllegalArgumentException {
+        if (!(userEmail.matches("\\p{all}+@[\\p{all}]+\\.\\p{all}+")))      //if not matches characters@characters.characters
+            throw new IllegalArgumentException("Invalid email format");
+        this.userEmail = userEmail;
     }
 
     @Override
-    public void setName(String name) {
-        this.name = name;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
-
 
     @Override
     public void isAdmin(Boolean admin) {
@@ -66,12 +88,14 @@ public class User implements Users {
     public User createFromDB(ResultSet rs) throws SQLException {
         User out = null;
         try {
+            int userID = rs.getInt("UserID");
             String name = rs.getString("UserName");
             String email = rs.getString("UserEmail");
             String encryptedPass = rs.getString("Password");
+            String salt = rs.getString("Salt");
             boolean admin = rs.getBoolean("Admin");
 
-            out = new User(email, name, encryptedPass, admin);
+            out = new User(userID, email, name, encryptedPass, salt, admin);
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -80,9 +104,22 @@ public class User implements Users {
     }
 
     @Override
-    public String getInsertQuery() throws SQLException {
+    public String getInsertQuery() throws SQLException, SQLIntegrityConstraintViolationException {
+        if (userID > 0)
+            throw new SQLIntegrityConstraintViolationException("User is already in DB.");
         return "INSERT INTO `users` (`UserName`, `UserEmail`, `Password`, `Salt`, `Admin`) " +
-                "VALUES ('" + name + "', '" + email + "', '" + encryptedPass + "', '" + salt + "', '" + (admin ? 1 : 0) + "');";
+                "VALUES ('" + userName + "', '" + userEmail + "', '" + encryptedPass + "', '" + salt + "', '" + (admin ? 1 : 0) + "');";
 
+    }
+
+    @Override
+    public void setID(int id) {
+        this.userID = id;
+    }
+
+    @Override
+    public String getUpdateQuery() throws SQLException {
+        return "UPDATE `users` SET `UserName` = '" + userName + "', `UserEmail` = '" + userEmail + "', `Password` = '" + encryptedPass + "', `Salt` = '" + salt + "', `Admin` = '" + (admin ? 1 : 0) + "'" +
+                " WHERE (`UserID` = '" + userID + "')";
     }
 }

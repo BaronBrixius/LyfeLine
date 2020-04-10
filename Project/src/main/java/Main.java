@@ -1,27 +1,45 @@
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
 class Main {
     public static void main(String[] args) throws SQLException {
-        DBM dbm = new DBM();
+        DBM dbm = null;
         try {
-            Event now = new Event(1, -44, 3, 15);
-            DBM.insertIntoDB(now);
+            dbm = new DBM();
+            //DBM.createDB();       //remakes DB with default settings
 
-            List<Event> newNow = DBM.getFromDB("SELECT * FROM events", new Event());     //blank object so functional interface method can be accessed
-            for (Event e : newNow)
+            Event now = new Event(1, 2020, 4, 9);
+            Event then = new Event(2, -44, 3, 15);
+            DBM.insertIntoDB(now, then);
+
+            try {                   //throws as a demonstration of anti-dupe
+                DBM.insertIntoDB(now);
+            } catch (SQLIntegrityConstraintViolationException e) {
+                System.err.println(e.getMessage());
+            }
+
+            //Makes a list of events from the DB and prints it
+            List<Event> eventList = DBM.getFromDB("SELECT * FROM events", new Event());     //blank object so functional interface method can be accessed
+            System.out.println("\nEvent List:");
+            for (Event e : eventList)
                 System.out.println(e);
 
-            List<Integer> years = DBM.getFromDB("SELECT StartYear, StartMonth FROM events", rs -> rs.getInt("StartYear"));
-            for (Integer i : years)
+            //Makes a list of event years from the DB and prints it
+            System.out.println("\nYear List:");
+            List<Integer> yearList = DBM.getFromDB("SELECT StartYear, StartMonth FROM events", rs -> rs.getInt("StartYear"));
+            for (Integer i : yearList)
                 System.out.println(i);
 
-            User doctor = new User("BigDoc@math.biz", "Jerry Mulan", "hunter2", false);
-            //DBM.insertIntoDB(doctor);         //don't run this multiple times because email is forced to be unique in DB
-
-            List<User> userList = DBM.getFromDB("SELECT * FROM users", new User());
+            //User has its own validation method so an object doesn't have to be created to validate email
+            User doctor = new User("BigDoc@math.biz", "Jerry Muhfan", "hunter2");
+            if (User.validateUnique("BigDoc@math.biz"))
+                DBM.insertIntoDB(doctor);
+            else
+                System.out.println("\nNot a unique email!");
 
         } finally {
+            if (dbm != null)
                 dbm.close();
         }
     }

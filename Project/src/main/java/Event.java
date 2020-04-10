@@ -1,9 +1,10 @@
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
 class Event implements DBObject<Event> {
-    private int eventID = 0;
+    int eventID = 0;
     private int eventType;
     private int startYear;
     private int startMonth;
@@ -12,9 +13,9 @@ class Event implements DBObject<Event> {
 
     Event() {         //defaults
         this.eventType = 1;
-        this.startYear = 2020;
+        this.startYear = -44;
         this.startMonth = 3;
-        this.startDay = 14;
+        this.startDay = 15;
     }
 
     Event(int eventType, int startYear, int startMonth, int startDay) {
@@ -62,9 +63,22 @@ class Event implements DBObject<Event> {
     }
 
     @Override
-    public String getInsertQuery() throws SQLException {
+    public String getInsertQuery() throws SQLException, RuntimeException {
+        if (eventID > 0)
+            throw new SQLIntegrityConstraintViolationException("Event is already in DB.");
         return "INSERT INTO `events` (`EventType`, `StartYear`, `StartMonth`, `StartDay`) " +
                 "VALUES ('" + eventType + "', '" + startYear + "', '" + startMonth + "', '" + startDay + "');";
+    }
+
+    @Override
+    public void setID(int id) {
+        this.eventID = id;
+    }
+
+    @Override
+    public String getUpdateQuery() throws SQLException {
+        return "UPDATE `events` SET `EventType` = '" + eventType + "', `StartYear` = '" + startYear + "', `StartMonth` = '" + startMonth + "', `StartDay` = '" + startDay + "' " +
+                "WHERE (`EventID` = '" + eventID + "');";
     }
 
     @Override
