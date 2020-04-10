@@ -68,7 +68,7 @@ class DBM {             //Database manager class for easier connecting and inter
         useSchema(schemaName);
     }
 
-    static boolean createDB() throws SQLException, FileNotFoundException {                 //creates DB from default script
+    static void createDB() throws SQLException, FileNotFoundException {                 //creates DB from default script
         Statement stmt = conn.createStatement();
 
         System.out.println("Deleting and recreating schema...");
@@ -81,17 +81,16 @@ class DBM {             //Database manager class for easier connecting and inter
         for (String s : statements) {
             stmt.execute(s);
         }
-        return true;
     }
 
-    static boolean createDB(String newScript) throws FileNotFoundException, SQLException {  //creates DB from alternate script
+    static void createDB(String newScript) throws FileNotFoundException, SQLException {  //creates DB from alternate script
         String temp = DBM.creationScript;
         DBM.creationScript = newScript;
-        if (createDB())
-            return true;
-        else {
+        try {
+            createDB();
+        } catch (SQLException e) {
             DBM.creationScript = temp;          //return to old creation script if new script fails
-            return false;
+            throw e;
         }
     }
 
@@ -112,28 +111,26 @@ class DBM {             //Database manager class for easier connecting and inter
     //Runs PreparedStatement and uses Functional Interface method to parse each row returned into an object
     //note: functional interfaces can either use the implementation of an object, e.g. new User() makes a blank user to call the User class's implementation,
     //or can accept a lambda/method directly (must take in a ResultSet and output an Object, e.g. rs -> rs.getString("Name") will return String objects from the Name field)
-    static <T> List<T> getFromDB(PreparedStatement query, CreatableFromDB creatable) throws SQLException {
+    static <T> List<T> getFromDB(PreparedStatement query, CreatableFromDB<T> creatable) throws SQLException {
         List<T> out = new ArrayList<>();
 
         //Runs input query to get ResultSet, then adds created objects to list
         ResultSet rs = query.executeQuery();
         while (rs.next()) {
-            out.add((T) creatable.createFromDB(rs));
+            out.add(creatable.createFromDB(rs));
         }
         return out;
     }
 
-    static <T> void updateInDB(DBObject<T>... update) throws SQLException {      //updates the records of all inserted objects
-        PreparedStatement stmt;                                             //DON'T INSERT OBJECTS OF DIFFERENT TYPES
-        for (DBObject<T> t : update) {
-            stmt = t.getUpdateQuery();
-            stmt.execute();
+    static <T> void updateInDB(DBObject<T>... update) throws SQLException {     //updates the records of all inserted objects
+        for (DBObject<T> t : update) {                                          //DON'T INSERT OBJECTS OF DIFFERENT TYPES
+            t.getUpdateQuery().execute();
         }
     }
 
-    static <T> void insertIntoDB(DBObject<T>... insert) throws SQLException, SQLIntegrityConstraintViolationException {
-        PreparedStatement stmt;                                         //inserts object(s) into DB as defined in each object's class
-        ResultSet rs;                                                   //DON'T INSERT OBJECTS OF DIFFERENT TYPES
+    static <T> void insertIntoDB(DBObject<T>... insert) throws SQLException {   //inserts object(s) into DB as defined in each object's class
+        PreparedStatement stmt;                                                 //DON'T INSERT OBJECTS OF DIFFERENT TYPES
+        ResultSet rs;
         for (DBObject<T> t : insert) {
             stmt = t.getInsertQuery();
             stmt.execute();

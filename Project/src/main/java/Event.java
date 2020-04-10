@@ -43,21 +43,14 @@ class Event implements DBObject<Event> {
 
     @Override
     public Event createFromDB(ResultSet rs) throws SQLException {
-        Event out = null;
-        try {
-            int eventID = rs.getInt("EventID");
-            int eventType = rs.getInt("EventType");
-            int startYear = rs.getInt("StartYear");
-            int startMonth = rs.getInt("StartMonth");
-            int startDay = rs.getInt("StartDay");
-            String start = rs.getString("Start");       //probably don't need to pull from table, can recalc here, but I wanted to test it a bit
+        int eventID = rs.getInt("EventID");
+        int eventType = rs.getInt("EventType");
+        int startYear = rs.getInt("StartYear");
+        int startMonth = rs.getInt("StartMonth");
+        int startDay = rs.getInt("StartDay");
+        String start = rs.getString("Start");       //probably don't need to pull from table, can recalculate here, but I wanted to test it a bit
 
-            out = new Event(eventID, eventType, startYear, startMonth, startDay, start);
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return out;
+        return new Event(eventID, eventType, startYear, startMonth, startDay, start);
     }
 
     @Override

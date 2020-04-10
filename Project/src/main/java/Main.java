@@ -19,7 +19,7 @@ class Main {
             try {                   //throws as a demonstration of anti-dupe
                 DBM.insertIntoDB(now);
             } catch (SQLIntegrityConstraintViolationException e) {
-                System.err.println(e.getMessage() + " This is just a demonstration exception. -Max");
+                System.err.println(e.getMessage() + " (This is just a demonstration exception. -Max)");
             }
 
             //Makes a list of events from the DB and prints it
@@ -30,13 +30,12 @@ class Main {
                 System.out.println(e);
 
             //Makes a list of event years from the DB and prints it
-            //note you can just prepare a statment right in the method parameters if there aren't any field values that need to be set
+            //note: you can just prepare a statement right in the method parameters if there aren't any field values that need to be set
             System.out.println("\nYear List:");
             List<Integer> yearList = DBM.getFromDB(DBM.conn.prepareStatement("SELECT StartYear, StartMonth FROM events"), rs -> rs.getInt("StartYear"));
             for (Integer i : yearList)
                 System.out.println(i);
 
-            //User has its own validation method so an object doesn't have to be created to validate email
             User professorChaos = new User("Seeqwul Encurshun', 'BigDoc@abuseme.biz', 'FunPass', 'TheSalt', '1'); -- ", "email@yo.mama", "hunter2");    //SQL injection attempt
             DBM.insertIntoDB(professorChaos);
 
@@ -46,10 +45,12 @@ class Main {
             else
                 System.out.println("\nNot a unique email!");
 
+            //Example of Prepared Statement with field value
             stmt = DBM.conn.prepareStatement("SELECT * FROM users WHERE userEmail = ?");
-            stmt.setString(1, "Hans@math.biz");
+            stmt.setString(1, teacher.getUserEmail());
+
             List<User> userList = DBM.getFromDB(stmt, new User());    //blank object so functional interface method can be accessed
-            System.out.println("\nUser List:");
+            System.out.println("\nUser:");
             for (User e : userList)
                 System.out.println(e);
 

@@ -77,33 +77,23 @@ public class User implements Users {
 
     @Override
     public Boolean verifyPass(String pass, String encrypted, String salt) {
-        String givenPassword = pass;
-        String DBSecurePassword = encrypted; //the one from DB, created with setPassword
-        String DBsalt = salt; //the one in DB associated with the encrypted password there and created with setPassword
-        return PasswordUtils.verifyUserPassword(givenPassword, DBSecurePassword, DBsalt);
+        return PasswordUtils.verifyUserPassword(pass, encrypted, salt);   //salt in DB associated with the encrypted password there and created with setPassword
     }
 
     @Override
     public User createFromDB(ResultSet rs) throws SQLException {
-        User out = null;
-        try {
-            int userID = rs.getInt("UserID");
-            String name = rs.getString("UserName");
-            String email = rs.getString("UserEmail");
-            String encryptedPass = rs.getString("Password");
-            String salt = rs.getString("Salt");
-            boolean admin = rs.getBoolean("Admin");
+        int userID = rs.getInt("UserID");
+        String name = rs.getString("UserName");
+        String email = rs.getString("UserEmail");
+        String encryptedPass = rs.getString("Password");
+        String salt = rs.getString("Salt");
+        boolean admin = rs.getBoolean("Admin");
 
-            out = new User(userID, name, email, encryptedPass, salt, admin);
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return out;
+        return new User(userID, name, email, encryptedPass, salt, admin);
     }
 
     @Override
-    public PreparedStatement getInsertQuery() throws SQLException, SQLIntegrityConstraintViolationException {
+    public PreparedStatement getInsertQuery() throws SQLException {
         if (userID > 0)
             throw new SQLIntegrityConstraintViolationException("User is already in DB.");
 
