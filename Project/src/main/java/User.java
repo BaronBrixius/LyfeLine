@@ -65,8 +65,8 @@ public class User implements Users {
 
     @Override
     public void setPassword(String pass) {
-        this.salt = PasswordUtils.getSalt(30); //Length of the salt string
-        this.encryptedPass = PasswordUtils.generateSecurePassword(pass, this.salt);
+        this.salt = PasswordEncryption.getSalt(30); //Length of the salt string
+        this.encryptedPass = PasswordEncryption.generateSecurePassword(pass, this.salt);
 
     }
 
@@ -77,7 +77,7 @@ public class User implements Users {
 
     @Override
     public Boolean verifyPass(String pass, String encrypted, String salt) {
-        return PasswordUtils.verifyUserPassword(pass, encrypted, salt);   //salt in DB associated with the encrypted password there and created with setPassword
+        return PasswordEncryption.verifyUserPassword(pass, encrypted, salt);   //salt in DB associated with the encrypted password there and created with setPassword
     }
 
     @Override

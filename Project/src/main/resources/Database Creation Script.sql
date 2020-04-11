@@ -53,7 +53,7 @@ CREATE TABLE `users` (
   `UserID` int NOT NULL AUTO_INCREMENT,
   `UserName` nvarchar(100) DEFAULT NULL,
   `UserEmail` nvarchar(100) NOT NULL,
-  `Password` nvarchar(50) NOT NULL,
+  `Password` nvarchar(90) NOT NULL,
   `Salt` nvarchar(30) NOT NULL,
   `Admin` tinyint DEFAULT '0',
   PRIMARY KEY (`UserID`),
