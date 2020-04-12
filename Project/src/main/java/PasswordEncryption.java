@@ -37,7 +37,7 @@ public class PasswordEncryption {
         } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
             throw new AssertionError("Error while hashing a password" + e.getMessage());
         } finally {
-            spec.clearPassword();
+            spec.clearPassword(); //clear the char array so the password is not retrieved from java memory
         }
     }
     //The method that creates the actual encrypted password by hashing the password and salt together
