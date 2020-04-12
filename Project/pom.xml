@@ -8,7 +8,6 @@
     <properties>
         <maven.compiler.source>1.13</maven.compiler.source>
         <maven.compiler.target>13</maven.compiler.target>
-        <junit-jupiter.version>5.6.2</junit-jupiter.version>
     </properties>
 
     <dependencies>
@@ -37,12 +36,6 @@
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
             <version>14</version>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>RELEASE</version>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 
