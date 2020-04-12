@@ -9,8 +9,8 @@ class Main {
         DBM dbm = null;
         PreparedStatement stmt;
         try {
-            dbm = new DBM("jdbc:mysql://localhost", "Halli", "dragon", "project");
-            DBM.createDB();       //destroys + remakes DB with default settings, can comment this out after first run if desired
+            dbm = new DBM();
+            DBM.setupSchema();       //destroys + remakes DB with default settings, can comment this out after first run if desired
 
             Event now = new Event(1, 2020, 4, 9);
             Event then = new Event(2, -44, 3, 15);
@@ -36,7 +36,8 @@ class Main {
             for (Integer i : yearList)
                 System.out.println(i);
 
-
+            User professorChaos = new User("Seeqwul Encurshun', 'BigDoc@abuseme.biz', 'FunPass', 'TheSalt', '1'); -- ", "email@yo.mama", "hunter2");    //SQL injection attempt
+            DBM.insertIntoDB(professorChaos);
 
             User teacher = new User("Hans Ove", "Hans@math.biz", "IloveMath1#");
             if (User.validateUnique("Hans@math.biz"))

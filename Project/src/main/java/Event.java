@@ -83,6 +83,13 @@ class Event implements DBObject<Event> {
     }
 
     @Override
+    public PreparedStatement getDeleteQuery() throws SQLException {
+        PreparedStatement out = DBM.conn.prepareStatement("DELETE FROM `events` WHERE (`EventID` = ?)");
+        out.setInt(1, eventID);
+        return out;
+    }
+
+    @Override
     public String toString() {
         return "EventID: " + eventID + " EventType: " + eventType + " Start: " + start;
     }

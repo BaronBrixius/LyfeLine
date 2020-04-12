@@ -11,22 +11,22 @@ public class User implements Users {
     private String salt;
     private boolean admin = false;
 
-    public User() {
-    }     //dummy object for access to interface methods
+    public User() {             //default object
+        this("Default", "default@domain.com", "Passw0rd!");
+    }
 
 
     public User(String name, String email, String password) {
         setUserName(name);
         setUserEmail(email);
-
         setPassword(password);
     }
 
-    public User(int userID, String name, String email, String encryptedPass, String salt, Boolean admin) {
+    public User(int userID, String name, String email, String encryptedPass, String salt, Boolean admin) {      //For reading from database only, don't use for new user creation
         setID(userID);
         setUserName(name);
         setUserEmail(email);
-        isAdmin(admin);
+        setAdmin(admin);
         this.encryptedPass = encryptedPass;
         this.salt = salt;
     }
@@ -59,18 +59,21 @@ public class User implements Users {
     }
 
     @Override
-    public void isAdmin(Boolean admin) {
+    public void setAdmin(Boolean admin) {
         this.admin = admin;
     }
 
+    boolean getAdmin(){
+        return this.admin;
+    }
+
     @Override
-    public void setPassword(String pass) {
+    public void setPassword(String pass) throws IllegalArgumentException {
         //We can split the regex down to be more specific in the error handling - no need for all possibilities, just one at a time.
-        if (!(pass.matches("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$")))//rules in order,at least: one digit, one lower case, one upper case,  one special character, no white space and min lenght 8
+        if (!(pass.matches("^(?=.*\\p{Digit})(?=.*\\p{Ll})(?=.*\\p{Lu})(?=.*\\p{Punct})(?=\\S+$).{8,}$")))//rules in order,at least: one digit, one lower case, one upper case,  one special character, no white space and min length 8
             throw new IllegalArgumentException("Invalid password, must include at least: one digit, one lower case, one upper case, one special character, no white space and be at least 8 character long");
         this.salt = PasswordEncryption.getSalt(30); //Length of the salt string
         this.encryptedPass = PasswordEncryption.generateSecurePassword(pass, this.salt);
-
     }
 
     @Override
@@ -123,6 +126,13 @@ public class User implements Users {
         out.setString(4, salt);
         out.setBoolean(5, admin);
         out.setInt(6, userID);
+        return out;
+    }
+
+    @Override
+    public PreparedStatement getDeleteQuery() throws SQLException {
+        PreparedStatement out = DBM.conn.prepareStatement("DELETE FROM `users` WHERE (`UserID` = ?)");
+        out.setInt(1, userID);
         return out;
     }
 
