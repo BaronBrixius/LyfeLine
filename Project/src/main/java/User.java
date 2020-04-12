@@ -65,6 +65,9 @@ public class User implements Users {
 
     @Override
     public void setPassword(String pass) {
+        //We can split the regex down to be more specific in the error handling - no need for all possibilities, just one at a time.
+        if (!(pass.matches("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$")))//rules in order,at least: one digit, one lower case, one upper case,  one special character, no white space and min lenght 8
+            throw new IllegalArgumentException("Invalid password, must include at least: one digit, one lower case, one upper case, one special character, no white space and be at least 8 character long");
         this.salt = PasswordEncryption.getSalt(30); //Length of the salt string
         this.encryptedPass = PasswordEncryption.generateSecurePassword(pass, this.salt);
 
