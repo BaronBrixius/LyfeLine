@@ -13,9 +13,8 @@ public class GUIManager extends Application{
 	//default window set up
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		myStage = primaryStage;
+		myStage = LoginAndRegistration_GUI.welcomeScreen();		//This is the Welcome Screen
 		myStage.setResizable(false);
-		myStage.setScene(TimelineList_GUI.createListScene()); //will be welcome screen as default - needs to be changed
 		myStage.show();
 	}
 	
