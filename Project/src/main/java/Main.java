@@ -36,7 +36,7 @@ class Main {
             for (Integer i : yearList)
                 System.out.println(i);
 
-            User professorChaos = new User("Seeqwul Encurshun', 'BigDoc@abuseme.biz', 'FunPass', 'TheSalt', '1'); -- ", "email@yo.mama", "hunter2");    //SQL injection attempt
+            User professorChaos = new User("Seeqwul Encurshun', 'BigDoc@abuseme.biz', 'FunPass', 'TheSalt', '1'); -- ", "email@yo.mama", "Passw0rd!");    //SQL injection attempt
             DBM.insertIntoDB(professorChaos);
 
             User teacher = new User("Hans Ove", "Hans@math.biz", "IloveMath1#");

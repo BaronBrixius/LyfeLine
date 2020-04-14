@@ -2,20 +2,16 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
+import static org.junit.jupiter.api.Assertions.*;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.SQLIntegrityConstraintViolationException;
+import java.lang.reflect.InvocationTargetException;
+import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 public class DBMIntegrationTest {
-    static private final String testDBPath = "src/test/resources/TestDB.xml";
-
+    static final private String SCHEMA = "test";
     static private int testCount = 0;
     static private DBM sut;
     static private PreparedStatement stmt;
@@ -23,57 +19,23 @@ public class DBMIntegrationTest {
 
 
     @BeforeAll
-    static void init() throws SQLException, IOException, ClassNotFoundException {
-        sut = new DBM("test");
+    static void init() throws SQLException, IOException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InstantiationException, InvocationTargetException {
+        sut = new DBM(SCHEMA);
         DBM.setupSchema();
-
-        //createTestDB();         //Adds some rows to the database tables and exports them to .xml, don't need to run this often
     }
 
-    static void resetTable(String table) throws SQLException {
-        DBM.conn.createStatement().execute("LOAD DATA INFILE 'src/test/resources/" + table + ".csv' " +
-                "INTO TABLE " + table + " " +
-                "FIELDS TERMINATED BY ',' " +
-                "ENCLOSED BY '\"' " +
-                "LINES TERMINATED BY '\\n' "// +
-                //"IGNORE 1 ROWS"
-        );
+    static void resetTable(String table) throws SQLException, FileNotFoundException {
+        String[] statements = DBM.readFile("src/test/resources/" + table + ".sql");
+        Statement executer = DBM.conn.createStatement();
+        for (String s : statements) {
+            executer.execute(s);
+        }
     }
 
     //@AfterAll
     static void tearDown() throws SQLException {
         DBM.conn.createStatement().execute("DROP DATABASE IF EXISTS test");
         DBM.conn.close();
-    }
-
-    static void createTestDB() throws SQLException {
-        Event[] events = new Event[4];
-        for (int i = 0; i < 4; i++) {
-            events[i] = new Event();
-        }
-        DBM.insertIntoDB(events);
-
-        DBM.conn.createStatement().execute("SELECT * " +
-                "INTO OUTFILE 'src/test/resources/events.csv' " +
-                "FIELDS TERMINATED BY ',' " +
-                "ENCLOSED BY '\"' " +
-                "ESCAPED BY '\\\\' " +
-                "LINES TERMINATED BY '\\n' " +
-                "FROM test.events");
-
-        User[] users = new User[4];
-        for (int i = 0; i < 4; i++) {
-            users[i] = new User("Name", "email" + i + "@domain.com", "Passw0rd!");
-        }
-        DBM.insertIntoDB(users);
-
-        DBM.conn.createStatement().execute("SELECT * " +
-                "INTO OUTFILE 'src/test/resources/users.csv' " +
-                "FIELDS TERMINATED BY ',' " +
-                "ENCLOSED BY '\"' " +
-                "ESCAPED BY '\\\\' " +
-                "LINES TERMINATED BY '\\n'" +
-                "FROM test.users");
     }
 
     @Test
@@ -93,9 +55,9 @@ public class DBMIntegrationTest {
     }
 
     @Test
-    void insertMultiple() throws SQLException {
+    void insertMultiple() throws SQLException, FileNotFoundException {
         resetTable("events");
-        int expected = 3;
+        int expected = 8;
 
         Event event1 = new Event();
         Event event2 = new Event();

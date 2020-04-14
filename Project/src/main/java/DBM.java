@@ -82,7 +82,7 @@ class DBM {
         }
     }
 
-    private static String[] readFile(String creationScript) throws FileNotFoundException {      //private read-in method for DB creation script
+    static String[] readFile(String creationScript) throws FileNotFoundException {      //private read-in method for DB creation script
         StringBuilder temp = new StringBuilder();
         File sql = new File(creationScript);
         Scanner sqlScan = new Scanner(sql);
