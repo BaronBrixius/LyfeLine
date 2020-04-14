@@ -13,21 +13,20 @@ import javafx.stage.Stage;
 
 public class LoginAndRegistration_GUI {
 
-    public static Stage welcomeScreen() {
+    public static Scene welcomeScreen() {
         //This is the Start Window
-        Stage welcomeStage = new Stage();
-        welcomeStage.setTitle("Welcome Screen");
+        GUIManager.mainStage.setTitle("Welcome Screen");
 
         //This is the Stage for the Login Window
         Stage loginStage = new Stage();
         loginStage.setTitle("Login Screen");
-        loginStage.initOwner(welcomeStage);                 //These two lines make sure you can't click back to the Start Window,
+        loginStage.initOwner(GUIManager.mainStage);                 //These two lines make sure you can't click back to the Start Window,
         loginStage.initModality(Modality.WINDOW_MODAL);     //so you can't have 10 Login Windows open at once.
 
         //This is the Stage for the Register Window
         Stage registerStage = new Stage();
         registerStage.setTitle("Register Screen");
-        registerStage.initOwner(welcomeStage);              //These are the same as before, prevents the window from losing focus until closed.
+        registerStage.initOwner(GUIManager.mainStage);              //These are the same as before, prevents the window from losing focus until closed.
         registerStage.initModality(Modality.WINDOW_MODAL);  //I don't actually know what Modality is, Google just said this works and it does.
 
 
@@ -58,7 +57,7 @@ public class LoginAndRegistration_GUI {
 
         //This button does nothing right now. Will eventually let people look at timelines without logging in.
         Button guest = new Button("Continue as guest");
-        guest.setOnAction(event -> System.out.println("The \"Continue as guest\" button has been pressed."));
+        guest.setOnAction(event -> GUIManager.swapScene(Dashboard_GUI.DashboardScreen()));
         guest.setPrefWidth(250);
         guest.setPrefHeight(100);
         guest.setStyle("-fx-background-color: #ffffff; -fx-border-color: #000000; -fx-font-size: 2em; -fx-font-weight: bold");
@@ -72,11 +71,10 @@ public class LoginAndRegistration_GUI {
         everything.setStyle("-fx-background-color: #9a9a9a;");  //This changes the background color of the whole window.
 
 
-        welcomeStage.setScene(new Scene(everything, 1300, 750));
-        return welcomeStage;
+       return new Scene(everything, 1300, 750);
     }
 
-    public static Scene registerScreen() {
+    private static Scene registerScreen() {
         //This GridPane holds all text on the left, all input fields on the right, and the HBox that holds the buttons under the input fields.
         GridPane pane = new GridPane();
         pane.setAlignment(Pos.CENTER);
@@ -149,7 +147,7 @@ public class LoginAndRegistration_GUI {
         return new Scene(pane, 600, 350);
     }
 
-    public static Scene loginScreen() {
+    private static Scene loginScreen() {
         //This GridPane holds all text on the left, all input fields on the right, and the HBox that holds the buttons under the input fields.
         GridPane pane = new GridPane();
         pane.setAlignment(Pos.CENTER);
