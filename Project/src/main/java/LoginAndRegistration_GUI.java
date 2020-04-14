@@ -1,4 +1,3 @@
-import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -12,31 +11,25 @@ import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-public class LoginAndRegistration_GUI extends Application {
+public class LoginAndRegistration_GUI {
 
+    public static Stage welcomeScreen() {
+        //This is the Start Window
+        Stage welcomeStage = new Stage();
+        welcomeStage.setTitle("Welcome Screen");
 
-    public static void main(String[] args) {
-        launch(args);
-    }
-
-
-    @Override
-    public void start(Stage primaryStage) throws Exception {
         //This is the Stage for the Login Window
         Stage loginStage = new Stage();
         loginStage.setTitle("Login Screen");
-        loginStage.initOwner(primaryStage);                 //These two lines make sure you can't click back to the Start Window,
+        loginStage.initOwner(welcomeStage);                 //These two lines make sure you can't click back to the Start Window,
         loginStage.initModality(Modality.WINDOW_MODAL);     //so you can't have 10 Login Windows open at once.
 
         //This is the Stage for the Register Window
         Stage registerStage = new Stage();
         registerStage.setTitle("Register Screen");
-        registerStage.initOwner(primaryStage);              //These are the same as before, prevents the window from losing focus until closed.
+        registerStage.initOwner(welcomeStage);              //These are the same as before, prevents the window from losing focus until closed.
         registerStage.initModality(Modality.WINDOW_MODAL);  //I don't actually know what Modality is, Google just said this works and it does.
 
-
-        //This is the Start Window
-        primaryStage.setTitle("Welcome Screen");
 
         //This HBox holds the three buttons: Login, Register, and Continue as guest
         HBox menuOptions = new HBox(30);
@@ -79,9 +72,8 @@ public class LoginAndRegistration_GUI extends Application {
         everything.setStyle("-fx-background-color: #9a9a9a;");  //This changes the background color of the whole window.
 
 
-        Scene scene = new Scene(everything, 1300, 750);
-        primaryStage.setScene(scene);
-        primaryStage.show();
+        welcomeStage.setScene(new Scene(everything, 1300, 750));
+        return welcomeStage;
     }
 
     public static Scene registerScreen() {
