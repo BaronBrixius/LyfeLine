@@ -118,6 +118,8 @@ public class User implements Users {
 
     @Override
     public PreparedStatement getUpdateQuery() throws SQLException {
+        if (userID == 0)
+            throw new SQLDataException("User not in database cannot be updated.");
         PreparedStatement out = DBM.conn.prepareStatement("UPDATE `users` SET `UserName` = ?, `UserEmail` = ?, `Password` = ?, `Salt` = ?, `Admin` = ? WHERE (`UserID` = ?)");
         out.setString(1, userName);
         out.setString(2, userEmail);

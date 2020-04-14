@@ -70,6 +70,8 @@ class Event implements DBObject<Event> {
 
     @Override
     public PreparedStatement getUpdateQuery() throws SQLException {
+        if (eventID == 0)
+            throw new SQLDataException("Event not in database cannot be updated.");
         PreparedStatement out = DBM.conn.prepareStatement("UPDATE `events` SET `EventType` = ?, `StartYear` = ?, `StartMonth` = ?, `StartDay` = ? WHERE (`EventID` = ?);");
         out.setInt(1, eventType);
         out.setInt(2, startYear);

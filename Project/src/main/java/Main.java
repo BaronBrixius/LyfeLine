@@ -6,10 +6,9 @@ import java.util.List;
 
 class Main {
     public static void main(String[] args) {
-        DBM dbm = null;
         PreparedStatement stmt;
         try {
-            dbm = new DBM();
+            new DBM();
             DBM.setupSchema();       //destroys + remakes DB with default settings, can comment this out after first run if desired
 
             Event now = new Event(1, 2020, 4, 9);
@@ -58,8 +57,7 @@ class Main {
             e.printStackTrace();
         } finally {
             try {
-                if (dbm != null)
-                    dbm.close();
+                DBM.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
