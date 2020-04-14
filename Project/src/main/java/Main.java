@@ -5,7 +5,7 @@ import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
 class Main {
-    public static void main(String[] args) throws ClassNotFoundException {
+    public static void main(String[] args){
         DBM dbm = null;
         PreparedStatement stmt;
         try {
@@ -55,7 +55,7 @@ class Main {
             for (User e : userList)
                 System.out.println(e);
 
-        } catch (FileNotFoundException | SQLException e) {
+        } catch (FileNotFoundException | SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         } finally {
             try {
