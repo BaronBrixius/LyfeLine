@@ -32,6 +32,8 @@ public class User implements Users {
     }
 
     static boolean validateUnique(String email) throws SQLException {
+        if (!(email.matches("\\p{all}+@[\\p{all}]+\\.\\p{all}+")))      //if not matches characters@characters.characters
+            throw new IllegalArgumentException("Invalid email format");
         List<String> dbList = DBM.getFromDB(DBM.conn.prepareStatement("SELECT UserEmail FROM users"), rs -> rs.getString("UserEmail"));
 
         for (String db : dbList) {
