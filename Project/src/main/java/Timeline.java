@@ -1,10 +1,12 @@
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 public class Timeline implements DBObject<Timeline>{
 	private String name;
 	private int date;
+	private List<Event> eventList;
 
 	public Timeline(String name, int date) {
 		this.name = name;
