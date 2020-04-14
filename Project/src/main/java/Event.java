@@ -9,21 +9,18 @@ class Event implements DBObject<Event> {
     private int startDay;
     private String start;
 
-    Event() {         //defaults
-        this.eventType = 1;
-        this.startYear = -44;
-        this.startMonth = 3;
-        this.startDay = 15;
+    public Event() {         //defaults
+        this(1, -44, 3, 15);
     }
 
-    Event(int eventType, int startYear, int startMonth, int startDay) {
+    public Event(int eventType, int startYear, int startMonth, int startDay) {
         this.eventType = eventType;
         this.startYear = startYear;
         this.startMonth = startMonth;
         this.startDay = startDay;
     }
 
-    private Event(int eventID, int eventType, int startYear, int startMonth, int startDay, String start) {
+    private Event(int eventID, int eventType, int startYear, int startMonth, int startDay, String start) {      //for reading from database
         this.eventID = eventID;
         this.eventType = eventType;
         this.startYear = startYear;

@@ -15,14 +15,13 @@ public class User implements Users {
         this("Default", "default@domain.com", "Passw0rd!");
     }
 
-
     public User(String name, String email, String password) {
         setUserName(name);
         setUserEmail(email);
         setPassword(password);
     }
 
-    public User(int userID, String name, String email, String encryptedPass, String salt, Boolean admin) {      //For reading from database only, don't use for new user creation
+    private User(int userID, String name, String email, String encryptedPass, String salt, Boolean admin) {      //For reading from database only, don't use for new user creation
         setID(userID);
         setUserName(name);
         setUserEmail(email);
