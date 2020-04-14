@@ -5,101 +5,79 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-class DBM {             //Database manager class for easier connecting and interacting
+//Database manager class for easier connecting and interacting
+class DBM {
     static private final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
-    //  Database credentials
-
-    static String DB_URL = "jdbc:mysql://localhost:3306?useTimezone=true&serverTimezone=UTC";
+    static String DB_URL = "jdbc:mysql://localhost";
     static String USER = "root";
-    static String PASS = "jan2306952431";
+    static String PASS = "AJnuHA^8VKHht=uB";
+    static String SCHEMA = "project";
     static Connection conn = null;
-    static private String creationScript = "src/main/resources/Database Creation Script.sql";
-    static private String schema;
+    static String creationScript = "src/main/resources/Database Creation Script.sql";
 
-    DBM() {             //Connect to server with default settings
-        try {
-            //Register JDBC driver
-            Class.forName(JDBC_DRIVER);
-            System.out.println("Connecting to a selected database...");
-            conn = DriverManager.getConnection(DB_URL, USER, PASS);
-            System.out.println("Connected database successfully...");
-
-            //Connect to schema
-            useSchema("project");
-        } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
+    DBM() throws ClassNotFoundException, SQLException {                                                         //Connect to server with default settings
+        this(SCHEMA);
     }
 
-    DBM(String schemaName) {
-        try {
-            //Register JDBC driver
-            Class.forName(JDBC_DRIVER);
-            System.out.println("Connecting to a selected database...");
-            conn = DriverManager.getConnection(DB_URL, USER, PASS);
-            System.out.println("Connected database successfully...");
-
-            //Connect to schema
-            useSchema(schemaName);
-        } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
+    DBM(String SCHEMA) throws ClassNotFoundException, SQLException {                                            //Connect to server with alternate schema
+        this(DB_URL, USER, PASS, SCHEMA);
     }
 
+    DBM(String DB_URL, String USER, String PASS) throws ClassNotFoundException, SQLException {                  //Connect to alternate server
+        this(DB_URL, USER, PASS, SCHEMA);
+    }
 
-    DBM(String DB_URL, String user, String pass) throws ClassNotFoundException, SQLException {
+    DBM(String DB_URL, String USER, String PASS, String SCHEMA) throws ClassNotFoundException, SQLException {   //Connect to server with alternate settings
+        DBM.DB_URL = DB_URL;
+        DBM.USER = USER;
+        DBM.PASS = PASS;
+        DBM.SCHEMA = SCHEMA;
+
         //Register JDBC driver
         Class.forName(JDBC_DRIVER);
 
         //Open a connection
         System.out.println("Connecting to a selected database...");
-        conn = DriverManager.getConnection(DB_URL, user, pass);
-        System.out.println("Connected database successfully...");
-
-        DBM.DB_URL = DB_URL;
-        DBM.USER = user;
-        DBM.PASS = pass;
-    }
-
-    DBM(String DB_URL, String user, String pass, String schemaName) throws ClassNotFoundException, SQLException {
-        //Register JDBC driver
-        Class.forName(JDBC_DRIVER);
-
-        //Open a connection
-        System.out.println("Connecting to a selected database...");
-        conn = DriverManager.getConnection(DB_URL, user, pass);
-        System.out.println("Connected database successfully...");
-
-        DBM.DB_URL = DB_URL;
-        DBM.USER = user;
-        DBM.PASS = pass;
+        conn = DriverManager.getConnection(DB_URL, USER, PASS);
 
         //Connect to schema
-        useSchema(schemaName);
+        useSchema(SCHEMA);
+
+        System.out.println("Connected to database successfully.");
     }
 
-    static void createDB() throws SQLException, FileNotFoundException {                 //creates DB from default script
+    static void useSchema(String SCHEMA) throws SQLException {                  //swaps to a different schema, creating it if it doesn't exist
+        System.out.println("Connecting to schema...");                              //note: you may want to rerun createDB() if on a brand new schema
         Statement stmt = conn.createStatement();
-
-        System.out.println("Deleting and recreating schema...");
-        DBM.dropSchema();
-        DBM.useSchema(schema);
-
-        //Read and run the database creation script
-        System.out.println("Creating table(s) in given database...");
-        String[] statements = readFile(creationScript);
-        for (String s : statements) {
-            stmt.execute(s);
-        }
+        if (!stmt.executeQuery("SHOW DATABASES LIKE '" + SCHEMA + "';").next())
+            stmt.execute("CREATE SCHEMA `" + SCHEMA + "`");
+        stmt.execute("USE " + SCHEMA);
+        DBM.SCHEMA = SCHEMA;
     }
 
-    static void createDB(String newScript) throws FileNotFoundException, SQLException {  //creates DB from alternate script
-        String temp = DBM.creationScript;
-        DBM.creationScript = newScript;
+    static void setupSchema() throws SQLException, FileNotFoundException {                  //creates schema from default script
+        setupSchema(creationScript);
+    }
+
+    static void setupSchema(String newScript) throws FileNotFoundException, SQLException {  //creates schema from alternate script
+        String oldScript = creationScript;
+        creationScript = newScript;
         try {
-            createDB();
-        } catch (SQLException e) {
-            DBM.creationScript = temp;          //return to old creation script if new script fails
+            Statement stmt = conn.createStatement();
+
+            System.out.println("Deleting and recreating schema...");
+            dropSchema();
+            useSchema(SCHEMA);
+
+            //Read and run the database creation script
+            System.out.println("Creating table(s) in given database...");
+            String[] statements = readFile(creationScript);
+            for (String s : statements) {
+                stmt.execute(s);
+            }
+            System.out.println("Schema created successfully.");
+        } catch (SQLException | FileNotFoundException e) {
+            creationScript = oldScript;          //return to old creation script if new script fails
             throw e;
         }
     }
@@ -132,16 +110,12 @@ class DBM {             //Database manager class for easier connecting and inter
         return out;
     }
 
-    static <T> void updateInDB(DBObject<T>... update) throws SQLException {     //updates the records of all inserted objects
-        for (DBObject<T> t : update) {                                          //DON'T INSERT OBJECTS OF DIFFERENT TYPES
-            t.getUpdateQuery().execute();
-        }
-    }
-
-    static <T> void insertIntoDB(DBObject<T>... insert) throws SQLException {   //inserts object(s) into DB as defined in each object's class
-        PreparedStatement stmt;                                                 //DON'T INSERT OBJECTS OF DIFFERENT TYPES
+    static <T> void insertIntoDB(DBObject<T>... insert) throws SQLException {   //DON'T INSERT OBJECTS OF DIFFERENT TYPES
+        PreparedStatement stmt;
         ResultSet rs;
         for (DBObject<T> t : insert) {
+            if (t == null)
+                continue;
             stmt = t.getInsertQuery();
             stmt.execute();
             //after insertion, get the autogenerated ID and pass it to object that was inserted
@@ -151,19 +125,24 @@ class DBM {             //Database manager class for easier connecting and inter
         }
     }
 
-    static void useSchema(String schemaName) throws SQLException {                   //swaps to a different schema, creating it if it doesn't exist
-        System.out.println("Connecting to schema...");          //note: you may want to rerun createDB() if on a brand new schema
-        Statement stmt = conn.createStatement();
-        if (!stmt.executeQuery("SHOW DATABASES LIKE '" + schemaName + "';").next())
-            stmt.execute("CREATE SCHEMA `" + schemaName + "`");
-        stmt.execute("USE " + schemaName);
-        DBM.schema = schemaName;
-        System.out.println("Schema connected to successfully...");
+    static <T> void updateInDB(DBObject<T>... update) throws SQLException {     //DON'T INSERT OBJECTS OF DIFFERENT TYPES
+        for (DBObject<T> t : update) {
+            if (t == null)
+                continue;
+            t.getUpdateQuery().execute();
+        }
+    }
+
+    static <T> void deleteFromDB(DBObject<T>... delete) throws SQLException {   //DON'T INSERT OBJECTS OF DIFFERENT TYPES
+        for (DBObject<T> t : delete) {
+            if (t == null)
+                continue;
+            t.getDeleteQuery().execute();
+        }
     }
 
     static void dropSchema() throws SQLException {                                   //drop current schema
-        Statement stmt = conn.createStatement();
-        stmt.execute("DROP DATABASE IF EXISTS " + schema);
+        conn.createStatement().execute("DROP DATABASE IF EXISTS " + SCHEMA);
     }
 
     void close() throws SQLException {                                  //close the connection when you're done please

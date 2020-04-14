@@ -18,7 +18,9 @@ public class PasswordEncryption {
 
     //Method to create random salt that is x char long.
     // Uses secure random class from Java security library to ensure secure, unpredictable randomness
-    public static String getSalt(int length) {
+    public static String getSalt(int length) throws IllegalArgumentException{
+        if(length < 1)
+            throw new IllegalArgumentException("Salt length must be > 0 in length");
         StringBuilder returnValue = new StringBuilder(length);
         for (int i = 0; i < length; i++) {
             returnValue.append(ALPHABET.charAt(SECURE.nextInt(ALPHABET.length())));
@@ -37,7 +39,7 @@ public class PasswordEncryption {
         } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
             throw new AssertionError("Error while hashing a password" + e.getMessage());
         } finally {
-            spec.clearPassword();
+            spec.clearPassword(); //clear the char array so the password is not retrieved from java memory
         }
     }
     //The method that creates the actual encrypted password by hashing the password and salt together

@@ -10,10 +10,7 @@ class Main {
         PreparedStatement stmt;
         try {
             dbm = new DBM();
-
-            DBM.createDB();       //remakes DB with default settings
-
-            DBM.createDB();       //destroys + remakes DB with default settings, can comment this out after first run if desired
+            DBM.setupSchema();       //destroys + remakes DB with default settings, can comment this out after first run if desired
 
 
             Event now = new Event(1, 2020, 4, 9);
@@ -43,7 +40,7 @@ class Main {
             User professorChaos = new User("Seeqwul Encurshun', 'BigDoc@abuseme.biz', 'FunPass', 'TheSalt', '1'); -- ", "email@yo.mama", "hunter2");    //SQL injection attempt
             DBM.insertIntoDB(professorChaos);
 
-            User teacher = new User("Hans Ove", "Hans@math.biz", "IloveMath");
+            User teacher = new User("Hans Ove", "Hans@math.biz", "IloveMath1#");
             if (User.validateUnique("Hans@math.biz"))
                 DBM.insertIntoDB(teacher);
             else
