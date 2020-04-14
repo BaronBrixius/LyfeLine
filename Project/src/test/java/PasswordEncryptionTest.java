@@ -25,12 +25,8 @@ class PasswordEncryptionTest {
 
     @Test
     void hash() {
-        //Not sure how to test the two exceptions, first the
-        //algorithm exception is only thrown if I go into the method and make wrong string
-        //int the secretKeyFactory
-        //The hashing will be testing via generateSecurePassword()
-        //and verifyUserPassword()
-        //Look into how to test clearPassword() to see if its is retrievable from Java memory after
+       PasswordEncryption test = new PasswordEncryption();
+
     }
 
     @Test //Add same password 1000 times with diff. salt each time - should give 1000 different encrypted passwords
