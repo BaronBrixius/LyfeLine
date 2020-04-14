@@ -1,9 +1,8 @@
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.List;
 
 class Event implements DBObject<Event> {
-    private int eventID = 0;
+    int eventID = 0;
     private int eventType;
     private int startYear;
     private int startMonth;
@@ -12,9 +11,9 @@ class Event implements DBObject<Event> {
 
     Event() {         //defaults
         this.eventType = 1;
-        this.startYear = 2020;
+        this.startYear = -44;
         this.startMonth = 3;
-        this.startDay = 14;
+        this.startDay = 15;
     }
 
     Event(int eventType, int startYear, int startMonth, int startDay) {
@@ -35,36 +34,59 @@ class Event implements DBObject<Event> {
 
     //Some examples of working with the database
     static List<Event> getAll() throws SQLException {
-        return DBM.getFromDB("SELECT * FROM events", new Event());     //blank object so functional interface method can be accessed
+        return DBM.getFromDB(DBM.conn.prepareStatement("SELECT * FROM events"), new Event());     //blank object so functional interface method can be accessed
     }
 
     static List<Integer> getYears() throws SQLException {
-        return DBM.getFromDB("SELECT StartYear FROM events", rs -> rs.getInt("StartYear"));
+        return DBM.getFromDB(DBM.conn.prepareStatement("SELECT StartYear FROM events"), rs -> rs.getInt("StartYear"));
     }
 
     @Override
     public Event createFromDB(ResultSet rs) throws SQLException {
-        Event out = null;
-        try {
-            int eventID = rs.getInt("EventID");
-            int eventType = rs.getInt("EventType");
-            int startYear = rs.getInt("StartYear");
-            int startMonth = rs.getInt("StartMonth");
-            int startDay = rs.getInt("StartDay");
-            String start = rs.getString("Start");       //probably don't need to pull from table, can recalc here, but I wanted to test it a bit
+        int eventID = rs.getInt("EventID");
+        int eventType = rs.getInt("EventType");
+        int startYear = rs.getInt("StartYear");
+        int startMonth = rs.getInt("StartMonth");
+        int startDay = rs.getInt("StartDay");
+        String start = rs.getString("Start");       //probably don't need to pull from table, can recalculate here, but I wanted to test it a bit
 
-            out = new Event(eventID, eventType, startYear, startMonth, startDay, start);
+        return new Event(eventID, eventType, startYear, startMonth, startDay, start);
+    }
 
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    @Override
+    public PreparedStatement getInsertQuery() throws SQLException, RuntimeException {
+        if (eventID > 0)
+            throw new SQLIntegrityConstraintViolationException("Event is already in DB.");
+
+        PreparedStatement out = DBM.conn.prepareStatement("INSERT INTO `events` (`EventType`, `StartYear`, `StartMonth`, `StartDay`) VALUES (?,?,?,?);", Statement.RETURN_GENERATED_KEYS);
+        out.setInt(1, eventType);
+        out.setInt(2, startYear);
+        out.setInt(3, startMonth);
+        out.setInt(4, startDay);
         return out;
     }
 
     @Override
-    public String getInsertQuery() throws SQLException {
-        return "INSERT INTO `events` (`EventType`, `StartYear`, `StartMonth`, `StartDay`) " +
-                "VALUES ('" + eventType + "', '" + startYear + "', '" + startMonth + "', '" + startDay + "');";
+    public void setID(int id) {
+        this.eventID = id;
+    }
+
+    @Override
+    public PreparedStatement getUpdateQuery() throws SQLException {
+        PreparedStatement out = DBM.conn.prepareStatement("UPDATE `events` SET `EventType` = ?, `StartYear` = ?, `StartMonth` = ?, `StartDay` = ? WHERE (`EventID` = ?);");
+        out.setInt(1, eventType);
+        out.setInt(2, startYear);
+        out.setInt(3, startMonth);
+        out.setInt(4, startDay);
+        out.setInt(5, eventID);
+        return out;
+    }
+
+    @Override
+    public PreparedStatement getDeleteQuery() throws SQLException {
+        PreparedStatement out = DBM.conn.prepareStatement("DELETE FROM `events` WHERE (`EventID` = ?)");
+        out.setInt(1, eventID);
+        return out;
     }
 
     @Override
