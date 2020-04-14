@@ -15,6 +15,7 @@ public class GUIManager extends Application{
 	public void start(Stage primaryStage) throws Exception {
 		myStage = LoginAndRegistration_GUI.welcomeScreen();		//This is the Welcome Screen
 		myStage.setResizable(false);
+		myStage.setScene(AdminRoleManager_GUI.AdminRoleManager()); //will be welcome screen as default - needs to be changed
 		myStage.show();
 	}
 	

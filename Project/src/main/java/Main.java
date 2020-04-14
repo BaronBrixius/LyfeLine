@@ -5,12 +5,13 @@ import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
 class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args){
         DBM dbm = null;
         PreparedStatement stmt;
         try {
             dbm = new DBM();
             DBM.setupSchema();       //destroys + remakes DB with default settings, can comment this out after first run if desired
+
 
             Event now = new Event(1, 2020, 4, 9);
             Event then = new Event(2, -44, 3, 15);
@@ -54,7 +55,7 @@ class Main {
             for (User e : userList)
                 System.out.println(e);
 
-        } catch (FileNotFoundException | ClassNotFoundException | SQLException e) {
+        } catch (FileNotFoundException | SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         } finally {
             try {

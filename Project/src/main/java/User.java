@@ -57,6 +57,15 @@ public class User implements Users {
     public void setUserName(String userName) {
         this.userName = userName;
     }
+    
+   
+    public String getUserName() {
+    	return this.userName;
+    }
+    
+    public int getUserID() {
+    	return this.userID;
+    }
 
     @Override
     public void setAdmin(Boolean admin) {
@@ -138,7 +147,7 @@ public class User implements Users {
 
     @Override
     public String toString() {
-        return "UserID: " + userID + " Name: " + userName + " Email: " + userEmail + " Encrypted Password: " + encryptedPass + " Salt: " + salt;
+        return "UserID: " + userID + " Name: " + userName + " Email: " + userEmail;
     }
 
 }
