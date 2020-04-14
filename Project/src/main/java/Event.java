@@ -1,6 +1,4 @@
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.SQLIntegrityConstraintViolationException;
+import java.sql.*;
 import java.util.List;
 
 class Event implements DBObject<Event> {
@@ -36,38 +34,36 @@ class Event implements DBObject<Event> {
 
     //Some examples of working with the database
     static List<Event> getAll() throws SQLException {
-        return DBM.getFromDB("SELECT * FROM events", new Event());     //blank object so functional interface method can be accessed
+        return DBM.getFromDB(DBM.conn.prepareStatement("SELECT * FROM events"), new Event());     //blank object so functional interface method can be accessed
     }
 
     static List<Integer> getYears() throws SQLException {
-        return DBM.getFromDB("SELECT StartYear FROM events", rs -> rs.getInt("StartYear"));
+        return DBM.getFromDB(DBM.conn.prepareStatement("SELECT StartYear FROM events"), rs -> rs.getInt("StartYear"));
     }
 
     @Override
     public Event createFromDB(ResultSet rs) throws SQLException {
-        Event out = null;
-        try {
-            int eventID = rs.getInt("EventID");
-            int eventType = rs.getInt("EventType");
-            int startYear = rs.getInt("StartYear");
-            int startMonth = rs.getInt("StartMonth");
-            int startDay = rs.getInt("StartDay");
-            String start = rs.getString("Start");       //probably don't need to pull from table, can recalc here, but I wanted to test it a bit
+        int eventID = rs.getInt("EventID");
+        int eventType = rs.getInt("EventType");
+        int startYear = rs.getInt("StartYear");
+        int startMonth = rs.getInt("StartMonth");
+        int startDay = rs.getInt("StartDay");
+        String start = rs.getString("Start");       //probably don't need to pull from table, can recalculate here, but I wanted to test it a bit
 
-            out = new Event(eventID, eventType, startYear, startMonth, startDay, start);
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return out;
+        return new Event(eventID, eventType, startYear, startMonth, startDay, start);
     }
 
     @Override
-    public String getInsertQuery() throws SQLException, RuntimeException {
+    public PreparedStatement getInsertQuery() throws SQLException, RuntimeException {
         if (eventID > 0)
             throw new SQLIntegrityConstraintViolationException("Event is already in DB.");
-        return "INSERT INTO `events` (`EventType`, `StartYear`, `StartMonth`, `StartDay`) " +
-                "VALUES ('" + eventType + "', '" + startYear + "', '" + startMonth + "', '" + startDay + "');";
+
+        PreparedStatement out = DBM.conn.prepareStatement("INSERT INTO `events` (`EventType`, `StartYear`, `StartMonth`, `StartDay`) VALUES (?,?,?,?);", Statement.RETURN_GENERATED_KEYS);
+        out.setInt(1, eventType);
+        out.setInt(2, startYear);
+        out.setInt(3, startMonth);
+        out.setInt(4, startDay);
+        return out;
     }
 
     @Override
@@ -76,9 +72,14 @@ class Event implements DBObject<Event> {
     }
 
     @Override
-    public String getUpdateQuery() throws SQLException {
-        return "UPDATE `events` SET `EventType` = '" + eventType + "', `StartYear` = '" + startYear + "', `StartMonth` = '" + startMonth + "', `StartDay` = '" + startDay + "' " +
-                "WHERE (`EventID` = '" + eventID + "');";
+    public PreparedStatement getUpdateQuery() throws SQLException {
+        PreparedStatement out = DBM.conn.prepareStatement("UPDATE `events` SET `EventType` = ?, `StartYear` = ?, `StartMonth` = ?, `StartDay` = ? WHERE (`EventID` = ?);");
+        out.setInt(1, eventType);
+        out.setInt(2, startYear);
+        out.setInt(3, startMonth);
+        out.setInt(4, startDay);
+        out.setInt(5, eventID);
+        return out;
     }
 
     @Override
