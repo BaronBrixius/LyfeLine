@@ -2,15 +2,16 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 
-public class TimelineList_GUI {
+public class Dashboard_GUI {
 
-	public static Scene createListScene() {
+	public static Scene DashboardScreen() {
 
 		// main layout
 		GridPane pane = new GridPane();
@@ -34,9 +35,20 @@ public class TimelineList_GUI {
 		list.setItems(timelines);
 		list.setMinWidth(200);
 		list.getSelectionModel().select(0);
-		pane.add(list, 1, 0);
+		pane.add(list, 2, 0);
 
-		// layout of left column
+		//layout of dashboard options / only for scene switch purposes for now
+		VBox dashboardOptions = new VBox();
+		dashboardOptions.setSpacing(10);
+		Button adminGUI = new Button("Admin Manager");
+		adminGUI.setMinWidth(150);
+		dashboardOptions.getChildren().add(adminGUI);
+		adminGUI.setOnAction(event->{
+			System.out.println("switch to admin manager gui");
+		});
+		pane.add(dashboardOptions, 0, 0);
+		
+		// layout of column to the left of the listview
 		VBox listOptions = new VBox();
 		listOptions.setSpacing(10);
 
@@ -59,7 +71,7 @@ public class TimelineList_GUI {
 		sortBy.setItems(sortOptions);
 		listOptions.getChildren().add(sortBy);
 
-		pane.add(listOptions, 0, 0);
+		pane.add(listOptions, 1, 0);
 
 		// sort order selection events
 		sortBy.getSelectionModel().selectedIndexProperty().addListener(ov -> {
