@@ -157,7 +157,7 @@ class DBM {
         deleteFromDB(asArray(delete));
     }
 
-    static <T> DBObject<T>[] asArray(List<T> list) {
+    static <T> DBObject<T>[] asArray(List<T> list) {                                    //converts generic List to Array since normal methods hate casting like that
         try {
             DBObject<T>[] asArray = (DBObject<T>[]) java.lang.reflect.Array.newInstance(list.get(0).getClass(), list.size());
             for (int i = 0; i < list.size(); i++) {
