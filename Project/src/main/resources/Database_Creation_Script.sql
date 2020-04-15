@@ -33,8 +33,6 @@ CREATE TABLE `groups` (
   `EndMonth` tinyint unsigned DEFAULT NULL,
   `EndDay` tinyint unsigned DEFAULT NULL,
   `EndTime` time DEFAULT NULL,
-  `Start` varchar(30) GENERATED ALWAYS AS (concat(abs(`StartYear`),_utf8mb4'-',lpad(`StartMonth`,2,0),_utf8mb4'-',lpad(`StartDay`,2,0),_utf8mb4' ',if((`StartYear` > 0),_utf8mb4'AD',_utf8mb4'BC'))) VIRTUAL,
-  `End` varchar(30) GENERATED ALWAYS AS (concat(abs(`EndYear`),_utf8mb4'-',lpad(`EndMonth`,2,0),_utf8mb4'-',lpad(`EndDay`,2,0),_utf8mb4' ',if((`EndYear` > 0),_utf8mb4'AD',_utf8mb4'BC'))) VIRTUAL,
   PRIMARY KEY (`GroupID`),
   UNIQUE KEY `GroupID_UNIQUE` (`GroupID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
