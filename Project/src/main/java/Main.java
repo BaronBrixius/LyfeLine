@@ -6,10 +6,9 @@ import java.util.List;
 
 class Main {
     public static void main(String[] args) {
-        DBM dbm = null;
         PreparedStatement stmt;
         try {
-            dbm = new DBM();
+            new DBM();
             DBM.setupSchema();       //destroys + remakes DB with default settings, can comment this out after first run if desired
 
             Event now = new Event(1, 2020, 4, 9);
@@ -36,8 +35,8 @@ class Main {
             for (Integer i : yearList)
                 System.out.println(i);
 
-//            User professorChaos = new User("Seeqwul Encurshun', 'BigDoc@abuseme.biz', 'FunPass', 'TheSalt', '1'); -- ", "email@yo.mama", "hunter2");    //SQL injection attempt
-//            DBM.insertIntoDB(professorChaos);
+            User professorChaos = new User("Seeqwul Encurshun', 'BigDoc@abuseme.biz', 'FunPass', 'TheSalt', '1'); -- ", "email@yo.mama", "Passw0rd!");    //SQL injection attempt
+            DBM.insertIntoDB(professorChaos);
 
             User teacher = new User("Hans Ove", "Hans@math.biz", "IloveMath1#");
             if (User.validateUnique("Hans@math.biz"))
@@ -58,8 +57,7 @@ class Main {
             e.printStackTrace();
         } finally {
             try {
-                if (dbm != null)
-                    dbm.close();
+                DBM.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }

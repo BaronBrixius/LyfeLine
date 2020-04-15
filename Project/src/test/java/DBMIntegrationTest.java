@@ -5,79 +5,41 @@ import org.junit.jupiter.api.Test;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.SQLIntegrityConstraintViolationException;
+import java.sql.*;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class DBMIntegrationTest {
-    static private final String testDBPath = "src/test/resources/TestDB.xml";
-
+    static final private String SCHEMA = "test";
     static private int testCount = 0;
-    static private DBM sut;
     static private PreparedStatement stmt;
     static private ResultSet rs;
 
 
     @BeforeAll
-    static void init() throws SQLException, IOException, ClassNotFoundException {
-        sut = new DBM("test");
-        DBM.setupSchema();
-
-        //createTestDB();         //Adds some rows to the database tables and exports them to .xml, don't need to run this often
+    static void init() throws SQLException, ClassNotFoundException {
+        new DBM(SCHEMA);
     }
 
     static void resetTable(String table) throws SQLException {
-        DBM.conn.createStatement().execute("LOAD DATA INFILE 'src/test/resources/" + table + ".csv' " +
-                "INTO TABLE " + table + " " +
-                "FIELDS TERMINATED BY ',' " +
-                "ENCLOSED BY '\"' " +
-                "LINES TERMINATED BY '\\n' "// +
-                //"IGNORE 1 ROWS"
-        );
+        try {
+            String[] statements = DBM.readFile("src/test/resources/" + table + ".sql");
+            Statement executer = DBM.conn.createStatement();
+
+            executer.execute("DELETE FROM " + table);
+            for (String s : statements) {
+                executer.execute(s);
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
-    //@AfterAll
-    static void tearDown() throws SQLException {
+    @AfterAll
+    static void finish() throws SQLException {
         DBM.conn.createStatement().execute("DROP DATABASE IF EXISTS test");
         DBM.conn.close();
-    }
-
-    static void createTestDB() throws SQLException {
-        Event[] events = new Event[4];
-        for (int i = 0; i < 4; i++) {
-            events[i] = new Event();
-        }
-        DBM.insertIntoDB(events);
-
-        DBM.conn.createStatement().execute("SELECT * " +
-                "INTO OUTFILE 'src/test/resources/events.csv' " +
-                "FIELDS TERMINATED BY ',' " +
-                "ENCLOSED BY '\"' " +
-                "ESCAPED BY '\\\\' " +
-                "LINES TERMINATED BY '\\n' " +
-                "FROM test.events");
-
-        User[] users = new User[4];
-        for (int i = 0; i < 4; i++) {
-            users[i] = new User("Name", "email" + i + "@domain.com", "Passw0rd!");
-        }
-        DBM.insertIntoDB(users);
-
-        DBM.conn.createStatement().execute("SELECT * " +
-                "INTO OUTFILE 'src/test/resources/users.csv' " +
-                "FIELDS TERMINATED BY ',' " +
-                "ENCLOSED BY '\"' " +
-                "ESCAPED BY '\\\\' " +
-                "LINES TERMINATED BY '\\n'" +
-                "FROM test.users");
-    }
-
-    @Test
-    void blah() {
     }
 
     @BeforeEach
@@ -95,7 +57,7 @@ public class DBMIntegrationTest {
     @Test
     void insertMultiple() throws SQLException {
         resetTable("events");
-        int expected = 3;
+        int expected = 8;
 
         Event event1 = new Event();
         Event event2 = new Event();
@@ -112,7 +74,8 @@ public class DBMIntegrationTest {
 
     @Test
     void insertList() throws SQLException {
-        int expected = 4;
+        resetTable("events");
+        int expected = 9;
 
         Event[] events = new Event[4];
         for (int i = 0; i < 4; i++) {
@@ -130,7 +93,8 @@ public class DBMIntegrationTest {
 
     @Test
     void insertNulls() throws SQLException {
-        int expected = 1;
+        resetTable("events");
+        int expected = 6;
 
         Event[] events = new Event[3];
         events[1] = new Event();
@@ -153,13 +117,50 @@ public class DBMIntegrationTest {
     }
 
     @Test
+    void updatebyArray() throws SQLException {
+        resetTable("users");
+        String expected;
+
+        List<User> userList = DBM.getFromDB(DBM.conn.prepareStatement("SELECT * FROM users"), new User());
+        for (int i = 0; i < 5; i++) {
+            userList.get(i).setUserEmail("test"+i+"@newdomain.biz");
+        }
+        DBM.updateInDB(userList);
+        List<User> updatedList = DBM.getFromDB(DBM.conn.prepareStatement("SELECT * FROM users"), new User());
+
+        String actual;
+        for (int i = 0; i < 5; i++) {
+            expected = "test"+i+"@newdomain.biz";
+            actual = updatedList.get(i).getUserEmail();
+            assertEquals(expected, actual);
+        }
+    }
+
+    @Test
     void updateNulls() throws SQLException {
+        resetTable("users");
         User[] users = new User[3];
         DBM.updateInDB(users);
     }
 
     @Test
+    void deleteByList() throws SQLException {
+        resetTable("events");
+        int expected = 2;
+
+        List<Event> eventList = DBM.getFromDB(DBM.conn.prepareStatement("SELECT * FROM events"), new Event());
+        eventList.remove(1);
+        eventList.remove(3);
+        DBM.deleteFromDB(eventList);
+
+        int actual = DBM.getFromDB(DBM.conn.prepareStatement("SELECT count(*) FROM events"), rs -> rs.getInt(1)).get(0);    //first row of count column
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
     void sanitizeSQLInjection() throws SQLException {
+        resetTable("users");
         User injection = new User("TestName', 'TestEmail', 'TestPass', 'TestSalt', '1'); -- ", "email@domain.com", "Passw0rd!");    //1 in last slot would ordinarily mean user is admin
         DBM.insertIntoDB(injection);
 
@@ -169,7 +170,7 @@ public class DBMIntegrationTest {
     }
 
     @Test
-    void setupSchemaFailureReturnsToOldList() throws FileNotFoundException, SQLException {
+    void setupSchemaFailureReturnsToOldList() throws SQLException {
         String expected = "src/main/resources/Database Creation Script.sql";
         try {
             DBM.setupSchema("NonexistentFile.sql");

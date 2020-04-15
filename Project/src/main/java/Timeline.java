@@ -1,7 +1,12 @@
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
 
-public class Timeline {
+public class Timeline implements DBObject<Timeline>{
 	private String name;
 	private int date;
+	private List<Event> eventList;
 
 	public Timeline(String name, int date) {
 		this.name = name;
@@ -27,5 +32,30 @@ public class Timeline {
 
 	public void setDate(int date) {
 		this.date = date;
+	}
+
+	@Override
+	public PreparedStatement getInsertQuery() throws SQLException {
+		return null;
+	}
+
+	@Override
+	public PreparedStatement getUpdateQuery() throws SQLException {
+		return null;
+	}
+
+	@Override
+	public PreparedStatement getDeleteQuery() throws SQLException {
+		return null;
+	}
+
+	@Override
+	public void setID(int id) {
+
+	}
+
+	@Override
+	public Timeline createFromDB(ResultSet rs) throws SQLException {
+		return null;
 	}
 }

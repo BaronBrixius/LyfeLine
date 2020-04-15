@@ -3,10 +3,9 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Line;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -41,36 +40,34 @@ public class LoginAndRegistration_GUI {
         Button login = new Button("Login");
         login.setOnAction(event -> {
             loginStage.setScene(loginScreen());
+            loginStage.getScene().getStylesheets().add("File:src/main/resources/"+ GUIManager.mainStyle +".css");
             loginStage.show();
         });
-        login.setPrefWidth(250);
-        login.setPrefHeight(100);
-        login.setStyle("-fx-background-color: #ffffff; -fx-border-color: #000000; -fx-font-size: 2em; -fx-font-weight: bold");
 
         //This button when clicked opens the Register Window in a new pop-up
         Button register = new Button("Register");
         register.setOnAction(event -> {
             registerStage.setScene(registerScreen());
+            registerStage.getScene().getStylesheets().add("File:src/main/resources/"+ GUIManager.mainStyle +".css");
             registerStage.show();
         });
-        register.setPrefWidth(250);
-        register.setPrefHeight(100);
-        register.setStyle("-fx-background-color: #ffffff; -fx-border-color: #000000; -fx-font-size: 2em; -fx-font-weight: bold");
 
-        //This button does nothing right now. Will eventually let people look at timelines without logging in.
+        //This button opens the Dashboard Scene in the same window.
         Button guest = new Button("Continue as guest");
         guest.setOnAction(event -> GUIManager.swapScene(Dashboard_GUI.DashboardScreen()));
-        guest.setPrefWidth(250);
-        guest.setPrefHeight(100);
-        guest.setStyle("-fx-background-color: #ffffff; -fx-border-color: #000000; -fx-font-size: 2em; -fx-font-weight: bold");
 
         menuOptions.getChildren().addAll(login, register, guest);
 
+        //This is a picture of the temporary logo. When a permanent logo is settled on, just name it Logo.png, and put it in the resources folder
+        ImageView logo = new ImageView(new Image("File:src/main/resources/Logo.png"));
+        logo.setScaleX(.75);
+        logo.setScaleY(.75);
+
+
         //This VBox holds the HBox that holds the buttons, the VBox that holds the the dropdown menus, and the logo
-        VBox everything = new VBox(5);
-        everything.getChildren().addAll(dropDownMenus(), menuOptions, logo());
+        VBox everything = new VBox(20);
+        everything.getChildren().addAll(dropDownMenus(), menuOptions, logo);
         everything.setAlignment(Pos.TOP_CENTER);
-        everything.setStyle("-fx-background-color: #9a9a9a;");  //This changes the background color of the whole window.
 
 
        return new Scene(everything, 1300, 750);
@@ -81,108 +78,94 @@ public class LoginAndRegistration_GUI {
         //This GridPane holds all text on the left, all input fields on the right, and the HBox that holds the buttons under the input fields.
         GridPane pane = new GridPane();
         pane.setAlignment(Pos.CENTER);
-        pane.setHgap(20);
+        pane.setHgap(10);
         pane.setVgap(50);
 
         //These are the texts in order from top to bottom
         Text username = new Text("Username");
-        username.setStyle("-fx-font-size: 2em;");
         pane.add(username, 0, 1);
 
         Text password = new Text("Password");
-        password.setStyle("-fx-font-size: 2em;");
         pane.add(password, 0, 2);
 
         Text confirmPassword = new Text("Confirm Password");
-        confirmPassword.setStyle("-fx-font-size: 2em;");
         pane.add(confirmPassword, 0, 3);
 
         Text email = new Text("Email Address");
-        email.setStyle("-fx-font-size: 2em;");
         pane.add(email, 0, 0);
 
         //This text alerts the user if their inputted information is wrong in any way
         Text errorMessage = new Text();
-        errorMessage.setStyle("-fx-font-size: 1em;");
         errorMessage.setWrappingWidth(190);
+        errorMessage.getStyleClass().add("smallText");
         pane.add(errorMessage, 0, 4);
 
         //These are the input fields in order from top to bottom
         final TextField emailInput = new TextField();
-        emailInput.setPrefHeight(30);
         pane.add(emailInput, 1, 0);
 
         final TextField usernameInput = new TextField();
-        usernameInput.setPrefHeight(30);
         pane.add(usernameInput, 1, 1);
 
         final TextField passwordInput = new TextField();
-        passwordInput.setPrefHeight(30);
         pane.add(passwordInput, 1, 2);
 
         final TextField confirmPasswordInput = new TextField();
-        confirmPasswordInput.setPrefHeight(30);
         pane.add(confirmPasswordInput, 1, 3);
 
 
         //This button only checks if the passwordInput and confirmPasswordInput fields are the same right now.
         //Will eventually create a User from the inputted data.
         Button register = new Button("Register");
+        register.getStyleClass().add("smallButton");
         register.setOnAction(event -> {
 
-                    //Reset the error message if the input fields match after getting the error
-                    errorMessage.setText("");
+            //Reset the error message if the input fields match after getting the error
+            errorMessage.setText("");
 
-                    try {
+            try {
 
-                        // Check if the email is valid (unique)
-                        if (!User.validateUnique(emailInput.getText())) {
-                            errorMessage.setText("Email already in use");
+                // Check if the email is valid (unique)
+                if (!User.validateUnique(emailInput.getText())) {
+                    errorMessage.setText("Email already in use");
 
-                            //If the passwordInput's text does not equal the confirmPasswordInput's text
-                        } else if (!passwordInput.getText().equals(confirmPasswordInput.getText())) {
-                            errorMessage.setText("Error: the inputted passwords do not match.");
+                    //If the passwordInput's text does not equal the confirmPasswordInput's text
+                } else if (!passwordInput.getText().equals(confirmPasswordInput.getText())) {
+                    errorMessage.setText("Error: the inputted passwords do not match.");
 
-                            // Check if the Username field is not empty
-                        } else if (usernameInput.getText().equals("")) {
-                            errorMessage.setText("Please enter a Username");
+                    // Check if the Username field is not empty
+                } else if (usernameInput.getText().equals("")) {
+                    errorMessage.setText("Please enter a Username");
 
 
-                            // If everything checks out, create a new user
-                        } else {
+                    // If everything checks out, create a new user
+                } else {
 
-                            DBM.insertIntoDB(new User(usernameInput.getText(), emailInput.getText(), passwordInput.getText()));
-                            // close the window once successful, and switch do the dashboard
-                            ((Node) (event.getSource())).getScene().getWindow().hide();
-                            GUIManager.swapScene(Dashboard_GUI.DashboardScreen());
-                            GUIManager.mainStage.setTitle("Dashboard");
-                        }
-                    } catch (IllegalArgumentException | SQLException e) {
-                        errorMessage.setText(e.getMessage());
-                    }
-                });
+                    DBM.insertIntoDB(new User(usernameInput.getText(), emailInput.getText(), passwordInput.getText()));
+                    // close the window once successful, and switch do the dashboard
+                    ((Node) (event.getSource())).getScene().getWindow().hide();
+                    GUIManager.swapScene(Dashboard_GUI.DashboardScreen());
+                    GUIManager.mainStage.setTitle("Dashboard");
+                }
+            } catch (IllegalArgumentException | SQLException e) {
+                errorMessage.setText(e.getMessage());
+            }
 
-        register.setPrefWidth(150);
-        register.setPrefHeight(50);
-        register.setStyle("-fx-background-color: #ffffff; -fx-border-color: #000000; -fx-font-size: 1.5em;");
+        });
+
 
         //This button closes the Registration window
         Button cancel = new Button("Cancel");
+        cancel.getStyleClass().add("smallButton");
         cancel.setOnAction(event -> ((Node)(event.getSource())).getScene().getWindow().hide()); //This is the line that actually closes the window
-        cancel.setPrefWidth(150);
-        cancel.setPrefHeight(50);
-        cancel.setStyle("-fx-background-color: #ffffff; -fx-border-color: #000000; -fx-font-size: 1.5em;");
 
         //This HBox holds the buttons Register and Cancel
         HBox buttons = new HBox(20);
         buttons.getChildren().addAll(register, cancel);
         pane.add(buttons, 1, 4);
 
-        pane.setStyle("-fx-background-color: #9a9a9a;");  //This changes the background color of the whole window.
 
-
-
-        return new Scene(pane, 600, 450);
+        return new Scene(pane, 650, 450);
     }
 
     private static Scene loginScreen() {
@@ -194,42 +177,34 @@ public class LoginAndRegistration_GUI {
 
         //These are the texts in order from top to bottom
         Text username = new Text("Username");
-        username.setStyle("-fx-font-size: 2em;");
         pane.add(username, 0, 0);
 
         Text password = new Text("Password");
-        password.setStyle("-fx-font-size: 2em;");
         pane.add(password, 0, 1);
 
         //These are the input fields in order from top to bottom
         final TextField usernameInput = new TextField();
-        usernameInput.setPrefHeight(30);
         pane.add(usernameInput, 1, 0);
 
         final TextField passwordInput = new TextField();
-        passwordInput.setPrefHeight(30);
         pane.add(passwordInput, 1, 1);
 
         //This button does nothing right now. Will eventually connect the User to their account.
         Button login = new Button("Login");
         login.setOnAction(event -> System.out.println("The \"Login\" button has been pressed."));
-        login.setPrefWidth(150);
-        login.setPrefHeight(50);
-        login.setStyle("-fx-background-color: #ffffff; -fx-border-color: #000000; -fx-font-size: 1.5em;");
+        login.getStyleClass().add("smallButton");
 
         //This button closes the Login window
         Button cancel = new Button("Cancel");
         cancel.setOnAction(event -> ((Node)(event.getSource())).getScene().getWindow().hide());
-        cancel.setPrefWidth(150);
-        cancel.setPrefHeight(50);
-        cancel.setStyle("-fx-background-color: #ffffff; -fx-border-color: #000000; -fx-font-size: 1.5em;");
+        cancel.getStyleClass().add("smallButton");
 
         //This HBox holds the buttons Login and Cancel
         HBox buttons = new HBox(20);
         buttons.getChildren().addAll(login, cancel);
         pane.add(buttons, 1, 2);
 
-        pane.setStyle("-fx-background-color: #9a9a9a;");  //This changes the background color of the whole window.
+
         return new Scene(pane, 600, 300);
     }
 
@@ -268,34 +243,10 @@ public class LoginAndRegistration_GUI {
         //This is the bar that holds the dropdown menus in the top left
         MenuBar bar = new MenuBar();
         bar.getMenus().addAll(menuFile, menuEdit, menuView);
-        //The border color stuff at the end of the next line creates a box around the menu options, then colors the bottom line of that box black
-        //The other lines are set to the background color, and this is the best way I've found to put a line under the menu options
-        bar.setStyle("-fx-background-color: #9a9a9a;  -fx-font-size: 1.1em; -fx-font-weight: bold; -fx-border-color: #9a9a9a #9a9a9a black #9a9a9a; ");
-
         
         VBox menus = new VBox();
         menus.getChildren().addAll(bar);
         return menus;
     }
 
-
-    //This method creates the logo from Shapes and a Text box.
-    //Almost certainly acting as placeholder art and should be replaced eventually.
-    public static Node logo() {
-        Rectangle outline = new Rectangle(0, 0, 600, 300);
-        outline.setFill(null);
-        outline.setStroke(Color.BLACK);
-
-        Rectangle logoBar = new Rectangle(2, 149, 598, 15);
-        logoBar.setFill(Color.WHITE);
-
-        Line lineOne = new Line(0, 0, 600, 300);
-        Line lineTwo = new Line(600, 0, 0, 300);
-
-        Text text = new Text("LOGO");
-
-        StackPane pane = new StackPane();
-        pane.getChildren().addAll(outline, lineOne, lineTwo, logoBar, text);
-        return pane;
-    }
 }

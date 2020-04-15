@@ -15,14 +15,13 @@ public class User implements Users {
         this("Default", "default@domain.com", "Passw0rd!");
     }
 
-
     public User(String name, String email, String password) {
         setUserName(name);
         setUserEmail(email);
         setPassword(password);
     }
 
-    public User(int userID, String name, String email, String encryptedPass, String salt, Boolean admin) {      //For reading from database only, don't use for new user creation
+    private User(int userID, String name, String email, String encryptedPass, String salt, Boolean admin) {      //For reading from database only, don't use for new user creation
         setID(userID);
         setUserName(name);
         setUserEmail(email);
@@ -32,6 +31,8 @@ public class User implements Users {
     }
 
     static boolean validateUnique(String email) throws SQLException {
+        if (!(email.matches("\\p{all}+@[\\p{all}]+\\.\\p{all}+")))      //if not matches characters@characters.characters
+            throw new IllegalArgumentException("Invalid email format");
         List<String> dbList = DBM.getFromDB(DBM.conn.prepareStatement("SELECT UserEmail FROM users"), rs -> rs.getString("UserEmail"));
 
         for (String db : dbList) {
@@ -41,10 +42,12 @@ public class User implements Users {
         }
         return true;
     }
-
+    
     public String getUserEmail() {
         return this.userEmail;
     }
+    
+    
 
     @Override
     public void setUserEmail(String userEmail) throws IllegalArgumentException {
@@ -77,8 +80,8 @@ public class User implements Users {
     }
 
     @Override
-    public String getUser(String email) { //Not sure about this one
-        return null;
+    public String getUser() { //Not sure about this one
+        return  this.userName;
     }
 
     @Override
@@ -119,6 +122,8 @@ public class User implements Users {
 
     @Override
     public PreparedStatement getUpdateQuery() throws SQLException {
+        if (userID == 0)
+            throw new SQLDataException("User not in database cannot be updated.");
         PreparedStatement out = DBM.conn.prepareStatement("UPDATE `users` SET `UserName` = ?, `UserEmail` = ?, `Password` = ?, `Salt` = ?, `Admin` = ? WHERE (`UserID` = ?)");
         out.setString(1, userName);
         out.setString(2, userEmail);
