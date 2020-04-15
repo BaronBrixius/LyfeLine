@@ -44,8 +44,6 @@
 			<artifactId>javafx-controls</artifactId>
 			<version>14</version>
 		</dependency>
-		<!--Eclipse 2019-09 jUnit Bug Fix -->
-		<!--Eclipse 2019-09 jUnit Bug Fix -->
 
 	</dependencies>
 
