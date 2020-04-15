@@ -11,6 +11,8 @@ import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import java.sql.SQLException;
+
 public class LoginAndRegistration_GUI {
 
     public static Scene welcomeScreen() {
@@ -72,6 +74,7 @@ public class LoginAndRegistration_GUI {
 
 
        return new Scene(everything, 1300, 750);
+
     }
 
     private static Scene registerScreen() {
@@ -126,13 +129,39 @@ public class LoginAndRegistration_GUI {
         //Will eventually create a User from the inputted data.
         Button register = new Button("Register");
         register.setOnAction(event -> {
-            //If the passwordInput's text does not equal the confirmPasswordInput's text
-            if (!passwordInput.getText().equals(confirmPasswordInput.getText()))
-                errorMessage.setText("Error: the inputted passwords do not match.");
-            //Reset the error message if the input fields match after getting the error
-            else
-                errorMessage.setText("");
-        });
+
+                    //Reset the error message if the input fields match after getting the error
+                    errorMessage.setText("");
+
+                    try {
+
+                        // Check if the email is valid (unique)
+                        if (!User.validateUnique(emailInput.getText())) {
+                            errorMessage.setText("Email already in use");
+
+                            //If the passwordInput's text does not equal the confirmPasswordInput's text
+                        } else if (!passwordInput.getText().equals(confirmPasswordInput.getText())) {
+                            errorMessage.setText("Error: the inputted passwords do not match.");
+
+                            // Check if the Username field is not empty
+                        } else if (usernameInput.getText().equals("")) {
+                            errorMessage.setText("Please enter a Username");
+
+
+                            // If everything checks out, create a new user
+                        } else {
+
+                            DBM.insertIntoDB(new User(usernameInput.getText(), emailInput.getText(), passwordInput.getText()));
+                            // close the window once successful, and switch do the dashboard
+                            ((Node) (event.getSource())).getScene().getWindow().hide();
+                            GUIManager.swapScene(Dashboard_GUI.DashboardScreen());
+                            GUIManager.mainStage.setTitle("Dashboard");
+                        }
+                    } catch (IllegalArgumentException | SQLException e) {
+                        errorMessage.setText(e.getMessage());
+                    }
+                });
+
         register.setPrefWidth(150);
         register.setPrefHeight(50);
         register.setStyle("-fx-background-color: #ffffff; -fx-border-color: #000000; -fx-font-size: 1.5em;");
@@ -269,5 +298,4 @@ public class LoginAndRegistration_GUI {
         pane.getChildren().addAll(outline, lineOne, lineTwo, logoBar, text);
         return pane;
     }
-
 }
