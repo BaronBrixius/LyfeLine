@@ -23,4 +23,5 @@ public class GUIManager extends Application{
 	public static void swapScene(Scene scene) {
 		myStage.setScene(scene);
 	}
+	
 }

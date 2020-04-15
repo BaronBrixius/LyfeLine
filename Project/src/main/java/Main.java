@@ -37,10 +37,22 @@ class Main {
             for (Integer i : yearList)
                 System.out.println(i);
 
-            User professorChaos = new User("Seeqwul Encurshun', 'BigDoc@abuseme.biz', 'FunPass', 'TheSalt', '1'); -- ", "email@yo.mama", "hunter2");    //SQL injection attempt
+            User professorChaos = new User("Seeqwul Encurshun", "email@yo.mama", "hunter2");    //SQL injection attempt
             DBM.insertIntoDB(professorChaos);
-
-            User teacher = new User("Hans Ove", "Hans@math.biz", "IloveMath1#");
+            DBM.insertIntoDB(new User("Ben", "Ben@gmail.com", "12345"));
+            DBM.insertIntoDB(new User("Max", "Max@gmail.com", "12345"));
+            DBM.insertIntoDB(new User("Dillon", "Dillon@gmail.com", "12345"));
+            DBM.insertIntoDB(new User("Firas", "Firas@gmail.com", "12345"));
+            DBM.insertIntoDB(new User("Lasse", "Lasse@gmail.com", "12345"));
+            DBM.insertIntoDB(new User("Haraldur", "Haraldur@gmail.com", "12345"));
+            DBM.insertIntoDB(new User("Vytautas", "Vytautas@gmail.com", "12345"));
+            DBM.insertIntoDB(new User("Timothy", "Timothy@gmail.com", "12345"));
+            DBM.insertIntoDB(new User("Matas", "Matas@gmail.com", "12345"));
+            DBM.insertIntoDB(new User("Lorenz", "Lorenz@gmail.com", "12345"));
+            DBM.insertIntoDB(new User("Chris", "Chris@gmail.com", "12345"));
+            DBM.insertIntoDB(new User("Jan", "Jan@gmail.com", "12345"));
+            
+            User teacher = new User("Hans Ove", "Hans@math.biz", "IloveMath");
             if (User.validateUnique("Hans@math.biz"))
                 DBM.insertIntoDB(teacher);
             else
