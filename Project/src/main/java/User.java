@@ -148,6 +148,6 @@ public class User implements Users {
 
     @Override
     public String toString() {
-        return "UserID: " + userID + " Name: " + userName + " Email: " + userEmail + " Encrypted Password: " + encryptedPass + " Salt: " + salt;
+        return "User ID: " + userID + " Name: " + userName + " Email: " + userEmail;
     }
 }

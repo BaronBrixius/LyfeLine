@@ -1,6 +1,3 @@
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-
 import javafx.animation.FillTransition;
 import javafx.animation.ParallelTransition;
 import javafx.animation.TranslateTransition;
@@ -25,23 +22,21 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
+import java.sql.SQLException;
+import java.util.Comparator;
+
 public abstract class AdminRoleManager_GUI extends Application {
+    static ListView<User> userListView;
 
-	static ObservableList<User> userList;
-	static PreparedStatement stmt;
-	static DBM dbm;
-	static ListView<User> userListView;
-
-	public static Scene AdminRoleManager(){
+	public static Scene AdminRoleManager() throws SQLException {
 		GridPane pane = new GridPane();
 
 		pane.setVgap(5);
 		pane.setHgap(5);
 		pane.setPadding(new Insets(10, 10, 10, 10));
 
-		dbm = new DBM();
-		stmt = DBM.conn.prepareStatement("SELECT * FROM users ");
-		userList = FXCollections.observableArrayList(DBM.getFromDB(stmt, new User()));
+
+        final ObservableList<User> userList = FXCollections.observableArrayList(DBM.getFromDB(DBM.conn.prepareStatement("SELECT * FROM users "), new User()));
 
 		// headline
 		final Text headLine = new Text("Role Management");
@@ -51,7 +46,7 @@ public abstract class AdminRoleManager_GUI extends Application {
 		GridPane.setColumnSpan(headLine, 4);
 
 		// custom toggleswitch
-		AdminToggleSwitch toggle = new AdminToggleSwitch();
+		AdminToggleSwitch toggle = new AdminToggleSwitch(userList);
 		GridPane.setColumnSpan(toggle, 3);
 		toggle.setTranslateX(40);
 		toggle.setTranslateY(40);
@@ -84,7 +79,7 @@ public abstract class AdminRoleManager_GUI extends Application {
 				.bind(Bindings.when(toggle.switchedOnProperty()).then("Status: ADMIN").otherwise("Status: USER"));
 
 		// default sort order
-		userList.sort((t1, t2) -> (t1.getUserName().compareTo(t2.getUserName())));
+		userList.sort(Comparator.comparing(User::getUserName));
 
 		// user information
 		Text textUser = new Text("User: " + userList.get(0).getUserEmail());
@@ -94,12 +89,11 @@ public abstract class AdminRoleManager_GUI extends Application {
 		textUser.setTranslateY(50);
 
 		// list display of timelines
-		userListView = new ListView<User>();
+        userListView = new ListView<>();
 		userListView.setEditable(false);
-		userListView.setItems((ObservableList<User>) userList);
+		userListView.setItems(userList);
 		userListView.setTranslateY(50);
 		userListView.setPrefWidth(300);
-		
 
 		GridPane.setRowSpan(userListView, 3);
 
@@ -139,18 +133,18 @@ public abstract class AdminRoleManager_GUI extends Application {
 					break;
 				}
 			});
-			
-			
+
+
 			userListView.getSelectionModel().selectedIndexProperty().addListener(ov -> {
-				
+
 				textUser.setText(
 						"User: " + userList.get(userListView.getSelectionModel().getSelectedIndex()).getUserEmail());
 
 				toggle.switchedOn.set(userList.get(userListView.getSelectionModel().getSelectedIndex()).getAdmin());
 			});
-			userListView.getSelectionModel().select(0);
-		} catch (IndexOutOfBoundsException ex) {
 
+			userListView.getSelectionModel().select(0);
+		} catch (IndexOutOfBoundsException ignored) {
 		}
 
 		pane.add(bg, 0, 2);
@@ -178,7 +172,7 @@ public abstract class AdminRoleManager_GUI extends Application {
 			return switchedOn;
 		}
 
-		public AdminToggleSwitch() {
+		public AdminToggleSwitch(ObservableList<User> userList) {
 			Rectangle background = new Rectangle(100, 50);
 			background.setArcWidth(50);
 			background.setArcHeight(50);
@@ -201,19 +195,14 @@ public abstract class AdminRoleManager_GUI extends Application {
 			getChildren().addAll(background, trigger);
 
 			switchedOn.addListener((obs, oldState, newState) -> {
-				boolean isOn = newState.booleanValue();
+				boolean isOn = newState;
 
 				translateAnimation.setToX(isOn ? 100 - 50 : 0);
 				fillAnimation.setFromValue(isOn ? Color.WHITE : Color.LIGHTGREEN);
 				fillAnimation.setToValue(isOn ? Color.LIGHTGREEN : Color.WHITE);
 
-				if (isOn == true) {
-					trigger.setFill(Color.WHITE);
-				}
+                trigger.setFill(isOn ? Color.WHITE : Color.DARKRED);
 
-				if (isOn == false) {
-					trigger.setFill(Color.DARKRED);
-				}
 				animation.play();
 			});
 
@@ -222,8 +211,7 @@ public abstract class AdminRoleManager_GUI extends Application {
 				try {
 					userList.get(userListView.getSelectionModel().getSelectedIndex()).toggleAdmin();
 					DBM.updateInDB(userList.get(userListView.getSelectionModel().getSelectedIndex()));
-				} catch (SQLException e) {
-					
+				} catch (SQLException ignored) {
 				}
 			});
 

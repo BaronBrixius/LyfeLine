@@ -65,8 +65,6 @@ class DBM {
         String oldScript = creationScript;
         creationScript = newScript;
         try {
-            Statement stmt = conn.createStatement();
-
             System.out.println("Deleting and recreating schema...");
             dropSchema();
             useSchema(SCHEMA);

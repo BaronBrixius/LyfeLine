@@ -76,7 +76,11 @@ public class Dashboard_GUI {
 		adminGUI.setMinWidth(150);
 		dashboardOptions.getChildren().add(adminGUI);
 		adminGUI.setOnAction(event->{
-			GUIManager.swapScene(AdminRoleManager_GUI.AdminRoleManager());
+			try {
+				GUIManager.swapScene(AdminRoleManager_GUI.AdminRoleManager());
+			} catch (SQLException e) {
+				e.printStackTrace();		//probably annoying, but useful until more final version
+			}
 		});
 		pane.add(dashboardOptions, 0, 0);
 		
