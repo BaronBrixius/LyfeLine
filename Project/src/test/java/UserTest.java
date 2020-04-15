@@ -100,7 +100,7 @@ class UserTest {
 		List<User> userList = DBM.getFromDB(stmt1, new User());
 		for (int i = 0; i < users.length; i++) {
 			assertEquals(users[i].getUserEmail(), userList.get(i).getUserEmail());
-			assertEquals(users[i].getUser(), userList.get(i).getUser());
+			assertEquals(users[i].getUserName(), userList.get(i).getUserName());
 		}
 	}
 

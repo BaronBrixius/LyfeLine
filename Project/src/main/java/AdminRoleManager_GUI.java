@@ -32,7 +32,7 @@ public abstract class AdminRoleManager_GUI extends Application {
 	static DBM dbm;
 	static ListView<User> userListView;
 
-	public static Scene AdminRoleManager() throws Exception {
+	public static Scene AdminRoleManager(){
 		GridPane pane = new GridPane();
 
 		pane.setVgap(5);
@@ -152,10 +152,7 @@ public abstract class AdminRoleManager_GUI extends Application {
 		} catch (IndexOutOfBoundsException ex) {
 
 		}
-		
 
-		
-		
 		pane.add(bg, 0, 2);
 		pane.add(headLine, 0, 0);
 		pane.add(textUser, 0, 2);
@@ -164,8 +161,6 @@ public abstract class AdminRoleManager_GUI extends Application {
 		pane.add(toggle, 0, 4);
 		pane.add(textToggle, 0, 4);
 		pane.add(textStatus, 0, 3);
-		
-		
 
 		return new Scene(pane);
 	}
