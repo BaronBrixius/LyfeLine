@@ -22,6 +22,14 @@ class UserTest {
 
     @Test
     void isAdmin() {
+        User user1 = new User("John", "john@gmail.com", "somethingCool#1");
+        // set user1 as an admin
+        user1.setAdmin(true);
+        assertTrue(user1.getAdmin());
+        //remove admin from user1
+        user1.setAdmin(false);
+        assertFalse(user1.getAdmin());
+
     }
 
     @Test
