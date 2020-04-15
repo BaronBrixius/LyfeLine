@@ -43,4 +43,5 @@ public class GUIManager extends Application{
 		mainStyle = styleName;
 		mainStage.getScene().getStylesheets().add("File:src/main/resources/"+ mainStyle +".css");
 	}
+	
 }

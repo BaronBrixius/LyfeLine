@@ -183,8 +183,7 @@ pom.xml.next
 release.properties
 dependency-reduced-pom.xml
 buildNumber.properties
-.mvn/timing.properties
-.mvn/wrapper/maven-wrapper.jar
+.mvn/*
 .flattened-pom.xml
 
 # End of https://www.gitignore.io/api/java,maven,eclipse,intellij
