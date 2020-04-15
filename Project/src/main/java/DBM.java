@@ -13,7 +13,7 @@ class DBM {
     static String PASS = "AJnuHA^8VKHht=uB";
     static String SCHEMA = "project";
     static Connection conn = null;
-    static String creationScript = "src/main/resources/Database Creation Script.sql";
+    static String creationScript = "src/main/resources/Database_Creation_Script.sql";
 
     DBM() throws ClassNotFoundException, SQLException {                                                         //Connect to server with default settings
         this(SCHEMA);
