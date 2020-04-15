@@ -1,3 +1,7 @@
+drop database project;
+create schema project;
+use project;
+
 CREATE TABLE `events` (
   `EventID` int NOT NULL AUTO_INCREMENT,
   `EventType` tinyint NOT NULL,
@@ -87,7 +91,7 @@ CREATE TABLE `timelines` (
   `CreatedSecond` tinyint unsigned DEFAULT NULL,
   `CreatedMillisecond` smallint unsigned DEFAULT NULL,
   `Private` tinyint(1) DEFAULT '0',
-  `TimelineOwner` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `TimelineOwner` int,
 
   PRIMARY KEY (`TimelineID`),
   UNIQUE KEY `TimelineID_UNIQUE` (`TimelineID`)
@@ -110,25 +114,43 @@ delimiter ;
 
 -- This part is for populating timelines table with dummy data
 
-/*INSERT INTO `timelines`
+INSERT INTO `timelines`
 (`TimelineID`,
 `Scale`,
 `TimelineName`,
 `TimelineDescription`,
 `Theme`,
-`StartDate`,
-`Enddate`,
-`DateCreated`,
+`StartYear`,
+`StartMonth`,
+`StartDay`,
+`StartHour`,
+`StartMinute`,
+`StartSecond`,
+`StartMillisecond`,
+`EndYear`,
+`EndMonth`,
+`EndDay`,
+`EndHour`,
+`EndMinute`,
+`EndSecond`,
+`EndMillisecond`,
+`CreatedYear`,
+`CreatedMonth`,
+`CreatedDay`,
+`CreatedHour`,
+`CreatedMinute`,
+`CreatedSecond`,
+`CreatedMillisecond`,
 `Private`,
 `TimelineOwner`)
 VALUES
-(01 , 12, 'aaa', 'descr0', 'dark', default, default, default, default, '1'),
-(02 , 2, 'aaabb', 'descr2', 'dark', default, default, default, default,'1'),
-(03 , 4, 'bbbbb', 'descr3', 'light', default, default, default, default,'2'),
-(04 , 17,'bbbcc', 'descr4', 'dark',default, default, default, default, '2'),
-(05 , 11, 'aaacc', 'descr5', 'light', default, default, default, default,'3'),
-(06 , 2, 'cccaaa', 'descr6', 'light', default, default, default, default,'4'),
-(07 , 1, 'aaagra', 'descr7', 'dark', default, default, default, default,'1'),
-(08 , 59, 'tempus', 'descr8', 'mad', default, default, default, default,'5'),
-(09 , 22,'fungi', 'descr9', 'dark', default, default, default, default,'6'),
-(10 , 33, 'container', 'descr10', 'barkingmad', default, default, default, default,'7');*/
+(01 , 12, 'aaa', 'descr0', 'dark', 2000, 5, 20, 4, 43,32,213, 2001, 5, 20, 4, 43,32,213, 2000, 5, 20, 4, 43,32,213, default, 1),
+(02 , 2, 'aaabb', 'descr2', 'dark', 2003, 5, 20, 4, 43,32,213, 2005, 5, 20, 4, 43,32,213, 2003, 5, 20, 4, 43,32,213, default,1),
+(03 , 4, 'bbbbb', 'descr3', 'light', 2004, 5, 20, 4, 43,32,213, 2006, 5, 20, 4, 43,32,213, 2004, 5, 20, 4, 43,32,213, default,2),
+(04 , 17,'bbbcc', 'descr4', 'dark',2007, 5, 20, 4, 43,32,213, 2008, 5, 20, 4, 43,32,213, 2007, 5, 20, 4, 43,32,213, default, 2),
+(05 , 11, 'aaacc', 'descr5', 'light', 2008, 5, 20, 4, 43,32,213, 2009, 5, 20, 4, 43,32,213, 2008, 5, 20, 4, 43,32,213, default,3),
+(06 , 2, 'cccaaa', 'descr6', 'light', 2009, 5, 20, 4, 43,32,213, 2010, 5, 20, 4, 43,32,213, 2009, 5, 20, 4, 43,32,213, default,4),
+(07 , 1, 'aaagra', 'descr7', 'dark', 1990, 5, 20, 4, 43,32,213, 1991, 5, 20, 4, 43,32,213, 1990, 5, 20, 4, 43,32,213, default,1),
+(08 , 59, 'tempus', 'descr8', 'mad', 1500, 5, 20, 4, 43,32,213, 1505, 5, 20, 4, 43,32,213, 2000, 5, 20, 4, 46,32,213, default,5),
+(09 , 22,'fungi', 'descr9', 'dark', 1550, 5, 20, 4, 43,32,213, 1555, 5, 20, 4, 43,32,213, 1550, 5, 20, 4, 43,32,213, default,6),
+(10 , 33, 'container', 'descr10', 'barkingmad', 1600, 5, 20, 4, 43,32,213, 1661, 5, 20, 4, 43,32,213, 2016, 5, 20, 4, 43,32,213, default,7);
