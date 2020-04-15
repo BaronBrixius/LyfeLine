@@ -24,13 +24,9 @@ public class DBMIntegrationTest {
 
     static void resetTable(String table) throws SQLException {
         try {
-            String[] statements = DBM.readFile("src/test/resources/" + table + ".sql");
             Statement executer = DBM.conn.createStatement();
-
             executer.execute("DELETE FROM " + table);
-            for (String s : statements) {
-                executer.execute(s);
-            }
+            DBM.runScript("src/test/resources/" + table + ".sql");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
