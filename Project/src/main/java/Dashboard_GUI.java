@@ -76,7 +76,7 @@ public class Dashboard_GUI {
 		adminGUI.setMinWidth(150);
 		dashboardOptions.getChildren().add(adminGUI);
 		adminGUI.setOnAction(event->{
-			System.out.println("switch to admin manager gui");
+			GUIManager.swapScene(AdminRoleManager_GUI.AdminRoleManager());
 		});
 		pane.add(dashboardOptions, 0, 0);
 		
