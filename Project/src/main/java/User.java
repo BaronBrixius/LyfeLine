@@ -79,8 +79,8 @@ public class User implements Users {
     }
 
     @Override
-    public String getUser(String email) { //Not sure about this one
-        return null;
+    public String getUser() { //Not sure about this one
+        return  this.userName;
     }
 
     @Override
