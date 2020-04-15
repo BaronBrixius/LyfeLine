@@ -81,7 +81,7 @@ class DBM {
         }
     }
 
-    private static void runScript(String creationScript) throws FileNotFoundException, SQLException {      //private read-in method for DB creation script
+    static void runScript(String creationScript) throws FileNotFoundException, SQLException {      //private read-in method for DB creation script
         File sql = new File(creationScript);
         Statement stmt = conn.createStatement();
         Scanner sqlScan = new Scanner(sql);

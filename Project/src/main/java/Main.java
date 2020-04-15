@@ -11,7 +11,6 @@ class Main {
             new DBM();
             DBM.setupSchema();       //destroys + remakes DB with default settings, can comment this out after first run if desired
 
-
             Event now = new Event(1, 2020, 4, 9);
             Event then = new Event(2, -44, 3, 15);
             DBM.insertIntoDB(now, then);
@@ -38,20 +37,20 @@ class Main {
 
             User professorChaos = new User("Seeqwul Encurshun', 'BigDoc@abuseme.biz', 'FunPass', 'TheSalt', '1'); -- ", "email@yo.mama", "Passw0rd!");    //SQL injection attempt
             DBM.insertIntoDB(professorChaos);
-            DBM.insertIntoDB(new User("Ben", "Ben@gmail.com", "12345"));
-            DBM.insertIntoDB(new User("Max", "Max@gmail.com", "12345"));
-            DBM.insertIntoDB(new User("Dillon", "Dillon@gmail.com", "12345"));
-            DBM.insertIntoDB(new User("Firas", "Firas@gmail.com", "12345"));
-            DBM.insertIntoDB(new User("Lasse", "Lasse@gmail.com", "12345"));
-            DBM.insertIntoDB(new User("Haraldur", "Haraldur@gmail.com", "12345"));
-            DBM.insertIntoDB(new User("Vytautas", "Vytautas@gmail.com", "12345"));
-            DBM.insertIntoDB(new User("Timothy", "Timothy@gmail.com", "12345"));
-            DBM.insertIntoDB(new User("Matas", "Matas@gmail.com", "12345"));
-            DBM.insertIntoDB(new User("Lorenz", "Lorenz@gmail.com", "12345"));
-            DBM.insertIntoDB(new User("Chris", "Chris@gmail.com", "12345"));
-            DBM.insertIntoDB(new User("Jan", "Jan@gmail.com", "12345"));
+            DBM.insertIntoDB(new User("Ben", "Ben@gmail.com", "Passw0rd!"));
+            DBM.insertIntoDB(new User("Max", "Max@gmail.com", "Passw0rd!"));
+            DBM.insertIntoDB(new User("Dillon", "Dillon@gmail.com", "Passw0rd!"));
+            DBM.insertIntoDB(new User("Firas", "Firas@gmail.com", "Passw0rd!"));
+            DBM.insertIntoDB(new User("Lasse", "Lasse@gmail.com", "Passw0rd!"));
+            DBM.insertIntoDB(new User("Haraldur", "Haraldur@gmail.com", "Passw0rd!"));
+            DBM.insertIntoDB(new User("Vytautas", "Vytautas@gmail.com", "Passw0rd!"));
+            DBM.insertIntoDB(new User("Timothy", "Timothy@gmail.com", "Passw0rd!"));
+            DBM.insertIntoDB(new User("Matas", "Matas@gmail.com", "Passw0rd!"));
+            DBM.insertIntoDB(new User("Lorenz", "Lorenz@gmail.com", "Passw0rd!"));
+            DBM.insertIntoDB(new User("Chris", "Chris@gmail.com", "Passw0rd!"));
+            DBM.insertIntoDB(new User("Jan", "Jan@gmail.com", "Passw0rd!"));
             
-            User teacher = new User("Hans Ove", "Hans@math.biz", "IloveMath");
+            User teacher = new User("Hans Ove", "Hans@math.biz", "Passw0rd!");
             if (User.validateUnique("Hans@math.biz"))
                 DBM.insertIntoDB(teacher);
             else
