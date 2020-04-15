@@ -32,7 +32,7 @@ public abstract class AdminRoleManager_GUI extends Application {
 	static DBM dbm;
 	static ListView<User> userListView;
 
-	public static Scene AdminRoleManager() throws Exception {
+	public static Scene AdminRoleManager(){
 		GridPane pane = new GridPane();
 
 		pane.setVgap(5);
