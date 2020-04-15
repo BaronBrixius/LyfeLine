@@ -71,10 +71,7 @@ class DBM {
 
             //Read and run the database creation script
             System.out.println("Creating table(s) in given database...");
-            String[] statements = readFile(creationScript);
-            for (String s : statements) {
-                stmt.execute(s);
-            }
+            runScript(creationScript);
             System.out.println("Schema created successfully.");
         } catch (SQLException | FileNotFoundException e) {
             creationScript = oldScript;          //return to old creation script if new script fails
@@ -82,18 +79,22 @@ class DBM {
         }
     }
 
-    private static String[] readFile(String creationScript) throws FileNotFoundException {      //private read-in method for DB creation script
-        StringBuilder temp = new StringBuilder();
+    private static void runScript(String creationScript) throws FileNotFoundException, SQLException {      //private read-in method for DB creation script
         File sql = new File(creationScript);
+        Statement stmt = conn.createStatement();
         Scanner sqlScan = new Scanner(sql);
+        sqlScan.useDelimiter(";[\\r\\n]{3,}");
+        String query;
 
-        while (sqlScan.hasNextLine())
-            temp.append(sqlScan.nextLine()).append("\n");
+        while (sqlScan.hasNext()) {
+            query = sqlScan.next();
+            if (stmt != null && !query.isEmpty())
+                stmt.execute(query);
+        }
 
         sqlScan.close();
-
-        temp.delete(temp.lastIndexOf(";"), temp.length());   //cuts last ; off final statement so that ; can be used as delimiter without empty statements
-        return temp.toString().split(";");
+        if (stmt != null)
+            stmt.close();
     }
 
     //Runs PreparedStatement and uses Functional Interface method to parse each row returned into an object
