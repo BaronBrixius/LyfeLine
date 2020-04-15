@@ -1,8 +1,6 @@
 import java.sql.*;
 import java.util.List;
 
-//Just example implement first and foremost to show the encryption/salting method to use.
-//Of course all kinds of exception handling needed for inputs, such as email.
 public class User implements Users {
     private int userID = 0;
     private String userName;
@@ -42,12 +40,19 @@ public class User implements Users {
         }
         return true;
     }
-    
+
     public String getUserEmail() {
         return this.userEmail;
     }
-    
-    
+
+    public int getUserID(){
+        return userID;
+    }
+
+    public boolean toggleAdmin(){
+        admin=!admin;
+        return admin;
+    }
 
     @Override
     public void setUserEmail(String userEmail) throws IllegalArgumentException {
@@ -80,7 +85,7 @@ public class User implements Users {
     }
 
     @Override
-    public String getUser() { //Not sure about this one
+    public String getUserName() { //Not sure about this one
         return  this.userName;
     }
 
@@ -145,5 +150,4 @@ public class User implements Users {
     public String toString() {
         return "UserID: " + userID + " Name: " + userName + " Email: " + userEmail + " Encrypted Password: " + encryptedPass + " Salt: " + salt;
     }
-
 }
