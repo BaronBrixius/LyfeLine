@@ -45,7 +45,7 @@ class Event implements DBObject<Event> {
         int startYear = rs.getInt("StartYear");
         int startMonth = rs.getInt("StartMonth");
         int startDay = rs.getInt("StartDay");
-        String start = rs.getString("Start");       //probably don't need to pull from table, can recalculate here, but I wanted to test it a bit
+       // String start = rs.getString("Start");       //probably don't need to pull from table, can recalculate here, but I wanted to test it a bit
 
         return new Event(eventID, eventType, startYear, startMonth, startDay, start);
     }
@@ -90,6 +90,6 @@ class Event implements DBObject<Event> {
 
     @Override
     public String toString() {
-        return "EventID: " + eventID + " EventType: " + eventType + " Start: " + start;
+        return "EventID: " + eventID + " EventType: " + eventType;
     }
 }

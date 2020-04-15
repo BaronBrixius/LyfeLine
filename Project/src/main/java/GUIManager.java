@@ -23,7 +23,7 @@ public class GUIManager extends Application{
 			DBM.setupSchema();
 		}
 		catch (SQLException e) {
-			System.out.println("Could not establish the connection to the SQL server");
+			e.printStackTrace();
 		}
 
 		mainStage = primaryStage;
@@ -43,4 +43,5 @@ public class GUIManager extends Application{
 		mainStyle = styleName;
 		mainStage.getScene().getStylesheets().add("File:src/main/resources/"+ mainStyle +".css");
 	}
+	
 }
