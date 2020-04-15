@@ -1,16 +1,21 @@
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.List;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 
-public class TimelineList_GUI {
+public class Dashboard_GUI {
 
-	public static Scene createListScene() {
+	public static Scene DashboardScreen() {
 
 		// main layout
 		GridPane pane = new GridPane();
@@ -20,11 +25,17 @@ public class TimelineList_GUI {
 
 		// holds timelines from DB
 		ObservableList<Timeline> timelines = FXCollections.observableArrayList();
-
-		// temporary example timelines until import is working
-		timelines.add(new Timeline("WW2", 3));
-		timelines.add(new Timeline("Z", 4));
-		timelines.add(new Timeline("CVID", 6));
+		
+		try {
+			PreparedStatement stmt = DBM.conn.prepareStatement("SELECT * FROM timelines");
+			List<Timeline> timelineList = DBM.getFromDB(stmt, new Timeline());
+			for(Timeline t : timelineList) {
+				System.out.println(t.getInfo());
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		// default sort order
 		timelines.sort((t1, t2) -> (t1.getName().compareTo(t2.getName())));
@@ -34,9 +45,20 @@ public class TimelineList_GUI {
 		list.setItems(timelines);
 		list.setMinWidth(200);
 		list.getSelectionModel().select(0);
-		pane.add(list, 1, 0);
+		pane.add(list, 2, 0);
 
-		// layout of left column
+		//layout of dashboard options / only for scene switch purposes for now
+		VBox dashboardOptions = new VBox();
+		dashboardOptions.setSpacing(10);
+		Button adminGUI = new Button("Admin Manager");
+		adminGUI.setMinWidth(150);
+		dashboardOptions.getChildren().add(adminGUI);
+		adminGUI.setOnAction(event->{
+			System.out.println("switch to admin manager gui");
+		});
+		pane.add(dashboardOptions, 0, 0);
+		
+		// layout of column to the left of the listview
 		VBox listOptions = new VBox();
 		listOptions.setSpacing(10);
 
@@ -59,7 +81,7 @@ public class TimelineList_GUI {
 		sortBy.setItems(sortOptions);
 		listOptions.getChildren().add(sortBy);
 
-		pane.add(listOptions, 0, 0);
+		pane.add(listOptions, 1, 0);
 
 		// sort order selection events
 		sortBy.getSelectionModel().selectedIndexProperty().addListener(ov -> {
@@ -71,10 +93,10 @@ public class TimelineList_GUI {
 				timelines.sort((t1, t2) -> (t2.getName().compareTo(t1.getName())));
 				break;
 			case 2:
-				timelines.sort((t1, t2) -> (Integer.compare(t1.getDate(), t2.getDate())));
+				timelines.sort((t1, t2) -> (t1.getDateCreated().compareTo(t2.getDateCreated())));
 				break;
 			case 3:
-				timelines.sort((t1, t2) -> (Integer.compare(t2.getDate(), t1.getDate())));
+				timelines.sort((t1, t2) -> (t2.getDateCreated().compareTo(t1.getDateCreated())));
 				break;
 			}
 		});
