@@ -15,6 +15,7 @@ CREATE TABLE `events` (
   UNIQUE KEY `EventID_UNIQUE` (`EventID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+
 CREATE TABLE `groups` (
   `GroupID` int NOT NULL AUTO_INCREMENT,
   `GroupName` nvarchar(100) DEFAULT NULL,
@@ -32,9 +33,12 @@ CREATE TABLE `groups` (
   `EndMonth` tinyint unsigned DEFAULT NULL,
   `EndDay` tinyint unsigned DEFAULT NULL,
   `EndTime` time DEFAULT NULL,
+  `Start` varchar(30) GENERATED ALWAYS AS (concat(abs(`StartYear`),_utf8mb4'-',lpad(`StartMonth`,2,0),_utf8mb4'-',lpad(`StartDay`,2,0),_utf8mb4' ',if((`StartYear` > 0),_utf8mb4'AD',_utf8mb4'BC'))) VIRTUAL,
+  `End` varchar(30) GENERATED ALWAYS AS (concat(abs(`EndYear`),_utf8mb4'-',lpad(`EndMonth`,2,0),_utf8mb4'-',lpad(`EndDay`,2,0),_utf8mb4' ',if((`EndYear` > 0),_utf8mb4'AD',_utf8mb4'BC'))) VIRTUAL,
   PRIMARY KEY (`GroupID`),
   UNIQUE KEY `GroupID_UNIQUE` (`GroupID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 
 CREATE TABLE `groupevents` (
   `GroupID` int NOT NULL,
@@ -44,6 +48,7 @@ CREATE TABLE `groupevents` (
   CONSTRAINT `fk_groupevents_events1` FOREIGN KEY (`EventID`) REFERENCES `events` (`EventID`),
   CONSTRAINT `fk_groupevents_groups` FOREIGN KEY (`GroupID`) REFERENCES `groups` (`GroupID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 
 CREATE TABLE `users` (
   `UserID` int NOT NULL AUTO_INCREMENT,
@@ -57,8 +62,8 @@ CREATE TABLE `users` (
   UNIQUE KEY `UserEmail_UNIQUE` (`UserEmail`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Code for creating timelines
 
+-- Code for creating timelines
 CREATE TABLE `timelines` (
   `TimelineID` int NOT NULL AUTO_INCREMENT,
   `Scale` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
@@ -88,6 +93,7 @@ CREATE TABLE `timelines` (
   `CreatedMillisecond` smallint unsigned DEFAULT NULL,
   `Private` tinyint(1) DEFAULT '0',
   `TimelineOwner` int,
+
 
   PRIMARY KEY (`TimelineID`),
   UNIQUE KEY `TimelineID_UNIQUE` (`TimelineID`)
