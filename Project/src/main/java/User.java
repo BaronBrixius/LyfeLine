@@ -43,16 +43,6 @@ public class User implements Users {
         return true;
     }
     
-    static boolean validateName(String name) throws SQLException {
-        List<String> dbList = DBM.getFromDB(DBM.conn.prepareStatement("SELECT UserName FROM users"), rs -> rs.getString("UserName"));
-
-        for (String db : dbList) {
-            if (name.equalsIgnoreCase(db)) {
-                return false;
-            }
-        }
-        return true;
-    }
     public String getUserEmail() {
         return this.userEmail;
     }
