@@ -84,34 +84,43 @@ public class LoginAndRegistration_GUI {
         //These are the texts in order from top to bottom
         Text username = new Text("Username");
         username.setStyle("-fx-font-size: 2em;");
-        pane.add(username, 0, 0);
+        pane.add(username, 0, 1);
 
         Text password = new Text("Password");
         password.setStyle("-fx-font-size: 2em;");
-        pane.add(password, 0, 1);
+        pane.add(password, 0, 2);
 
         Text confirmPassword = new Text("Confirm Password");
         confirmPassword.setStyle("-fx-font-size: 2em;");
-        pane.add(confirmPassword, 0, 2);
+        pane.add(confirmPassword, 0, 3);
+
+        Text email = new Text("Email Address");
+        email.setStyle("-fx-font-size: 2em;");
+        pane.add(email, 0, 0);
 
         //This text alerts the user if their inputted information is wrong in any way
         Text errorMessage = new Text();
         errorMessage.setStyle("-fx-font-size: 1em;");
         errorMessage.setWrappingWidth(190);
-        pane.add(errorMessage, 0, 3);
+        pane.add(errorMessage, 0, 4);
 
         //These are the input fields in order from top to bottom
+        final TextField emailInput = new TextField();
+        emailInput.setPrefHeight(30);
+        pane.add(emailInput, 1, 0);
+
         final TextField usernameInput = new TextField();
         usernameInput.setPrefHeight(30);
-        pane.add(usernameInput, 1, 0);
+        pane.add(usernameInput, 1, 1);
 
         final TextField passwordInput = new TextField();
         passwordInput.setPrefHeight(30);
-        pane.add(passwordInput, 1, 1);
+        pane.add(passwordInput, 1, 2);
 
         final TextField confirmPasswordInput = new TextField();
         confirmPasswordInput.setPrefHeight(30);
-        pane.add(confirmPasswordInput, 1, 2);
+        pane.add(confirmPasswordInput, 1, 3);
+
 
         //This button only checks if the passwordInput and confirmPasswordInput fields are the same right now.
         //Will eventually create a User from the inputted data.
@@ -138,13 +147,13 @@ public class LoginAndRegistration_GUI {
         //This HBox holds the buttons Register and Cancel
         HBox buttons = new HBox(20);
         buttons.getChildren().addAll(register, cancel);
-        pane.add(buttons, 1, 3);
+        pane.add(buttons, 1, 4);
 
         pane.setStyle("-fx-background-color: #9a9a9a;");  //This changes the background color of the whole window.
 
 
 
-        return new Scene(pane, 600, 350);
+        return new Scene(pane, 600, 450);
     }
 
     private static Scene loginScreen() {
