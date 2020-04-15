@@ -2,6 +2,8 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.sql.SQLException;
+
 public class GUIManager extends Application{
 
 	public static void main(String[] args) {
@@ -13,6 +15,16 @@ public class GUIManager extends Application{
 	//default window set up
 	@Override
 	public void start(Stage primaryStage) throws Exception {
+
+		// Used to establish connection to the DB.
+		try {
+			new DBM();
+			DBM.setupSchema();
+		}
+		catch (SQLException e) {
+			System.out.println("Could not establish the connection to the SQL server");
+		}
+
 		mainStage = primaryStage;
 		mainStage.setScene(LoginAndRegistration_GUI.welcomeScreen()); //default scene
 		mainStage.setResizable(false);
