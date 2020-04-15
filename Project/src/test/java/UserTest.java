@@ -3,12 +3,16 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class UserTest {
     static private DBM sut;
+    static  User[] users = new User[4];
 
 
 
@@ -21,14 +25,18 @@ class UserTest {
         createTestDB();  //Adds some rows to the database tables and exports them to .xml, don't need to run this often
     }
 
-    static void createTestDB() throws SQLException {
+     static void createTestDB() throws SQLException {
         User user1 = new User("John", "john@gmail.com", "somethingCool#1");
+        users[0]= user1;
         DBM.insertIntoDB(user1);
         User user2 = new User("John", "john2@gmail.com", "somethingCool#2");
+        users[1]= user2;
         DBM.insertIntoDB(user2);
         User user3 = new User("John", "john3@gmail.com", "somethingCool#3");
+        users[2]= user3;
         DBM.insertIntoDB(user3);
         User user4 = new User("John", "john4@gmail.com", "somethingCool#4");
+        users[3]= user4;
         DBM.insertIntoDB(user4);
 
     }
@@ -102,9 +110,22 @@ class UserTest {
     }
 
     @Test
-    void createFromDB() {
-        //try object creation of user in db... should be the same that i pushed to
-        // the DB in getInsertQuery()
+    void createFromDB() throws SQLException {
+        //Create objects from the DB and see if they are 4(cause I inserted 4)
+        ResultSet rs;
+        PreparedStatement stmt = DBM.conn.prepareStatement("SELECT COUNT(*) FROM users");
+        rs = stmt.executeQuery();
+        rs.next();
+        int actual = rs.getInt(1);
+        assertEquals(users.length, actual);
+
+        //See if the database objects are the same as the ones I pushed
+        PreparedStatement stmt1 = DBM.conn.prepareStatement("SELECT * FROM users");
+        List<User> userList = DBM.getFromDB(stmt1, new User());
+        for(int i= 0; i< users.length;i++){
+            assertEquals(users[i].getUserEmail(),userList.get(i).getUserEmail());
+            assertEquals(users[i].getUser(),userList.get(i).getUser());
+        }
     }
 
     @Test
