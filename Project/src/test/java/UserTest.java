@@ -40,14 +40,14 @@ class UserTest {
     }
 
     @Test
-    void validateUnique(String userEmail) throws SQLException {
+    void validateUnique() throws SQLException {
         User user1 = new User("John", "john@gmail.com", "somethingCool#1");
         User user2 = new User("John", "johnny@gmail.com", "somethingCool#1");
 
         //Test if email returns false - exists
-        assertFalse(user1.validateUnique(user1.getUserEmail()));
+        assertFalse(User.validateUnique(user1.getUserEmail()));
         //Test if email returns true - does not exist
-        assertTrue(user2.validateUnique(user2.getUserEmail()));
+        assertTrue(User.validateUnique(user2.getUserEmail()));
         //check exception if not right format - missing @
         Exception exception = assertThrows(IllegalArgumentException.class, () -> {
             user2.setUserEmail("jonny.gmail.com");
