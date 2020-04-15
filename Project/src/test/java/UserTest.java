@@ -71,37 +71,13 @@ class UserTest {
         String actualMessage1 = exception.getMessage();
         assertTrue(actualMessage1.contains(expectedMessage1)); //Checks both that exception is thrown and correct message printed
     }
-
-    @Test
-    void getUserEmail() {
-        //ble
-    }
-
-    @Test
-    void setUserEmail() {
-        //IllegalArgumentException test
-        //Check if email is proper
-    }
-
-    @Test
-    void setUserName() {
-        //ble
-    }
-
-    @Test
-    void isAdmin() {
-        //ble
-    }
-
+ 
     @Test
     void setPassword() {
         //IllegalArgumentException check
         //See if encrpt. is right??
-    }
-
-    @Test
-    void getUser() {
-        //not sure
+    	
+    	
     }
 
     @Test
@@ -132,11 +108,6 @@ class UserTest {
     void getInsertQuery() {
 
         //try right
-    }
-
-    @Test
-    void setID() {
-        //ok
     }
 
     @Test
