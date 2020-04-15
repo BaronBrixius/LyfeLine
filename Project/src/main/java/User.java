@@ -57,6 +57,10 @@ public class User implements Users {
         this.userName = userName;
     }
     
+    public boolean getAdmin() {
+    	return admin;
+    }
+    
    
     public String getUserName() {
     	return this.userName;
@@ -69,6 +73,12 @@ public class User implements Users {
     @Override
     public void isAdmin(Boolean admin) {
         this.admin = admin;
+    }
+    
+    public boolean toggleAdmin() {
+    	admin=!admin;
+    	
+    	return admin;
     }
 
     @Override

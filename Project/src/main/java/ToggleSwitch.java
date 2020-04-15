@@ -17,7 +17,9 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-
+	/* Credit & source: https://github.com/AlmasB/FXTutorials/blob/master/src/com/almasb/ios/IOSApp.java
+	 * This is a custom made toggle switch that has been modified to our need in the purple group.
+	 */
     public class ToggleSwitch extends Parent {
 
         private BooleanProperty switchedOn = new SimpleBooleanProperty(false);
