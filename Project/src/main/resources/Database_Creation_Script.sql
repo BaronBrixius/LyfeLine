@@ -11,8 +11,6 @@ CREATE TABLE `events` (
   `EndMonth` tinyint unsigned DEFAULT NULL,
   `EndDay` tinyint unsigned DEFAULT NULL,
   `EndTime` time DEFAULT NULL,
-  `Start` varchar(30) GENERATED ALWAYS AS (concat(abs(`StartYear`),_utf8mb4'-',lpad(`StartMonth`,2,0),_utf8mb4'-',lpad(`StartDay`,2,0),_utf8mb4' ',if((`StartYear` > 0),_utf8mb4'AD',_utf8mb4'BC'))) VIRTUAL,
-  `End` varchar(30) GENERATED ALWAYS AS (concat(abs(`EndYear`),_utf8mb4'-',lpad(`EndMonth`,2,0),_utf8mb4'-',lpad(`EndDay`,2,0),_utf8mb4' ',if((`EndYear` > 0),_utf8mb4'AD',_utf8mb4'BC'))) VIRTUAL,
   PRIMARY KEY (`EventID`),
   UNIQUE KEY `EventID_UNIQUE` (`EventID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -34,8 +32,6 @@ CREATE TABLE `groups` (
   `EndMonth` tinyint unsigned DEFAULT NULL,
   `EndDay` tinyint unsigned DEFAULT NULL,
   `EndTime` time DEFAULT NULL,
-  `Start` varchar(30) GENERATED ALWAYS AS (concat(abs(`StartYear`),_utf8mb4'-',lpad(`StartMonth`,2,0),_utf8mb4'-',lpad(`StartDay`,2,0),_utf8mb4' ',if((`StartYear` > 0),_utf8mb4'AD',_utf8mb4'BC'))) VIRTUAL,
-  `End` varchar(30) GENERATED ALWAYS AS (concat(abs(`EndYear`),_utf8mb4'-',lpad(`EndMonth`,2,0),_utf8mb4'-',lpad(`EndDay`,2,0),_utf8mb4' ',if((`EndYear` > 0),_utf8mb4'AD',_utf8mb4'BC'))) VIRTUAL,
   PRIMARY KEY (`GroupID`),
   UNIQUE KEY `GroupID_UNIQUE` (`GroupID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -61,11 +57,18 @@ CREATE TABLE `users` (
   UNIQUE KEY `UserEmail_UNIQUE` (`UserEmail`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+-- Code for creating timelines
+
 CREATE TABLE `timelines` (
   `TimelineID` int NOT NULL AUTO_INCREMENT,
+  `Scale` nvarchar(100) DEFAULT NULL,
   `TimelineName` nvarchar(100) DEFAULT NULL,
   `TimelineDescription` nvarchar(5000) DEFAULT NULL,
-  `Public/Private` tinyint DEFAULT '0',
+  `Theme` nvarchar(100) DEFAULT NULL,
+  `StartDate` datetime DEFAULT NULL,
+  `Enddate` datetime DEFAULT NULL,
+  `DateCreated` timestamp  DEFAULT CURRENT_TIMESTAMP,
+  `Private` boolean DEFAULT false,
   `TimelineOwner` nvarchar(100) DEFAULT NULL,
   PRIMARY KEY (`TimelineID`), 
   UNIQUE KEY `TimelineID_UNIQUE` (`TimelineID`)
@@ -73,20 +76,26 @@ CREATE TABLE `timelines` (
 
 -- This part is for populating timelines table with dummy data
 
-INSERT INTO `timelines`
+INSERT INTO `project`.`timelines`
 (`TimelineID`,
+`Scale`,
 `TimelineName`,
 `TimelineDescription`,
-`Public/Private`,
+`Theme`,
+`StartDate`,
+`Enddate`,
+`DateCreated`,
+`Private`,
 `TimelineOwner`)
 VALUES
-(01 , 'aaa', 'descr0', 0, '1'),
-(02 , 'aaabb', 'descr2', 1, '1'),
-(03 , 'bbbbb', 'descr3', 0, '2'),
-(04 , 'bbbcc', 'descr4', 0, '2'),
-(05 , 'aaacc', 'descr5', 1, '3'),
-(06 , 'cccaaa', 'descr6', 0, '4'),
-(07 , 'aaagra', 'descr7', 0, '1'),
-(08 , 'tempus', 'descr8', 0, '5'),
-(09 , 'fungi', 'descr9', 1, '6'),
-(10 , 'container', 'descr10', 0, '7');
+(01 , 12, 'aaa', 'descr0', 'dark', default, default, default, default, '1'),
+(02 , 2, 'aaabb', 'descr2', 'dark', default, default, default, default,'1'),
+(03 , 4, 'bbbbb', 'descr3', 'light', default, default, default, default,'2'),
+(04 , 17,'bbbcc', 'descr4', 'dark',default, default, default, default, '2'),
+(05 , 11, 'aaacc', 'descr5', 'light', default, default, default, default,'3'),
+(06 , 2, 'cccaaa', 'descr6', 'light', default, default, default, default,'4'),
+(07 , 1, 'aaagra', 'descr7', 'dark', default, default, default, default,'1'),
+(08 , 59, 'tempus', 'descr8', 'mad', default, default, default, default,'5'),
+(09 , 22,'fungi', 'descr9', 'dark', default, default, default, default,'6'),
+(10 , 33, 'container', 'descr10', 'barkingmad', default, default, default, default,'7');
+
