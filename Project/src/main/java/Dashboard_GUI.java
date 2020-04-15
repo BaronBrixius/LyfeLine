@@ -5,6 +5,7 @@ import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -71,6 +72,7 @@ public class Dashboard_GUI {
 		VBox dashboardOptions = new VBox();
 		dashboardOptions.setSpacing(10);
 		Button adminGUI = new Button("Admin Manager");
+		adminGUI.getStyleClass().add("smallButton");
 		adminGUI.setMinWidth(150);
 		dashboardOptions.getChildren().add(adminGUI);
 		adminGUI.setOnAction(event->{
@@ -121,8 +123,10 @@ public class Dashboard_GUI {
 			}
 		});
 
+		pane.setAlignment(Pos.CENTER);
+
 		// finalizes and returns scene
-		Scene scene = new Scene(pane, 500, 400);
+		Scene scene = new Scene(pane, 600, 400);
 		return scene;
 
 	}

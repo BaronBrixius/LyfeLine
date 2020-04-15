@@ -11,6 +11,7 @@ public class GUIManager extends Application{
 	}
 	
 	public static Stage mainStage;
+	public static String mainStyle;
 	
 	//default window set up
 	@Override
@@ -28,11 +29,18 @@ public class GUIManager extends Application{
 		mainStage = primaryStage;
 		mainStage.setScene(LoginAndRegistration_GUI.welcomeScreen()); //default scene
 		mainStage.setResizable(false);
+		changeStyle("DefaultStyle");
 		mainStage.show();
 	}
 	
 	//is used when swapping scenes inside classes. use the static classes that return scenes
 	public static void swapScene(Scene scene) {
 		mainStage.setScene(scene);
+		changeStyle(mainStyle);
+	}
+
+	public static void changeStyle(String styleName) {
+		mainStyle = styleName;
+		mainStage.getScene().getStylesheets().add("File:src/main/resources/"+ mainStyle +".css");
 	}
 }

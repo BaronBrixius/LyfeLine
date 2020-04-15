@@ -1,6 +1,5 @@
-
-import java.sql.*;
 import java.util.List;
+import java.sql.*;
 
 public class Timeline implements DBObject<Timeline>{
 
@@ -167,5 +166,30 @@ public class Timeline implements DBObject<Timeline>{
 
 	public Date getDateCreated() {
 		return dateCreated;
+	}
+
+	@Override
+	public PreparedStatement getInsertQuery() throws SQLException {
+		return null;
+	}
+
+	@Override
+	public PreparedStatement getUpdateQuery() throws SQLException {
+		return null;
+	}
+
+	@Override
+	public PreparedStatement getDeleteQuery() throws SQLException {
+		return null;
+	}
+
+	@Override
+	public void setID(int id) {
+
+	}
+
+	@Override
+	public Timeline createFromDB(ResultSet rs) throws SQLException {
+		return null;
 	}
 }
