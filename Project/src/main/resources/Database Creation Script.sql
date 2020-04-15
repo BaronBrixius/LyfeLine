@@ -54,7 +54,7 @@ CREATE TABLE `users` (
   `UserName` nvarchar(100) DEFAULT NULL,
   `UserEmail` nvarchar(100) NOT NULL,
   `Password` nvarchar(90) NOT NULL,
-  `Salt` nvarchar(30) NOT NULL,3
+  `Salt` nvarchar(30) NOT NULL,
   `Admin` tinyint DEFAULT '0',
   PRIMARY KEY (`UserID`),
   UNIQUE KEY `UserID_UNIQUE` (`UserID`),
