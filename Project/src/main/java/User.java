@@ -42,10 +42,12 @@ public class User implements Users {
         }
         return true;
     }
-
+    
     public String getUserEmail() {
         return this.userEmail;
     }
+    
+    
 
     @Override
     public void setUserEmail(String userEmail) throws IllegalArgumentException {
