@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -16,7 +17,7 @@ class UserTest {
 
 	@BeforeAll
 	static void init() throws SQLException, IOException, ClassNotFoundException {
-		sut = new DBM("jdbc:mysql://localhost", "root", "AJnuHA^8VKHht=uB", "project");
+		sut = new DBM("jdbc:mysql://localhost", "Halli", "dragon", "test");
 		DBM.setupSchema();
 		createTestDB(); // Adds some rows to the database tables and exports them to .xml, don't need to
 						// run this often
@@ -104,8 +105,12 @@ class UserTest {
 	}
 
 	@Test
-	void getInsertQuery() {
-
+	void getInsertQuery() throws SQLException {
+		User tester = new User("Halli","halli@hotmail.com", "Th3Mind'5EyE!");
+        String sql = "INSERT INTO `users` (`UserName`, `UserEmail`, `Password`, `Salt`, `Admin`) VALUES ('" + tester.getUserName() + "','" + tester.getUserEmail() + "','" + tester.getEncryptedForTest() +"','" + tester.getSaltForTest() + "',?)";
+		PreparedStatement out = DBM.conn.prepareStatement(sql   , Statement.RETURN_GENERATED_KEYS);
+		out.setBoolean(1, tester.getAdmin());
+		assertEquals(out.toString() ,tester.getInsertQuery().toString());
 		// try right
 	}
 
