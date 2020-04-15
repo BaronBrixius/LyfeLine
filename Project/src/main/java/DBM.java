@@ -13,7 +13,7 @@ class DBM {
     static String PASS = "AJnuHA^8VKHht=uB";
     static String SCHEMA = "project";
     static Connection conn = null;
-    static String creationScript = "src/main/resources/Database Creation Script.sql";
+    static String creationScript = "src/main/resources/Database_Creation_Script.sql";
 
     DBM() throws ClassNotFoundException, SQLException {                                                         //Connect to server with default settings
         this(SCHEMA);
@@ -28,6 +28,8 @@ class DBM {
     }
 
     DBM(String DB_URL, String USER, String PASS, String SCHEMA) throws ClassNotFoundException, SQLException {   //Connect to server with alternate settings
+        close();                        //if connection is already open, close it before making a new one
+
         DBM.DB_URL = DB_URL;
         DBM.USER = USER;
         DBM.PASS = PASS;
@@ -37,7 +39,7 @@ class DBM {
         Class.forName(JDBC_DRIVER);
 
         //Open a connection
-        System.out.println("Connecting to a selected database...");
+        System.out.println("Connecting to selected database...");
         conn = DriverManager.getConnection(DB_URL, USER, PASS);
 
         //Connect to schema
@@ -71,10 +73,7 @@ class DBM {
 
             //Read and run the database creation script
             System.out.println("Creating table(s) in given database...");
-            String[] statements = readFile(creationScript);
-            for (String s : statements) {
-                stmt.execute(s);
-            }
+            runScript(creationScript);
             System.out.println("Schema created successfully.");
         } catch (SQLException | FileNotFoundException e) {
             creationScript = oldScript;          //return to old creation script if new script fails
@@ -82,23 +81,29 @@ class DBM {
         }
     }
 
-    private static String[] readFile(String creationScript) throws FileNotFoundException {      //private read-in method for DB creation script
-        StringBuilder temp = new StringBuilder();
+    private static void runScript(String creationScript) throws FileNotFoundException, SQLException {      //private read-in method for DB creation script
         File sql = new File(creationScript);
+        Statement stmt = conn.createStatement();
         Scanner sqlScan = new Scanner(sql);
+        sqlScan.useDelimiter(";[\\r\\n]{3,}");
+        String query;
 
-        while (sqlScan.hasNextLine())
-            temp.append(sqlScan.nextLine()).append("\n");
+        while (sqlScan.hasNext()) {
+            query = sqlScan.next();
+            if (stmt != null && !query.isEmpty())
+                stmt.execute(query);
+        }
 
         sqlScan.close();
-
-        temp.delete(temp.lastIndexOf(";"), temp.length());   //cuts last ; off final statement so that ; can be used as delimiter without empty statements
-        return temp.toString().split(";");
+        if (stmt != null)
+            stmt.close();
     }
+
 
     //Runs PreparedStatement and uses Functional Interface method to parse each row returned into an object
     //note: functional interfaces can either use the implementation of an object, e.g. new User() makes a blank user to call the User class's implementation,
     //or can accept a lambda/method directly (must take in a ResultSet and output an Object, e.g. rs -> rs.getString("Name") will return String objects from the Name field)
+
     static <T> List<T> getFromDB(PreparedStatement query, CreatableFromDB<T> creatable) throws SQLException {
         List<T> out = new ArrayList<>();
 
@@ -125,6 +130,10 @@ class DBM {
         }
     }
 
+    static <T> void insertIntoDB(List<T> insert) throws SQLException {            //converts to array so it works with varargs
+        insertIntoDB(asArray(insert));
+    }
+
     static <T> void updateInDB(DBObject<T>... update) throws SQLException {     //DON'T INSERT OBJECTS OF DIFFERENT TYPES
         for (DBObject<T> t : update) {
             if (t == null)
@@ -133,7 +142,11 @@ class DBM {
         }
     }
 
-    static <T> void deleteFromDB(DBObject<T>... delete) throws SQLException {   //DON'T INSERT OBJECTS OF DIFFERENT TYPES
+    static <T> void updateInDB(List<T> update) throws SQLException {            //converts to array so it works with varargs
+        updateInDB(asArray(update));
+    }
+
+    static <T> void deleteFromDB(DBObject<T>... delete) throws SQLException {           //DON'T INSERT OBJECTS OF DIFFERENT TYPES
         for (DBObject<T> t : delete) {
             if (t == null)
                 continue;
@@ -141,12 +154,30 @@ class DBM {
         }
     }
 
-    static void dropSchema() throws SQLException {                                   //drop current schema
+    static <T> void deleteFromDB(List<T> delete) throws SQLException {                  //converts to array so it works with varargs
+        deleteFromDB(asArray(delete));
+    }
+
+    static <T> DBObject<T>[] asArray(List<T> list) {                                    //converts generic List to Array since normal methods hate casting like that
+        try {
+            DBObject<T>[] asArray = (DBObject<T>[]) java.lang.reflect.Array.newInstance(list.get(0).getClass(), list.size());
+            for (int i = 0; i < list.size(); i++) {
+                asArray[i] = (DBObject<T>) list.get(i);
+            }
+            return asArray;
+        } catch (ClassCastException e) {
+            throw new ClassCastException("Class does not implement DBObject<T>");       //clearer exception message for this project
+        }
+    }
+
+    static void dropSchema() throws SQLException {                                      //drop current schema
         conn.createStatement().execute("DROP DATABASE IF EXISTS " + SCHEMA);
     }
 
-    void close() throws SQLException {                                  //close the connection when you're done please
-        if (conn != null)
+    static void close() throws SQLException {                                                  //close the connection when you're done please
+        if (conn != null) {
             conn.close();
+            conn = null;
+        }
     }
 }

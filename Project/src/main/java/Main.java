@@ -5,11 +5,10 @@ import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
 class Main {
-    public static void main(String[] args){
-        DBM dbm = null;
+    public static void main(String[] args) {
         PreparedStatement stmt;
         try {
-            dbm = new DBM();
+            new DBM();
             DBM.setupSchema();       //destroys + remakes DB with default settings, can comment this out after first run if desired
 
 
@@ -37,7 +36,7 @@ class Main {
             for (Integer i : yearList)
                 System.out.println(i);
 
-            User professorChaos = new User("Seeqwul Encurshun", "email@yo.mama", "hunter2");    //SQL injection attempt
+            User professorChaos = new User("Seeqwul Encurshun', 'BigDoc@abuseme.biz', 'FunPass', 'TheSalt', '1'); -- ", "email@yo.mama", "Passw0rd!");    //SQL injection attempt
             DBM.insertIntoDB(professorChaos);
             DBM.insertIntoDB(new User("Ben", "Ben@gmail.com", "12345"));
             DBM.insertIntoDB(new User("Max", "Max@gmail.com", "12345"));
@@ -71,8 +70,7 @@ class Main {
             e.printStackTrace();
         } finally {
             try {
-                if (dbm != null)
-                    dbm.close();
+                DBM.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
