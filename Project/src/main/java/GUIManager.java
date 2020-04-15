@@ -8,19 +8,19 @@ public class GUIManager extends Application{
 		launch(args);
 	}
 	
-	public static Stage myStage;
+	public static Stage mainStage;
 	
 	//default window set up
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		myStage = primaryStage;
-		myStage.setResizable(false);
-		myStage.setScene(TimelineList_GUI.createListScene()); //will be welcome screen as default - needs to be changed
-		myStage.show();
+		mainStage = primaryStage;
+		mainStage.setScene(LoginAndRegistration_GUI.welcomeScreen()); //default scene
+		mainStage.setResizable(false);
+		mainStage.show();
 	}
 	
 	//is used when swapping scenes inside classes. use the static classes that return scenes
 	public static void swapScene(Scene scene) {
-		myStage.setScene(scene);
+		mainStage.setScene(scene);
 	}
 }

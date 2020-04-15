@@ -1,4 +1,3 @@
-import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -12,31 +11,24 @@ import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-public class LoginAndRegistration_GUI extends Application {
+public class LoginAndRegistration_GUI {
 
+    public static Scene welcomeScreen() {
+        //This is the Start Window
+        GUIManager.mainStage.setTitle("Welcome Screen");
 
-    public static void main(String[] args) {
-        launch(args);
-    }
-
-
-    @Override
-    public void start(Stage primaryStage) throws Exception {
         //This is the Stage for the Login Window
         Stage loginStage = new Stage();
         loginStage.setTitle("Login Screen");
-        loginStage.initOwner(primaryStage);                 //These two lines make sure you can't click back to the Start Window,
+        loginStage.initOwner(GUIManager.mainStage);                 //These two lines make sure you can't click back to the Start Window,
         loginStage.initModality(Modality.WINDOW_MODAL);     //so you can't have 10 Login Windows open at once.
 
         //This is the Stage for the Register Window
         Stage registerStage = new Stage();
         registerStage.setTitle("Register Screen");
-        registerStage.initOwner(primaryStage);              //These are the same as before, prevents the window from losing focus until closed.
+        registerStage.initOwner(GUIManager.mainStage);              //These are the same as before, prevents the window from losing focus until closed.
         registerStage.initModality(Modality.WINDOW_MODAL);  //I don't actually know what Modality is, Google just said this works and it does.
 
-
-        //This is the Start Window
-        primaryStage.setTitle("Welcome Screen");
 
         //This HBox holds the three buttons: Login, Register, and Continue as guest
         HBox menuOptions = new HBox(30);
@@ -65,7 +57,7 @@ public class LoginAndRegistration_GUI extends Application {
 
         //This button does nothing right now. Will eventually let people look at timelines without logging in.
         Button guest = new Button("Continue as guest");
-        guest.setOnAction(event -> System.out.println("The \"Continue as guest\" button has been pressed."));
+        guest.setOnAction(event -> GUIManager.swapScene(Dashboard_GUI.DashboardScreen()));
         guest.setPrefWidth(250);
         guest.setPrefHeight(100);
         guest.setStyle("-fx-background-color: #ffffff; -fx-border-color: #000000; -fx-font-size: 2em; -fx-font-weight: bold");
@@ -79,12 +71,10 @@ public class LoginAndRegistration_GUI extends Application {
         everything.setStyle("-fx-background-color: #9a9a9a;");  //This changes the background color of the whole window.
 
 
-        Scene scene = new Scene(everything, 1300, 750);
-        primaryStage.setScene(scene);
-        primaryStage.show();
+       return new Scene(everything, 1300, 750);
     }
 
-    public static Scene registerScreen() {
+    private static Scene registerScreen() {
         //This GridPane holds all text on the left, all input fields on the right, and the HBox that holds the buttons under the input fields.
         GridPane pane = new GridPane();
         pane.setAlignment(Pos.CENTER);
@@ -94,34 +84,43 @@ public class LoginAndRegistration_GUI extends Application {
         //These are the texts in order from top to bottom
         Text username = new Text("Username");
         username.setStyle("-fx-font-size: 2em;");
-        pane.add(username, 0, 0);
+        pane.add(username, 0, 1);
 
         Text password = new Text("Password");
         password.setStyle("-fx-font-size: 2em;");
-        pane.add(password, 0, 1);
+        pane.add(password, 0, 2);
 
         Text confirmPassword = new Text("Confirm Password");
         confirmPassword.setStyle("-fx-font-size: 2em;");
-        pane.add(confirmPassword, 0, 2);
+        pane.add(confirmPassword, 0, 3);
+
+        Text email = new Text("Email Address");
+        email.setStyle("-fx-font-size: 2em;");
+        pane.add(email, 0, 0);
 
         //This text alerts the user if their inputted information is wrong in any way
         Text errorMessage = new Text();
         errorMessage.setStyle("-fx-font-size: 1em;");
         errorMessage.setWrappingWidth(190);
-        pane.add(errorMessage, 0, 3);
+        pane.add(errorMessage, 0, 4);
 
         //These are the input fields in order from top to bottom
+        final TextField emailInput = new TextField();
+        emailInput.setPrefHeight(30);
+        pane.add(emailInput, 1, 0);
+
         final TextField usernameInput = new TextField();
         usernameInput.setPrefHeight(30);
-        pane.add(usernameInput, 1, 0);
+        pane.add(usernameInput, 1, 1);
 
         final TextField passwordInput = new TextField();
         passwordInput.setPrefHeight(30);
-        pane.add(passwordInput, 1, 1);
+        pane.add(passwordInput, 1, 2);
 
         final TextField confirmPasswordInput = new TextField();
         confirmPasswordInput.setPrefHeight(30);
-        pane.add(confirmPasswordInput, 1, 2);
+        pane.add(confirmPasswordInput, 1, 3);
+
 
         //This button only checks if the passwordInput and confirmPasswordInput fields are the same right now.
         //Will eventually create a User from the inputted data.
@@ -148,16 +147,16 @@ public class LoginAndRegistration_GUI extends Application {
         //This HBox holds the buttons Register and Cancel
         HBox buttons = new HBox(20);
         buttons.getChildren().addAll(register, cancel);
-        pane.add(buttons, 1, 3);
+        pane.add(buttons, 1, 4);
 
         pane.setStyle("-fx-background-color: #9a9a9a;");  //This changes the background color of the whole window.
 
 
 
-        return new Scene(pane, 600, 350);
+        return new Scene(pane, 600, 450);
     }
 
-    public static Scene loginScreen() {
+    private static Scene loginScreen() {
         //This GridPane holds all text on the left, all input fields on the right, and the HBox that holds the buttons under the input fields.
         GridPane pane = new GridPane();
         pane.setAlignment(Pos.CENTER);
