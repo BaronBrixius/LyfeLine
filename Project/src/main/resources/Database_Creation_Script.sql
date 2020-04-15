@@ -1,7 +1,3 @@
-drop database project;
-create schema project;
-use project;
-
 CREATE TABLE `events` (
   `EventID` int NOT NULL AUTO_INCREMENT,
   `EventType` tinyint NOT NULL,
@@ -97,19 +93,18 @@ CREATE TABLE `timelines` (
   UNIQUE KEY `TimelineID_UNIQUE` (`TimelineID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-DELIMITER $$
-CREATE TRIGGER `CreatedDateTime` BEFORE INSERT ON `timelines` FOR EACH ROW
-if ( isnull(new.`CreatedYear`) ) then
- set new.`CreatedYear`=YEAR(NOW());
- set new.`CreatedMonth`=MONTH(NOW());
- set new.`CreatedDay`=DAY(NOW());
- set new.`CreatedHour`=HOUR(NOW());
- set new.`CreatedMinute`=MINUTE(NOW());
- set new.`CreatedSecond`=SECOND(NOW());
- set new.`CreatedMillisecond`=CAST(UNIX_TIMESTAMP(CURTIME(3)) % 1 * 1000 AS unsigned);
-end if;
-$$
-delimiter ;
+
+CREATE TRIGGER CreatedDateTime BEFORE INSERT ON timelines FOR EACH ROW BEGIN
+    if (isnull(new.`CreatedYear`)) then
+        set new.`CreatedYear`=YEAR(NOW());
+        set new.`CreatedMonth`=MONTH(NOW());
+        set new.`CreatedDay`=DAY(NOW());
+        set new.`CreatedHour`=HOUR(NOW());
+        set new.`CreatedMinute`=MINUTE(NOW());
+        set new.`CreatedSecond`=SECOND(NOW());
+        set new.`CreatedMillisecond`=CAST(UNIX_TIMESTAMP(CURTIME(3)) % 1 * 1000 AS unsigned);
+    end if;
+END;
 
 
 -- This part is for populating timelines table with dummy data
