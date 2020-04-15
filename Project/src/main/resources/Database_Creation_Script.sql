@@ -97,19 +97,6 @@ CREATE TABLE `timelines` (
   UNIQUE KEY `TimelineID_UNIQUE` (`TimelineID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-DELIMITER $$
-CREATE TRIGGER `CreatedDateTime` BEFORE INSERT ON `timelines` FOR EACH ROW
-if ( isnull(new.`CreatedYear`) ) then
- set new.`CreatedYear`=YEAR(NOW());
- set new.`CreatedMonth`=MONTH(NOW());
- set new.`CreatedDay`=DAY(NOW());
- set new.`CreatedHour`=HOUR(NOW());
- set new.`CreatedMinute`=MINUTE(NOW());
- set new.`CreatedSecond`=SECOND(NOW());
- set new.`CreatedMillisecond`=CAST(UNIX_TIMESTAMP(CURTIME(3)) % 1 * 1000 AS unsigned);
-end if;
-$$
-delimiter ;
 
 
 -- This part is for populating timelines table with dummy data
@@ -144,13 +131,13 @@ INSERT INTO `timelines`
 `Private`,
 `TimelineOwner`)
 VALUES
-(01 , 12, 'aaa', 'descr0', 'dark', 2000, 5, 20, 4, 43,32,213, 2001, 5, 20, 4, 43,32,213, 2000, 5, 20, 4, 43,32,213, default, 1),
-(02 , 2, 'aaabb', 'descr2', 'dark', 2003, 5, 20, 4, 43,32,213, 2005, 5, 20, 4, 43,32,213, 2003, 5, 20, 4, 43,32,213, default,1),
-(03 , 4, 'bbbbb', 'descr3', 'light', 2004, 5, 20, 4, 43,32,213, 2006, 5, 20, 4, 43,32,213, 2004, 5, 20, 4, 43,32,213, default,2),
-(04 , 17,'bbbcc', 'descr4', 'dark',2007, 5, 20, 4, 43,32,213, 2008, 5, 20, 4, 43,32,213, 2007, 5, 20, 4, 43,32,213, default, 2),
-(05 , 11, 'aaacc', 'descr5', 'light', 2008, 5, 20, 4, 43,32,213, 2009, 5, 20, 4, 43,32,213, 2008, 5, 20, 4, 43,32,213, default,3),
-(06 , 2, 'cccaaa', 'descr6', 'light', 2009, 5, 20, 4, 43,32,213, 2010, 5, 20, 4, 43,32,213, 2009, 5, 20, 4, 43,32,213, default,4),
-(07 , 1, 'aaagra', 'descr7', 'dark', 1990, 5, 20, 4, 43,32,213, 1991, 5, 20, 4, 43,32,213, 1990, 5, 20, 4, 43,32,213, default,1),
-(08 , 59, 'tempus', 'descr8', 'mad', 1500, 5, 20, 4, 43,32,213, 1505, 5, 20, 4, 43,32,213, 2000, 5, 20, 4, 46,32,213, default,5),
-(09 , 22,'fungi', 'descr9', 'dark', 1550, 5, 20, 4, 43,32,213, 1555, 5, 20, 4, 43,32,213, 1550, 5, 20, 4, 43,32,213, default,6),
+(01 , 12, 'aaa', 'descr0', 'dark', 2000, 5, 20, 4, 43,32,213, 2001, 5, 20, 4, 43,32,213,     2000, 5, 20, 4, 43,32,213, default, 1),
+(02 , 2, 'timeline1', 'descr2', 'dark', 2003, 5, 20, 4, 43,32,213, 2005, 5, 20, 4, 43,32,213,2003, 5, 20, 4, 43,32,213, default,1),
+(03 , 4, 'timeline2', 'descr3', 'light', 2004, 5, 20, 4, 43,32,213, 2006, 5, 20, 4, 43,32,213,2003, 5, 20, 3, 43,32,213, default,2),
+(04 , 17,'bbbcc', 'descr4', 'dark',2007, 5, 20, 4, 43,32,213, 2008, 5, 20, 4, 43,32,213,     2007, 5, 20, 4, 43,32,213, default, 2),
+(05 , 11, 'aaacc', 'descr5', 'light', 2008, 5, 20, 4, 43,32,213, 2009, 5, 20, 4, 43,32,213,  2008, 5, 20, 4, 43,32,213, default,3),
+(06 , 2, 'cccaaa', 'descr6', 'light', 2009, 5, 20, 4, 43,32,213, 2010, 5, 20, 4, 43,32,213,  2009, 5, 20, 4, 43,32,213, default,4),
+(07 , 1, 'aaagra', 'descr7', 'dark', 1990, 5, 20, 4, 43,32,213, 1991, 5, 20, 4, 43,32,213,   1990, 5, 20, 4, 43,32,213, default,1),
+(08 , 59, 'tempus', 'descr8', 'mad', 1500, 5, 20, 4, 43,32,213, 1505, 5, 20, 4, 43,32,213,   2000, 5, 20, 4, 46,32,213, default,5),
+(09 , 22,'fungi', 'descr9', 'dark', 1550, 5, 20, 4, 43,32,213, 1555, 5, 20, 4, 43,32,213,    1550, 5, 20, 4, 43,32,213, default,6),
 (10 , 33, 'container', 'descr10', 'barkingmad', 1600, 5, 20, 4, 43,32,213, 1661, 5, 20, 4, 43,32,213, 2016, 5, 20, 4, 43,32,213, default,7);

@@ -8,6 +8,7 @@ import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
@@ -25,24 +26,43 @@ public class Dashboard_GUI {
 
 		// holds timelines from DB
 		ObservableList<Timeline> timelines = FXCollections.observableArrayList();
+		List<Timeline> timelinesFromDB=null;
 		
 		try {
 			PreparedStatement stmt = DBM.conn.prepareStatement("SELECT * FROM timelines");
-			List<Timeline> timelineList = DBM.getFromDB(stmt, new Timeline());
-			for(Timeline t : timelineList) {
-				System.out.println(t.getInfo());
-			}
+			timelinesFromDB = DBM.getFromDB(stmt, new Timeline());
+			
+			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
+		for(Timeline t: timelinesFromDB) {
+			timelines.add(t);
+		}
+		
+		
 		// default sort order
 		timelines.sort((t1, t2) -> (t1.getName().compareTo(t2.getName())));
 
 		// list display of timelines
-		ListView<Timeline> list = new ListView<Timeline>();
-		list.setItems(timelines);
+		ListView<Timeline> list = new ListView<Timeline>(timelines);
+		
+		//approach adapted from https://stackoverflow.com/a/36657553
+		list.setCellFactory(param -> new ListCell<Timeline>() {
+			@Override
+            protected void updateItem(Timeline item, boolean empty) {
+                super.updateItem(item, empty);
+
+                if (empty || item == null || item.getName() == null) {
+                    setText(null);
+                } else {
+                    setText(item.getName());
+                }
+            }
+		});
+		
 		list.setMinWidth(200);
 		list.getSelectionModel().select(0);
 		pane.add(list, 2, 0);
@@ -93,10 +113,10 @@ public class Dashboard_GUI {
 				timelines.sort((t1, t2) -> (t2.getName().compareTo(t1.getName())));
 				break;
 			case 2:
-				timelines.sort((t1, t2) -> (t1.getDateCreated().compareTo(t2.getDateCreated())));
+				timelines.sort((t1, t2) -> (t2.getDateCreated().compareTo(t1.getDateCreated())));
 				break;
 			case 3:
-				timelines.sort((t1, t2) -> (t2.getDateCreated().compareTo(t1.getDateCreated())));
+				timelines.sort((t1, t2) -> (t1.getDateCreated().compareTo(t2.getDateCreated())));
 				break;
 			}
 		});

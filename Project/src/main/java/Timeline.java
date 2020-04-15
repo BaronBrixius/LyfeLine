@@ -119,7 +119,7 @@ public class Timeline implements DBObject<Timeline>{
 		int TimelineID=rs.getInt("TimelineID");
 		String Scale = rs.getString("Scale");
 		String TimelineName = rs.getString("TimelineName");
-		String TimelineDesription = rs.getString("TimelineDesription");
+		String TimelineDesription = rs.getString("TimelineDescription");
 		String Theme = rs.getString("Theme");
 		int StartYear = rs.getInt("StartYear");
 		int StartMonth = rs.getInt("StartMonth");
@@ -151,16 +151,11 @@ public class Timeline implements DBObject<Timeline>{
 				new Date(CreatedYear,CreatedMonth,CreatedDay,CreatedHour,CreatedMinute,CreatedSecond,CreatedMillisecond),
 				TimelineOwner,isPrivate);
 	}
-	
-	public String getInfo() {
-		return "Time line ID: " + timelineID + " Time line Name: " + timelineName + " Time line Description: " + timelineDescription + " Private:" + isPrivate+" Scale:"+scale+" Theme: "+theme+" Start Date: "+startDate+" End Date: "+endDate+" Created: "+dateCreated+" Owner: "+timelineOwner;
-	}
-	
 	@Override
 	public String toString() {
-		return this.timelineName;
+		return "Time line ID: " + timelineID + " Time line Name: " + timelineName + " Time line Description: " + timelineDescription + " Private:" + isPrivate+" Scale:"+scale+" Theme: "+theme+" Start Date: "+startDate+" End Date: "+endDate+" Created: "+dateCreated+" Owner: "+timelineOwner;
 	}
-	
+		
 	@Override
 	public void setID(int id) {
 	this.timelineID=id;
