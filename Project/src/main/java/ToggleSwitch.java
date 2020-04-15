@@ -45,8 +45,6 @@ import javafx.util.Duration;
             trigger.setCenterY(25);
             trigger.setFill(Color.WHITE);
             trigger.setStroke(Color.LIGHTGRAY);
-            
-            
 
             DropShadow shadow = new DropShadow();
             shadow.setRadius(2);
@@ -58,19 +56,14 @@ import javafx.util.Duration;
             getChildren().addAll(background, trigger);
 
             switchedOn.addListener((obs, oldState, newState) -> {
-                boolean isOn = newState.booleanValue();
+                boolean isOn = newState;
                 
                 translateAnimation.setToX(isOn ? 100 - 50 : 0);
                 fillAnimation.setFromValue(isOn ? Color.WHITE : Color.LIGHTGREEN);
                 fillAnimation.setToValue(isOn ? Color.LIGHTGREEN : Color.WHITE);
                
-                if(isOn==true) {
-                	trigger.setFill(Color.WHITE);
-                }
-                
-                if(isOn==false) {
-                	trigger.setFill(Color.DARKRED);
-                }
+                trigger.setFill(isOn ? Color.WHITE : Color.DARKRED);
+
                 animation.play();
             });
 

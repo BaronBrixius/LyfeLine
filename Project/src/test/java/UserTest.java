@@ -35,7 +35,6 @@ class UserTest {
 		User user4 = new User("John", "john4@gmail.com", "somethingCool#4");
 		users[3] = user4;
 		DBM.insertIntoDB(user4);
-
 	}
 
 	@AfterAll
