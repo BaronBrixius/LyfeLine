@@ -61,22 +61,56 @@ CREATE TABLE `users` (
 
 CREATE TABLE `timelines` (
   `TimelineID` int NOT NULL AUTO_INCREMENT,
-  `Scale` nvarchar(100) DEFAULT NULL,
-  `TimelineName` nvarchar(100) DEFAULT NULL,
-  `TimelineDescription` nvarchar(5000) DEFAULT NULL,
-  `Theme` nvarchar(100) DEFAULT NULL,
-  `StartDate` datetime DEFAULT NULL,
-  `Enddate` datetime DEFAULT NULL,
-  `DateCreated` timestamp  DEFAULT CURRENT_TIMESTAMP,
-  `Private` boolean DEFAULT false,
-  `TimelineOwner` nvarchar(100) DEFAULT NULL,
-  PRIMARY KEY (`TimelineID`), 
+  `Scale` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `TimelineName` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `TimelineDescription` varchar(5000) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `Theme` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `StartYear` bigint NOT NULL,
+  `StartMonth` tinyint unsigned NOT NULL,
+  `StartDay` tinyint unsigned NOT NULL,
+  `StartHour` tinyint unsigned NOT NULL,
+  `StartMinute` tinyint unsigned NOT NULL,
+  `StartSecond` tinyint unsigned NOT NULL,
+  `StartMillisecond` smallint unsigned NOT NULL,
+  `EndYear` bigint DEFAULT NULL,
+  `EndMonth` tinyint unsigned DEFAULT NULL,
+  `EndDay` tinyint unsigned DEFAULT NULL,
+  `EndHour` tinyint unsigned DEFAULT NULL,
+  `EndMinute` tinyint unsigned DEFAULT NULL,
+  `EndSecond` tinyint unsigned DEFAULT NULL,
+  `EndMillisecond` smallint unsigned DEFAULT NULL,
+  `CreatedYear` bigint DEFAULT NULL,
+  `CreatedMonth` tinyint unsigned DEFAULT NULL,
+  `CreatedDay` tinyint unsigned DEFAULT NULL,
+  `CreatedHour` tinyint unsigned DEFAULT NULL,
+  `CreatedMinute` tinyint unsigned DEFAULT NULL,
+  `CreatedSecond` tinyint unsigned DEFAULT NULL,
+  `CreatedMillisecond` smallint unsigned DEFAULT NULL,
+  `Private` tinyint(1) DEFAULT '0',
+  `TimelineOwner` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+
+  PRIMARY KEY (`TimelineID`),
   UNIQUE KEY `TimelineID_UNIQUE` (`TimelineID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+DELIMITER $$
+CREATE TRIGGER `CreatedDateTime` BEFORE INSERT ON `timelines` FOR EACH ROW
+if ( isnull(new.`CreatedYear`) ) then
+ set new.`CreatedYear`=YEAR(NOW());
+ set new.`CreatedMonth`=MONTH(NOW());
+ set new.`CreatedDay`=DAY(NOW());
+ set new.`CreatedHour`=HOUR(NOW());
+ set new.`CreatedMinute`=MINUTE(NOW());
+ set new.`CreatedSecond`=SECOND(NOW());
+ set new.`CreatedMillisecond`=CAST(UNIX_TIMESTAMP(CURTIME(3)) % 1 * 1000 AS unsigned);
+end if;
+$$
+delimiter ;
+
+
 -- This part is for populating timelines table with dummy data
 
-INSERT INTO `project`.`timelines`
+/*INSERT INTO `timelines`
 (`TimelineID`,
 `Scale`,
 `TimelineName`,
@@ -97,5 +131,4 @@ VALUES
 (07 , 1, 'aaagra', 'descr7', 'dark', default, default, default, default,'1'),
 (08 , 59, 'tempus', 'descr8', 'mad', default, default, default, default,'5'),
 (09 , 22,'fungi', 'descr9', 'dark', default, default, default, default,'6'),
-(10 , 33, 'container', 'descr10', 'barkingmad', default, default, default, default,'7');
-
+(10 , 33, 'container', 'descr10', 'barkingmad', default, default, default, default,'7');*/

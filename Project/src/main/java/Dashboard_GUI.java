@@ -1,3 +1,7 @@
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.List;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -21,11 +25,17 @@ public class Dashboard_GUI {
 
 		// holds timelines from DB
 		ObservableList<Timeline> timelines = FXCollections.observableArrayList();
-
-		// temporary example timelines until import is working
-		timelines.add(new Timeline("WW2", 3));
-		timelines.add(new Timeline("Z", 4));
-		timelines.add(new Timeline("CVID", 6));
+		
+		try {
+			PreparedStatement stmt = DBM.conn.prepareStatement("SELECT * FROM timelines");
+			List<Timeline> timelineList = DBM.getFromDB(stmt, new Timeline());
+			for(Timeline t : timelineList) {
+				System.out.println(t.getInfo());
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		// default sort order
 		timelines.sort((t1, t2) -> (t1.getName().compareTo(t2.getName())));
@@ -83,10 +93,10 @@ public class Dashboard_GUI {
 				timelines.sort((t1, t2) -> (t2.getName().compareTo(t1.getName())));
 				break;
 			case 2:
-				timelines.sort((t1, t2) -> (Integer.compare(t1.getDate(), t2.getDate())));
+				timelines.sort((t1, t2) -> (t1.getDateCreated().compareTo(t2.getDateCreated())));
 				break;
 			case 3:
-				timelines.sort((t1, t2) -> (Integer.compare(t2.getDate(), t1.getDate())));
+				timelines.sort((t1, t2) -> (t2.getDateCreated().compareTo(t1.getDateCreated())));
 				break;
 			}
 		});

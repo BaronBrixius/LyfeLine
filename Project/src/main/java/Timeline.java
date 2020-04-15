@@ -4,109 +4,173 @@ import java.util.List;
 
 public class Timeline implements DBObject<Timeline>{
 
-	private String name;
-	private int date;
-	private int TimelineID;
-	private String Scale;
-	private String TimelineName;
-	private String Theme;
-	private Date StartDate;
-	private Date Enddate;
-	private Date DateCreated;
-	private String TimelineDescription;
-	private int TimelineOwner;
-	private boolean Private=false;
+	private int timelineID;
+	private String scale;
+	private String timelineName;
+	private String theme;
+	private Date startDate;
+	private Date endDate;
+	private Date dateCreated;
+	private String timelineDescription;
+	private int timelineOwner;
+	private boolean isPrivate=false;
 	private List<Event> eventList;
 
-
-	public Timeline(String name, int date, int TimeLineID, String TimelineName, String TimelineDescription, String Scale, String Theme, Date StartDate, Date Enddate, Date DateCreated, int TimelineOwner, boolean Private) {
-		this.name = name;
-		this.date = date;
-		this.TimelineID=TimeLineID;
-		this.TimelineName=TimelineName;
-		this.Scale=Scale;
-		this.TimelineDescription=TimelineDescription;
-		this.Theme=Theme;
-		this.StartDate=StartDate;
-		this.Enddate=Enddate;
-		this.DateCreated=DateCreated;
-		this.TimelineOwner=TimelineOwner;
-		this.Private=Private;
+	public Timeline() {
+		
 	}
 
-	public String getName() {
-		return name;
+	public Timeline(int TimeLineID, String TimelineName, String TimelineDescription, String Scale, String Theme, Date StartDate, Date Enddate, Date DateCreated, int TimelineOwner, boolean Private) {
+
+		this.timelineID=TimeLineID;
+		this.timelineName=TimelineName;
+		this.scale=Scale;
+		this.timelineDescription=TimelineDescription;
+		this.theme=Theme;
+		this.startDate=StartDate;
+		this.endDate=Enddate;
+		this.dateCreated=DateCreated;
+		this.timelineOwner=TimelineOwner;
+		this.isPrivate=Private;
 	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
 
-	@Override
-	public String toString() {
-		return "Time line ID: " + TimelineID + " Time line Name: " + TimelineName + " Time line Description: " + TimelineDescription + " Private:" + Private+Scale+Theme+StartDate+Enddate+DateCreated+TimelineOwner;
-	}
-
-	public int getDate() {
-		return date;
-	}
-
-	public void setDate(int date) {
-		this.date = date;
-	}
 
 	@Override
 	public PreparedStatement getInsertQuery() throws SQLException {
-		if (TimelineID > 0)
+		if (timelineID > 0)
 			throw new SQLIntegrityConstraintViolationException("TimelineID is already in DB.");
 
-		PreparedStatement out = DBM.conn.prepareStatement("INSERT INTO `timelines` ( `Scale`,`TimelineName`, `TimelineDescription`, `Theme`,`StartDate`,`Enddate`,`DateCreated`,`Private`,`TimelineOwner`) VALUES (?,?,?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
-		out.setString(1, Scale);
-		out.setString(2, TimelineName);
-		out.setString(3, TimelineDescription);
-		out.setString(4, Theme);
-		out.setDate(5, (Date) StartDate);
-		out.setDate(6, (Date) Enddate);
-		out.setDate(7, (Date) DateCreated);
-		out.setBoolean(8, Private);
+		PreparedStatement out = DBM.conn.prepareStatement("INSERT INTO `timelines` ( `Scale`,`TimelineName`, `TimelineDescription`, `Theme`,`StartYear`,`StartMonth`,`StartDay`,`StartHour`"
+				+ ",`StartMinute`,`StartSecond`,`StartMillisecond`,`EndYear`,`EndMonth`,`EndDay`,`EndHour`,`EndMinute`,`EndSecond`,"
+				+ "`EndMillisecond`,`CreatedYear`,`CreatedMonth`,`CreatedDay`,`CreatedHour`,`CreatedMinute`,`CreatedSecond`,`CreatedMillisecond`,"
+				+ "`Private`,`TimelineOwner`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
+		out.setString(1, scale);
+		out.setString(2, timelineName);
+		out.setString(3, timelineDescription);
+		out.setString(4, theme);
+		out.setInt(5, startDate.getYear());
+		out.setInt(6, startDate.getMonth());
+		out.setInt(7, startDate.getDay());
+		out.setInt(8, startDate.getHours());
+		out.setInt(9, startDate.getMinutes());
+		out.setInt(10, startDate.getSeconds());
+		out.setInt(11, startDate.getMilliseconds());
+		out.setInt(12, endDate.getYear());
+		out.setInt(13, endDate.getMonth());
+		out.setInt(14, endDate.getDay());
+		out.setInt(15, endDate.getHours());
+		out.setInt(16, endDate.getMinutes());
+		out.setInt(17, endDate.getSeconds());
+		out.setInt(18, endDate.getMilliseconds());
+		out.setInt(19, dateCreated.getYear());
+		out.setInt(20, dateCreated.getMonth());
+		out.setInt(21, dateCreated.getDay());
+		out.setInt(22, dateCreated.getHours());
+		out.setInt(23, dateCreated.getMinutes());
+		out.setInt(24, dateCreated.getSeconds());
+		out.setInt(25, dateCreated.getMilliseconds());
+		out.setBoolean(26, isPrivate);
+		out.setInt(27, timelineOwner);
 		return out;
 	}
 
 	@Override
 	public PreparedStatement getUpdateQuery() throws SQLException {
-		PreparedStatement out = DBM.conn.prepareStatement("UPDATE `timelines` SET `Scale` = ?, `TimelineName` = ?,  `TimelineDescription` = ?,  `Theme` = ?,  `StartDate` = ?,  `Enddate` = ?,  `DateCreated` = ?,  `Private` = ? WHERE (`TimelineID` = ?)");
-		out.setString(1, Scale);
-		out.setString(2, TimelineName);
-		out.setString(3, TimelineDescription);
-		out.setString(4, Theme);
-		out.setDate(5, (Date) StartDate);
-		out.setDate(6, (Date) Enddate);
-		out.setDate(7, (Date) DateCreated);
-		out.setBoolean(8, Private);
+		PreparedStatement out = DBM.conn.prepareStatement("UPDATE `timelines` SET `Scale` = ?, `TimelineName` = ?, `TimelineDescription` = ?,  `Theme` = ?,   `StartYear` = ?,  `StartMonth` = ?,  `StartDay` = ?,  `StartHour` = ?,  `StartMinute` = ?,  `StartSecond` = ?,  `StartMillisecond` = ?,    `EndYear` = ?,  `EndMonth` = ?,  `EndDay` = ?,  `EndHour` = ?,  `EndMinute` = ?,  `EndSecond` = ?,  `EndMillisecond` = ?,   `CreatedYear` = ?,  `ECreatedMonth` = ?,  `CreatedDay` = ?,  `CreatedHour` = ?,  `CreatedMinute` = ?,  `CreatedSecond` = ?,  `CreatedMillisecond` = ?, `Private` = ? WHERE (`TimelineID` = ?)");
+		out.setString(1, scale);
+		out.setString(2, timelineName);
+		out.setString(3, timelineDescription);
+		out.setString(4, theme);
+		out.setInt(5, startDate.getYear());
+		out.setInt(6, startDate.getMonth());
+		out.setInt(7, startDate.getDay());
+		out.setInt(8, startDate.getHours());
+		out.setInt(9, startDate.getMinutes());
+		out.setInt(10, startDate.getSeconds());
+		out.setInt(11, startDate.getMilliseconds());
+		out.setInt(12, endDate.getYear());
+		out.setInt(13, endDate.getMonth());
+		out.setInt(14, endDate.getDay());
+		out.setInt(15, endDate.getHours());
+		out.setInt(16, endDate.getMinutes());
+		out.setInt(17, endDate.getSeconds());
+		out.setInt(18, endDate.getMilliseconds());
+		out.setInt(19, dateCreated.getYear());
+		out.setInt(20, dateCreated.getMonth());
+		out.setInt(21, dateCreated.getDay());
+		out.setInt(22, dateCreated.getHours());
+		out.setInt(23, dateCreated.getMinutes());
+		out.setInt(24, dateCreated.getSeconds());
+		out.setInt(25, dateCreated.getMilliseconds());
+		out.setBoolean(26, isPrivate);
 		return out;
 	}
 
 	@Override
 	public PreparedStatement getDeleteQuery() throws SQLException {
 		PreparedStatement out = DBM.conn.prepareStatement("DELETE FROM `timelines` WHERE (`TimelineID` = ?)");
-		out.setInt(1, TimelineID);
+		out.setInt(1, timelineID);
 		return out;
 	}
 
 	@Override
-	public void setID(int id) {
-	this.TimelineID=id;
-	}
-
-	@Override
 	public Timeline createFromDB(ResultSet rs) throws SQLException {
-		int TimelineID=rs.getInt("timelineID");
+		int TimelineID=rs.getInt("TimelineID");
 		String Scale = rs.getString("Scale");
-		boolean Private = rs.getBoolean("Private");
 		String TimelineName = rs.getString("TimelineName");
 		String TimelineDesription = rs.getString("TimelineDesription");
 		String Theme = rs.getString("Theme");
-		return new Timeline(name,date,TimelineID,TimelineName, Scale, TimelineDesription, Theme,rs.getDate("`StartDate"),rs.getDate("Enddate"),rs.getDate("DateCreated"),rs.getInt("TimelineOwner"),Private);
+		int StartYear = rs.getInt("StartYear");
+		int StartMonth = rs.getInt("StartMonth");
+		int StartDay = rs.getInt("StartDay");
+		int StartHour = rs.getInt("StartHour");
+		int StartMinute = rs.getInt("StartMinute");
+		int StartSecond = rs.getInt("StartSecond");
+		int StartMillisecond = rs.getInt("StartMillisecond");
+		int EndYear = rs.getInt("EndYear");
+		int EndMonth = rs.getInt("EndMonth");
+		int EndDay = rs.getInt("EndDay");
+		int EndHour = rs.getInt("EndHour");
+		int EndMinute = rs.getInt("EndMinute");
+		int EndSecond = rs.getInt("EndSecond");
+		int EndMillisecond = rs.getInt("EndMillisecond");
+		int CreatedYear = rs.getInt("CreatedYear");
+		int CreatedMonth = rs.getInt("CreatedMonth");
+		int CreatedDay = rs.getInt("CreatedDay");
+		int CreatedHour = rs.getInt("CreatedHour");
+		int CreatedMinute = rs.getInt("CreatedMinute");
+		int CreatedSecond = rs.getInt("CreatedSecond");
+		int CreatedMillisecond = rs.getInt("CreatedMillisecond");
+		int TimelineOwner = rs.getInt("TimelineOwner");
+		boolean isPrivate = rs.getBoolean("Private");
+				
+		return new Timeline(TimelineID,TimelineName,TimelineDesription,Scale,Theme,
+				new Date(StartYear,StartMonth,StartDay,StartHour,StartMinute,StartSecond,StartMillisecond),
+				new Date(EndYear,EndMonth,EndDay,EndHour,EndMinute,EndSecond,EndMillisecond),
+				new Date(CreatedYear,CreatedMonth,CreatedDay,CreatedHour,CreatedMinute,CreatedSecond,CreatedMillisecond),
+				TimelineOwner,isPrivate);
+	}
+	
+	public String getInfo() {
+		return "Time line ID: " + timelineID + " Time line Name: " + timelineName + " Time line Description: " + timelineDescription + " Private:" + isPrivate+" Scale:"+scale+" Theme: "+theme+" Start Date: "+startDate+" End Date: "+endDate+" Created: "+dateCreated+" Owner: "+timelineOwner;
+	}
+	
+	@Override
+	public String toString() {
+		return this.timelineName;
+	}
+	
+	@Override
+	public void setID(int id) {
+	this.timelineID=id;
+	}
+	
+	public String getName() {
+		return this.timelineName;
+	}
 
+	public Date getDateCreated() {
+		return dateCreated;
 	}
 }
