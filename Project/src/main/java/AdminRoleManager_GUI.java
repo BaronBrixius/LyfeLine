@@ -66,11 +66,12 @@ public abstract class AdminRoleManager_GUI extends Application {
 		// background for user information & toggle function
 		Rectangle bg = new Rectangle(300, 240);
 		bg.setFill(Color.WHITE);
-		bg.setStroke(Color.LIGHTGREEN);
+		bg.setStroke(Color.LIGHTBLUE);
+		bg.setStrokeWidth(2);
 		bg.setTranslateX(18);
 		bg.setTranslateY(50);
-		bg.setArcWidth(50);
-		bg.setArcHeight(50);
+		bg.setArcWidth(7);
+		bg.setArcHeight(7);
 		GridPane.setRowSpan(bg, 3);
 
 		// displays status of user (User/ admin)
@@ -97,6 +98,7 @@ public abstract class AdminRoleManager_GUI extends Application {
 		userListView.setEditable(false);
 		userListView.setItems((ObservableList<User>) userList);
 		userListView.setTranslateY(50);
+		userListView.setPrefWidth(300);
 		
 
 		GridPane.setRowSpan(userListView, 3);
@@ -137,19 +139,23 @@ public abstract class AdminRoleManager_GUI extends Application {
 					break;
 				}
 			});
-
+			
+			
 			userListView.getSelectionModel().selectedIndexProperty().addListener(ov -> {
+				
 				textUser.setText(
 						"User: " + userList.get(userListView.getSelectionModel().getSelectedIndex()).getUserEmail());
 
 				toggle.switchedOn.set(userList.get(userListView.getSelectionModel().getSelectedIndex()).getAdmin());
-
 			});
-			userListView.getSelectionModel().select(1);
+			userListView.getSelectionModel().select(0);
 		} catch (IndexOutOfBoundsException ex) {
 
 		}
+		
 
+		
+		
 		pane.add(bg, 0, 2);
 		pane.add(headLine, 0, 0);
 		pane.add(textUser, 0, 2);
@@ -158,6 +164,8 @@ public abstract class AdminRoleManager_GUI extends Application {
 		pane.add(toggle, 0, 4);
 		pane.add(textToggle, 0, 4);
 		pane.add(textStatus, 0, 3);
+		
+		
 
 		return new Scene(pane);
 	}
@@ -220,8 +228,7 @@ public abstract class AdminRoleManager_GUI extends Application {
 					userList.get(userListView.getSelectionModel().getSelectedIndex()).toggleAdmin();
 					DBM.updateInDB(userList.get(userListView.getSelectionModel().getSelectedIndex()));
 				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					
 				}
 			});
 
