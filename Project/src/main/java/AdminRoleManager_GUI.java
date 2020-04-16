@@ -9,6 +9,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -136,31 +137,44 @@ public abstract class AdminRoleManager_GUI extends Application {
 		sortBy.setItems(sortOptions);
 		listOptions.getChildren().addAll(sortBy, searchInput);
 
-		// sort order selection events
-		sortBy.getSelectionModel().selectedIndexProperty().addListener(ov -> {
-			switch (sortBy.getSelectionModel().getSelectedIndex()) {
-			case 0:
-				userList.sort((t1, t2) -> (t1.getUserName().compareTo(t2.getUserName())));
-				break;
-			case 1:
-				userList.sort((t1, t2) -> (t2.getUserName().compareTo(t1.getUserName())));
-				break;
-			case 2:
-				userList.sort((t1, t2) -> (Integer.compare(t1.getUserID(), t2.getUserID())));
-				break;
-			case 3:
-				userList.sort((t1, t2) -> (Integer.compare(t2.getUserID(), t1.getUserID())));
-				break;
-			}
+		//back button
+		Button btnBack = new Button("Back");
+		btnBack.getStyleClass().add("smallButton");
+		btnBack.setOnAction(event -> {
+			GUIManager.swapScene(Dashboard_GUI.DashboardScreen());
+			GUIManager.mainStage.setTitle("Dashboard");
 		});
 
-		userListView.getSelectionModel().selectedIndexProperty().addListener(ov -> {
+		try {
+			// sort order selection events
+			sortBy.getSelectionModel().selectedIndexProperty().addListener(ov -> {
+				switch (sortBy.getSelectionModel().getSelectedIndex()) {
+				case 0:
+					userList.sort((t1, t2) -> (t1.getUserName().compareTo(t2.getUserName())));
+					break;
+				case 1:
+					userList.sort((t1, t2) -> (t2.getUserName().compareTo(t1.getUserName())));
+					break;
+				case 2:
+					userList.sort((t1, t2) -> (Integer.compare(t1.getUserID(), t2.getUserID())));
+					break;
+				case 3:
+					userList.sort((t1, t2) -> (Integer.compare(t2.getUserID(), t1.getUserID())));
+					break;
+				}
+			});
 
-			if (userListView.getSelectionModel().getSelectedIndex() >= 0) {
-				textUser.setText("User: " + userListView.getSelectionModel().getSelectedItem().getUserEmail());
+
+			userListView.getSelectionModel().selectedIndexProperty().addListener(ov -> {
+
+				textUser.setText(
+						"User: " + userList.get(userListView.getSelectionModel().getSelectedIndex()).getUserEmail());
+
 				toggle.switchedOn.set(userList.get(userListView.getSelectionModel().getSelectedIndex()).getAdmin());
 			}
 		});
+
+
 
 		pane.add(bg, 0, 2);
 		pane.add(headLine, 0, 0);
@@ -170,6 +184,7 @@ public abstract class AdminRoleManager_GUI extends Application {
 		pane.add(toggle, 0, 4);
 		pane.add(textToggle, 0, 4);
 		pane.add(textStatus, 0, 3);
+		pane.add(btnBack, 0, 5);
 
 		return new Scene(pane);
 	}

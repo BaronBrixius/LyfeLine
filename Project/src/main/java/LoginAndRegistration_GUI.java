@@ -54,7 +54,11 @@ public class LoginAndRegistration_GUI {
 
         //This button opens the Dashboard Scene in the same window.
         Button guest = new Button("Continue as guest");
-        guest.setOnAction(event -> GUIManager.swapScene(Dashboard_GUI.DashboardScreen()));
+        guest.setOnAction(event -> {
+            GUIManager.swapScene(Dashboard_GUI.DashboardScreen());
+            GUIManager.mainStage.setTitle("Dashboard");
+        });
+
 
         menuOptions.getChildren().addAll(login, register, guest);
 

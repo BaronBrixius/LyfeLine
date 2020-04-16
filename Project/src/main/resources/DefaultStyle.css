@@ -58,6 +58,17 @@ for example:      buttonName.getStyleClass().add("smallButton");                
     -fx-pref-width: 175px;
 }
 
+.smallButton:hover {
+    -fx-background-color: #126c82;
+    -fx-scale-y: 1.1;
+}
+
+
+.logOutButton:hover {
+    -fx-background-color: #ff4251;
+    -fx-scale-y: 1.1;
+}
+
 .smallText{
     -fx-font-size: 1em;
 }
