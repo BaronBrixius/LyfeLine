@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.List;
 import java.sql.*;
 
@@ -19,10 +20,10 @@ public class Timeline implements DBObject<Timeline>{
 		
 	}
 
-	public Timeline(int TimeLineID, String TimelineName, String TimelineDescription, String Scale, String Theme, Date StartDate, Date Enddate, Date DateCreated, int TimelineOwner, boolean Private) {
+	public Timeline(int TimeLineID, String TimelineName, String TimelineDescription, String Scale, String Theme, Date StartDate, Date Enddate, Date DateCreated, int TimelineOwner, boolean Private) throws SQLException {
 
 		this.timelineID=TimeLineID;
-		this.timelineName=TimelineName;
+		setTimelineName(TimelineName, TimelineOwner);
 		this.scale=Scale;
 		this.timelineDescription=TimelineDescription;
 		this.theme=Theme;
@@ -153,6 +154,30 @@ public class Timeline implements DBObject<Timeline>{
 	@Override
 	public String toString() {
 		return "Time line ID: " + timelineID + " Time line Name: " + timelineName + " Time line Description: " + timelineDescription + " Private:" + isPrivate+" Scale:"+scale+" Theme: "+theme+" Start Date: "+startDate+" End Date: "+endDate+" Created: "+dateCreated+" Owner: "+timelineOwner;
+	}
+
+	private boolean validName(String name, int  user) throws SQLException {
+		//Throw exception if no timeline on user in DB
+		PreparedStatement stmt = DBM.conn.prepareStatement("SELECT * FROM timelines WHERE TimelineOwner = ?");
+		stmt.setInt(1,user);
+		ResultSet result = stmt.executeQuery();
+		List<String> timelineNameList = new ArrayList<>();
+		while(result.next()){
+			String timelineName = result.getString("TimelineName");
+			timelineNameList.add(timelineName);
+		}
+		for(int i = 0; i<timelineNameList.size(); i++){
+			if (name.equals(timelineNameList.get(i)))
+				return false;
+		}
+		return true;
+	}
+
+	public void setTimelineName(String name, int userID) throws SQLException, IllegalArgumentException{
+		if (validName(name,userID))
+			this.timelineName = name;
+		else
+			throw new IllegalArgumentException("This user has already a timeline with this name, choose another name or remove the former timeline");
 	}
 		
 	@Override
