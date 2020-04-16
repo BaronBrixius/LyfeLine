@@ -37,7 +37,7 @@ class Main {
 
             User professorChaos = new User("Seeqwul Encurshun', 'BigDoc@abuseme.biz', 'FunPass', 'TheSalt', '1'); -- ", "email@yo.mama", "Passw0rd!");    //SQL injection attempt
             DBM.insertIntoDB(professorChaos);
-
+            //I add 3 timelines manually to get the exception that this user has already this timelinename in it - timeline 2 is good but 3 is the same so exception is thrown
             Timeline test = new Timeline(0, "My timeline", "Very cool timeline", "Month", "pink", new Date(1,0,0,0,0,0,0), new Date(2,0,0,0,0,0,0),  new Date(2,0,0,0,0,0,0), 10, false);
             DBM.insertIntoDB(test);
             Timeline test1 = new Timeline(0, "My other timeline", "Very cool timeline", "Month", "pink", new Date(1,0,0,0,0,0,0), new Date(2,0,0,0,0,0,0),  new Date(2,0,0,0,0,0,0), 10, false);
