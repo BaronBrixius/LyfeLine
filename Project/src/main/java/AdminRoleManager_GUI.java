@@ -191,6 +191,8 @@ public abstract class AdminRoleManager_GUI extends Application {
 		private BooleanProperty switchedOn = new SimpleBooleanProperty(false);
 
 		public AdminToggleSwitch(ObservableList<User> userList) {
+			switchedOn.setValue(userList.get(0).getAdmin());
+
 			Rectangle background = new Rectangle(100, 50);
 			background.setArcWidth(50);
 			background.setArcHeight(50);
@@ -211,6 +213,10 @@ public abstract class AdminRoleManager_GUI extends Application {
 			ParallelTransition animation = new ParallelTransition(translateAnimation, fillAnimation);
 
 			getChildren().addAll(background, trigger);
+
+			trigger.setTranslateX(switchedOn.get() ? 100 - 50 : 0);
+			background.setFill(switchedOn.get() ? Color.LIGHTGREEN : Color.WHITE);
+			trigger.setFill(switchedOn.get() ? Color.DARKRED : Color.WHITE);
 
 			switchedOn.addListener((obs, oldState, newState) -> {
 				setDisable(true);

@@ -67,10 +67,12 @@ public class LoginAndRegistration_GUI {
         logo.setScaleX(.75);
         logo.setScaleY(.75);
 
+        ToggleSwitch toggleSwitch = new ToggleSwitch();
+
 
         //This VBox holds the HBox that holds the buttons, the VBox that holds the the dropdown menus, and the logo
         VBox everything = new VBox(20);
-        everything.getChildren().addAll(dropDownMenus(), menuOptions, logo);
+        everything.getChildren().addAll(dropDownMenus(), menuOptions, toggleSwitch, logo);
         everything.setAlignment(Pos.TOP_CENTER);
 
 

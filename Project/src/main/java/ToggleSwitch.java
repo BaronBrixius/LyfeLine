@@ -30,6 +30,8 @@ public class ToggleSwitch extends Parent {
     public BooleanProperty switchedOn = new SimpleBooleanProperty(false);
 
     public ToggleSwitch() {
+        switchedOn.setValue(true);
+
         Rectangle background = new Rectangle(100, 50);
         background.setArcWidth(50);
         background.setArcHeight(50);
@@ -50,6 +52,12 @@ public class ToggleSwitch extends Parent {
         ParallelTransition animation = new ParallelTransition(translateAnimation, fillAnimation);
 
         getChildren().addAll(background, trigger);
+
+        trigger.setTranslateX(switchedOn.get() ? 100 - 50 : 0);
+        //translateAnimation.setToX(switchedOn.get() ? 100 - 50 : 0);
+        background.setFill(switchedOn.get() ? Color.LIGHTGREEN : Color.WHITE);
+        //fillAnimation.setToValue(switchedOn.get() ? Color.LIGHTGREEN : Color.WHITE);
+        trigger.setFill(switchedOn.get() ? Color.DARKRED : Color.WHITE);
 
         switchedOn.addListener((obs, oldState, newState) -> {
             setDisable(true);
