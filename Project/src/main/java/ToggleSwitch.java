@@ -30,8 +30,6 @@ public class ToggleSwitch extends Parent {
     public BooleanProperty switchedOn = new SimpleBooleanProperty(false);
 
     public ToggleSwitch() {
-        //switchedOn.setValue(true);
-
         Rectangle background = new Rectangle(100, 50);
         background.setArcWidth(50);
         background.setArcHeight(50);
@@ -55,7 +53,7 @@ public class ToggleSwitch extends Parent {
 
         trigger.setTranslateX(switchedOn.get() ? 100 - 50 : 0);
         background.setFill(switchedOn.get() ? Color.LIGHTGREEN : Color.WHITE);
-        trigger.setFill(switchedOn.get() ? Color.DARKRED : Color.WHITE);
+        trigger.setFill(switchedOn.get() ? Color.WHITE : Color.DARKRED);
 
         switchedOn.addListener((obs, oldState, newState) -> {
             setDisable(true);
