@@ -190,7 +190,7 @@ public class LoginAndRegistration_GUI {
         final TextField usernameInput = new TextField();
         pane.add(usernameInput, 1, 0);
 
-        final TextField passwordInput = new TextField();
+        final PasswordField passwordInput = new PasswordField();
         pane.add(passwordInput, 1, 1);
 
         //This button does nothing right now. Will eventually connect the User to their account.
