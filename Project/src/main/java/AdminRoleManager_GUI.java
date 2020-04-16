@@ -10,6 +10,7 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.effect.DropShadow;
@@ -26,7 +27,7 @@ import java.sql.SQLException;
 import java.util.Comparator;
 
 public abstract class AdminRoleManager_GUI extends Application {
-    static ListView<User> userListView;
+	static ListView<User> userListView;
 
 	public static Scene AdminRoleManager() throws SQLException {
 		GridPane pane = new GridPane();
@@ -35,8 +36,8 @@ public abstract class AdminRoleManager_GUI extends Application {
 		pane.setHgap(5);
 		pane.setPadding(new Insets(10, 10, 10, 10));
 
-
-        final ObservableList<User> userList = FXCollections.observableArrayList(DBM.getFromDB(DBM.conn.prepareStatement("SELECT * FROM users "), new User()));
+		final ObservableList<User> userList = FXCollections
+				.observableArrayList(DBM.getFromDB(DBM.conn.prepareStatement("SELECT * FROM users "), new User()));
 
 		// headline
 		final Text headLine = new Text("Role Management");
@@ -89,11 +90,27 @@ public abstract class AdminRoleManager_GUI extends Application {
 		textUser.setTranslateY(50);
 
 		// list display of timelines
-        userListView = new ListView<>();
+		userListView = new ListView<>();
 		userListView.setEditable(false);
+
+		// approach adapted from https://stackoverflow.com/a/36657553
+		userListView.setCellFactory(param -> new ListCell<User>() {
+			@Override
+			protected void updateItem(User item, boolean empty) {
+				super.updateItem(item, empty);
+
+				if (empty || item == null || item.getUserEmail() == null) {
+					setText(null);
+				} else {
+					setText("ID: " + item.getUserID() + " - " + item.getUserEmail());
+				}
+			}
+		});
+
 		userListView.setItems(userList);
 		userListView.setTranslateY(50);
 		userListView.setPrefWidth(300);
+		userListView.getSelectionModel().select(0);
 
 		GridPane.setRowSpan(userListView, 3);
 
@@ -103,6 +120,10 @@ public abstract class AdminRoleManager_GUI extends Application {
 		listOptions.setTranslateY(50);
 		// search field
 		TextField searchInput = new TextField("search here");
+		searchInput.focusedProperty().addListener(ov -> {
+			if (searchInput.isFocused())
+				searchInput.setText("");
+		});
 
 		// sort order selection
 		ComboBox<String> sortBy = new ComboBox<String>();
@@ -115,37 +136,31 @@ public abstract class AdminRoleManager_GUI extends Application {
 		sortBy.setItems(sortOptions);
 		listOptions.getChildren().addAll(sortBy, searchInput);
 
-		try {
-			// sort order selection events
-			sortBy.getSelectionModel().selectedIndexProperty().addListener(ov -> {
-				switch (sortBy.getSelectionModel().getSelectedIndex()) {
-				case 0:
-					userList.sort((t1, t2) -> (t1.getUserName().compareTo(t2.getUserName())));
-					break;
-				case 1:
-					userList.sort((t1, t2) -> (t2.getUserName().compareTo(t1.getUserName())));
-					break;
-				case 2:
-					userList.sort((t1, t2) -> (Integer.compare(t1.getUserID(), t2.getUserID())));
-					break;
-				case 3:
-					userList.sort((t1, t2) -> (Integer.compare(t2.getUserID(), t1.getUserID())));
-					break;
-				}
-			});
+		// sort order selection events
+		sortBy.getSelectionModel().selectedIndexProperty().addListener(ov -> {
+			switch (sortBy.getSelectionModel().getSelectedIndex()) {
+			case 0:
+				userList.sort((t1, t2) -> (t1.getUserName().compareTo(t2.getUserName())));
+				break;
+			case 1:
+				userList.sort((t1, t2) -> (t2.getUserName().compareTo(t1.getUserName())));
+				break;
+			case 2:
+				userList.sort((t1, t2) -> (Integer.compare(t1.getUserID(), t2.getUserID())));
+				break;
+			case 3:
+				userList.sort((t1, t2) -> (Integer.compare(t2.getUserID(), t1.getUserID())));
+				break;
+			}
+		});
 
+		userListView.getSelectionModel().selectedIndexProperty().addListener(ov -> {
 
-			userListView.getSelectionModel().selectedIndexProperty().addListener(ov -> {
-
-				textUser.setText(
-						"User: " + userList.get(userListView.getSelectionModel().getSelectedIndex()).getUserEmail());
-
+			if (userListView.getSelectionModel().getSelectedIndex() >= 0) {
+				textUser.setText("User: " + userListView.getSelectionModel().getSelectedItem().getUserEmail());
 				toggle.switchedOn.set(userList.get(userListView.getSelectionModel().getSelectedIndex()).getAdmin());
-			});
-
-			userListView.getSelectionModel().select(0);
-		} catch (IndexOutOfBoundsException ignored) {
-		}
+			}
+		});
 
 		pane.add(bg, 0, 2);
 		pane.add(headLine, 0, 0);
@@ -201,7 +216,7 @@ public abstract class AdminRoleManager_GUI extends Application {
 				fillAnimation.setFromValue(isOn ? Color.WHITE : Color.LIGHTGREEN);
 				fillAnimation.setToValue(isOn ? Color.LIGHTGREEN : Color.WHITE);
 
-                trigger.setFill(isOn ? Color.WHITE : Color.DARKRED);
+				trigger.setFill(isOn ? Color.WHITE : Color.DARKRED);
 
 				animation.play();
 			});
