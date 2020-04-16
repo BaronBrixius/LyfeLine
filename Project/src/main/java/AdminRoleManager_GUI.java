@@ -218,7 +218,7 @@ public abstract class AdminRoleManager_GUI extends Application {
 				translateAnimation.setToX(newState ? 100 - 50 : 0);
 				fillAnimation.setFromValue(newState ? Color.WHITE : Color.LIGHTGREEN);
 				fillAnimation.setToValue(newState ? Color.LIGHTGREEN : Color.WHITE);
-				trigger.setFill(newState ? Color.WHITE : Color.DARKRED);
+				trigger.setFill(newState ? Color.DARKRED : Color.WHITE);
 
 				animation.play();
 				animation.setOnFinished(e -> setDisable(false));
