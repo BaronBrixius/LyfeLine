@@ -142,6 +142,7 @@ public class User implements Users {
 
     @Override
     public PreparedStatement getDeleteQuery() throws SQLException {
+
         PreparedStatement out = DBM.conn.prepareStatement("DELETE FROM `users` WHERE (`UserID` = ?)");
         out.setInt(1, userID);
         return out;
@@ -152,7 +153,7 @@ public class User implements Users {
         return "User ID: " + userID + " Name: " + userName + " Email: " + userEmail;
     }
 
-    //Two methods for junit test, commented out when not needed
+    //Two methods for junit test only - if I set private, have to learn how to mock them if possible
     public String getEncryptedForTest(){ //This method only when I am testing the getInsertQuery() and getUpdateQuery()
         return this.encryptedPass;
     }
