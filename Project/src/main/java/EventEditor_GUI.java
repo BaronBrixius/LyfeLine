@@ -1,5 +1,6 @@
 import javafx.geometry.Insets;
-import javafx.scene.control.RadioButton;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
@@ -7,26 +8,34 @@ import javafx.scene.text.Text;
 public class EventEditor_GUI extends GridPane {
     private Event event;
 
-    private TextField titleInput = new TextField("Title");
-    private TextField descInput = new TextField("Description");
-    private RadioButton durationInput = new RadioButton();           //does event have a duration?
-
+    TextField title = new TextField("Title");
+    TextField description = new TextField("Description");
+    TextField endDate = new TextField("End Date");          //only a text field for skeleton, will figure best way to enter info later
+    CheckBox hasDuration = new CheckBox();        //does event have a duration?
+    Button saveButton = new Button("Save");
 
     public EventEditor_GUI(Event event) {
         this.event = event;
-        updateDisplay();
 
         this.setVgap(5);
         this.setHgap(5);
-        this.setPadding(new Insets(0, 0, 10, 10));
+        this.setPadding(new Insets(10, 10, 10, 10));
 
-        this.add(new Text("Test Test"), 0, 0);
-        //this.add( = new TextField("search here");)
+        setHasDuration(false);
 
-        this.add(titleInput, 0, 1);
-        this.add(descInput, 0, 2);
-        this.add(durationInput, 0, 3);
+        this.addColumn(0, new Text("Test Test"), title, description, endDate, saveButton);
+        this.add(hasDuration, 1, 3);
 
+        hasDuration.setOnAction(e ->
+            setHasDuration(hasDuration.isSelected()));
+
+
+        updateDisplay();
+    }
+
+    private void setHasDuration(boolean set){
+        endDate.setVisible(set);
+        endDate.setManaged(set);
     }
 
     public boolean changeEvent(int eventID) {
