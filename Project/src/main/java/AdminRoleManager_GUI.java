@@ -137,7 +137,7 @@ public abstract class AdminRoleManager_GUI extends Application {
 		sortBy.setItems(sortOptions);
 		listOptions.getChildren().addAll(sortBy, searchInput);
 
-		//back button
+		// back button
 		Button btnBack = new Button("Back");
 		btnBack.getStyleClass().add("smallButton");
 		btnBack.setOnAction(event -> {
@@ -145,36 +145,33 @@ public abstract class AdminRoleManager_GUI extends Application {
 			GUIManager.mainStage.setTitle("Dashboard");
 		});
 
-		try {
-			// sort order selection events
-			sortBy.getSelectionModel().selectedIndexProperty().addListener(ov -> {
-				switch (sortBy.getSelectionModel().getSelectedIndex()) {
-				case 0:
-					userList.sort((t1, t2) -> (t1.getUserName().compareTo(t2.getUserName())));
-					break;
-				case 1:
-					userList.sort((t1, t2) -> (t2.getUserName().compareTo(t1.getUserName())));
-					break;
-				case 2:
-					userList.sort((t1, t2) -> (Integer.compare(t1.getUserID(), t2.getUserID())));
-					break;
-				case 3:
-					userList.sort((t1, t2) -> (Integer.compare(t2.getUserID(), t1.getUserID())));
-					break;
-				}
-			});
+		// sort order selection events
+		sortBy.getSelectionModel().selectedIndexProperty().addListener(ov -> {
+			switch (sortBy.getSelectionModel().getSelectedIndex()) {
+			case 0:
+				userList.sort((t1, t2) -> (t1.getUserName().compareTo(t2.getUserName())));
+				break;
+			case 1:
+				userList.sort((t1, t2) -> (t2.getUserName().compareTo(t1.getUserName())));
+				break;
+			case 2:
+				userList.sort((t1, t2) -> (Integer.compare(t1.getUserID(), t2.getUserID())));
+				break;
+			case 3:
+				userList.sort((t1, t2) -> (Integer.compare(t2.getUserID(), t1.getUserID())));
+				break;
+			}
+		});
 
+		userListView.getSelectionModel().selectedIndexProperty().addListener(ov -> {
 
-			userListView.getSelectionModel().selectedIndexProperty().addListener(ov -> {
-
+			if (userListView.getSelectionModel().getSelectedIndex() >= 0) {
 				textUser.setText(
 						"User: " + userList.get(userListView.getSelectionModel().getSelectedIndex()).getUserEmail());
 
 				toggle.switchedOn.set(userList.get(userListView.getSelectionModel().getSelectedIndex()).getAdmin());
 			}
 		});
-
-
 
 		pane.add(bg, 0, 2);
 		pane.add(headLine, 0, 0);
