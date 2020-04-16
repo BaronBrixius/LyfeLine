@@ -176,7 +176,7 @@ public class Timeline implements DBObject<Timeline>{
 		//Then check if the new timeline name equals to any of the ones gotten from the DB
 		for(int i = 0; i<timelineNameList.size(); i++){
 			if (name.equals(timelineNameList.get(i)))
-				return false;//this user has this name already as a timeline name in the DB 
+				return false;//this user has this name already as a timeline name in the DB
 		}
 		//If not found in the DB its good and returns true
 		return true;
