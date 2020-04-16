@@ -11,10 +11,11 @@ import static org.junit.jupiter.api.Assertions.*;
 class UserTest {
 	static private DBM sut;
 	static User[] users = new User[4];
+	static User[] user = new User[4];
 
 	@BeforeAll
 	static void init() throws SQLException, IOException, ClassNotFoundException {
-		sut = new DBM("jdbc:mysql://localhost", "Halli", "dragon", "test");
+		sut = new DBM("jdbc:mysql://localhost", "root", "Password123", "project");
 		DBM.setupSchema();
 		createTestDB(); // Adds some rows to the database tables and exports them to .xml, don't need to
 						// run this often
@@ -110,6 +111,7 @@ class UserTest {
 		PreparedStatement out = DBM.conn.prepareStatement(sql   , Statement.RETURN_GENERATED_KEYS);
 		out.setBoolean(1, tester.getAdmin());
 		assertEquals(out.toString() ,tester.getInsertQuery().toString());
+		//Exception testing
 		tester.setID(1);
 		Exception exception = assertThrows(SQLIntegrityConstraintViolationException.class, () -> {
 			tester.getInsertQuery();
@@ -149,15 +151,70 @@ class UserTest {
 		users[1] = users[1].createFromDB(rs);
         assertEquals("lalli@hotmail.com", users[1].getUserEmail());
 
-
 	}
 
 	@Test
 	public void getDeleteQuery() throws SQLException {
+		User testerNotInDB = new User("Halli","halli@hotmail.com", "Th3Mind'5EyE!");
+		//Test exception, if user ID = 0 (not in DB)
+		Exception exception = assertThrows(SQLDataException.class, () -> {
+			testerNotInDB.getDeleteQuery();
+		});
+		String actualMessage = exception.getMessage();
+		String expectedMessage = ("User not in database cannot be updated.");
+		assertTrue(actualMessage.contains(expectedMessage));
 
+		//Ended up comparing the strings from the PreparedStatement created with getInsertQuery and the one created manually by picking the fields from the same user
+		int userID= users[1].getUserID();
+		String sql = "DELETE FROM `users` WHERE (`UserID` = " + userID +")";
+		PreparedStatement out = DBM.conn.prepareStatement(sql , Statement.RETURN_GENERATED_KEYS);
+		assertEquals(out.toString() ,users[1].getDeleteQuery().toString());
 	}
 
 	@Test
 	void testToString() {
+	}
+
+	@Test
+	void isAdmin() throws SQLException{ // test to ensure that admin toggles are being sent to database correctly
+		// set previous users as admin (4 users)
+		users[0].setAdmin(true);
+		users[1].setAdmin(true);
+		users[2].setAdmin(true);
+		users[3].setAdmin(true);
+		DBM.updateInDB(users);
+		// create new users and set them all as admin (now total 8 users)
+		User user1 = new User("John", "john5@gmail.com", "somethingCool#5");
+		user[0] = user1;
+		DBM.insertIntoDB(user1);
+		User user2 = new User("John", "john6@gmail.com", "somethingCool#6");
+		user[1] = user2;
+		DBM.insertIntoDB(user2);
+		User user3 = new User("John", "john7@gmail.com", "somethingCool#7");
+		user[2] = user3;
+		DBM.insertIntoDB(user3);
+		User user4 = new User("John", "john8@gmail.com", "somethingCool#8");
+		user[3] = user4;
+		DBM.insertIntoDB(user4);
+		// generate a list of users from database
+		PreparedStatement stmt1 = DBM.conn.prepareStatement("SELECT * FROM users");
+		List<User> userList = DBM.getFromDB(stmt1, new User());
+		//loop through each user checking if the list from the database matches what their admin status was set to
+		for (int i = 0; i < users.length; i++) {
+			assertEquals(users[i].getAdmin(), userList.get(i).getAdmin());
+		}
+		// remove admin status from the last 4 users
+		user[0].setAdmin(false);
+		user[1].setAdmin(false);
+		user[2].setAdmin(false);
+		user[3].setAdmin(false);
+		DBM.updateInDB(user);
+
+		PreparedStatement stmt2 = DBM.conn.prepareStatement("SELECT * FROM users");
+		List<User> userList1 = DBM.getFromDB(stmt2, new User());
+		//loop through each user checking if the list from the database matches what their admin status was set to
+		for (int i = 0; i < users.length; i++) {
+			assertEquals(users[i].getAdmin(), userList1.get(i).getAdmin());
+		}
 	}
 }
