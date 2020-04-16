@@ -26,19 +26,28 @@ import javafx.util.Duration;
 
 import java.sql.SQLException;
 import java.util.Comparator;
+import java.util.List;
 
 public abstract class AdminRoleManager_GUI extends Application {
 	static ListView<User> userListView;
 
-	public static Scene AdminRoleManager() throws SQLException {
+	public static Scene AdminRoleManager(){
 		GridPane pane = new GridPane();
 
 		pane.setVgap(5);
 		pane.setHgap(5);
 		pane.setPadding(new Insets(10, 10, 10, 10));
 
-		final ObservableList<User> userList = FXCollections
-				.observableArrayList(DBM.getFromDB(DBM.conn.prepareStatement("SELECT * FROM users "), new User()));
+		final ObservableList<User> userList = FXCollections.observableArrayList(); 
+		try {
+			List<User> usersFromDB = DBM.getFromDB(DBM.conn.prepareStatement("SELECT * FROM users "), new User());
+			for(User u : usersFromDB) {
+				userList.add(u);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		// headline
 		final Text headLine = new Text("Role Management");
