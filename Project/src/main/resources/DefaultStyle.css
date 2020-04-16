@@ -31,6 +31,15 @@ Text{
     -fx-pref-height: 30px;
 }
 
+.text-area{
+    -fx-pref-height: 105px;
+    -fx-pref-width: 400px;
+    -fx-wrap-text: true;
+    -fx-translate-y: -10px;
+
+
+}
+
 .menu-item{
 
 }

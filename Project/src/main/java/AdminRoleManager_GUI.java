@@ -28,7 +28,7 @@ import java.sql.SQLException;
 import java.util.Comparator;
 import java.util.List;
 
-public abstract class AdminRoleManager_GUI extends Application {
+public class AdminRoleManager_GUI {
 	static ListView<User> userListView;
 
 	public static Scene AdminRoleManager(){
