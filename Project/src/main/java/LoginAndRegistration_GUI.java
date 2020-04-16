@@ -10,6 +10,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import javax.swing.text.PasswordView;
 import java.sql.SQLException;
 
 public class LoginAndRegistration_GUI {
@@ -67,7 +68,6 @@ public class LoginAndRegistration_GUI {
         logo.setScaleX(.75);
         logo.setScaleY(.75);
 
-
         //This VBox holds the HBox that holds the buttons, the VBox that holds the the dropdown menus, and the logo
         VBox everything = new VBox(20);
         everything.getChildren().addAll(dropDownMenus(), menuOptions, logo);
@@ -111,10 +111,10 @@ public class LoginAndRegistration_GUI {
         final TextField usernameInput = new TextField();
         pane.add(usernameInput, 1, 1);
 
-        final TextField passwordInput = new TextField();
+        final PasswordField passwordInput = new PasswordField();
         pane.add(passwordInput, 1, 2);
 
-        final TextField confirmPasswordInput = new TextField();
+        final PasswordField confirmPasswordInput = new PasswordField();
         pane.add(confirmPasswordInput, 1, 3);
 
 
@@ -190,7 +190,7 @@ public class LoginAndRegistration_GUI {
         final TextField usernameInput = new TextField();
         pane.add(usernameInput, 1, 0);
 
-        final TextField passwordInput = new TextField();
+        final PasswordField passwordInput = new PasswordField();
         pane.add(passwordInput, 1, 1);
 
         //This button does nothing right now. Will eventually connect the User to their account.

@@ -87,7 +87,7 @@ public abstract class AdminRoleManager_GUI extends Application {
 		textStatus.setTranslateX(40);
 		textStatus.setTranslateY(50);
 		textStatus.textProperty()
-				.bind(Bindings.when(toggle.switchedOnProperty()).then("Status: ADMIN").otherwise("Status: USER"));
+				.bind(Bindings.when(toggle.switchedOn).then("Status: ADMIN").otherwise("Status: USER"));
 
 		// default sort order
 		userList.sort(Comparator.comparing(User::getUserName));
@@ -199,47 +199,44 @@ public abstract class AdminRoleManager_GUI extends Application {
 
 		private BooleanProperty switchedOn = new SimpleBooleanProperty(false);
 
-		private TranslateTransition translateAnimation = new TranslateTransition(Duration.seconds(0.25));
-		private FillTransition fillAnimation = new FillTransition(Duration.seconds(0.25));
-
-		private ParallelTransition animation = new ParallelTransition(translateAnimation, fillAnimation);
-
-		public BooleanProperty switchedOnProperty() {
-			return switchedOn;
-		}
-
 		public AdminToggleSwitch(ObservableList<User> userList) {
+			switchedOn.setValue(userList.get(0).getAdmin());
+
 			Rectangle background = new Rectangle(100, 50);
 			background.setArcWidth(50);
 			background.setArcHeight(50);
 			background.setFill(Color.WHITE);
 			background.setStroke(Color.LIGHTGRAY);
 
-			Circle trigger = new Circle(25);
-			trigger.setCenterX(25);
-			trigger.setCenterY(25);
-			trigger.setFill(Color.DARKRED);
+			Circle trigger = new Circle(25, 25, 25);
+			trigger.setFill(Color.WHITE);
 			trigger.setStroke(Color.LIGHTGRAY);
+			trigger.setEffect(new DropShadow(2, Color.valueOf("0x000000ff")));
 
-			DropShadow shadow = new DropShadow();
-			shadow.setRadius(2);
-			trigger.setEffect(shadow);
-
+			TranslateTransition translateAnimation = new TranslateTransition(Duration.seconds(0.25));
 			translateAnimation.setNode(trigger);
+
+			FillTransition fillAnimation = new FillTransition(Duration.seconds(0.25));
 			fillAnimation.setShape(background);
+
+			ParallelTransition animation = new ParallelTransition(translateAnimation, fillAnimation);
 
 			getChildren().addAll(background, trigger);
 
+			trigger.setTranslateX(switchedOn.get() ? 100 - 50 : 0);
+			background.setFill(switchedOn.get() ? Color.LIGHTGREEN : Color.WHITE);
+			trigger.setFill(switchedOn.get() ? Color.WHITE : Color.DARKRED);
+
 			switchedOn.addListener((obs, oldState, newState) -> {
-				boolean isOn = newState;
+				setDisable(true);
 
-				translateAnimation.setToX(isOn ? 100 - 50 : 0);
-				fillAnimation.setFromValue(isOn ? Color.WHITE : Color.LIGHTGREEN);
-				fillAnimation.setToValue(isOn ? Color.LIGHTGREEN : Color.WHITE);
-
-				trigger.setFill(isOn ? Color.WHITE : Color.DARKRED);
+				translateAnimation.setToX(newState ? 100 - 50 : 0);
+				fillAnimation.setFromValue(newState ? Color.WHITE : Color.LIGHTGREEN);
+				fillAnimation.setToValue(newState ? Color.LIGHTGREEN : Color.WHITE);
+				trigger.setFill(newState ? Color.WHITE : Color.DARKRED);
 
 				animation.play();
+				animation.setOnFinished(e -> setDisable(false));
 			});
 
 			setOnMouseClicked(event -> { // add functionality here
