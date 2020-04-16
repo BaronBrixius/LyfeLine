@@ -8,7 +8,7 @@ class Main {
     public static void main(String[] args) {
         PreparedStatement stmt;
         try {
-            new DBM("jdbc:mysql://localhost?useTimezone=true&serverTimezone=UTC", "Halli", "dragon", "project");
+            new DBM();
             DBM.setupSchema();       //destroys + remakes DB with default settings, can comment this out after first run if desired
 
             Event now = new Event(1, 2020, 4, 9);
