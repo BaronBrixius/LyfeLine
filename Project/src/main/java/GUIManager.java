@@ -2,6 +2,7 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.io.PrintWriter;
 import java.sql.SQLException;
 
 public class GUIManager extends Application{
@@ -16,7 +17,7 @@ public class GUIManager extends Application{
 	//default window set up
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-
+		new PrintWriter("test.txt").println("Hello World!");
 		// Used to establish connection to the DB.
 		try {
 			new DBM();
