@@ -216,7 +216,7 @@ public abstract class AdminRoleManager_GUI extends Application {
 
 			trigger.setTranslateX(switchedOn.get() ? 100 - 50 : 0);
 			background.setFill(switchedOn.get() ? Color.LIGHTGREEN : Color.WHITE);
-			trigger.setFill(switchedOn.get() ? Color.DARKRED : Color.WHITE);
+			trigger.setFill(switchedOn.get() ? Color.WHITE : Color.DARKRED);
 
 			switchedOn.addListener((obs, oldState, newState) -> {
 				setDisable(true);
@@ -224,7 +224,7 @@ public abstract class AdminRoleManager_GUI extends Application {
 				translateAnimation.setToX(newState ? 100 - 50 : 0);
 				fillAnimation.setFromValue(newState ? Color.WHITE : Color.LIGHTGREEN);
 				fillAnimation.setToValue(newState ? Color.LIGHTGREEN : Color.WHITE);
-				trigger.setFill(newState ? Color.DARKRED : Color.WHITE);
+				trigger.setFill(newState ? Color.WHITE : Color.DARKRED);
 
 				animation.play();
 				animation.setOnFinished(e -> setDisable(false));
