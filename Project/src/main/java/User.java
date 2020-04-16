@@ -106,12 +106,6 @@ public class User implements Users {
         return new User(userID, name, email, encryptedPass, salt, admin);
     }
 
-    public String getEncryptedForTest(){ //This method only when I am testing the getInsertQuery() and getUpdateQuery()
-        return this.encryptedPass;
-    }
-    public String getSaltForTest(){
-        return this.salt;
-    }
 
     @Override
     public PreparedStatement getInsertQuery() throws SQLException {
@@ -157,4 +151,13 @@ public class User implements Users {
     public String toString() {
         return "User ID: " + userID + " Name: " + userName + " Email: " + userEmail;
     }
+
+    //Two methods for junit test, commented out when not needed
+    public String getEncryptedForTest(){ //This method only when I am testing the getInsertQuery() and getUpdateQuery()
+        return this.encryptedPass;
+    }
+    public String getSaltForTest(){
+        return this.salt;
+    }
+
 }
