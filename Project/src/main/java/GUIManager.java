@@ -9,10 +9,10 @@ public class GUIManager extends Application{
 	public static void main(String[] args) {
 		launch(args);
 	}
-	
+
 	public static Stage mainStage;
 	public static String mainStyle;
-	
+
 	//default window set up
 	@Override
 	public void start(Stage primaryStage) throws Exception {
@@ -20,10 +20,10 @@ public class GUIManager extends Application{
 		// Used to establish connection to the DB.
 		try {
 			new DBM();
-			DBM.setupSchema();
+			//DBM.setupSchema();
 		}
 		catch (SQLException e) {
-			System.out.println("Could not establish the connection to the SQL server");
+			e.printStackTrace();
 		}
 
 		mainStage = primaryStage;
@@ -32,7 +32,7 @@ public class GUIManager extends Application{
 		changeStyle("DefaultStyle");
 		mainStage.show();
 	}
-	
+
 	//is used when swapping scenes inside classes. use the static classes that return scenes
 	public static void swapScene(Scene scene) {
 		mainStage.setScene(scene);
@@ -43,4 +43,5 @@ public class GUIManager extends Application{
 		mainStyle = styleName;
 		mainStage.getScene().getStylesheets().add("File:src/main/resources/"+ mainStyle +".css");
 	}
+
 }
