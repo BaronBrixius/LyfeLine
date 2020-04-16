@@ -156,29 +156,32 @@ public class Timeline implements DBObject<Timeline>{
 		return "Time line ID: " + timelineID + " Time line Name: " + timelineName + " Time line Description: " + timelineDescription + " Private:" + isPrivate+" Scale:"+scale+" Theme: "+theme+" Start Date: "+startDate+" End Date: "+endDate+" Created: "+dateCreated+" Owner: "+timelineOwner;
 	}
 
-	private boolean validName(String name, int  user) throws SQLException {
-		//Throw exception if no timeline on user in DB
-		PreparedStatement stmt = DBM.conn.prepareStatement("SELECT * FROM timelines WHERE TimelineOwner = ?");
-		stmt.setInt(1,user);
-		ResultSet result = stmt.executeQuery();
-		List<String> timelineNameList = new ArrayList<>();
-		while(result.next()){
-			String timelineName = result.getString("TimelineName");
-			timelineNameList.add(timelineName);
-		}
-		for(int i = 0; i<timelineNameList.size(); i++){
-			if (name.equals(timelineNameList.get(i)))
-				return false;
-		}
-		return true;
-	}
-
+	//This method will set the name of the timeline if this user has not timeline with the same name already in the DB
 	public void setTimelineName(String name, int userID) throws SQLException, IllegalArgumentException{
-		if (validName(name,userID))
+		if (validName(name,userID)) //uses this private method for validation
 			this.timelineName = name;
 		else
 			throw new IllegalArgumentException("This user has already a timeline with this name, choose another name or remove the former timeline");
 	}
+   //This method takes the new timeline name and the userID that is creating the line and checks if the name is already in the DB, in relation with this user
+	private boolean validName(String name, int  user) throws SQLException {
+		PreparedStatement stmt = DBM.conn.prepareStatement("SELECT * FROM timelines WHERE TimelineOwner = ?"); //Search the timelinetable for this user
+		stmt.setInt(1,user);
+		ResultSet result = stmt.executeQuery(); //Collect all rows that are connected to this userID
+		List<String> timelineNameList = new ArrayList<>();//List to hold the timeline name strings related to this user ID
+		while(result.next()){ //while the set has next row
+			String timelineName = result.getString("TimelineName"); //get the string from that current row TimelineName column
+			timelineNameList.add(timelineName); //and add it to the Arraylist
+		}
+		//Then check if the new timeline name equals to any of the ones gotten from the DB
+		for(int i = 0; i<timelineNameList.size(); i++){
+			if (name.equals(timelineNameList.get(i)))
+				return false;//this user has this name already as a timeline name in the DB 
+		}
+		//If not found in the DB its good and returns true
+		return true;
+	}
+
 		
 	@Override
 	public void setID(int id) {
