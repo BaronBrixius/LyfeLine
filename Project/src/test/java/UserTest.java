@@ -157,7 +157,7 @@ class UserTest {
 		User testerNotInDB = new User("Halli","halli@hotmail.com", "Th3Mind'5EyE!");
 		//Test exception, if user ID = 0 (not in DB)
 		Exception exception = assertThrows(SQLDataException.class, () -> {
-			testerNotInDB.getUpdateQuery();
+			testerNotInDB.getDeleteQuery();
 		});
 		String actualMessage = exception.getMessage();
 		String expectedMessage = ("User not in database cannot be updated.");

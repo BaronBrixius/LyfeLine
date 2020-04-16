@@ -142,7 +142,8 @@ public class User implements Users {
 
     @Override
     public PreparedStatement getDeleteQuery() throws SQLException {
-
+        if (userID == 0)
+            throw new SQLDataException("User not in database cannot be updated.");
         PreparedStatement out = DBM.conn.prepareStatement("DELETE FROM `users` WHERE (`UserID` = ?)");
         out.setInt(1, userID);
         return out;
