@@ -3,10 +3,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -104,19 +101,60 @@ class UserTest {
 		}
 	}
 
-	@Test
+	@Test //Need to uncomment two methods in User class to let this test work:  getEncryptedForTest() and getSaltForTest()
+		//Might want some integration testing but this is a unit test
 	void getInsertQuery() throws SQLException {
+		//Ended up comparing the strings from the PreparedStatement created with getInsertQuery and the one created manually by picking the fields from the same user
 		User tester = new User("Halli","halli@hotmail.com", "Th3Mind'5EyE!");
-        String sql = "INSERT INTO `users` (`UserName`, `UserEmail`, `Password`, `Salt`, `Admin`) VALUES ('" + tester.getUserName() + "','" + tester.getUserEmail() + "','" + tester.getEncryptedForTest() +"','" + tester.getSaltForTest() + "',?)";
+		String sql = "INSERT INTO `users` (`UserName`, `UserEmail`, `Password`, `Salt`, `Admin`) VALUES ('" + tester.getUserName() + "','" + tester.getUserEmail() + "','" + tester.getEncryptedForTest() +"','" + tester.getSaltForTest() + "',?)";
 		PreparedStatement out = DBM.conn.prepareStatement(sql   , Statement.RETURN_GENERATED_KEYS);
 		out.setBoolean(1, tester.getAdmin());
 		assertEquals(out.toString() ,tester.getInsertQuery().toString());
-		// try right
+		tester.setID(1);
+		Exception exception = assertThrows(SQLIntegrityConstraintViolationException.class, () -> {
+			tester.getInsertQuery();
+		});
+		String actualMessage = exception.getMessage();
+		String expectedMessage = ("User is already in DB.");
+
+		assertTrue(actualMessage.contains(expectedMessage));
+
+	}
+
+	@Test //Need to uncomment two methods in User class to let this test work:  getEncryptedForTest() and getSaltForTest()
+		//will do little integration test here to see if the user gets his email updated (using createFromDB())
+	void getUpdateQuery() throws SQLException {
+		User testerNotInDB = new User("Halli","halli@hotmail.com", "Th3Mind'5EyE!");
+		//Test exception, if user ID = 0 (not in DB)
+		Exception exception = assertThrows(SQLDataException.class, () -> {
+			testerNotInDB.getUpdateQuery();
+		});
+		String actualMessage = exception.getMessage();
+		String expectedMessage = ("User not in database cannot be updated.");
+		assertTrue(actualMessage.contains(expectedMessage));
+
+		// Try updateQuery and see then if createFromDB() fits the changes - integration
+		ResultSet rs;
+		PreparedStatement stmt = DBM.conn.prepareStatement("SELECT * FROM users WHERE userEmail = ?");
+		stmt.setString(1, users[1].getUserEmail());
+		rs = stmt.executeQuery();
+		rs.next();
+		   users[1].setUserEmail("lalli@hotmail.com");
+		   DBM.updateInDB(users[1]); //Now I have updated the email for tester to lalli@hotmail.com, now I will call him by his userID and check if it is updated
+		//Now I recreate that user and see if he has the new email
+		PreparedStatement stmt1 = DBM.conn.prepareStatement("SELECT * FROM users  WHERE userID = ?");
+		stmt1.setInt(1, users[1].getUserID());
+		rs = stmt1.executeQuery();
+		rs.next();
+		users[1] = users[1].createFromDB(rs);
+        assertEquals("lalli@hotmail.com", users[1].getUserEmail());
+
+
 	}
 
 	@Test
-	void getUpdateQuery() {
-		// Try updateQuery and see then if createFromDB() fits the changes
+	public void getDeleteQuery() throws SQLException {
+
 	}
 
 	@Test
