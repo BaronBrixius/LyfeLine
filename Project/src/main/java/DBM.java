@@ -8,9 +8,9 @@ import java.util.Scanner;
 //Database manager class for easier connecting and interacting
 class DBM {
     static private final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
-    static String DB_URL = "jdbc:mysql://localhost";
+    static String DB_URL = "jdbc:mysql://localhost?useTimezone=true&serverTimezone=UTC";
     static String USER = "root";
-    static String PASS = "AJnuHA^8VKHht=uB";
+    static String PASS = "jan2306952431";
     static String SCHEMA = "project";
     static Connection conn = null;
     static String creationScript = "src/main/resources/Database_Creation_Script.sql";
