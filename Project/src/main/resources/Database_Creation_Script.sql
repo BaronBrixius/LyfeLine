@@ -195,11 +195,8 @@ VALUES (01, 12, 'Fall of Rome', 'Out with a wimper, not a bang', 'dark', -350, 5
         43, 32, 213, default, 3),
        (06, 2, 'Bronze Age Collapse', 'When civilization reset', 'light', -13000, 5, 20, 4, 43, 32, 213, 2010, 5, 20, 4, 43, 32, 213, 2009, 5, 20, 4,
         43, 32, 213, default, 4),
-       (07, 1, 'Evolution of Turnips', 'A fascinating look at plantlife', 'dark', -1000000, 5, 20, 4, 43, 32, 213, 1991, 5, 20, 4, 43, 32, 213, 1990, 5, 20, 4, 43,
-        32, 213, default, 1),
-       (08, 59, 'Life of Bacillus', 'Life and times of a bacterium', 'mad', 2020, 5, 20, 4, 43, 32, 213, 1505, 5, 20, 4, 43, 32, 213, 2000, 5, 20, 4, 46,
+       (07, 59, 'Life of Bacillus', 'Life and times of a bacterium', 'mad', 2020, 5, 20, 4, 43, 32, 213, 1505, 5, 20, 4, 43, 32, 213, 2000, 5, 20, 4, 46,
         32, 213, default, 5),
-       (09, 22, 'Decay of Ununoctium', 'Radioactive decay - a study', 'dark', 2020, 5, 20, 4, 43, 32, 213, 1555, 5, 20, 4, 43, 32, 213, 1550, 5, 20, 4, 43,
-        32, 213, default, 6),
-       (10, 33, 'Formation of Earth', 'From the beginning to now', 'barkingmad', -14000000000, 5, 20, 4, 43, 32, 213, 1661, 5, 20, 4, 43, 32, 213, 2016, 5,
-        20, 4, 43, 32, 213, default, 7);
+       (08, 22, 'Decay of Ununoctium', 'Radioactive decay - a study', 'dark', 2020, 5, 20, 4, 43, 32, 213, 1555, 5, 20, 4, 43, 32, 213, 1550, 5, 20, 4, 43,
+        32, 213, default, 6)
+;
