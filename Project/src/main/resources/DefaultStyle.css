@@ -1,0 +1,87 @@
+/*This File holds all the CSS Style commands that are applied to all Nodes in a Scene*/
+
+/*.root applies to everything in a scene and overrides all other commands in this file. Use carefully.*/
+.root{
+    -fx-background-color: #f4f4f4;
+}
+
+/*Text applies to any free floating text, does not apply to text in Buttons, TextFields, etc.
+"-fx-text-fill" does not work here, use "fx-fill" to color the text instead.*/
+Text{
+    -fx-font-size: 1.75em;
+}
+
+/*The following apply to any object of the corresponding name.*/
+.button{
+    -fx-font-size: 2em;
+    -fx-font-weight: bold;
+    -fx-pref-width: 250px;
+    -fx-pref-height: 100px;
+    -fx-text-fill: white;
+    -fx-background-color: #1aa9cd;
+    -fx-background-radius: 222px;
+}
+/*This is what the button looks like when you hover over it*/
+.button:hover {
+    -fx-background-color: #126c82;
+    -fx-scale-y: 1.1;
+}
+
+.text-field{
+    -fx-pref-height: 30px;
+}
+
+.menu-item{
+
+}
+
+.menu-bar{
+    -fx-font-size: 1.1em;
+
+}
+
+.combo-box{
+
+}
+
+.list-view{
+
+}
+
+
+/*The following are custom made presets, and must be applied in the actual code to apply.
+for example:      buttonName.getStyleClass().add("smallButton");                         */
+.smallButton{
+    -fx-font-size: 1.3em;
+    -fx-font-weight: bold;
+    -fx-pref-height: 50px;
+    -fx-pref-width: 175px;
+}
+
+.smallButton:hover {
+    -fx-background-color: #126c82;
+    -fx-scale-y: 1.1;
+}
+
+
+.logOutButton:hover {
+    -fx-background-color: #ff4251;
+    -fx-scale-y: 1.1;
+}
+
+.smallText{
+    -fx-font-size: 1em;
+}
+
+/*Here is a list of useful CSS commands:
+-fx-text-fill: black; (sets text color)
+-fx-font-size: 1.5em; (sets text size)
+-fx-font-family: serif; (sets text font)
+-fx-font-weight: bold; (sets hold bold the text is)
+-fx-font-style: italic; (sets text to be italic)
+-fx-background-color: black; (sets background color)
+-fx-border-color: black; (sets the color of the border for that object)
+-fx-border-width: 2em; (sets the width of the border)
+-fx-border-style: dotted; (makes neat little patterns for the border)
+-fx-focus-color: #000000; (sets the color that highlights the object when it has focus)
+*/

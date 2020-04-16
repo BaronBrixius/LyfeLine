@@ -1,7 +1,9 @@
-import java.sql.ResultSet;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public interface DBObject<T> {
-    T createFromDB(ResultSet rs) throws SQLException;
-    String getInsertQuery() throws SQLException;
+interface DBObject<T> extends CreatableFromDB<T> {
+    PreparedStatement getInsertQuery() throws SQLException;
+    PreparedStatement getUpdateQuery() throws SQLException;
+    PreparedStatement getDeleteQuery() throws SQLException;
+    void setID(int id);
 }
