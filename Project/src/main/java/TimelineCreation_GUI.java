@@ -6,7 +6,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
-public class Timeline_Creation_GUI {
+public class TimelineCreation_GUI {
 
 
 
