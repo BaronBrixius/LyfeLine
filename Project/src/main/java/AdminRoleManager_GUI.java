@@ -9,6 +9,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
@@ -115,6 +116,14 @@ public abstract class AdminRoleManager_GUI extends Application {
 		sortBy.setItems(sortOptions);
 		listOptions.getChildren().addAll(sortBy, searchInput);
 
+		//back button
+		Button btnBack = new Button("Back");
+		btnBack.getStyleClass().add("smallButton");
+		btnBack.setOnAction(event -> {
+			GUIManager.swapScene(Dashboard_GUI.DashboardScreen());
+			GUIManager.mainStage.setTitle("Dashboard");
+		});
+
 		try {
 			// sort order selection events
 			sortBy.getSelectionModel().selectedIndexProperty().addListener(ov -> {
@@ -147,6 +156,8 @@ public abstract class AdminRoleManager_GUI extends Application {
 		} catch (IndexOutOfBoundsException ignored) {
 		}
 
+
+
 		pane.add(bg, 0, 2);
 		pane.add(headLine, 0, 0);
 		pane.add(textUser, 0, 2);
@@ -155,6 +166,7 @@ public abstract class AdminRoleManager_GUI extends Application {
 		pane.add(toggle, 0, 4);
 		pane.add(textToggle, 0, 4);
 		pane.add(textStatus, 0, 3);
+		pane.add(btnBack, 0, 5);
 
 		return new Scene(pane);
 	}

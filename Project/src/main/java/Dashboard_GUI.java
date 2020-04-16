@@ -78,6 +78,7 @@ public class Dashboard_GUI {
 		adminGUI.setOnAction(event->{
 			try {
 				GUIManager.swapScene(AdminRoleManager_GUI.AdminRoleManager());
+				GUIManager.mainStage.setTitle("Admin Manager");
 			} catch (SQLException e) {
 				e.printStackTrace();		//probably annoying, but useful until more final version
 			}
@@ -106,6 +107,17 @@ public class Dashboard_GUI {
 		sortOptions.add("Oldest");
 		sortBy.setItems(sortOptions);
 		listOptions.getChildren().add(sortBy);
+
+
+		Button btnLogOut = new Button("Log Out");
+		btnLogOut.getStyleClass().add("smallButton");
+		btnLogOut.getStyleClass().add("logOutButton");
+		pane.add(btnLogOut, 2, 2);
+
+		btnLogOut.setOnAction(event-> {
+			GUIManager.swapScene(LoginAndRegistration_GUI.welcomeScreen());
+		});
+
 
 		pane.add(listOptions, 1, 0);
 
