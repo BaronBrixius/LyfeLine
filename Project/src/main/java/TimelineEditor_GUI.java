@@ -43,14 +43,26 @@ public class TimelineEditor_GUI extends AnchorPane {
         //These are the input fields from top to bottom.
         titleInput = new TextArea(timeline.getName());
 
-        descriptionInput = new TextArea();//timeline.timelineDescription
+        descriptionInput = new TextArea();  //put timeline.getTimelineDescription, or however it's called, into the constructor.
 
-        keywordsInput = new TextArea();//timeline.timelineKeywords
 
-        startDateInput = new TextArea();
+        StringBuilder keywordsList = new StringBuilder();
+        /*
+        This is how to get the keywords into the TextArea when they are implemented.
+        Store them as a String Array, and append them one by one to a StringBuilder.
+        Append a comma and a space for everyone of them except the last one, then append that one manually.
+
+        for (int i = 0; i < timeline.getKeywords - 1; i++) {
+            keywordsList.append(timeline.getKeywords.get(i) + ", ");
+        }
+        keywordsList.append(timeline.getKeywords.get(timeline.getKeywords.size - 1));
+        */
+        keywordsInput = new TextArea(keywordsList.toString());
+
+        startDateInput = new TextArea();    //timeline.getStartDate
         startDateInput.getStyleClass().addAll("smallTextArea");
 
-        endDateInput = new TextArea();
+        endDateInput = new TextArea();  //timeline.getEndDate
         endDateInput.getStyleClass().addAll("smallTextArea");
 
         ObservableList<String> timeUnits = FXCollections.observableArrayList();
@@ -107,75 +119,5 @@ public class TimelineEditor_GUI extends AnchorPane {
         setRightAnchor(buttons, 5.0);
         setBottomAnchor(buttons, 10.0);
     }
-
-
-
-    //public Scene timelineCreationScreen() {
-//
-    //    //These are the names of the fields from top to bottom.
-    //    Text titleText = new Text("Title");
-    //    Text descriptionText = new Text("Description");
-    //    Text keywordsText = new Text("Keywords");
-    //    Text rangeText = new Text("Range");
-    //    Text timeText = new Text("Time");
-//
-    //    //These are the input fields from top to bottom.
-    //    TextArea titleInput = new TextArea();
-    //    TextArea descriptionInput = new TextArea();
-    //    TextArea keywordsInput = new TextArea();
-    //    TextArea rangeInput = new TextArea();
-    //    TextArea timeInput = new TextArea();
-//
-    //    //This VBox holds all the input fields and their names
-    //    VBox infoFields = new VBox(12);
-    //    infoFields.getChildren().addAll(titleText, titleInput, descriptionText, descriptionInput,
-    //                    keywordsText, keywordsInput, rangeText, rangeInput, timeText, timeInput);
-    //    //Make it a bit smaller to fit nicely into the background rectangle
-    //    infoFields.setScaleX(.9);
-    //    infoFields.setScaleY(.9);
-//
-    //    //This is that background rectangle I was talking about.
-    //    Rectangle background = new Rectangle(0, 0,400,710);
-    //    background.setFill(Color.GRAY);
-    //    background.setStroke(Color.BLACK);
-    //    background.setStrokeWidth(4);
-//
-    //    //This button will eventually finalize the creation of the Timeline.
-    //    Button saveButton = new Button("Save");
-    //    saveButton.setOnAction(event -> System.out.println("The Save button has been pushed."));
-//
-    //    //This button will eventually return to the previous screen without saving anything.
-    //    Button cancelButton = new Button("Cancel");
-    //    cancelButton.setOnAction(event -> System.out.println("The Cancel button has been pushed."));
-//
-    //    //This HBox holds the Save and Cancel buttons.
-    //    HBox buttons = new HBox(5);
-    //    buttons.getChildren().addAll(saveButton, cancelButton);
-//
-    //    //This VBox holds the drop down menus.
-    //    VBox dropDownMenu = LoginAndRegistration_GUI.dropDownMenus();
-//
-//
-    //    //This AnchorPane places everything exactly where it needs to be in relation to the edges of the window.
-    //    AnchorPane pane = new AnchorPane(dropDownMenu, background, infoFields, buttons);
-//
-    //    //The drop down menu runs across the top of the window from left to right.
-    //    AnchorPane.setTopAnchor(dropDownMenu, 0.0);
-    //    AnchorPane.setRightAnchor(dropDownMenu, 0.0);
-    //    AnchorPane.setLeftAnchor(dropDownMenu, 0.0);
-//
-    //    //The background and the information fields are held in the top left of the window.
-    //    AnchorPane.setLeftAnchor(background, 5.0);
-    //    AnchorPane.setTopAnchor(background, 33.0);
-//
-    //    AnchorPane.setTopAnchor(infoFields, 3.0);
-//
-    //    //The buttons are held in the lower right of the window.
-    //    AnchorPane.setRightAnchor(buttons, 5.0);
-    //    AnchorPane.setBottomAnchor(buttons, 10.0);
-//
-//
-    //    return new Scene(pane, 1300, 750);
-    //}
 
 }
