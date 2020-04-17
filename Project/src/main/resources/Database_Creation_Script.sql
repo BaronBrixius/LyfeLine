@@ -77,7 +77,7 @@ CREATE TABLE `users`
 CREATE TABLE `timelines`
 (
     `TimelineID`          int               NOT NULL AUTO_INCREMENT,
-    `Scale`               nvarchar(100)     DEFAULT NULL,
+    `Scale` int DEFAULT NULL,
     `TimelineName`        nvarchar(100)     DEFAULT NULL,
     `TimelineDescription` nvarchar(5000)    DEFAULT NULL,
     `Theme`               nvarchar(100)     DEFAULT NULL,
@@ -106,7 +106,9 @@ CREATE TABLE `timelines`
     `TimelineOwner`       int,
 
     PRIMARY KEY (`TimelineID`),
-    UNIQUE KEY `TimelineID_UNIQUE` (`TimelineID`)
+    UNIQUE KEY `TimelineID_UNIQUE` (`TimelineID`),
+    KEY `FK_Scale` (`Scale`),
+    CONSTRAINT `FK_Scale` FOREIGN KEY (`Scale`) REFERENCES `scale_lookup` (`ID`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_general_ci;
@@ -127,6 +129,13 @@ BEGIN
         set new.`CreatedMillisecond` = CAST(UNIX_TIMESTAMP(CURTIME(3)) % 1 * 1000 AS unsigned);
     end if;
 END;
+
+-- Lookup table for the scale column of timeline table
+CREATE TABLE `scale_lookup` (
+    `ID` int NOT NULL AUTO_INCREMENT,
+    `unit` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+    PRIMARY KEY (`ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
 -- This part is for populating tables with dummy data
