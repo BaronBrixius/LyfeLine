@@ -103,7 +103,7 @@ public class Dashboard_GUI extends GridPane implements GUI_Interface {
 		Button btnLogOut = new Button("Log Out");
 		btnLogOut.getStyleClass().add("smallButton");
 		btnLogOut.getStyleClass().add("logOutButton");
-		add(btnLogOut, 2, 2);
+		this.add(btnLogOut, 2, 2);
 
 		btnLogOut.setOnAction(event -> {
 			GUIManager.swapScene(new LoginAndRegistration_GUI());
