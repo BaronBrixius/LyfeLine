@@ -8,7 +8,7 @@ class Main {
     public static void main(String[] args) {
         PreparedStatement stmt;
         try {
-            new DBM();
+            new DBM("jdbc:mysql://localhost?useTimezone=true&serverTimezone=UTC", "Halli", "dragon", "project");
             DBM.setupSchema();       //destroys + remakes DB with default settings, can comment this out after first run if desired
 
             Event now = new Event(1, 2020, 4, 9);
@@ -41,9 +41,12 @@ class Main {
             Timeline test = new Timeline(0, "My timeline", "Very cool timeline", "Month", "pink", new Date(1,0,0,0,0,0,0), new Date(2,0,0,0,0,0,0),  new Date(2,0,0,0,0,0,0), 10, false);
             DBM.insertIntoDB(test);
             Timeline test1 = new Timeline(0, "My other timeline", "Very cool timeline", "Month", "pink", new Date(1,0,0,0,0,0,0), new Date(2,0,0,0,0,0,0),  new Date(2,0,0,0,0,0,0), 10, false);
-            DBM.insertIntoDB(test1);
-            Timeline test3 = new Timeline(0, "My other timeline", "Very cool timeline", "Month", "pink", new Date(1,0,0,0,0,0,0), new Date(2,0,0,0,0,0,0),  new Date(2,0,0,0,0,0,0), 10, false);
+            DBM.insertIntoDB(test1); //Here are two timelines with same name == ok because I changed userID
+            Timeline test3 = new Timeline(0, "My other timeline", "Very cool timeline", "Month", "pink", new Date(1,0,0,0,0,0,0), new Date(2,0,0,0,0,0,0),  new Date(2,0,0,0,0,0,0), 11, false);
+            DBM.insertIntoDB(test3); //Here are two timelines with same name == NOT OK because I now same  userID and same name
+            Timeline test4 = new Timeline(0, "My other timeline", "Very cool timeline", "Month", "pink", new Date(1,0,0,0,0,0,0), new Date(2,0,0,0,0,0,0),  new Date(2,0,0,0,0,0,0), 11, false);
             DBM.insertIntoDB(test3);
+
 
             User teacher = new User("Hans Ove", "Hans@math.biz", "Passw0rd!");
             if (User.validateUnique("Hans@math.biz"))
