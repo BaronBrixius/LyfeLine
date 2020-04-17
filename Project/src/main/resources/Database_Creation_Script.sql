@@ -73,6 +73,34 @@ CREATE TABLE `users`
   COLLATE = utf8mb4_general_ci;
 
 
+
+-- Lookup table for the scale column of timeline table
+CREATE TABLE `scale_lookup`
+(
+`ID` int NOT NULL AUTO_INCREMENT,
+`unit` nvarchar(20)  NOT NULL,
+PRIMARY KEY (`ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+
+
+
+INSERT INTO `scale_lookup`
+(`ID`,
+ `unit`)
+VALUES (01, 'Seconds'),
+       (02, 'Minutes'),
+       (03, 'Hours'),
+       (04, 'Days'),
+       (05, 'Weeks'),
+       (06, 'Months'),
+       (07, 'Years'),
+       (08, 'Decades')
+;
+
+
+
 -- Code for creating timelines
 CREATE TABLE `timelines`
 (
@@ -130,13 +158,6 @@ BEGIN
     end if;
 END;
 
--- Lookup table for the scale column of timeline table
-CREATE TABLE `scale_lookup` (
-    `ID` int NOT NULL AUTO_INCREMENT,
-    `unit` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-    PRIMARY KEY (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
 
 -- This part is for populating tables with dummy data
 
@@ -192,20 +213,21 @@ INSERT INTO `timelines`
  `StartMinute`, `StartSecond`, `StartMillisecond`, `EndYear`, `EndMonth`, `EndDay`, `EndHour`, `EndMinute`, `EndSecond`,
  `EndMillisecond`, `CreatedYear`, `CreatedMonth`, `CreatedDay`, `CreatedHour`, `CreatedMinute`, `CreatedSecond`,
  `CreatedMillisecond`, `Private`, `TimelineOwner`)
-VALUES (01, 12, 'Fall of Rome', 'Out with a wimper, not a bang', 'dark', -350, 5, 20, 4, 43, 32, 213, 2001, 5, 20, 4, 43, 32, 213, 2000, 5, 20, 4, 43,
+VALUES (01, 1, 'Fall of Rome', 'Out with a wimper, not a bang', 'dark', -350, 5, 20, 4, 43, 32, 213, 2001, 5, 20, 4, 43, 32, 213, 2000, 5, 20, 4, 43,
         32, 213, default, 1),
        (02, 2, 'New Timeline', '', 'dark', 2020, 5, 20, 4, 43, 32, 213, 2005, 5, 20, 4, 43, 32, 213, 2003, 5, 20, 4,
         43, 32, 213, default, 1),
-       (03, 4, 'Hound of Baskervilles', 'Investigation of an attempted murder', 'light', 1902, 5, 20, 4, 43, 32, 213, 2006, 5, 20, 4, 43, 32, 213, 2003, 5, 20, 3,
+       (03, 2, 'Hound of Baskervilles', 'Investigation of an attempted murder', 'light', 1902, 5, 20, 4, 43, 32, 213, 2006, 5, 20, 4, 43, 32, 213, 2003, 5, 20, 3,
         43, 32, 213, default, 2),
-       (04, 17, 'Dr. Strangelove', 'A dark comedy on nuclear war', 'dark', 1987, 5, 20, 4, 43, 32, 213, 2008, 5, 20, 4, 43, 32, 213, 2007, 5, 20, 4, 43,
+       (04, 3, 'Dr. Strangelove', 'A dark comedy on nuclear war', 'dark', 1987, 5, 20, 4, 43, 32, 213, 2008, 5, 20, 4, 43, 32, 213, 2007, 5, 20, 4, 43,
         32, 213, default, 2),
-       (05, 11, 'New Timeline1', '', 'light', 2020, 5, 20, 4, 43, 32, 213, 2009, 5, 20, 4, 43, 32, 213, 2008, 5, 20, 4,
+       (05, 3, 'New Timeline1', '', 'light', 2020, 5, 20, 4, 43, 32, 213, 2009, 5, 20, 4, 43, 32, 213, 2008, 5, 20, 4,
         43, 32, 213, default, 3),
        (06, 2, 'Bronze Age Collapse', 'When civilization reset', 'light', -13000, 5, 20, 4, 43, 32, 213, 2010, 5, 20, 4, 43, 32, 213, 2009, 5, 20, 4,
         43, 32, 213, default, 4),
-       (07, 59, 'Life of Bacillus', 'Life and times of a bacterium', 'mad', 2020, 5, 20, 4, 43, 32, 213, 1505, 5, 20, 4, 43, 32, 213, 2000, 5, 20, 4, 46,
+       (07, 4, 'Life of Bacillus', 'Life and times of a bacterium', 'mad', 2020, 5, 20, 4, 43, 32, 213, 1505, 5, 20, 4, 43, 32, 213, 2000, 5, 20, 4, 46,
         32, 213, default, 5),
-       (08, 22, 'Decay of Ununoctium', 'Radioactive decay - a study', 'dark', 2020, 5, 20, 4, 43, 32, 213, 1555, 5, 20, 4, 43, 32, 213, 1550, 5, 20, 4, 43,
+       (08, 8, 'Decay of Ununoctium', 'Radioactive decay - a study', 'dark', 2020, 5, 20, 4, 43, 32, 213, 1555, 5, 20, 4, 43, 32, 213, 1550, 5, 20, 4, 43,
         32, 213, default, 6)
 ;
+
