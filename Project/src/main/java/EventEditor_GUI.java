@@ -1,41 +1,82 @@
+import javafx.geometry.HPos;
 import javafx.geometry.Insets;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.TextField;
+import javafx.scene.Node;
+import javafx.scene.control.*;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
-import javafx.scene.text.Text;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 
-public class EventEditor_GUI extends GridPane {
+public class EventEditor_GUI extends VBox {
+    Label header = new Label("Event Editor");
+    Label titleLabel = new Label("Title");
+    Label descriptionLabel = new Label("Description");
+    Label startLabel = new Label("Start");
+    Label endLabel = new Label("End");
+    Label imageLabel = new Label("Image");
+    TextField titleInput = new TextField();
+    TextArea descriptionInput = new TextArea();
+    DatePicker startInput = new DatePicker();
+    CheckBox hasDuration = new CheckBox();
+    DatePicker endInput = new DatePicker();             //only a datepicker for skeleton, will figure best way to enter info later
+    ComboBox<String> imageInput = new ComboBox<>();
+    Button uploadButton = new Button("Upload img");     //not sure if good idea, but it's on the sketch
+    Button saveButton = new Button("Save");
+    Button deleteButton = new Button("Delete");
+    Button closeButton = new Button("Close");
     private Event event;
 
-    TextField title = new TextField("Title");
-    TextField description = new TextField("Description");
-    TextField endDate = new TextField("End Date");          //only a text field for skeleton, will figure best way to enter info later
-    CheckBox hasDuration = new CheckBox();        //does event have a duration?
-    Button saveButton = new Button("Save");
+    public EventEditor_GUI() {
+        this(new Event());
+    }
 
     public EventEditor_GUI(Event event) {
-        this.event = event;
+        Label[] labels = new Label[]{titleLabel, descriptionLabel, startLabel, endLabel, imageLabel};
 
-        this.setVgap(5);
-        this.setHgap(5);
-        this.setPadding(new Insets(10, 10, 10, 10));
+        GridPane buttons = new GridPane();
+        buttons.addColumn(0, uploadButton, saveButton, deleteButton);
+        buttons.add(closeButton, 1, 2);
+
+        for (Node b: buttons.getChildren())
+            b.getStyleClass().add("smallButton");
+        saveButton.setPadding(new Insets(50,50,50,50));
+
+        this.event = event;
+        setScaleX(0.9);
+        setScaleY(0.9);
+
+
+        setSpacing(5);
+
+
+
+        hasDuration.setPadding(new Insets(5,0,0,0));
+
+        HBox endHeader = new HBox(50);
+        endHeader.getChildren().addAll(endLabel, hasDuration);
+
+        //HBox bottom
+
+        getChildren().addAll(header,
+                titleLabel, titleInput,
+                descriptionLabel, descriptionInput,
+                startLabel, startInput, endHeader, endInput,
+                imageLabel, imageInput, buttons);
+        //add(closeButton, 1, 13);
+
 
         setHasDuration(false);
 
-        this.addColumn(0, new Text("Test Test"), title, description, endDate, saveButton);
-        this.add(hasDuration, 1, 3);
-
         hasDuration.setOnAction(e ->
-            setHasDuration(hasDuration.isSelected()));
+                setHasDuration(hasDuration.isSelected()));
+
 
 
         updateDisplay();
     }
 
-    private void setHasDuration(boolean set){
-        endDate.setVisible(set);
-        endDate.setManaged(set);
+    private void setHasDuration(boolean set) {
+        endInput.setDisable(!set);
     }
 
     public boolean changeEvent(int eventID) {
@@ -52,6 +93,8 @@ public class EventEditor_GUI extends GridPane {
     }
 
     private boolean updateDisplay() {
+        //populate fields with info from event, or leave blank if new event and such
+
         return false;
     }
 

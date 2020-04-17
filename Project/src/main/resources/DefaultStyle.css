@@ -3,12 +3,17 @@
 /*.root applies to everything in a scene and overrides all other commands in this file. Use carefully.*/
 .root{
     -fx-background-color: #f4f4f4;
+    -fx-spacing: 5px;
 }
 
 /*Text applies to any free floating text, does not apply to text in Buttons, TextFields, etc.
 "-fx-text-fill" does not work here, use "fx-fill" to color the text instead.*/
 Text{
     -fx-font-size: 1.75em;
+}
+
+.label{
+    -fx-padding: 5 0 0 0;
 }
 
 /*The following apply to any object of the corresponding name.*/
@@ -21,6 +26,8 @@ Text{
     -fx-background-color: #1aa9cd;
     -fx-background-radius: 222px;
 }
+
+
 /*This is what the button looks like when you hover over it*/
 .button:hover {
     -fx-background-color: #126c82;

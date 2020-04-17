@@ -154,7 +154,7 @@ public class Timeline implements DBObject<Timeline>{
 	public String toString() {
 		return "Time line ID: " + timelineID + " Time line Name: " + timelineName + " Time line Description: " + timelineDescription + " Private:" + isPrivate+" Scale:"+scale+" Theme: "+theme+" Start Date: "+startDate+" End Date: "+endDate+" Created: "+dateCreated+" Owner: "+timelineOwner;
 	}
-		
+
 	@Override
 	public void setID(int id) {
 	this.timelineID=id;
