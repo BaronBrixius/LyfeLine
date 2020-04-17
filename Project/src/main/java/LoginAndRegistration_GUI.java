@@ -148,8 +148,7 @@ public class LoginAndRegistration_GUI {
                     DBM.insertIntoDB(new User(usernameInput.getText(), emailInput.getText(), passwordInput.getText()));
                     // close the window once successful, and switch do the dashboard
                     ((Node) (event.getSource())).getScene().getWindow().hide();
-                    GUIManager.swapScene(Dashboard_GUI.DashboardScreen());
-                    GUIManager.mainStage.setTitle("Dashboard");
+                    GUIManager.swapScene(LoginAndRegistration_GUI.welcomeScreen());
                 }
             } catch (IllegalArgumentException | SQLException e) {
                 errorMessage.setText(e.getMessage());
