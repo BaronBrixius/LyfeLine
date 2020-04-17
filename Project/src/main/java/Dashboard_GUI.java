@@ -18,7 +18,8 @@ import javafx.scene.layout.VBox;
 public class Dashboard_GUI {
 
 	public static Scene DashboardScreen() {
-
+		//everything including menu bar
+		VBox everything = new VBox();
 		// main layout
 		GridPane pane = new GridPane();
 		pane.setVgap(5);
@@ -109,6 +110,7 @@ public class Dashboard_GUI {
 		pane.add(btnLogOut, 2, 2);
 
 		btnLogOut.setOnAction(event -> {
+			GUIManager.loggedInUser=null;
 			GUIManager.swapScene(LoginAndRegistration_GUI.welcomeScreen());
 		});
 
@@ -133,9 +135,11 @@ public class Dashboard_GUI {
 		});
 
 		pane.setAlignment(Pos.CENTER);
+		
+		everything.getChildren().addAll(LoginAndRegistration_GUI.dropDownMenus(),pane);
 
 		// finalizes and returns scene
-		Scene scene = new Scene(pane, 600, 400);
+		Scene scene = new Scene(everything, 600, 400);
 		return scene;
 
 	}

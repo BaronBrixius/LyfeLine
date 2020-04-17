@@ -56,15 +56,7 @@ public class LoginAndRegistration_GUI {
             registerStage.show();
         });
 
-        //This button opens the Dashboard Scene in the same window.
-        Button guest = new Button("Continue as guest");
-        guest.setOnAction(event -> {
-            GUIManager.swapScene(Dashboard_GUI.DashboardScreen());
-            GUIManager.mainStage.setTitle("Dashboard");
-        });
-
-
-        menuOptions.getChildren().addAll(login, register, guest);
+        menuOptions.getChildren().addAll(login, register);
 
         //This is a picture of the temporary logo. When a permanent logo is settled on, just name it Logo.png, and put it in the resources folder
         ImageView logo = new ImageView(new Image("File:src/main/resources/Logo.png"));
@@ -261,6 +253,8 @@ public class LoginAndRegistration_GUI {
 
     //This method creates the dropdown menus in the top right of most windows
     public static VBox dropDownMenus() {
+    	HBox menus = new HBox();
+    	
         //These are the items in the File dropdown menu
         MenuItem save = new MenuItem("Save");
         save.setOnAction(e -> System.out.println("The \"Save\" menu button has been pressed."));
@@ -290,14 +284,37 @@ public class LoginAndRegistration_GUI {
         //This is the View dropdown menu in the top left
         Menu menuView = new Menu("View");
         menuView.getItems().addAll(viewMode);
-
+        
         //This is the bar that holds the dropdown menus in the top left
         MenuBar bar = new MenuBar();
         bar.getMenus().addAll(menuFile, menuEdit, menuView);
         
-        VBox menus = new VBox();
-        menus.getChildren().addAll(bar);
-        return menus;
+        //spacer approach adapted from https://stackoverflow.com/a/39282816
+
+        //spacer to push the loggedInText to the right of the screen
+        Region spacer = new Region();
+        spacer.getStyleClass().add("menu-bar");
+        HBox.setHgrow(spacer, Priority.SOMETIMES);
+        
+        //This is the bar that holds the logged-in-info
+        MenuBar loggedInBar = new MenuBar(); 
+        
+        //set text depending on login session
+        Menu loggedInText = new Menu();
+        if(null==GUIManager.loggedInUser) {
+        	loggedInText.setText("Not logged in");
+        }
+        else loggedInText.setText("Logged in as: "+GUIManager.loggedInUser.getUserEmail());
+        
+        loggedInText.setDisable(true);
+        loggedInBar.getMenus().add(loggedInText);
+        
+        menus.getChildren().addAll(bar,spacer,loggedInBar);
+        
+        VBox vbox = new VBox();
+        vbox.getChildren().addAll(menus);
+        
+        return vbox;
     }
 
 }

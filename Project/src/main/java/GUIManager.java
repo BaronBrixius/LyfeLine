@@ -23,7 +23,7 @@ public class GUIManager extends Application{
 		// Used to establish connection to the DB.
 		try {
 			new DBM();
-			DBM.setupSchema();
+			//DBM.setupSchema();
 		}
 		catch (SQLException e) {
 			e.printStackTrace();
