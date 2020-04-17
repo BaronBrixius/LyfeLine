@@ -11,7 +11,10 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import javax.swing.text.PasswordView;
+
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.List;
 
 public class LoginAndRegistration_GUI {
 
@@ -179,11 +182,17 @@ public class LoginAndRegistration_GUI {
         pane.setVgap(50);
 
         //These are the texts in order from top to bottom
-        Text username = new Text("Username");
+        Text username = new Text("Email");
         pane.add(username, 0, 0);
 
         Text password = new Text("Password");
         pane.add(password, 0, 1);
+        
+      //This text alerts the user if their inputted information is wrong in any way
+        Text errorMessage = new Text();
+        errorMessage.setWrappingWidth(100);
+        errorMessage.getStyleClass().add("smallText");
+        pane.add(errorMessage, 0, 2);
 
         //These are the input fields in order from top to bottom
         final TextField usernameInput = new TextField();
@@ -192,9 +201,48 @@ public class LoginAndRegistration_GUI {
         final PasswordField passwordInput = new PasswordField();
         pane.add(passwordInput, 1, 1);
 
-        //This button does nothing right now. Will eventually connect the User to their account.
+        //log in button
         Button login = new Button("Login");
-        login.setOnAction(event -> System.out.println("The \"Login\" button has been pressed."));
+        login.setOnAction(event -> {
+        	
+        	//Reset the error message if the input fields match after getting the error
+            errorMessage.setText("");
+            
+        	try {
+				if(usernameInput.getText().trim().equals("")||passwordInput.getText().trim().equals("")){ //invalid inputs
+					errorMessage.setText("Username or password invalid!");
+				}
+				else { //valid inputs
+					PreparedStatement stmt = DBM.conn.prepareStatement("SELECT * FROM users WHERE userEmail = ?");
+					stmt.setString(1, usernameInput.getText());
+					//list of users that match the input email (hopefully length 1)
+					List<User> dbResult = DBM.getFromDB(stmt, new User());
+					if(dbResult.size()>1) throw new SQLException("Multiple users found, something went horribly wrong, contact tech support!");
+					else if(dbResult.size()==0) { //no user found
+						errorMessage.setText("Email not found in database!");
+					}
+					else { //user found, time for password check
+						User user = dbResult.get(0);
+							
+						boolean isValid = user.verifyPass(passwordInput.getText(), user.getEncrypted(), user.getSalt());
+						
+						if(!isValid) {
+							errorMessage.setText("Invalid password!");
+						}
+						else { //log in!!!
+							GUIManager.loggedInUser=user;
+							((Node) (event.getSource())).getScene().getWindow().hide();
+		                    GUIManager.swapScene(Dashboard_GUI.DashboardScreen());
+						}
+					}
+					
+					
+					
+				}
+			} catch (SQLException e) {
+				errorMessage.setText(e.getMessage());
+			}
+        });
         login.getStyleClass().add("smallButton");
 
         //This button closes the Login window

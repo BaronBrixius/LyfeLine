@@ -31,7 +31,7 @@ import java.util.List;
 public abstract class AdminRoleManager_GUI extends Application {
 	static ListView<User> userListView;
 
-	public static Scene AdminRoleManager(){
+	public static Scene AdminRoleManager() {
 		GridPane pane = new GridPane();
 
 		pane.setVgap(5);
