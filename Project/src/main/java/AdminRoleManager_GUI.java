@@ -28,15 +28,14 @@ import java.sql.SQLException;
 import java.util.Comparator;
 import java.util.List;
 
-public class AdminRoleManager_GUI {
-	static ListView<User> userListView;
+public class AdminRoleManager_GUI extends GridPane implements GUI_Interface {
+	private ListView<User> userListView;
 
-	public static Scene AdminRoleManager(){
-		GridPane pane = new GridPane();
+	public AdminRoleManager_GUI(){
 
-		pane.setVgap(5);
-		pane.setHgap(5);
-		pane.setPadding(new Insets(10, 10, 10, 10));
+		this.setVgap(5);
+		this.setHgap(5);
+		this.setPadding(new Insets(10, 10, 10, 10));
 
 		final ObservableList<User> userList = FXCollections.observableArrayList(); 
 		try {
@@ -150,8 +149,7 @@ public class AdminRoleManager_GUI {
 		Button btnBack = new Button("Back");
 		btnBack.getStyleClass().add("smallButton");
 		btnBack.setOnAction(event -> {
-			GUIManager.swapScene(Dashboard_GUI.DashboardScreen());
-			GUIManager.mainStage.setTitle("Dashboard");
+			GUIManager.swapScene(new Dashboard_GUI());
 		});
 
 		// sort order selection events
@@ -182,20 +180,24 @@ public class AdminRoleManager_GUI {
 			}
 		});
 
-		pane.add(bg, 0, 2);
-		pane.add(headLine, 0, 0);
-		pane.add(textUser, 0, 2);
-		pane.add(listOptions, 4, 2);
-		pane.add(userListView, 4, 3);
-		pane.add(toggle, 0, 4);
-		pane.add(textToggle, 0, 4);
-		pane.add(textStatus, 0, 3);
-		pane.add(btnBack, 0, 5);
+		this.add(bg, 0, 2);
+		this.add(headLine, 0, 0);
+		this.add(textUser, 0, 2);
+		this.add(listOptions, 4, 2);
+		this.add(userListView, 4, 3);
+		this.add(toggle, 0, 4);
+		this.add(textToggle, 0, 4);
+		this.add(textStatus, 0, 3);
+		this.add(btnBack, 0, 5);
 
-		return new Scene(pane);
 	}
 
-	static class AdminToggleSwitch extends ToggleSwitch {
+	@Override
+	public String getWindowName() {
+		return "Admin Manager";
+	}
+
+	private class AdminToggleSwitch extends ToggleSwitch {
 
 		private BooleanProperty switchedOn = new SimpleBooleanProperty(false);
 

@@ -11,6 +11,12 @@ Text{
     -fx-font-size: 1.75em;
 }
 
+.label{
+    -fx-font-size: 1.6em;
+    -fx-font-weight: bold;
+    -fx-text-fill: black;
+}
+
 /*The following apply to any object of the corresponding name.*/
 .button{
     -fx-font-size: 2em;
@@ -25,6 +31,7 @@ Text{
 .button:hover {
     -fx-background-color: #126c82;
     -fx-scale-y: 1.1;
+
 }
 
 .text-field{
@@ -36,17 +43,23 @@ Text{
     -fx-pref-width: 400px;
     -fx-wrap-text: true;
     -fx-translate-y: -10px;
+    -fx-font-size: 15px;
+}
 
+.smallTextArea{
+    -fx-pref-height: 40px;
 
 }
 
 .menu-item{
-
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
 }
 
 .menu-bar{
-    -fx-font-size: 1.1em;
-
+    -fx-font-size: .55em;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
 }
 
 .combo-box{

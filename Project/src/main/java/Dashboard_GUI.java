@@ -15,15 +15,14 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 
-public class Dashboard_GUI {
+public class Dashboard_GUI extends GridPane implements GUI_Interface {
 
-	public static Scene DashboardScreen() {
+	public Dashboard_GUI() {
 
 		// main layout
-		GridPane pane = new GridPane();
-		pane.setVgap(5);
-		pane.setHgap(5);
-		pane.setPadding(new Insets(10, 10, 10, 10));
+		this.setVgap(5);
+		this.setHgap(5);
+		this.setPadding(new Insets(10, 10, 10, 10));
 
 		// holds timelines from DB
 		ObservableList<Timeline> timelines = FXCollections.observableArrayList();
@@ -64,7 +63,7 @@ public class Dashboard_GUI {
 
 		list.setMinWidth(200);
 		list.getSelectionModel().select(0);
-		pane.add(list, 2, 0);
+		this.add(list, 2, 0);
 
 		// layout of dashboard options / only for scene switch purposes for now
 		VBox dashboardOptions = new VBox();
@@ -74,11 +73,9 @@ public class Dashboard_GUI {
 		adminGUI.setMinWidth(150);
 		dashboardOptions.getChildren().add(adminGUI);
 		adminGUI.setOnAction(event -> {
-			GUIManager.swapScene(AdminRoleManager_GUI.AdminRoleManager());
-			GUIManager.mainStage.setTitle("Admin Manager");
-
+			GUIManager.swapScene(new AdminRoleManager_GUI());
 		});
-		pane.add(dashboardOptions, 0, 0);
+		this.add(dashboardOptions, 0, 0);
 
 		// layout of column to the left of the listview
 		VBox listOptions = new VBox();
@@ -106,13 +103,13 @@ public class Dashboard_GUI {
 		Button btnLogOut = new Button("Log Out");
 		btnLogOut.getStyleClass().add("smallButton");
 		btnLogOut.getStyleClass().add("logOutButton");
-		pane.add(btnLogOut, 2, 2);
+		this.add(btnLogOut, 2, 2);
 
 		btnLogOut.setOnAction(event -> {
-			GUIManager.swapScene(LoginAndRegistration_GUI.welcomeScreen());
+			GUIManager.swapScene(new LoginAndRegistration_GUI());
 		});
 
-		pane.add(listOptions, 1, 0);
+		this.add(listOptions, 1, 0);
 
 		// sort order selection events
 		sortBy.getSelectionModel().selectedIndexProperty().addListener(ov -> {
@@ -132,12 +129,12 @@ public class Dashboard_GUI {
 			}
 		});
 
-		pane.setAlignment(Pos.CENTER);
-
-		// finalizes and returns scene
-		Scene scene = new Scene(pane, 600, 400);
-		return scene;
+		this.setAlignment(Pos.CENTER);
 
 	}
 
+	@Override
+	public String getWindowName() {
+		return "Dashboard";
+	}
 }
