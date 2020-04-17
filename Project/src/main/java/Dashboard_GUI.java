@@ -6,6 +6,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -13,7 +14,11 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 public class Dashboard_GUI {
 
@@ -103,14 +108,7 @@ public class Dashboard_GUI {
 		sortBy.setItems(sortOptions);
 		listOptions.getChildren().add(sortBy);
 
-		Button btnLogOut = new Button("Log Out");
-		btnLogOut.getStyleClass().add("smallButton");
-		btnLogOut.getStyleClass().add("logOutButton");
-		pane.add(btnLogOut, 2, 2);
-
-		btnLogOut.setOnAction(event -> {
-			GUIManager.swapScene(LoginAndRegistration_GUI.welcomeScreen());
-		});
+		
 
 		pane.add(listOptions, 1, 0);
 
@@ -133,11 +131,81 @@ public class Dashboard_GUI {
 		});
 
 		pane.setAlignment(Pos.CENTER);
+		
+		
+		// Delete timeline button
+		Button btnDelete = new Button("Delete");
+		btnDelete.getStyleClass().add("smallButton");
+		btnDelete.getStyleClass().add("logOutButton");
+		pane.add(btnDelete, 2, 2);
+		
+		// Popup confirmation
+		Stage delConfirm = new Stage();
+        delConfirm.setTitle("Confirm Deletion");
+        delConfirm.initOwner(GUIManager.mainStage);                
+        delConfirm.initModality(Modality.WINDOW_MODAL); 
+        delConfirm.setResizable(false);
+        
+       btnDelete.setOnAction(event -> {
+            delConfirm.setScene(deletePopup(list.getSelectionModel().getSelectedItem().getName()));
+            delConfirm.getScene().getStylesheets().add("File:src/main/resources/"+ GUIManager.mainStyle +".css");
+            delConfirm.show();
+        });
+        
+        
+		// Log out, returns to main menu
+		Button btnLogOut = new Button("Log Out");
+		btnLogOut.getStyleClass().add("smallButton");
+		btnLogOut.getStyleClass().add("logOutButton");
+		pane.add(btnLogOut, 0, 2);
 
+		btnLogOut.setOnAction(event -> {
+			GUIManager.swapScene(LoginAndRegistration_GUI.welcomeScreen());
+		});	
+		
+		
+		
+		
 		// finalizes and returns scene
 		Scene scene = new Scene(pane, 600, 400);
 		return scene;
 
+	}
+	
+	private static Scene deletePopup(String timelineName) {
+		//Layout 
+		HBox hboxButton = new HBox();
+		VBox vboxText = new VBox();
+		
+		
+		//Confirmation text
+		Text displayTxt = new Text("Delete timeline " + timelineName + "?");
+		vboxText.getChildren().add(displayTxt);
+		vboxText.setPadding(new Insets(10, 10, 10, 10));
+		displayTxt.setWrappingWidth(550);
+		
+		
+		//Buttons to select
+		Button btnConfirm = new Button("Confirm");
+		btnConfirm.getStyleClass().add("popupButton");
+		btnConfirm.getStyleClass().add("hoverRed");
+		hboxButton.getChildren().add(btnConfirm);
+		
+		Button btnCancel = new Button("Cancel");
+		btnCancel.getStyleClass().add("popupButton");
+		btnCancel.setOnAction(event -> ((Node)(event.getSource())).getScene().getWindow().hide());
+		hboxButton.getChildren().add(btnCancel);
+		hboxButton.setSpacing(75);
+		hboxButton.setPadding(new Insets(10, 20, 10, 10));
+		hboxButton.setAlignment(Pos.CENTER);
+		
+		
+		//Extra scene params
+		vboxText.getChildren().add(hboxButton);
+		vboxText.setAlignment(Pos.CENTER);
+		
+		
+		return new Scene(vboxText, 600, 100);
 	}
 
 }

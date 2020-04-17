@@ -190,7 +190,7 @@ public abstract class AdminRoleManager_GUI extends Application {
 		pane.add(toggle, 0, 4);
 		pane.add(textToggle, 0, 4);
 		pane.add(textStatus, 0, 3);
-		pane.add(btnBack, 0, 5);
+		pane.add(btnBack, 0, 8);
 
 		return new Scene(pane);
 	}

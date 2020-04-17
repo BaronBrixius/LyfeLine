@@ -191,7 +191,7 @@ VALUES (01, 12, 'Fall of Rome', 'Out with a wimper, not a bang', 'dark', -350, 5
         43, 32, 213, default, 2),
        (04, 17, 'Dr. Strangelove', 'A dark comedy on nuclear war', 'dark', 1987, 5, 20, 4, 43, 32, 213, 2008, 5, 20, 4, 43, 32, 213, 2007, 5, 20, 4, 43,
         32, 213, default, 2),
-       (05, 11, 'New Timeline1', '', 'light', 2020, 5, 20, 4, 43, 32, 213, 2009, 5, 20, 4, 43, 32, 213, 2008, 5, 20, 4,
+       (05, 11, 'Incredibly, Wastefully Long Timeline Name', '', 'light', 2020, 5, 20, 4, 43, 32, 213, 2009, 5, 20, 4, 43, 32, 213, 2008, 5, 20, 4,
         43, 32, 213, default, 3),
        (06, 2, 'Bronze Age Collapse', 'When civilization reset', 'light', -13000, 5, 20, 4, 43, 32, 213, 2010, 5, 20, 4, 43, 32, 213, 2009, 5, 20, 4,
         43, 32, 213, default, 4),
