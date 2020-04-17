@@ -290,7 +290,6 @@ public class LoginAndRegistration_GUI {
         bar.getMenus().addAll(menuFile, menuEdit, menuView);
         
         //spacer approach adapted from https://stackoverflow.com/a/39282816
-
         //spacer to push the loggedInText to the right of the screen
         Region spacer = new Region();
         spacer.getStyleClass().add("menu-bar");
@@ -299,6 +298,8 @@ public class LoginAndRegistration_GUI {
         //This is the bar that holds the logged-in-info
         MenuBar loggedInBar = new MenuBar(); 
         
+        
+        
         //set text depending on login session
         Menu loggedInText = new Menu();
         if(null==GUIManager.loggedInUser) {
@@ -306,8 +307,14 @@ public class LoginAndRegistration_GUI {
         }
         else loggedInText.setText("Logged in as: "+GUIManager.loggedInUser.getUserEmail());
         
-        loggedInText.setDisable(true);
+        
+        
+        
+        //loggedInText.setDisable(true);
+        
+        
         loggedInBar.getMenus().add(loggedInText);
+        loggedInBar.setStyle("-fx-accent: transparent");
         
         menus.getChildren().addAll(bar,spacer,loggedInBar);
         
@@ -316,5 +323,4 @@ public class LoginAndRegistration_GUI {
         
         return vbox;
     }
-
 }

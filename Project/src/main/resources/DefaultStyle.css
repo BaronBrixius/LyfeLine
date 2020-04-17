@@ -73,6 +73,11 @@ for example:      buttonName.getStyleClass().add("smallButton");                
     -fx-font-size: 1em;
 }
 
+
+
+
+
+
 /*Here is a list of useful CSS commands:
 -fx-text-fill: black; (sets text color)
 -fx-font-size: 1.5em; (sets text size)
