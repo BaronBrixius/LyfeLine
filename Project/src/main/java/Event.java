@@ -3,6 +3,7 @@ import java.util.List;
 
 class Event implements DBObject<Event> {
     int eventID = 0;
+    private String eventName = "New Event";
     private int eventType;
     private int startYear;
     private int startMonth;
