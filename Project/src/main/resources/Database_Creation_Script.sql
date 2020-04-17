@@ -18,7 +18,7 @@ CREATE TABLE `events`
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_general_ci;
 
-
+--groups and groupevents wont be used, here for explanation only
 CREATE TABLE `groups`
 (
     `GroupID`          int              NOT NULL AUTO_INCREMENT,
@@ -43,7 +43,7 @@ CREATE TABLE `groups`
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_general_ci;
 
-
+--groups and groupevent wont be used, here for explanation only
 CREATE TABLE `groupevents`
 (
     `GroupID` int NOT NULL,
@@ -111,6 +111,17 @@ CREATE TABLE `timelines`
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_general_ci;
 
+CREATE TABLE `timelineevents`
+(
+    `TimelineID` int NOT NULL,
+    `EventID` int NOT NULL,
+    PRIMARY KEY (`TimelineID`, `EventID`),
+    KEY `fk_timelineevents_events1_idx` (`EventID`),
+    CONSTRAINT `fk_timelineevents_events1` FOREIGN KEY (`EventID`) REFERENCES `events` (`EventID`),
+    CONSTRAINT `fk_timelineevents_timelines` FOREIGN KEY (`TimelineID`) REFERENCES `timelines` (`TimelineID`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_general_ci;
 
 CREATE TRIGGER CreatedDateTime
     BEFORE INSERT
