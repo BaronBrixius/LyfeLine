@@ -187,6 +187,7 @@ public abstract class AdminRoleManager_GUI extends Application {
 		
 		VBox userListBox = new VBox();
 		userListBox.setSpacing(10);
+		userListBox.setPadding(new Insets(10, 10, 10, 10));
 		userListBox.getChildren().addAll(sortBy,searchInput,userListView);
 		
 		pane.add(userInfo, 0, 0);
