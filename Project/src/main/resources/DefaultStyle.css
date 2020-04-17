@@ -31,6 +31,7 @@ Text{
 .button:hover {
     -fx-background-color: #126c82;
     -fx-scale-y: 1.1;
+
 }
 
 .text-field{
@@ -47,17 +48,18 @@ Text{
 
 .smallTextArea{
     -fx-pref-height: 40px;
-    -fx-pref-width: 400px;
-    -fx-wrap-text: true;
-    -fx-translate-y: -10px;
+
 }
 
 .menu-item{
-
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
 }
 
 .menu-bar{
     -fx-font-size: .55em;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
 }
 
 .combo-box{

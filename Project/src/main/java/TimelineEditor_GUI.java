@@ -1,30 +1,11 @@
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
-public class TimelineEditor_GUI extends AnchorPane {
-
-    //These are the names of the fields from top to bottom.
-    private Label titleText;
-    private Label descriptionText;
-    private Label keywordsText;
-    private Label startDateText;
-    private Label endDateText;
-    private Label timeText;
-
-    //These are the input fields from top to bottom.
-    private TextArea titleInput;
-    private TextArea descriptionInput;
-    private TextArea keywordsInput;
-    private TextArea startDateInput;
-    private TextArea endDateInput;
-    private ComboBox<String> timeInput;
+public class TimelineEditor_GUI extends AnchorPane implements GUI_Interface {
 
     public TimelineEditor_GUI() {
         this(new Timeline());
@@ -33,22 +14,22 @@ public class TimelineEditor_GUI extends AnchorPane {
     public TimelineEditor_GUI(Timeline timeline) {
 
         //These are the names of the fields from top to bottom.
-        titleText = new Label("Title");
-        descriptionText = new Label("Description");
-        keywordsText = new Label("Keywords");
-        startDateText = new Label("Start Date");
-        endDateText = new Label("End Date");
-        timeText = new Label("Time Units");
+        Label titleText = new Label("Title");
+        Label descriptionText = new Label("Description");
+        Label keywordsText = new Label("Keywords");
+        Label startDateText = new Label("Start Date");
+        Label endDateText = new Label("End Date");
+        Label timeText = new Label("Time Units");
 
         //These are the input fields from top to bottom.
-        titleInput = new TextArea(timeline.getName());
+        TextArea titleInput = new TextArea(timeline.getName());
 
-        descriptionInput = new TextArea();  //put timeline.getTimelineDescription, or however it's called, into the constructor.
+        TextArea descriptionInput = new TextArea();  //put timeline.getTimelineDescription, or however it's called, into the constructor.
 
 
         StringBuilder keywordsList = new StringBuilder();
         /*
-        This is how to get the keywords into the TextArea when they are implemented.
+        This is how I'm assuming the keywords get into the TextArea when they are implemented.
         Store them as a String Array, and append them one by one to a StringBuilder.
         Append a comma and a space for everyone of them except the last one, then append that one manually.
 
@@ -57,17 +38,17 @@ public class TimelineEditor_GUI extends AnchorPane {
         }
         keywordsList.append(timeline.getKeywords.get(timeline.getKeywords.size - 1));
         */
-        keywordsInput = new TextArea(keywordsList.toString());
+        TextArea keywordsInput = new TextArea(keywordsList.toString());
 
-        startDateInput = new TextArea();    //timeline.getStartDate
+        TextArea startDateInput = new TextArea();    //timeline.getStartDate in constructor
         startDateInput.getStyleClass().addAll("smallTextArea");
 
-        endDateInput = new TextArea();  //timeline.getEndDate
+        TextArea endDateInput = new TextArea();  //timeline.getEndDate in constructor
         endDateInput.getStyleClass().addAll("smallTextArea");
 
         ObservableList<String> timeUnits = FXCollections.observableArrayList();
         timeUnits.addAll("Seconds", "Minutes", "Hours", "Days", "Years");
-        timeInput = new ComboBox<>(timeUnits);
+        ComboBox<String> timeInput = new ComboBox<>(timeUnits);
 
 
 
@@ -75,7 +56,8 @@ public class TimelineEditor_GUI extends AnchorPane {
         VBox infoFields = new VBox(12);
         infoFields.getChildren().addAll(titleText, titleInput, descriptionText, descriptionInput,
                 keywordsText, keywordsInput, startDateText, startDateInput, endDateText, endDateInput, timeText, timeInput);
-        //Make it a bit smaller to fit nicely into the background rectangle
+
+        //Make it a bit smaller to fit nicely into the background rectangle, I'll make it pretty later I promise.
         infoFields.setScaleX(.9);
         infoFields.setScaleY(.9);
 
@@ -89,20 +71,18 @@ public class TimelineEditor_GUI extends AnchorPane {
         Button saveButton = new Button("Save");
         saveButton.setOnAction(event -> System.out.println("The Save button has been pushed."));
 
-        //This button will eventually return to the previous screen without saving anything.
+        //This button returns to the previous screen without saving anything.
         Button cancelButton = new Button("Cancel");
-        cancelButton.setOnAction(event -> System.out.println("The Cancel button has been pushed."));
+        cancelButton.setOnAction(event -> GUIManager.swapScene(new LoginAndRegistration_GUI()));
 
         //This HBox holds the Save and Cancel buttons.
         HBox buttons = new HBox(5);
         buttons.getChildren().addAll(saveButton, cancelButton);
 
         //This VBox holds the drop down menus.
-        VBox dropDownMenu = LoginAndRegistration_GUI.dropDownMenus();
+        VBox dropDownMenu = new DropDownMenu();
 
-
-
-        getChildren().addAll(dropDownMenu, background, infoFields, buttons);
+        this.getChildren().addAll(dropDownMenu, background, infoFields, buttons);
 
         //The drop down menu runs across the top of the window from left to right.
         setTopAnchor(dropDownMenu, 0.0);
@@ -118,6 +98,52 @@ public class TimelineEditor_GUI extends AnchorPane {
         //The buttons are held in the lower right of the window.
         setRightAnchor(buttons, 5.0);
         setBottomAnchor(buttons, 10.0);
+    }
+
+    @Override
+    public String getWindowName() {
+        return "Timeline Editor";
+    }
+
+    public class DropDownMenu extends VBox {
+        //This method creates the dropdown menus in the top right of most windows
+        public DropDownMenu() {
+            //These are the items in the File dropdown menu
+            MenuItem save = new MenuItem("Save");
+            save.setOnAction(e -> System.out.println("The \"Save\" menu button has been pressed."));
+
+            MenuItem delete = new MenuItem("Delete");
+            delete.setOnAction(e -> System.out.println("The \"Delete\" menu button has been pressed."));
+
+            MenuItem zoom = new MenuItem("Zoom");
+            zoom.setOnAction(e -> System.out.println("The \"Zoom\" menu button has been pressed."));
+
+            //This is the File dropdown menu in the top left
+            Menu menuFile = new Menu("File");
+            menuFile.getItems().addAll(save, delete, zoom);
+
+            //This is the only item in the Edit dropdown menu
+            MenuItem editMode = new MenuItem("Edit Mode");
+            editMode.setOnAction(e -> System.out.println("The \"Edit Mode\" menu button has been pressed."));
+
+            //This is the Edit dropdown menu in the top left
+            Menu menuEdit = new Menu("Edit");
+            menuEdit.getItems().addAll(editMode);
+
+            //This is the only item in the View dropdown menu
+            MenuItem viewMode = new MenuItem("View Mode");
+            viewMode.setOnAction(e -> System.out.println("The \"View Mode\" menu button has been pressed."));
+
+            //This is the View dropdown menu in the top left
+            Menu menuView = new Menu("View");
+            menuView.getItems().addAll(viewMode);
+
+            //This is the bar that holds the dropdown menus in the top left
+            MenuBar bar = new MenuBar();
+            bar.getMenus().addAll(menuFile, menuEdit, menuView);
+
+            getChildren().addAll(bar);
+        }
     }
 
 }
