@@ -42,13 +42,22 @@ Text{
     -fx-pref-width: 400px;
     -fx-wrap-text: true;
     -fx-translate-y: -10px;
+    -fx-font-size: 15px;
+}
 
+.smallTextArea{
+    -fx-pref-height: 40px;
+    -fx-pref-width: 400px;
+    -fx-wrap-text: true;
+    -fx-translate-y: -10px;
+}
+
+.menu-item{
 
 }
 
 .menu-bar{
     -fx-font-size: .55em;
-
 }
 
 .combo-box{

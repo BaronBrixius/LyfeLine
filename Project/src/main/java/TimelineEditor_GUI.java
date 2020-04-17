@@ -1,11 +1,12 @@
-import javafx.scene.Scene;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Text;
 
 public class TimelineEditor_GUI extends AnchorPane {
 
@@ -13,15 +14,17 @@ public class TimelineEditor_GUI extends AnchorPane {
     private Label titleText;
     private Label descriptionText;
     private Label keywordsText;
-    private Label rangeText;
+    private Label startDateText;
+    private Label endDateText;
     private Label timeText;
 
     //These are the input fields from top to bottom.
     private TextArea titleInput;
     private TextArea descriptionInput;
     private TextArea keywordsInput;
-    private TextArea rangeInput;
-    private TextArea timeInput;
+    private TextArea startDateInput;
+    private TextArea endDateInput;
+    private ComboBox<String> timeInput;
 
     public TimelineEditor_GUI() {
         this(new Timeline());
@@ -33,25 +36,33 @@ public class TimelineEditor_GUI extends AnchorPane {
         titleText = new Label("Title");
         descriptionText = new Label("Description");
         keywordsText = new Label("Keywords");
-        rangeText = new Label("Range");
-        timeText = new Label("Time");
+        startDateText = new Label("Start Date");
+        endDateText = new Label("End Date");
+        timeText = new Label("Time Units");
 
         //These are the input fields from top to bottom.
         titleInput = new TextArea(timeline.getName());
 
-        descriptionInput = new TextArea();//timelineDescription
+        descriptionInput = new TextArea();//timeline.timelineDescription
 
-        keywordsInput = new TextArea();
+        keywordsInput = new TextArea();//timeline.timelineKeywords
 
-        rangeInput = new TextArea();
+        startDateInput = new TextArea();
+        startDateInput.getStyleClass().addAll("smallTextArea");
 
-        timeInput = new TextArea();
+        endDateInput = new TextArea();
+        endDateInput.getStyleClass().addAll("smallTextArea");
+
+        ObservableList<String> timeUnits = FXCollections.observableArrayList();
+        timeUnits.addAll("Seconds", "Minutes", "Hours", "Days", "Years");
+        timeInput = new ComboBox<>(timeUnits);
+
 
 
         //This VBox holds all the input fields and their names
         VBox infoFields = new VBox(12);
         infoFields.getChildren().addAll(titleText, titleInput, descriptionText, descriptionInput,
-                keywordsText, keywordsInput, rangeText, rangeInput, timeText, timeInput);
+                keywordsText, keywordsInput, startDateText, startDateInput, endDateText, endDateInput, timeText, timeInput);
         //Make it a bit smaller to fit nicely into the background rectangle
         infoFields.setScaleX(.9);
         infoFields.setScaleY(.9);
