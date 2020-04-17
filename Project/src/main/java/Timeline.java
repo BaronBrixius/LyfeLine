@@ -164,15 +164,11 @@ public class Timeline implements DBObject<Timeline>{
 			throw new IllegalArgumentException("This user has already a timeline with this name, choose another name or remove the former timeline");
 	}
    //This method takes the new timeline name and the userID that is creating the line and checks if the name is already in the DB, in relation with this user
+
 	private boolean validName(String name, int  user) throws SQLException {
-		PreparedStatement stmt = DBM.conn.prepareStatement("SELECT * FROM timelines WHERE TimelineOwner = ?"); //Search the timelinetable for this user
+		PreparedStatement stmt = DBM.conn.prepareStatement("SELECT * FROM timelines WHERE TimelineOwner = ?");
 		stmt.setInt(1,user);
-		ResultSet result = stmt.executeQuery(); //Collect all rows that are connected to this userID
-		List<String> timelineNameList = new ArrayList<>();//List to hold the timeline name strings related to this user ID
-		while(result.next()){ //while the set has next row
-			String timelineName = result.getString("TimelineName"); //get the string from that current row TimelineName column
-			timelineNameList.add(timelineName); //and add it to the Arraylist
-		}
+		List<String> timelineNameList = DBM.getFromDB(stmt, rs -> rs.getString("TimelineName"));
 		//Then check if the new timeline name equals to any of the ones gotten from the DB
 		for(int i = 0; i<timelineNameList.size(); i++){
 			if (name.equals(timelineNameList.get(i)))
