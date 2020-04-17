@@ -12,6 +12,11 @@ Text{
     -fx-font-size: 1.75em;
 }
 
+GridPane {
+    -fx-vgap: 5px;
+    -fx-hgap: 5px;
+}
+
 .label{
     -fx-padding: 5 0 0 0;
 }
