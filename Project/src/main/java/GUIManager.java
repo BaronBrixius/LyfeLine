@@ -18,13 +18,13 @@ public class GUIManager extends Application{
 	public void start(Stage primaryStage) throws Exception {
 
 		// Used to establish connection to the DB.
-		/*try {
+		try {
 			new DBM();
 			DBM.setupSchema();
 		}
 		catch (SQLException e) {
 			e.printStackTrace();
-		}*/
+		}
 
 		mainStage = primaryStage;
 		//mainStage.setScene(LoginAndRegistration_GUI.welcomeScreen()); 	//default scene
