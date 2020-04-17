@@ -5,7 +5,7 @@
     -fx-background-color: #f4f4f4;
 }
 
-/*Text applies to any free floating text, does not apply to text in Buttons, TextFields, etc.
+/*Text applies to any free floating text (inc. TextField), does not apply to text in Buttons, etc.
 "-fx-text-fill" does not work here, use "fx-fill" to color the text instead.*/
 Text{
     -fx-font-size: 1.75em;
@@ -71,6 +71,10 @@ for example:      buttonName.getStyleClass().add("smallButton");                
 
 .smallText{
     -fx-font-size: 1em;
+}
+
+.mediumText{
+	-fx-font-size: 1.5em;
 }
 
 
