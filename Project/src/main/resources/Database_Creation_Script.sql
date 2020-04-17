@@ -6,15 +6,34 @@ CREATE TABLE `events` (
   `StartYear` bigint NOT NULL,
   `StartMonth` tinyint unsigned NOT NULL,
   `StartDay` tinyint unsigned NOT NULL,
-  `StartTime` time DEFAULT NULL,
+  `StartHour` tinyint unsigned  NULL,
+  `StartMinute` tinyint unsigned  NULL,
+  `StartSecond` tinyint unsigned  NULL,
+  `StartMillisecond` smallint unsigned  NULL,
   `EndYear` bigint DEFAULT NULL,
   `EndMonth` tinyint unsigned DEFAULT NULL,
   `EndDay` tinyint unsigned DEFAULT NULL,
-  `EndTime` time DEFAULT NULL,
+  `EndHour` tinyint unsigned DEFAULT NULL,
+  `EndMinute` tinyint unsigned DEFAULT NULL,
+  `EndSecond` tinyint unsigned DEFAULT NULL,
+  `EndMillisecond` smallint unsigned DEFAULT NULL,
+  `CreatedYear` bigint DEFAULT NULL,
+  `CreatedMonth` tinyint unsigned DEFAULT NULL,
+  `CreatedDay` tinyint unsigned DEFAULT NULL,
+  `CreatedHour` tinyint unsigned DEFAULT NULL,
+  `CreatedMinute` tinyint unsigned DEFAULT NULL,
+  `CreatedSecond` tinyint unsigned DEFAULT NULL,
+  `CreatedMillisecond` smallint unsigned DEFAULT NULL,
   PRIMARY KEY (`EventID`),
   UNIQUE KEY `EventID_UNIQUE` (`EventID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+CREATE TABLE `Images` (
+ `ImageID` int NOT NULL AUTO_INCREMENT,
+ `ImageULR` character(500) DEFAULT NULL,
+  PRIMARY KEY (`ImageID`),
+  UNIQUE KEY `ImageID_UNIQUE` (`ImageID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 CREATE TABLE `groups` (
   `GroupID` int NOT NULL AUTO_INCREMENT,
