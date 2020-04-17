@@ -173,39 +173,32 @@ public class Dashboard_GUI {
 	}
 	
 	private static Scene deletePopup(String timelineName) {
-		//Layout 
-		HBox hboxButton = new HBox();
-		VBox vboxText = new VBox();
-		
-		
-		//Confirmation text
-		Text displayTxt = new Text("Delete timeline " + timelineName + "?");
-		vboxText.getChildren().add(displayTxt);
-		vboxText.setPadding(new Insets(10, 10, 10, 10));
-		displayTxt.setWrappingWidth(550);
-		
-		
-		//Buttons to select
+		// Row 1 - Info Text
+		Text displayTxt = new Text("Delete Timeline " + timelineName + "?");
+
+		// Row 2 - Buttons Hbox
 		Button btnConfirm = new Button("Confirm");
 		btnConfirm.getStyleClass().add("popupButton");
 		btnConfirm.getStyleClass().add("hoverRed");
-		hboxButton.getChildren().add(btnConfirm);
+		btnConfirm.setOnAction(event -> ((Node)(event.getSource())).getScene().getWindow().hide());
 		
 		Button btnCancel = new Button("Cancel");
 		btnCancel.getStyleClass().add("popupButton");
 		btnCancel.setOnAction(event -> ((Node)(event.getSource())).getScene().getWindow().hide());
-		hboxButton.getChildren().add(btnCancel);
-		hboxButton.setSpacing(75);
-		hboxButton.setPadding(new Insets(10, 20, 10, 10));
-		hboxButton.setAlignment(Pos.CENTER);
-		
+
+		HBox hboxButtons = new HBox();
+		hboxButtons.setSpacing(75);
+		hboxButtons.setAlignment(Pos.CENTER);
+		hboxButtons.getChildren().addAll(btnConfirm, btnCancel);
 		
 		//Extra scene params
-		vboxText.getChildren().add(hboxButton);
-		vboxText.setAlignment(Pos.CENTER);
-		
-		
-		return new Scene(vboxText, 600, 100);
+		VBox layout = new VBox();
+		layout.setPadding(new Insets(20, 20, 20, 20));
+		layout.setSpacing(35);
+		layout.setAlignment(Pos.CENTER);
+		layout.getChildren().addAll(displayTxt, hboxButtons);
+
+		return new Scene(layout);
 	}
 
 }
