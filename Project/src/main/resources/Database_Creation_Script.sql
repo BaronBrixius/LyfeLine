@@ -115,8 +115,7 @@ CREATE TABLE `timelineevents`
 (
     `TimelineID` int NOT NULL,
     `EventID` int NOT NULL,
-    PRIMARY KEY (`TimelineID`, `EventID`),
-    KEY `fk_timelineevents_events1_idx` (`EventID`),
+    CONSTRAINT `pK_timelinesevent` PRIMARY KEY (eventID,timelineID),
     CONSTRAINT `fk_timelineevents_events1` FOREIGN KEY (`EventID`) REFERENCES `events` (`EventID`),
     CONSTRAINT `fk_timelineevents_timelines` FOREIGN KEY (`TimelineID`) REFERENCES `timelines` (`TimelineID`)
 ) ENGINE = InnoDB
