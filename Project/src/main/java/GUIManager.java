@@ -28,7 +28,7 @@ public class GUIManager extends Application{
 
 		mainStage = primaryStage;
 		//mainStage.setScene(LoginAndRegistration_GUI.welcomeScreen()); //default scene
-		mainStage.setScene(TimelineCreation_GUI.timelineCreationScreen());
+		mainStage.setScene(new Scene(new TimelineEditor_GUI(), 1300, 750));
 		//mainStage.setResizable(false);
 		changeStyle("DefaultStyle");
 		mainStage.show();

@@ -11,6 +11,12 @@ Text{
     -fx-font-size: 1.75em;
 }
 
+.label{
+    -fx-font-size: 1.6em;
+    -fx-font-weight: bold;
+    -fx-text-fill: black;
+}
+
 /*The following apply to any object of the corresponding name.*/
 .button{
     -fx-font-size: 2em;
@@ -40,12 +46,8 @@ Text{
 
 }
 
-.menu-item{
-
-}
-
 .menu-bar{
-    -fx-font-size: 1.1em;
+    -fx-font-size: .55em;
 
 }
 
