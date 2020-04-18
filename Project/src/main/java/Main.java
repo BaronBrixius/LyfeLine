@@ -23,7 +23,7 @@ class Main {
 
             //Makes a list of events from the DB and prints it
             stmt = DBM.conn.prepareStatement("SELECT * FROM events");
-            List<Event> eventList = DBM.getFromDB(stmt, new Event());           //blank object so functional interface method can be accessed
+            List<Event> eventList = DBM.getFromDB(DBM.conn.prepareStatement("SELECT * FROM events"), new Event());           //blank object so functional interface method can be accessed
             System.out.println("\nEvent List:");
             for (Event e : eventList)
                 System.out.println(e);

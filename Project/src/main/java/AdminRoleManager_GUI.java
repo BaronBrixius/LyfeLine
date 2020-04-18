@@ -197,7 +197,7 @@ public abstract class AdminRoleManager_GUI extends Application {
 
 	static class AdminToggleSwitch extends ToggleSwitch {
 
-		private BooleanProperty switchedOn = new SimpleBooleanProperty(false);
+		private final BooleanProperty switchedOn = new SimpleBooleanProperty(false);
 
 		public AdminToggleSwitch(ObservableList<User> userList) {
 			switchedOn.setValue(userList.get(0).getAdmin());

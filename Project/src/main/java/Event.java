@@ -3,11 +3,11 @@ import java.util.List;
 
 class Event implements DBObject<Event> {
     int eventID = 0;
-    private String eventName = "New Event";
-    private int eventType;
-    private int startYear;
-    private int startMonth;
-    private int startDay;
+    private final String eventName = "New Event";
+    private final int eventType;
+    private final int startYear;
+    private final int startMonth;
+    private final int startDay;
     private String start;
 
     public Event() {         //defaults
