@@ -28,7 +28,7 @@ import java.sql.SQLException;
 import java.util.Comparator;
 import java.util.List;
 
-public class AdminRoleManager_GUI extends GridPane implements GUI_Interface {
+public class AdminRoleManager_GUI extends GridPane {
 	private ListView<User> userListView;
 
 	public AdminRoleManager_GUI(){
@@ -190,11 +190,6 @@ public class AdminRoleManager_GUI extends GridPane implements GUI_Interface {
 		this.add(textStatus, 0, 3);
 		this.add(btnBack, 0, 5);
 
-	}
-
-	@Override
-	public String getWindowName() {
-		return "Admin Manager";
 	}
 
 	private class AdminToggleSwitch extends ToggleSwitch {

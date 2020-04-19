@@ -1,19 +1,23 @@
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.sql.SQLException;
 
-public class LoginAndRegistration_GUI extends VBox implements GUI_Interface {
+public class LoginAndRegistration_GUI extends VBox {
 
 
     public LoginAndRegistration_GUI() {
@@ -21,14 +25,15 @@ public class LoginAndRegistration_GUI extends VBox implements GUI_Interface {
     }
 
     @FXML
-    private void login() {
+    private void login() throws IOException {
         //This is the Stage for the Login Window
         Stage loginStage = new Stage();
         loginStage.setTitle("Login Screen");
         loginStage.initOwner(GUIManager.mainStage);         //These two lines make sure you can't click back to the Start Window,
         loginStage.initModality(Modality.WINDOW_MODAL);     //so you can't have 10 Login Windows open at once.
 
-        loginStage.setScene(new Scene(new LoginScreen(), 600, 300));
+        Parent root = FXMLLoader.load(GUIManager.class.getResource("Login_Screen.fxml"));
+        loginStage.setScene(new Scene(root));
         loginStage.getScene().getStylesheets().add("File:src/main/resources/"+ GUIManager.mainStyle +".css");
         loginStage.show();
     }
@@ -110,10 +115,45 @@ public class LoginAndRegistration_GUI extends VBox implements GUI_Interface {
 
     }
 
-    @Override
-    public String getWindowName() {
-        return "Welcome Screen";
+    @FXML
+    public void close(MouseEvent mouseEvent) {
+        ((Node) (mouseEvent.getSource())).getScene().getWindow().hide();
     }
+
+    @FXML
+    public void registerUser(MouseEvent event) {
+
+        //Reset the error message if the input fields match after getting the error
+        //errorMessage.setText("");
+        //try {
+//
+        //    // Check if the email is valid (unique)
+        //    if (!User.validateUnique(emailInput.getText())) {
+        //        errorMessage.setText("Email already in use");
+//
+        //        //If the passwordInput's text does not equal the confirmPasswordInput's text
+        //    } else if (!passwordInput.getText().equals(confirmPasswordInput.getText())) {
+        //        errorMessage.setText("Error: the inputted passwords do not match.");
+//
+        //        // Check if the Username field is not empty
+        //    } else if (usernameInput.getText().equals("")) {
+        //        errorMessage.setText("Please enter a Username");
+//
+//
+        //        // If everything checks out, create a new user
+        //    } else {
+//
+        //        DBM.insertIntoDB(new User(usernameInput.getText(), emailInput.getText(), passwordInput.getText()));
+        //        // close the window once successful, and switch to the dashboard
+        //        ((Node) (event.getSource())).getScene().getWindow().hide();
+        //        //GUIManager.swapScene(new Dashboard_GUI());
+        //    }
+        //} catch (IllegalArgumentException | SQLException e) {
+        //    errorMessage.setText(e.getMessage());
+        //}
+
+    }
+
 
     private class RegisterScreen extends GridPane {
         private RegisterScreen() {

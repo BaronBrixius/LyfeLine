@@ -5,7 +5,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
-public class TimelineEditor_GUI extends AnchorPane implements GUI_Interface {
+public class TimelineEditor_GUI extends AnchorPane {
 
     public TimelineEditor_GUI() {
         this(new Timeline());
@@ -98,11 +98,6 @@ public class TimelineEditor_GUI extends AnchorPane implements GUI_Interface {
         //The buttons are held in the lower right of the window.
         setRightAnchor(buttons, 5.0);
         setBottomAnchor(buttons, 10.0);
-    }
-
-    @Override
-    public String getWindowName() {
-        return "Timeline Editor";
     }
 
     public class DropDownMenu extends VBox {

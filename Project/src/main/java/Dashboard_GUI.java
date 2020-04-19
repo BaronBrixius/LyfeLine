@@ -15,7 +15,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 
-public class Dashboard_GUI extends GridPane implements GUI_Interface {
+public class Dashboard_GUI extends GridPane {
 
 	public Dashboard_GUI() {
 
@@ -133,8 +133,4 @@ public class Dashboard_GUI extends GridPane implements GUI_Interface {
 
 	}
 
-	@Override
-	public String getWindowName() {
-		return "Dashboard";
-	}
 }
