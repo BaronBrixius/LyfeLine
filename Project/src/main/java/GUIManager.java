@@ -1,23 +1,26 @@
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-import java.sql.SQLException;
+import java.io.IOException;
 
-public class GUIManager extends Application{
 
-	public static void main(String[] args) {
-		launch(args);
-	}
+public class GUIManager extends Application {
 
-	public static Stage mainStage;
-	public static String mainStyle;
+    public static void main(String[] args) {
+        launch(args);
+    }
 
-	//default window set up
-	@Override
-	public void start(Stage primaryStage) throws Exception {
+    static Stage stage;
+    static String style = "DefaultStyle";
 
-		// Used to establish connection to the DB.
+    //default window set up
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+
+        // Used to establish connection to the DB.
 		/*try {
 			new DBM();
 			DBM.setupSchema();
@@ -26,23 +29,23 @@ public class GUIManager extends Application{
 			e.printStackTrace();
 		}*/
 
-		mainStage = primaryStage;
-		//mainStage.setScene(LoginAndRegistration_GUI.welcomeScreen()); 	//default scene
-		mainStage.setScene(new Scene(new EventEditor_GUI())); 	//GUI currently being worked on, delete for final version
-		mainStage.setResizable(false);
-		changeStyle("DefaultStyle");
-		mainStage.show();
-	}
+        stage = primaryStage;
+        //stage.setResizable(false);
 
-	//is used when swapping scenes inside classes. use the static classes that return scenes
-	public static void swapScene(Scene scene) {
-		mainStage.setScene(scene);
-		changeStyle(mainStyle);
-	}
+        //swapScene("FXML/WelcomeScreen.fxml"); 	//default scene
+        swapScene("EventEditor.fxml"); 	//GUI element currently being worked on, delete for final version
+        changeStyle(style);
+    }
 
-	public static void changeStyle(String styleName) {
-		mainStyle = styleName;
-		mainStage.getScene().getStylesheets().add("File:src/main/resources/"+ mainStyle +".css");
-	}
+    public static void swapScene(String fxml) throws IOException {
+        stage.setScene(new Scene(FXMLLoader.load(GUIManager.class.getResource("fxml/"+fxml))));
+        //changeStyle(style);
+        stage.show();
+    }
+
+    public static void changeStyle(String styleName) {
+        style = styleName;
+        stage.getScene().getStylesheets().add("File:src/main/resources/"+ style +".css");
+    }
 
 }

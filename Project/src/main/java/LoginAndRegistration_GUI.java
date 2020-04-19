@@ -10,25 +10,24 @@ import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-import javax.swing.text.PasswordView;
 import java.sql.SQLException;
 
 public class LoginAndRegistration_GUI {
 
     public static Scene welcomeScreen() {
         //This is the Start Window
-        GUIManager.mainStage.setTitle("Welcome Screen");
+        OldGUIManager.mainStage.setTitle("Welcome Screen");
 
         //This is the Stage for the Login Window
         Stage loginStage = new Stage();
         loginStage.setTitle("Login Screen");
-        loginStage.initOwner(GUIManager.mainStage);                 //These two lines make sure you can't click back to the Start Window,
+        loginStage.initOwner(OldGUIManager.mainStage);                 //These two lines make sure you can't click back to the Start Window,
         loginStage.initModality(Modality.WINDOW_MODAL);     //so you can't have 10 Login Windows open at once.
 
         //This is the Stage for the Register Window
         Stage registerStage = new Stage();
         registerStage.setTitle("Register Screen");
-        registerStage.initOwner(GUIManager.mainStage);              //These are the same as before, prevents the window from losing focus until closed.
+        registerStage.initOwner(OldGUIManager.mainStage);              //These are the same as before, prevents the window from losing focus until closed.
         registerStage.initModality(Modality.WINDOW_MODAL);  //I don't actually know what Modality is, Google just said this works and it does.
 
 
@@ -41,7 +40,7 @@ public class LoginAndRegistration_GUI {
         Button login = new Button("Login");
         login.setOnAction(event -> {
             loginStage.setScene(loginScreen());
-            loginStage.getScene().getStylesheets().add("File:src/main/resources/"+ GUIManager.mainStyle +".css");
+            loginStage.getScene().getStylesheets().add("File:src/main/resources/"+ OldGUIManager.mainStyle +".css");
             loginStage.show();
         });
 
@@ -49,15 +48,15 @@ public class LoginAndRegistration_GUI {
         Button register = new Button("Register");
         register.setOnAction(event -> {
             registerStage.setScene(registerScreen());
-            registerStage.getScene().getStylesheets().add("File:src/main/resources/"+ GUIManager.mainStyle +".css");
+            registerStage.getScene().getStylesheets().add("File:src/main/resources/"+ OldGUIManager.mainStyle +".css");
             registerStage.show();
         });
 
         //This button opens the Dashboard Scene in the same window.
         Button guest = new Button("Continue as guest");
         guest.setOnAction(event -> {
-            GUIManager.swapScene(Dashboard_GUI.DashboardScreen());
-            GUIManager.mainStage.setTitle("Dashboard");
+            OldGUIManager.swapScene(Dashboard_GUI.DashboardScreen());
+            OldGUIManager.mainStage.setTitle("Dashboard");
         });
 
 
@@ -148,8 +147,8 @@ public class LoginAndRegistration_GUI {
                     DBM.insertIntoDB(new User(usernameInput.getText(), emailInput.getText(), passwordInput.getText()));
                     // close the window once successful, and switch do the dashboard
                     ((Node) (event.getSource())).getScene().getWindow().hide();
-                    GUIManager.swapScene(Dashboard_GUI.DashboardScreen());
-                    GUIManager.mainStage.setTitle("Dashboard");
+                    OldGUIManager.swapScene(Dashboard_GUI.DashboardScreen());
+                    OldGUIManager.mainStage.setTitle("Dashboard");
                 }
             } catch (IllegalArgumentException | SQLException e) {
                 errorMessage.setText(e.getMessage());

@@ -7,30 +7,38 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
+import java.util.Optional;
+
 public class EventEditor_GUI extends VBox {
-    Label nameLabel = new Label("New Event");
-    Label titleLabel = new Label("Title");
-    Label descriptionLabel = new Label("Description");
-    Label startLabel = new Label("Start");
-    Label endLabel = new Label("End");
-    Label imageLabel = new Label("Image");
+
+
+    @FXML
     TextField titleInput = new TextField();
+    @FXML
     TextArea descriptionInput = new TextArea();
+    @FXML
     DatePicker startInput = new DatePicker();
+
+    @FXML
     CheckBox hasDuration = new CheckBox();
+
+    @FXML
     DatePicker endInput = new DatePicker();             //only a datepicker for skeleton, will figure best way to enter info later
+    @FXML
     ComboBox<String> imageInput = new ComboBox<>();
-    Button uploadButton = new Button("Upload img");     //not sure if good idea, but it's on the sketch
-    Button saveButton = new Button("Save");
-    Button deleteButton = new Button("Delete");
-    Button closeButton = new Button("Close");
     private Event event;
 
     public EventEditor_GUI() {
+
     }
 
     public void initialize() {
         populateDisplay();
+    }
+
+    @FXML
+    private void toggleHasDuration(){
+        endInput.setDisable(!hasDuration.isSelected());
     }
 
     private void uploadImage() {
@@ -75,10 +83,19 @@ public class EventEditor_GUI extends VBox {
 
     @FXML
     private boolean deleteEvent() {
-        // prompt if user wants to continue
+        Alert confirmDelete = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmDelete.setTitle("Confirm Delete");
+        confirmDelete.setHeaderText("Deleting this event will remove it from all other timelines as well.");
+        confirmDelete.setContentText("Are you ok with this?");
+
+        Optional<ButtonType> result = confirmDelete.showAndWait();
+
+        if (result.get() == ButtonType.CANCEL)
+            return false;
+
         // delete event from DB, on this and all other timelines
-        System.out.println("Button pressed.");
-        return false;
+        System.out.println("Delete event.");
+        return true;
     }
 
 

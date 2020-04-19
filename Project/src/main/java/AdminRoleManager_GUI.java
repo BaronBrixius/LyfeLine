@@ -150,8 +150,8 @@ public abstract class AdminRoleManager_GUI extends Application {
 		Button btnBack = new Button("Back");
 		btnBack.getStyleClass().add("smallButton");
 		btnBack.setOnAction(event -> {
-			GUIManager.swapScene(Dashboard_GUI.DashboardScreen());
-			GUIManager.mainStage.setTitle("Dashboard");
+			OldGUIManager.swapScene(Dashboard_GUI.DashboardScreen());
+			OldGUIManager.mainStage.setTitle("Dashboard");
 		});
 
 		// sort order selection events

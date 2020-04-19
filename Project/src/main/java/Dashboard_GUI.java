@@ -74,8 +74,8 @@ public class Dashboard_GUI {
 		adminGUI.setMinWidth(150);
 		dashboardOptions.getChildren().add(adminGUI);
 		adminGUI.setOnAction(event -> {
-			GUIManager.swapScene(AdminRoleManager_GUI.AdminRoleManager());
-			GUIManager.mainStage.setTitle("Admin Manager");
+			OldGUIManager.swapScene(AdminRoleManager_GUI.AdminRoleManager());
+			OldGUIManager.mainStage.setTitle("Admin Manager");
 
 		});
 		pane.add(dashboardOptions, 0, 0);
@@ -109,7 +109,7 @@ public class Dashboard_GUI {
 		pane.add(btnLogOut, 2, 2);
 
 		btnLogOut.setOnAction(event -> {
-			GUIManager.swapScene(LoginAndRegistration_GUI.welcomeScreen());
+			OldGUIManager.swapScene(LoginAndRegistration_GUI.welcomeScreen());
 		});
 
 		pane.add(listOptions, 1, 0);
