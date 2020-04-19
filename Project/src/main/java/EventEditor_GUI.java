@@ -1,3 +1,4 @@
+import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -26,71 +27,9 @@ public class EventEditor_GUI extends VBox {
     private Event event;
 
     public EventEditor_GUI() {
-        this(new Event());
     }
 
-    public EventEditor_GUI(Event event) {
-        this.event = event;
-
-        setScaleX(0.9); setScaleY(0.9);
-        setPrefWidth(350);
-
-        //nameLabel.setText(event.getEventName);    event name not implemented yet
-        nameLabel.setAlignment(Pos.CENTER);
-        nameLabel.setStyle("-fx-font-size: 2em");
-
-        //End picker group
-        HBox endHeader = new HBox(5);
-        hasDuration.setPadding(new Insets(5, 0, 0, 0));
-        endHeader.getChildren().addAll(hasDuration, endLabel);
-
-        //Image selection group
-        HBox imageChooser = new HBox(10);
-        imageChooser.getChildren().addAll(imageInput, uploadButton);
-        imageInput.setPrefWidth(200);
-
-        //Buttons at bottom group
-        GridPane buttons = new GridPane();
-        buttons.addColumn(0, saveButton, deleteButton);
-        buttons.add(closeButton, 1, 1);
-        buttons.setPadding(new Insets(10,0,0,0));
-
-        for (Node b : buttons.getChildren())
-            b.getStyleClass().add("smallButton");
-
-        uploadButton.setStyle("-fx-pref-width: 100px;" +
-                "    -fx-pref-height: 30px;" +
-                "    -fx-font-size: 1em;");
-
-        //Add to window
-        getChildren().addAll(nameLabel,
-                titleLabel, titleInput,
-                descriptionLabel, descriptionInput,
-                startLabel, startInput, endHeader, endInput,
-                imageLabel, imageChooser, buttons);
-
-        //Define actions
-        endInput.setDisable(true);
-        hasDuration.setOnAction(e ->
-                endInput.setDisable(!hasDuration.isSelected())
-        );
-
-        uploadButton.setOnAction(e ->
-                uploadImage()
-        );
-
-        saveButton.setOnAction(e ->
-                saveEvent()
-        );
-
-        deleteButton.setOnAction(e ->
-                deleteEvent()
-        );
-
-        closeButton.setOnAction(e ->
-                close()
-        );
-
+    public void initialize() {
         populateDisplay();
     }
 
@@ -117,6 +56,7 @@ public class EventEditor_GUI extends VBox {
         return false;
     }
 
+    @FXML
     private boolean saveEvent() {
         //setters to update each field of this.event, based on the current info in the text fields
 
@@ -133,6 +73,7 @@ public class EventEditor_GUI extends VBox {
         return false;
     }
 
+    @FXML
     private boolean deleteEvent() {
         // prompt if user wants to continue
         // delete event from DB, on this and all other timelines
@@ -141,6 +82,7 @@ public class EventEditor_GUI extends VBox {
     }
 
 
+    @FXML
     private void close() {
         //close editor, return to previous screen
         System.out.println("Button pressed.");

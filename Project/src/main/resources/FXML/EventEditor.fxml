@@ -5,8 +5,9 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0"
-      prefWidth="350.0" spacing="5.0" stylesheets="@DefaultStyle.css" xmlns="http://javafx.com/javafx/11.0.1"
-      xmlns:fx="http://javafx.com/fxml/1">
+      prefWidth="350.0" spacing="5.0" stylesheets="@../DefaultStyle.css" xmlns="http://javafx.com/javafx/11.0.1"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="EventEditor_GUI">
     <opaqueInsets>
         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
     </opaqueInsets>
@@ -41,10 +42,10 @@
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
         </rowConstraints>
-        <Button alignment="CENTER" mnemonicParsing="false" onAction="#save" styleClass="smallButton" text="Button"/>
-        <Button alignment="CENTER" mnemonicParsing="false" styleClass="smallButton" text="Button"
+        <Button alignment="CENTER" mnemonicParsing="false" onAction="#saveEvent" styleClass="smallButton" text="Save"/>
+        <Button alignment="CENTER" mnemonicParsing="false" onAction="#deleteEvent" styleClass="smallButton" text="Delete"
                 GridPane.rowIndex="1"/>
-        <Button alignment="CENTER" mnemonicParsing="false" styleClass="smallButton" text="Button"
+        <Button alignment="CENTER" mnemonicParsing="false" onAction="#close" styleClass="smallButton" text="Close"
                 GridPane.columnIndex="1" GridPane.rowIndex="1"/>
     </GridPane>
 </VBox>

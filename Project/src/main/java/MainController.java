@@ -1,16 +1,21 @@
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-public class MainController  extends Application {
+import java.io.IOException;
+import java.net.URL;
+
+
+public class MainController extends Application {
 
     public static void main(String[] args) {
         launch(args);
     }
 
-    Stage stage;
-    Scene scene;
-    String style;
+    static Stage stage;
+    static String style = "DefaultStyle";
 
     //default window set up
     @Override
@@ -26,20 +31,21 @@ public class MainController  extends Application {
 		}*/
 
         stage = primaryStage;
-        //mainStage.setScene(LoginAndRegistration_GUI.welcomeScreen()); 	//default scene
-        stage.setScene(new Scene(new EventEditor_GUI())); 	//GUI currently being worked on, delete for final version
         stage.setResizable(false);
-        changeStyle("DefaultStyle");
-        stage.show();
-    }
 
-    //is used when swapping scenes inside classes. use the static classes that return scenes
-    public void swapScene(Scene scene) {
-        stage.setScene(scene);
+        //swapScene("WelcomeScreen.fxml"); 	//default scene
+        swapScene("FXML/EventEditor.fxml"); 	//GUI element currently being worked on, delete for final version
         changeStyle(style);
     }
 
-    public void changeStyle(String styleName) {
+    public static void swapScene(String fxml) throws IOException {
+        Parent root = FXMLLoader.load(MainController.class.getResource(fxml));
+        stage.setScene(new Scene(root));
+        //changeStyle(style);
+        stage.show();
+    }
+
+    public static void changeStyle(String styleName) {
         style = styleName;
         stage.getScene().getStylesheets().add("File:src/main/resources/"+ style +".css");
     }
