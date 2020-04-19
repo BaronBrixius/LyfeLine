@@ -7,6 +7,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
+import java.io.IOException;
 import java.util.Optional;
 
 public class EventEditor_GUI extends VBox {
@@ -100,8 +101,9 @@ public class EventEditor_GUI extends VBox {
 
 
     @FXML
-    private void close() {
+    private void close() throws IOException {
         //close editor, return to previous screen
+        GUIManager.swapScene("example");
         System.out.println("Button pressed.");
     }
 }

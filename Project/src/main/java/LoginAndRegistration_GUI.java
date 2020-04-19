@@ -246,7 +246,7 @@ public class LoginAndRegistration_GUI {
         //This is the bar that holds the dropdown menus in the top left
         MenuBar bar = new MenuBar();
         bar.getMenus().addAll(menuFile, menuEdit, menuView);
-        
+
         VBox menus = new VBox();
         menus.getChildren().addAll(bar);
         return menus;

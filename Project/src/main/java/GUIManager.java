@@ -1,6 +1,5 @@
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
@@ -9,12 +8,20 @@ import java.io.IOException;
 
 public class GUIManager extends Application {
 
+    static Stage stage;
+    static Scene scene;
+
     public static void main(String[] args) {
         launch(args);
     }
 
-    static Stage stage;
-    static String style = "DefaultStyle";
+    public static void swapScene(String fxml) throws IOException {
+        scene.setRoot(FXMLLoader.load(GUIManager.class.getResource("fxml/" + fxml + ".fxml")));
+    }
+
+    public static void applyStyle(String style) {
+        stage.getScene().getStylesheets().add("File:src/main/resources/styles/" + style + ".css");
+    }
 
     //default window set up
     @Override
@@ -30,22 +37,11 @@ public class GUIManager extends Application {
 		}*/
 
         stage = primaryStage;
-        //stage.setResizable(false);
-
-        //swapScene("FXML/WelcomeScreen.fxml"); 	//default scene
-        swapScene("EventEditor.fxml"); 	//GUI element currently being worked on, delete for final version
-        changeStyle(style);
-    }
-
-    public static void swapScene(String fxml) throws IOException {
-        stage.setScene(new Scene(FXMLLoader.load(GUIManager.class.getResource("fxml/"+fxml))));
-        //changeStyle(style);
+        //scene = new Scene(FXMLLoader.load(GUIManager.class.getResource("fxml/WelcomeScreen.fxml")));     //default page
+        scene = new Scene(FXMLLoader.load(GUIManager.class.getResource("fxml/EventEditor.fxml")));   //GUI element currently being worked on, delete for final version
+        stage.setScene(scene);
+        applyStyle("DefaultStyle");
         stage.show();
-    }
-
-    public static void changeStyle(String styleName) {
-        style = styleName;
-        stage.getScene().getStylesheets().add("File:src/main/resources/"+ style +".css");
     }
 
 }

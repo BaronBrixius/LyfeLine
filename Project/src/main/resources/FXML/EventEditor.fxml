@@ -3,7 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<GridPane alignment="CENTER_RIGHT" hgap="5" stylesheets="@../DefaultStyle.css" vgap="5"
+<GridPane alignment="CENTER_RIGHT" hgap="5" vgap="5"
           xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="EventEditor_GUI">
     <columnConstraints>
         <ColumnConstraints maxWidth="-Infinity" minWidth="-Infinity" prefWidth="150"/>
