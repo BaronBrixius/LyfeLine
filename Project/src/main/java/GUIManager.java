@@ -33,7 +33,7 @@ public class GUIManager extends Application {
 		}
 		catch (SQLException e) {
 			e.printStackTrace();
-		}
+		}*/
 
         stage = primaryStage;
         //scene = new Scene(FXMLLoader.load(GUIManager.class.getResource("fxml/WelcomeScreen.fxml")));     //default page
