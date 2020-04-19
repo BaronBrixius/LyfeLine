@@ -11,10 +11,11 @@
 <?import javafx.scene.text.Text?>
 
 <GridPane alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-          prefHeight="300.0" prefWidth="600.0" stylesheets="@DefaultStyle.css" xmlns:fx="http://javafx.com/fxml/1"
+          prefHeight="300.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1"
           xmlns="http://javafx.com/javafx/11.0.1" fx:controller="LoginAndRegistration_GUI">
     <columnConstraints>
         <ColumnConstraints hgrow="SOMETIMES" maxWidth="254.0" minWidth="10.0" prefWidth="158.0"/>
+        <ColumnConstraints hgrow="SOMETIMES" maxWidth="10.0" minWidth="10.0" prefWidth="10.0"/>
         <ColumnConstraints hgrow="SOMETIMES" maxWidth="497.0" minWidth="10.0" prefWidth="362.0"/>
     </columnConstraints>
     <rowConstraints>
@@ -25,13 +26,13 @@
     <padding>
         <Insets bottom="40.0" left="40.0" right="40.0" top="40.0"/>
     </padding>
-    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Username" GridPane.halignment="CENTER"/>
-    <TextField GridPane.columnIndex="1"/>
-    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Password" GridPane.halignment="CENTER" GridPane.rowIndex="1"/>
-    <PasswordField GridPane.columnIndex="1" GridPane.rowIndex="1"/>
-    <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0" GridPane.columnIndex="1"
+    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Username" GridPane.halignment="RIGHT"/>
+    <TextField GridPane.columnIndex="2"/>
+    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Password" GridPane.halignment="RIGHT" GridPane.rowIndex="1"/>
+    <PasswordField GridPane.columnIndex="2" GridPane.rowIndex="1"/>
+    <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0" GridPane.columnIndex="2"
           GridPane.rowIndex="2">
-        <Button mnemonicParsing="false" styleClass="smallButton" text="Login" onMouseClicked="#close"/>
+        <Button mnemonicParsing="false" styleClass="smallButton" text="Login" onMouseClicked="#loginUser"/>
         <Button mnemonicParsing="false" styleClass="smallButton" text="Cancel" onMouseClicked="#close"/>
     </HBox>
 </GridPane>
