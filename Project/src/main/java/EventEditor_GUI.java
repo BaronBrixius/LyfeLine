@@ -19,10 +19,8 @@ public class EventEditor_GUI extends VBox {
     TextArea descriptionInput = new TextArea();
     @FXML
     DatePicker startInput = new DatePicker();
-
     @FXML
     CheckBox hasDuration = new CheckBox();
-
     @FXML
     DatePicker endInput = new DatePicker();             //only a datepicker for skeleton, will figure best way to enter info later
     @FXML
