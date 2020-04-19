@@ -156,8 +156,7 @@ public class Timeline implements DBObject<Timeline>{
 		return "Time line ID: " + timelineID + " Time line Name: " + timelineName + " Time line Description: " + timelineDescription + " Private:" + isPrivate+" Scale:"+scale+" Theme: "+theme+" Start Date: "+startDate+" End Date: "+endDate+" Created: "+dateCreated+" Owner: "+timelineOwner;
 	}
 
-<<<<<<< HEAD
-=======
+
 	//This method will set the name of the timeline if this user has not timeline with the same name already in the DB
 	public void setTimelineName(String name, int userID) throws SQLException, IllegalArgumentException{
 		//if (validName(name,userID)) //uses this private method for validation
@@ -180,8 +179,7 @@ public class Timeline implements DBObject<Timeline>{
 		return true;
 	}
 
-		
->>>>>>> 26_Create_Timeline_Ben
+
 	@Override
 	public void setID(int id) {
 	this.timelineID=id;

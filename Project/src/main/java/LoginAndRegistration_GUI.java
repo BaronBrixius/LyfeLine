@@ -14,20 +14,12 @@ import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-<<<<<<< HEAD
-=======
 import java.io.IOException;
->>>>>>> 26_Create_Timeline_Ben
 import java.sql.SQLException;
 
 public class LoginAndRegistration_GUI extends VBox {
 
-<<<<<<< HEAD
-    public static Scene welcomeScreen() {
-        //This is the Start Window
-        OldGUIManager.mainStage.setTitle("Welcome Screen");
-=======
->>>>>>> 26_Create_Timeline_Ben
+
 
     public LoginAndRegistration_GUI() {
 
@@ -38,16 +30,13 @@ public class LoginAndRegistration_GUI extends VBox {
         //This is the Stage for the Login Window
         Stage loginStage = new Stage();
         loginStage.setTitle("Login Screen");
-<<<<<<< HEAD
         loginStage.initOwner(OldGUIManager.mainStage);                 //These two lines make sure you can't click back to the Start Window,
-=======
-        loginStage.initOwner(GUIManager.mainStage);         //These two lines make sure you can't click back to the Start Window,
->>>>>>> 26_Create_Timeline_Ben
+
         loginStage.initModality(Modality.WINDOW_MODAL);     //so you can't have 10 Login Windows open at once.
 
         Parent root = FXMLLoader.load(GUIManager.class.getResource("Login_Screen.fxml"));
         loginStage.setScene(new Scene(root));
-        loginStage.getScene().getStylesheets().add("File:src/main/resources/"+ GUIManager.mainStyle +".css");
+        //loginStage.getScene().getStylesheets().add("File:src/main/resources/"+ GUIManager.mainStyle +".css");
         loginStage.show();
     }
 
@@ -56,40 +45,16 @@ public class LoginAndRegistration_GUI extends VBox {
         //This is the Stage for the Register Window
         Stage registerStage = new Stage();
         registerStage.setTitle("Register Screen");
-<<<<<<< HEAD
+
         registerStage.initOwner(OldGUIManager.mainStage);              //These are the same as before, prevents the window from losing focus until closed.
-=======
-        registerStage.initOwner(GUIManager.mainStage);      //These are the same as before, prevents the window from losing focus until closed.
->>>>>>> 26_Create_Timeline_Ben
+
         registerStage.initModality(Modality.WINDOW_MODAL);  //I don't actually know what Modality is, Google just said this works and it does.
 
         registerStage.setScene(new Scene(new RegisterScreen(), 650, 450));
-        registerStage.getScene().getStylesheets().add("File:src/main/resources/"+ GUIManager.mainStyle +".css");
+        //registerStage.getScene().getStylesheets().add("File:src/main/resources/"+ GUIManager.mainStyle +".css");
         registerStage.show();
     }
 
-<<<<<<< HEAD
-        //This HBox holds the three buttons: Login, Register, and Continue as guest
-        HBox menuOptions = new HBox(30);
-        menuOptions.setPadding(new Insets(50));
-        menuOptions.setAlignment(Pos.TOP_CENTER);
-
-        //This button when clicked opens the Login Window in a new pop-up
-        Button login = new Button("Login");
-        login.setOnAction(event -> {
-            loginStage.setScene(loginScreen());
-            loginStage.getScene().getStylesheets().add("File:src/main/resources/"+ OldGUIManager.mainStyle +".css");
-            loginStage.show();
-        });
-
-        //This button when clicked opens the Register Window in a new pop-up
-        Button register = new Button("Register");
-        register.setOnAction(event -> {
-            registerStage.setScene(registerScreen());
-            registerStage.getScene().getStylesheets().add("File:src/main/resources/"+ OldGUIManager.mainStyle +".css");
-            registerStage.show();
-        });
-=======
     public void LoginAndRegistration_GUI1() {
         //This is the Start Window
 
@@ -126,15 +91,12 @@ public class LoginAndRegistration_GUI extends VBox {
         //    registerStage.getScene().getStylesheets().add("File:src/main/resources/"+ GUIManager.mainStyle +".css");
         //    registerStage.show();
         //});
->>>>>>> 26_Create_Timeline_Ben
+
 
         //This button opens the Dashboard Scene in the same window.
         Button guest = new Button("Continue as guest");
         guest.setOnAction(event -> {
-<<<<<<< HEAD
-            OldGUIManager.swapScene(Dashboard_GUI.DashboardScreen());
-            OldGUIManager.mainStage.setTitle("Dashboard");
-=======
+
             //GUIManager.swapScene(new Dashboard_GUI());
         });
 
@@ -142,7 +104,7 @@ public class LoginAndRegistration_GUI extends VBox {
         Button timelines = new Button("Timelines");
         timelines.setOnAction(event -> {
             //GUIManager.swapScene(new TimelineEditor_GUI());
->>>>>>> 26_Create_Timeline_Ben
+
         });
 
 
@@ -264,19 +226,6 @@ public class LoginAndRegistration_GUI extends VBox {
                     } else if (usernameInput.getText().equals("")) {
                         errorMessage.setText("Please enter a Username");
 
-<<<<<<< HEAD
-                    DBM.insertIntoDB(new User(usernameInput.getText(), emailInput.getText(), passwordInput.getText()));
-                    // close the window once successful, and switch do the dashboard
-                    ((Node) (event.getSource())).getScene().getWindow().hide();
-                    OldGUIManager.swapScene(Dashboard_GUI.DashboardScreen());
-                    OldGUIManager.mainStage.setTitle("Dashboard");
-                }
-            } catch (IllegalArgumentException | SQLException e) {
-                errorMessage.setText(e.getMessage());
-            }
-=======
->>>>>>> 26_Create_Timeline_Ben
-
                         // If everything checks out, create a new user
                     } else {
 
@@ -344,47 +293,6 @@ public class LoginAndRegistration_GUI extends VBox {
         }
     }
 
-<<<<<<< HEAD
-    //This method creates the dropdown menus in the top right of most windows
-    public static VBox dropDownMenus() {
-        //These are the items in the File dropdown menu
-        MenuItem save = new MenuItem("Save");
-        save.setOnAction(e -> System.out.println("The \"Save\" menu button has been pressed."));
-
-        MenuItem delete = new MenuItem("Delete");
-        delete.setOnAction(e -> System.out.println("The \"Delete\" menu button has been pressed."));
-
-        MenuItem zoom = new MenuItem("Zoom");
-        zoom.setOnAction(e -> System.out.println("The \"Zoom\" menu button has been pressed."));
-
-        //This is the File dropdown menu in the top left
-        Menu menuFile = new Menu("File");
-        menuFile.getItems().addAll(save, delete, zoom);
-
-        //This is the only item in the Edit dropdown menu
-        MenuItem editMode = new MenuItem("Edit Mode");
-        editMode.setOnAction(e -> System.out.println("The \"Edit Mode\" menu button has been pressed."));
-
-        //This is the Edit dropdown menu in the top left
-        Menu menuEdit = new Menu("Edit");
-        menuEdit.getItems().addAll(editMode);
-
-        //This is the only item in the View dropdown menu
-        MenuItem viewMode = new MenuItem("View Mode");
-        viewMode.setOnAction(e -> System.out.println("The \"View Mode\" menu button has been pressed."));
-
-        //This is the View dropdown menu in the top left
-        Menu menuView = new Menu("View");
-        menuView.getItems().addAll(viewMode);
-
-        //This is the bar that holds the dropdown menus in the top left
-        MenuBar bar = new MenuBar();
-        bar.getMenus().addAll(menuFile, menuEdit, menuView);
-
-        VBox menus = new VBox();
-        menus.getChildren().addAll(bar);
-        return menus;
-=======
     public class DropDownMenu extends VBox {
         //This method creates the dropdown menus in the top right of most windows
         public DropDownMenu() {
@@ -425,7 +333,7 @@ public class LoginAndRegistration_GUI extends VBox {
             bar.getMenus().addAll(menuFile, menuEdit, menuView);
             this.getChildren().addAll(bar);
         }
->>>>>>> 26_Create_Timeline_Ben
+
     }
 
 

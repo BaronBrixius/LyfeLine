@@ -12,7 +12,7 @@ Text{
     -fx-font-size: 1.75em;
 }
 
-<<<<<<< HEAD:Project/src/main/resources/styles/DefaultStyle.css
+
 GridPane {
     -fx-vgap: 5px;
     -fx-hgap: 5px;
@@ -20,12 +20,6 @@ GridPane {
 
 .label{
     -fx-padding: 5 0 0 0;
-=======
-.label{
-    -fx-font-size: 1.6em;
-    -fx-font-weight: bold;
-    -fx-text-fill: black;
->>>>>>> 26_Create_Timeline_Ben:Project/src/main/resources/DefaultStyle.css
 }
 
 /*The following apply to any object of the corresponding name.*/
@@ -44,7 +38,6 @@ GridPane {
 .button:hover {
     -fx-background-color: #126c82;
     -fx-scale-y: 1.1;
-
 }
 
 .text-field{
@@ -55,7 +48,6 @@ GridPane {
     -fx-pref-height: 105px;
     -fx-pref-width: 400px;
     -fx-wrap-text: true;
-    -fx-translate-y: -10px;
     -fx-font-size: 15px;
 }
 
