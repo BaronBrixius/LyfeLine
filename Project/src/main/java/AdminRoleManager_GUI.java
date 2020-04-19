@@ -149,7 +149,7 @@ public class AdminRoleManager_GUI extends GridPane implements GUI_Interface {
 		Button btnBack = new Button("Back");
 		btnBack.getStyleClass().add("smallButton");
 		btnBack.setOnAction(event -> {
-			GUIManager.swapScene(new Dashboard_GUI());
+			//GUIManager.swapScene(new Dashboard_GUI());
 		});
 
 		// sort order selection events

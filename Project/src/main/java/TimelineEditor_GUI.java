@@ -73,7 +73,7 @@ public class TimelineEditor_GUI extends AnchorPane implements GUI_Interface {
 
         //This button returns to the previous screen without saving anything.
         Button cancelButton = new Button("Cancel");
-        cancelButton.setOnAction(event -> GUIManager.swapScene(new LoginAndRegistration_GUI()));
+        //cancelButton.setOnAction(event -> GUIManager.swapScene(new LoginAndRegistration_GUI()));
 
         //This HBox holds the Save and Cancel buttons.
         HBox buttons = new HBox(5);

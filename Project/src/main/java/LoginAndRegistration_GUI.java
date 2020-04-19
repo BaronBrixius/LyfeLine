@@ -1,3 +1,4 @@
+import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -14,67 +15,98 @@ import java.sql.SQLException;
 
 public class LoginAndRegistration_GUI extends VBox implements GUI_Interface {
 
-    public LoginAndRegistration_GUI() {
-        //This is the Start Window
 
+    public LoginAndRegistration_GUI() {
+
+    }
+
+    @FXML
+    private void login() {
         //This is the Stage for the Login Window
         Stage loginStage = new Stage();
         loginStage.setTitle("Login Screen");
         loginStage.initOwner(GUIManager.mainStage);         //These two lines make sure you can't click back to the Start Window,
         loginStage.initModality(Modality.WINDOW_MODAL);     //so you can't have 10 Login Windows open at once.
 
+        loginStage.setScene(new Scene(new LoginScreen(), 600, 300));
+        loginStage.getScene().getStylesheets().add("File:src/main/resources/"+ GUIManager.mainStyle +".css");
+        loginStage.show();
+    }
+
+    @FXML
+    private void register() {
         //This is the Stage for the Register Window
         Stage registerStage = new Stage();
         registerStage.setTitle("Register Screen");
         registerStage.initOwner(GUIManager.mainStage);      //These are the same as before, prevents the window from losing focus until closed.
         registerStage.initModality(Modality.WINDOW_MODAL);  //I don't actually know what Modality is, Google just said this works and it does.
 
+        registerStage.setScene(new Scene(new RegisterScreen(), 650, 450));
+        registerStage.getScene().getStylesheets().add("File:src/main/resources/"+ GUIManager.mainStyle +".css");
+        registerStage.show();
+    }
 
-        //This HBox holds the three buttons: Login, Register, and Continue as guest
-        HBox menuOptions = new HBox(30);
-        menuOptions.setPadding(new Insets(50));
-        menuOptions.setAlignment(Pos.TOP_CENTER);
+    public void LoginAndRegistration_GUI1() {
+        //This is the Start Window
 
-        //This button when clicked opens the Login Window in a new pop-up
-        Button login = new Button("Login");
-        login.setOnAction(event -> {
-            loginStage.setScene(new Scene(new LoginScreen(), 600, 300));
-            loginStage.getScene().getStylesheets().add("File:src/main/resources/"+ GUIManager.mainStyle +".css");
-            loginStage.show();
-        });
-
-        //This button when clicked opens the Register Window in a new pop-up
-        Button register = new Button("Register");
-        register.setOnAction(event -> {
-            registerStage.setScene(new Scene(new RegisterScreen(), 650, 450));
-            registerStage.getScene().getStylesheets().add("File:src/main/resources/"+ GUIManager.mainStyle +".css");
-            registerStage.show();
-        });
+        ////This is the Stage for the Login Window
+        //Stage loginStage = new Stage();
+        //loginStage.setTitle("Login Screen");
+        //loginStage.initOwner(GUIManager.mainStage);         //These two lines make sure you can't click back to the Start Window,
+        //loginStage.initModality(Modality.WINDOW_MODAL);     //so you can't have 10 Login Windows open at once.
+//
+        ////This is the Stage for the Register Window
+        //Stage registerStage = new Stage();
+        //registerStage.setTitle("Register Screen");
+        //registerStage.initOwner(GUIManager.mainStage);      //These are the same as before, prevents the window from losing focus until closed.
+        //registerStage.initModality(Modality.WINDOW_MODAL);  //I don't actually know what Modality is, Google just said this works and it does.
+//
+//
+        ////This HBox holds the three buttons: Login, Register, and Continue as guest
+        //HBox menuOptions = new HBox(30);
+        //menuOptions.setPadding(new Insets(50));
+        //menuOptions.setAlignment(Pos.TOP_CENTER);
+//
+        ////This button when clicked opens the Login Window in a new pop-up
+        //Button login = new Button("Login");
+        //login.setOnAction(event -> {
+        //    loginStage.setScene(new Scene(new LoginScreen(), 600, 300));
+        //    loginStage.getScene().getStylesheets().add("File:src/main/resources/"+ GUIManager.mainStyle +".css");
+        //    loginStage.show();
+        //});
+//
+        ////This button when clicked opens the Register Window in a new pop-up
+        //Button register = new Button("Register");
+        //register.setOnAction(event -> {
+        //    registerStage.setScene(new Scene(new RegisterScreen(), 650, 450));
+        //    registerStage.getScene().getStylesheets().add("File:src/main/resources/"+ GUIManager.mainStyle +".css");
+        //    registerStage.show();
+        //});
 
         //This button opens the Dashboard Scene in the same window.
         Button guest = new Button("Continue as guest");
         guest.setOnAction(event -> {
-            GUIManager.swapScene(new Dashboard_GUI());
+            //GUIManager.swapScene(new Dashboard_GUI());
         });
 
         //Temp button to open Timeline editor
         Button timelines = new Button("Timelines");
         timelines.setOnAction(event -> {
-            GUIManager.swapScene(new TimelineEditor_GUI());
+            //GUIManager.swapScene(new TimelineEditor_GUI());
         });
 
 
-        menuOptions.getChildren().addAll(login, register, guest, timelines);
+        //menuOptions.getChildren().addAll(login, register, guest, timelines);
 
         //This is a picture of the temporary logo. When a permanent logo is settled on, just name it Logo.png, and put it in the resources folder
-        ImageView logo = new ImageView(new Image("File:src/main/resources/Logo.png"));
-        logo.setScaleX(.75);
-        logo.setScaleY(.75);
+        //ImageView logo = new ImageView(new Image("File:src/main/resources/Logo.png"));
+        //logo.setScaleX(.75);
+        //logo.setScaleY(.75);
 
         //This is a VBox that holds the HBox that holds the buttons, the VBox that holds the the dropdown menus, and the logo
-        this.setSpacing(20);
-        this.getChildren().addAll(new DropDownMenu(), menuOptions, logo);
-        this.setAlignment(Pos.TOP_CENTER);
+        //this.setSpacing(20);
+        //this.getChildren().addAll(new DropDownMenu(), menuOptions, logo);
+        //this.setAlignment(Pos.TOP_CENTER);
 
     }
 
@@ -154,7 +186,7 @@ public class LoginAndRegistration_GUI extends VBox implements GUI_Interface {
                         DBM.insertIntoDB(new User(usernameInput.getText(), emailInput.getText(), passwordInput.getText()));
                         // close the window once successful, and switch to the dashboard
                         ((Node) (event.getSource())).getScene().getWindow().hide();
-                        GUIManager.swapScene(new Dashboard_GUI());
+                        //GUIManager.swapScene(new Dashboard_GUI());
                     }
                 } catch (IllegalArgumentException | SQLException e) {
                     errorMessage.setText(e.getMessage());

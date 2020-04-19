@@ -1,8 +1,10 @@
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.sql.SQLException;
 
 public class GUIManager extends Application {
@@ -20,30 +22,31 @@ public class GUIManager extends Application {
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		// Used to establish connection to the DB.
-		try {
-			new DBM();
-			DBM.setupSchema();
-		}
-		catch (SQLException e) {
-			e.printStackTrace();
-		}
+		//try {
+		//	new DBM();
+		//	DBM.setupSchema();
+		//}
+		//catch (SQLException e) {
+		//	e.printStackTrace();
+		//}
 
 
 
 
 		mainStage = primaryStage;
 		mainStyle = "DefaultStyle";
-		swapScene(new LoginAndRegistration_GUI());//default scene
+		swapScene("test_gui.fxml");		//default scene
 
 		//mainStage.setResizable(false);
 		mainStage.show();
 	}
 
 	//is used when swapping scenes inside classes. use the static classes that return scenes
-	public static void swapScene(GUI_Interface node) {
-		Scene scene = new Scene((Parent) node, 1300,  750);
-		mainStage.setScene(scene);
-		mainStage.setTitle(node.getWindowName());
+	public static void swapScene(String fxml) throws IOException {
+		Parent root = FXMLLoader.load(GUIManager.class.getResource(fxml));
+		//Scene scene = new Scene((Parent) root, 1300,  750);
+		mainStage.setScene(new Scene(root));
+		//mainStage.setTitle(node.getWindowName());
 		changeStyle(mainStyle);
 	}
 
