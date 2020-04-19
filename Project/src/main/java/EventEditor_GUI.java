@@ -40,6 +40,7 @@ public class EventEditor_GUI extends VBox {
         endInput.setDisable(!hasDuration.isSelected());
     }
 
+    @FXML
     private void uploadImage() {
         //don't implement, not part of current sprint
         System.out.println("Button pressed.");
