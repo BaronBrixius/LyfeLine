@@ -1,24 +1,33 @@
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-import java.sql.SQLException;
+import java.io.IOException;
 
-public class GUIManager extends Application{
+public class GUIManager extends Application {
 
-	public static void main(String[] args) {
-		launch(args);
-	}
+    static Stage stage;
+    static Scene scene;
 
-	public static Stage mainStage;
-	public static String mainStyle;
+    public static void main(String[] args) {
+        launch(args);
+    }
 
-	//default window set up
-	@Override
-	public void start(Stage primaryStage) throws Exception {
+    public static void swapScene(String fxml) throws IOException {
+        scene.setRoot(FXMLLoader.load(GUIManager.class.getResource("fxml/" + fxml + ".fxml")));
+    }
 
-		// Used to establish connection to the DB.
-		try {
+    public static void applyStyle(String style) {
+        stage.getScene().getStylesheets().add("File:src/main/resources/styles/" + style + ".css");
+    }
+
+    //default window set up
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+
+        // Used to establish connection to the DB.
+		/*try {
 			new DBM();
 			DBM.setupSchema();
 		}
@@ -26,23 +35,12 @@ public class GUIManager extends Application{
 			e.printStackTrace();
 		}
 
-		mainStage = primaryStage;
-		//mainStage.setScene(LoginAndRegistration_GUI.welcomeScreen()); 	//default scene
-		mainStage.setScene(new Scene(new EventEditor_GUI())); 	//GUI currently being worked on, delete for final version
-		mainStage.setResizable(false);
-		changeStyle("DefaultStyle");
-		mainStage.show();
-	}
-
-	//is used when swapping scenes inside classes. use the static classes that return scenes
-	public static void swapScene(Scene scene) {
-		mainStage.setScene(scene);
-		changeStyle(mainStyle);
-	}
-
-	public static void changeStyle(String styleName) {
-		mainStyle = styleName;
-		mainStage.getScene().getStylesheets().add("File:src/main/resources/"+ mainStyle +".css");
-	}
+        stage = primaryStage;
+        //scene = new Scene(FXMLLoader.load(GUIManager.class.getResource("fxml/WelcomeScreen.fxml")));     //default page
+        scene = new Scene(FXMLLoader.load(GUIManager.class.getResource("fxml/EventEditor.fxml")));   //GUI element currently being worked on, delete for final version
+        stage.setScene(scene);
+        applyStyle("DefaultStyle");
+        stage.show();
+    }
 
 }
