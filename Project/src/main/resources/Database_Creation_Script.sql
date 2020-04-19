@@ -112,6 +112,19 @@ CREATE TABLE `timelines`
   COLLATE = utf8mb4_general_ci;
 
 
+  CREATE TABLE `timelineevents`
+  (
+      `TimelineID` int NOT NULL,
+      `EventID` int NOT NULL,
+      CONSTRAINT `pK_timelinesevent` PRIMARY KEY (eventID,timelineID),
+      CONSTRAINT `fk_timelineevents_events1` FOREIGN KEY (`EventID`) REFERENCES `events` (`EventID`),
+      CONSTRAINT `fk_timelineevents_timelines` FOREIGN KEY (`TimelineID`) REFERENCES `timelines` (`TimelineID`)
+  ) ENGINE = InnoDB
+    DEFAULT CHARSET = utf8mb4
+    COLLATE = utf8mb4_general_ci;
+
+
+
 CREATE TRIGGER CreatedDateTime
     BEFORE INSERT
     ON timelines

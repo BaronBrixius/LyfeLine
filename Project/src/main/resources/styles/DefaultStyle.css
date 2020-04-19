@@ -12,6 +12,7 @@ Text{
     -fx-font-size: 1.75em;
 }
 
+<<<<<<< HEAD:Project/src/main/resources/styles/DefaultStyle.css
 GridPane {
     -fx-vgap: 5px;
     -fx-hgap: 5px;
@@ -19,6 +20,12 @@ GridPane {
 
 .label{
     -fx-padding: 5 0 0 0;
+=======
+.label{
+    -fx-font-size: 1.6em;
+    -fx-font-weight: bold;
+    -fx-text-fill: black;
+>>>>>>> 26_Create_Timeline_Ben:Project/src/main/resources/DefaultStyle.css
 }
 
 /*The following apply to any object of the corresponding name.*/
@@ -37,19 +44,35 @@ GridPane {
 .button:hover {
     -fx-background-color: #126c82;
     -fx-scale-y: 1.1;
+
 }
 
 .text-field{
     -fx-pref-height: 30px;
 }
 
-.menu-item{
+.text-area{
+    -fx-pref-height: 105px;
+    -fx-pref-width: 400px;
+    -fx-wrap-text: true;
+    -fx-translate-y: -10px;
+    -fx-font-size: 15px;
+}
+
+.smallTextArea{
+    -fx-pref-height: 40px;
 
 }
 
-.menu-bar{
-    -fx-font-size: 1.1em;
+.menu-item{
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
 
+.menu-bar{
+    -fx-font-size: .55em;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
 }
 
 .combo-box{

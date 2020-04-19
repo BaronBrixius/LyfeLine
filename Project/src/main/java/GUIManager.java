@@ -5,7 +5,6 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-
 public class GUIManager extends Application {
 
     static Stage stage;
