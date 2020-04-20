@@ -31,16 +31,17 @@ public class GUIManager extends Application {
     public void start(Stage primaryStage) throws Exception {
 
         // Used to establish connection to the DB.
-		/*try {
+		try {
 			new DBM();
 			DBM.setupSchema(); //comment out for testing of log in
 		}
 		catch (SQLException e) {
 			e.printStackTrace();
-		}*/
+		}
 
         mainStage = primaryStage;
-        scene = new Scene(FXMLLoader.load(GUIManager.class.getResource("FXML/Welcome_Screen.fxml")));     //default page
+        //scene = new Scene(FXMLLoader.load(GUIManager.class.getResource("FXML/Welcome_Screen.fxml")));     //default page
+        scene = new Scene(FXMLLoader.load(GUIManager.class.getResource("FXML/Register_Screen.fxml")));
         mainStage.setScene(scene);
         applyStyle("DefaultStyle");
         mainStage.show();

@@ -29,7 +29,7 @@ CREATE TABLE `events` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
-CREATE TRIGGER CreatedDateTime
+CREATE TRIGGER CreatedDateTime2
     BEFORE INSERT
     ON events
     FOR EACH ROW
@@ -48,10 +48,11 @@ END;
 
 CREATE TABLE `Images` (
  `ImageID` int NOT NULL AUTO_INCREMENT,
- `ImageULR` character(500) DEFAULT NULL,
+ `ImageULR` character(255) DEFAULT NULL,
   PRIMARY KEY (`ImageID`),
   UNIQUE KEY `ImageID_UNIQUE` (`ImageID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 
 CREATE TABLE `groups` (
   `GroupID` int NOT NULL AUTO_INCREMENT,
@@ -136,9 +137,6 @@ CREATE TABLE `timelines`
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_general_ci;
 
-
-
-<<<<<<< HEAD
 
   CREATE TABLE `timelineevents`
   (
