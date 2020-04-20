@@ -9,7 +9,7 @@ class Main {
         PreparedStatement stmt;
         try {
             new DBM("jdbc:mysql://localhost?useTimezone=true&serverTimezone=UTC", "Halli", "dragon", "project");
-            DBM.setupSchema();       //destroys + remakes DB with default settings, can comment this out after first run if desired
+            //DBM.setupSchema();       //destroys + remakes DB with default settings, can comment this out after first run if desired
 
 
             //Makes a list of events from the DB and prints it
@@ -54,7 +54,7 @@ class Main {
             for (User e : userList)
                 System.out.println(e);
 
-        } catch (FileNotFoundException | SQLException | ClassNotFoundException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         } finally {
             try {
