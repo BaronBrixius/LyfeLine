@@ -73,10 +73,8 @@ public class Dashboard_GUI extends GridPane {
 		adminGUI.setMinWidth(150);
 		dashboardOptions.getChildren().add(adminGUI);
 		adminGUI.setOnAction(event -> {
-
 			//OldGUIManager.swapScene(AdminRoleManager_GUI.AdminRoleManager());
 			//OldGUIManager.mainStage.setTitle("Admin Manager");
-
 		});
 		this.add(dashboardOptions, 0, 0);
 
@@ -109,9 +107,7 @@ public class Dashboard_GUI extends GridPane {
 		this.add(btnLogOut, 2, 2);
 
 		btnLogOut.setOnAction(event -> {
-
 			//OldGUIManager.swapScene(LoginAndRegistration_GUI.welcomeScreen());
-
 		});
 
 		this.add(listOptions, 1, 0);

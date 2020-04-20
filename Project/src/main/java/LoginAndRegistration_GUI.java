@@ -34,7 +34,7 @@ public class LoginAndRegistration_GUI extends VBox {
         //This is the Stage for the Login Window
         Stage loginStage = new Stage();
         loginStage.setTitle("Login Screen");
-        loginStage.initOwner(OldGUIManager.mainStage);                 //These two lines make sure you can't click back to the Start Window,
+        loginStage.initOwner(GUIManager.stage);                 //These two lines make sure you can't click back to the Start Window,
 
         loginStage.initModality(Modality.WINDOW_MODAL);     //so you can't have 10 Login Windows open at once.
 
@@ -50,7 +50,7 @@ public class LoginAndRegistration_GUI extends VBox {
         Stage registerStage = new Stage();
         registerStage.setTitle("Register Screen");
 
-        registerStage.initOwner(OldGUIManager.mainStage);              //These are the same as before, prevents the window from losing focus until closed.
+        registerStage.initOwner(GUIManager.stage);              //These are the same as before, prevents the window from losing focus until closed.
         registerStage.initModality(Modality.WINDOW_MODAL);  //I don't actually know what Modality is, Google just said this works and it does.
 
         Parent root = FXMLLoader.load(GUIManager.class.getResource("fxml/Register_Screen.fxml"));
@@ -105,10 +105,51 @@ public class LoginAndRegistration_GUI extends VBox {
     }
 
     @FXML
-    public void timelineScreen() throws IOException, SQLException {
+    public void timelineScreen() throws IOException {
         GUIManager.swapScene("Timeline_Editor_Screen");
     }
 
+
+    public class DropDownMenu extends VBox {
+        //This method creates the dropdown menus in the top right of most windows
+        public DropDownMenu() {
+            //These are the items in the File dropdown menu
+            MenuItem save = new MenuItem("Save");
+            save.setOnAction(e -> System.out.println("The \"Save\" menu button has been pressed."));
+
+            MenuItem delete = new MenuItem("Delete");
+            delete.setOnAction(e -> System.out.println("The \"Delete\" menu button has been pressed."));
+
+            MenuItem zoom = new MenuItem("Zoom");
+            zoom.setOnAction(e -> System.out.println("The \"Zoom\" menu button has been pressed."));
+
+            //This is the File dropdown menu in the top left
+            Menu menuFile = new Menu("File");
+            menuFile.getItems().addAll(save, delete, zoom);
+
+            //This is the only item in the Edit dropdown menu
+            MenuItem editMode = new MenuItem("Edit Mode");
+            editMode.setOnAction(e -> System.out.println("The \"Edit Mode\" menu button has been pressed."));
+
+            //This is the Edit dropdown menu in the top left
+            Menu menuEdit = new Menu("Edit");
+            menuEdit.getItems().addAll(editMode);
+
+            //This is the only item in the View dropdown menu
+            MenuItem viewMode = new MenuItem("View Mode");
+            viewMode.setOnAction(e -> System.out.println("The \"View Mode\" menu button has been pressed."));
+
+            //This is the View dropdown menu in the top left
+            Menu menuView = new Menu("View");
+            menuView.getItems().addAll(viewMode);
+
+
+            //This is the bar that holds the dropdown menus in the top left
+            MenuBar bar = new MenuBar();
+            bar.getMenus().addAll(menuFile, menuEdit, menuView);
+            this.getChildren().addAll(bar);
+        }
+    }
 
 
 }
