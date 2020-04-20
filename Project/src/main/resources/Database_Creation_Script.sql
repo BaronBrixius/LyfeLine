@@ -1,6 +1,6 @@
 CREATE TABLE `events` (
   `EventID` int NOT NULL AUTO_INCREMENT,
-  `EventOwner` int NOT NULL
+  `EventOwner` int NOT NULL,
   `EventType` tinyint NOT NULL,
   `EventName` nvarchar(100) DEFAULT NULL,
   `EventDescription` nvarchar(5000) DEFAULT NULL,
