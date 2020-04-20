@@ -11,15 +11,6 @@ class Main {
             new DBM("jdbc:mysql://localhost?useTimezone=true&serverTimezone=UTC", "Halli", "dragon", "project");
             DBM.setupSchema();       //destroys + remakes DB with default settings, can comment this out after first run if desired
 
-            Event now = new Event(1, 2020, 4, 9);
-            Event then = new Event(2, -44, 3, 15);
-            DBM.insertIntoDB(now, then);
-
-            try {                   //throws as a demonstration of anti-dupe
-                DBM.insertIntoDB(now);
-            } catch (SQLIntegrityConstraintViolationException e) {
-                System.err.println(e.getMessage() + " (This is just a demonstration exception. -Max)");
-            }
 
             //Makes a list of events from the DB and prints it
             stmt = DBM.conn.prepareStatement("SELECT * FROM events");

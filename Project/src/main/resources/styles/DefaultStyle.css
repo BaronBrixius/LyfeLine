@@ -11,15 +11,6 @@ Text{
     -fx-font-size: 1.75em;
 }
 
-<<<<<<< HEAD:Project/src/main/resources/DefaultStyle.css
-=======
-
-GridPane {
-    -fx-vgap: 5px;
-    -fx-hgap: 5px;
-}
->>>>>>> origin/Ben_FXML_Work:Project/src/main/resources/styles/DefaultStyle.css
-
 .label{
     -fx-padding: 5 0 0 0;
     -fx-font-size: 1.5em;
