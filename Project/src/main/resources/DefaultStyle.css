@@ -80,6 +80,23 @@ for example:      buttonName.getStyleClass().add("smallButton");                
     -fx-font-size: 1em;
 }
 
+.popupButton{
+    -fx-font-size: 1.3em;
+    -fx-font-weight: bold;
+    -fx-pref-height: 35px;
+    -fx-pref-width: 90px;
+}
+
+.popupButton:hover {
+    -fx-background-color: #126c82;
+    -fx-scale-y: 1.1;
+}
+
+.hoverRed:hover {
+    -fx-background-color: #ff4251;
+    -fx-scale-y: 1.1;
+}
+
 .mediumText{
 	-fx-font-size: 1.5em;
 }
