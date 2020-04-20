@@ -1,3 +1,4 @@
+import java.util.Calendar;
 
 public class Date implements Comparable<Date> {
 
@@ -9,6 +10,8 @@ public class Date implements Comparable<Date> {
 	private int seconds;
 	private int milliseconds;
 
+	public Date(){}
+
 	public Date(int year, int month, int day, int hours, int minutes, int seconds, int milliseconds) {
 		this.year = year;
 		this.month = month;
@@ -17,6 +20,19 @@ public class Date implements Comparable<Date> {
 		this.minutes = minutes;
 		this.seconds = seconds;
 		this.milliseconds = milliseconds;
+	}
+
+	public Date currentDate(){
+		Date current = null;
+		Calendar calendar = Calendar.getInstance();
+		current.setYear(calendar.get(Calendar.YEAR));
+		current.setMonth(calendar.get(Calendar.MONTH));
+		current.setDay(calendar.get(Calendar.DATE));
+		current.setHours(calendar.get(Calendar.HOUR));
+		current.setMinutes(calendar.get(Calendar.MINUTE));
+		current.setSeconds(calendar.get(Calendar.SECOND));
+		current.setMilliseconds(calendar.get(Calendar.MILLISECOND));;
+		return current;
 	}
 
 	@Override
@@ -127,6 +143,6 @@ public class Date implements Comparable<Date> {
 	public void setMilliseconds(int milliseconds) {
 		this.milliseconds = milliseconds;
 	}
-	
+
 
 }
