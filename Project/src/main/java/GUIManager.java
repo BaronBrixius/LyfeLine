@@ -15,7 +15,7 @@ public class GUIManager extends Application {
     }
 
     public static void swapScene(String fxml) throws IOException {
-        scene.setRoot(FXMLLoader.load(GUIManager.class.getResource("fxml/" + fxml + ".fxml")));
+        scene.setRoot(FXMLLoader.load(GUIManager.class.getResource("FXML/" + fxml + ".fxml")));
     }
 
     public static void applyStyle(String style) {
@@ -36,8 +36,8 @@ public class GUIManager extends Application {
 		}*/
 
         stage = primaryStage;
-        //scene = new Scene(FXMLLoader.load(GUIManager.class.getResource("fxml/WelcomeScreen.fxml")));     //default page
-        scene = new Scene(FXMLLoader.load(GUIManager.class.getResource("fxml/EventEditor.fxml")));   //GUI element currently being worked on, delete for final version
+        //scene = new Scene(FXMLLoader.load(GUIManager.class.getResource("FXML/WelcomeScreen.fxml")));     //default page
+        scene = new Scene(FXMLLoader.load(GUIManager.class.getResource("FXML/EventEditor.fxml")));   //GUI element currently being worked on, delete for final version
         stage.setScene(scene);
         applyStyle("DefaultStyle");
         stage.show();
