@@ -53,6 +53,7 @@ CREATE TABLE `Images` (
   UNIQUE KEY `ImageID_UNIQUE` (`ImageID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+
 CREATE TABLE `groups` (
   `GroupID` int NOT NULL AUTO_INCREMENT,
   `GroupName` nvarchar(100) DEFAULT NULL,
@@ -136,19 +137,19 @@ CREATE TABLE `timelines`
   COLLATE = utf8mb4_general_ci;
 
 
-
-<<<<<<< HEAD
-
   CREATE TABLE `timelineevents`
   (
-      `TimelineID` int NOT NULL,
-      `EventID` int NOT NULL,
-      CONSTRAINT `pK_timelinesevent` PRIMARY KEY (eventID,timelineID),
-      CONSTRAINT `fk_timelineevents_events1` FOREIGN KEY (`EventID`) REFERENCES `events` (`EventID`), ON DELETE CASCADE,
-      CONSTRAINT `fk_timelineevents_timelines` FOREIGN KEY (`TimelineID`) REFERENCES `timelines` (`TimelineID`)
-  ) ENGINE = InnoDB
-    DEFAULT CHARSET = utf8mb4
-    COLLATE = utf8mb4_general_ci;
+    `TimelineID` int NOT NULL,
+    `EventID` int NOT NULL,
+    CONSTRAINT `pK_timelinesevent` PRIMARY KEY (eventID,timelineID),
+    CONSTRAINT `fk_timelineevents_events1`
+        FOREIGN KEY (`EventID`)
+        REFERENCES `events` (`EventID`)
+        ON DELETE CASCADE,
+    CONSTRAINT `fk_timelineevents_timelines`
+        FOREIGN KEY (`TimelineID`)
+        REFERENCES `timelines` (`TimelineID`)
+)
 
 
 CREATE TRIGGER CreatedDateTime
@@ -166,6 +167,9 @@ BEGIN
         set new.`CreatedMillisecond` = CAST(UNIX_TIMESTAMP(CURTIME(3)) % 1 * 1000 AS unsigned);
     end if;
 END;
+
+
+
 
 
 -- This part is for populating tables with dummy data
