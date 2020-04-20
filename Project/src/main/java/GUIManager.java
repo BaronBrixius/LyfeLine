@@ -19,7 +19,7 @@ public class GUIManager extends Application {
     }
 
     public static void swapScene(String fxml) throws IOException {
-        scene.setRoot(FXMLLoader.load(GUIManager.class.getResource("fxml/" + fxml + ".fxml")));
+        scene.setRoot(FXMLLoader.load(GUIManager.class.getResource("FXML/" + fxml + ".fxml")));
     }
 
     public static void applyStyle(String style) {
@@ -31,22 +31,20 @@ public class GUIManager extends Application {
     public void start(Stage primaryStage) throws Exception {
 
         // Used to establish connection to the DB.
-		try {
-
+		/*try {
 			new DBM();
 			DBM.setupSchema(); //comment out for testing of log in
 		}
 		catch (SQLException e) {
 			e.printStackTrace();
-		}
+		}*/
 
-        mainStage = primaryStage;
-        //scene = new Scene(FXMLLoader.load(GUIManager.class.getResource("fxml/WelcomeScreen.fxml")));     //default page
-        scene = new Scene(FXMLLoader.load(GUIManager.class.getResource("fxml/EventEditor.fxml")));   //GUI element currently being worked on, delete for final version
-        mainStage.setScene(scene);
+        stage = primaryStage;
+        //scene = new Scene(FXMLLoader.load(GUIManager.class.getResource("FXML/WelcomeScreen.fxml")));     //default page
+        scene = new Scene(FXMLLoader.load(GUIManager.class.getResource("FXML/EventEditor.fxml")));   //GUI element currently being worked on, delete for final version
+        stage.setScene(scene);
         applyStyle("DefaultStyle");
         mainStage.show();
     }
 
 }
-
