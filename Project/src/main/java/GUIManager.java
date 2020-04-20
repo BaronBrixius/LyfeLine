@@ -11,15 +11,14 @@ public class GUIManager extends Application {
 	//currently logged in user, null if no log in
 	public static User loggedInUser;
 	public static Stage mainStage;
-	public static String mainStyle;
-    public static Scene scene;
+    public static Scene mainScene;
 
     public static void main(String[] args) {
         launch(args);
     }
 
     public static void swapScene(String fxml) throws IOException {
-        scene.setRoot(FXMLLoader.load(GUIManager.class.getResource("FXML/" + fxml + ".fxml")));
+        mainScene.setRoot(FXMLLoader.load(GUIManager.class.getResource("FXML/" + fxml + ".fxml")));
     }
 
     public static void applyStyle(String style) {
@@ -40,8 +39,8 @@ public class GUIManager extends Application {
 		}
 
         mainStage = primaryStage;
-        scene = new Scene(FXMLLoader.load(GUIManager.class.getResource("FXML/Welcome_Screen.fxml")));     //default page
-        mainStage.setScene(scene);
+        mainScene = new Scene(FXMLLoader.load(GUIManager.class.getResource("FXML/Welcome_Screen.fxml")));     //default page
+        mainStage.setScene(mainScene);
         applyStyle("DefaultStyle");
         mainStage.show();
     }
