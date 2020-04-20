@@ -16,10 +16,8 @@ class Event implements DBObject<Event> {
     private Date creationDate;
 
    public Event(){} //dummy constructor
-
-    public Event(User user, Timeline timeline) {         //defaults, bare minimum - only related to the logged in user, timeline working on and sets creation date
+    public Event(User user) {//defaults, bare minimum - only related to the logged in user, timeline working on and sets creation date
         this.userID = user.getUserID();
-        this.timelineID = timeline.getTimelineID();
 
     }
 
@@ -55,7 +53,7 @@ class Event implements DBObject<Event> {
 
         PreparedStatement out = DBM.conn.prepareStatement("INSERT INTO `events` (`EventType`, `EventName`, `EventDescription`,`StartYear`,`StartMonth`,`StartDay`,`StartHour`\"\n" +
                 "\t\t\t\t+ \",`StartMinute`,`StartSecond`,`StartMillisecond`,`EndYear`,`EndMonth`,`EndDay`,`EndHour`,`EndMinute`,`EndSecond`,\"\n" +
-                "\t\t\t\t+ \"`EndMillisecond`,`CreatedYear`,`CreatedMonth`,`CreatedDay`,`CreatedHour`,`CreatedMinute`,`CreatedSecond`,`CreatedMillisecond`,) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);", Statement.RETURN_GENERATED_KEYS);
+                "\t\t\t\t+ \"`EndMillisecond`,`CreatedYear`,`CreatedMonth`,`CreatedDay`,`CreatedHour`,`CreatedMinute`,`CreatedSecond`,`CreatedMillisecond`,`EventOwner`,) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);", Statement.RETURN_GENERATED_KEYS);
         out.setInt(1, eventType);
         out.setString(2, eventName);
         out.setString(3, eventDescription);
@@ -80,6 +78,7 @@ class Event implements DBObject<Event> {
         out.setInt(22, creationDate.getMinutes());
         out.setInt(23, creationDate.getSeconds());
         out.setInt(24, creationDate.getMilliseconds());
+        out.setInt(25, userID);
         return out;
     }
     @Override
@@ -115,8 +114,6 @@ class Event implements DBObject<Event> {
 
     }
 
-
-
     @Override
     public void setID(int id) {
         this.eventID = id;
@@ -148,9 +145,21 @@ class Event implements DBObject<Event> {
         this.imageID = image;
     }
 
-    //Getter for editing Event fields
+    //Getters for Event fields
     public int  getEventID() {
         return this.eventID;
+    }
+    public String getEventDescrition() {
+        return this.eventDescription;
+    }
+    public String  getEventName() {
+        return this.eventName;
+    }
+    public Date  getEventStart() {
+        return this.startDate;
+    }
+    public Date  getEventEnd() {
+        return this.endDate;
     }
 
 

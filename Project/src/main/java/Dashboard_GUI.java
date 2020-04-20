@@ -42,6 +42,24 @@ public class Dashboard_GUI extends GridPane {
 		this.setHgap(5);
 		this.setPadding(new Insets(10, 10, 10, 10));
 
+		// holds events from DB that have the logged in userID
+		ObservableList<Event> events = FXCollections.observableArrayList();
+		List<Event> eventsFromDB = null;
+
+		try {
+			PreparedStatement stmt = DBM.conn.prepareStatement("SELECT * FROM events WHERE EventOwner = ?");
+			stmt.setInt(1,GUIManager.loggedInUser.getUserID());
+			eventsFromDB = DBM.getFromDB(stmt, new Event());
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		for (Event e : eventsFromDB) {
+			events.add(e);
+		}
+
 		// holds timelines from DB
 		ObservableList<Timeline> timelines = FXCollections.observableArrayList();
 		List<Timeline> timelinesFromDB = null;
