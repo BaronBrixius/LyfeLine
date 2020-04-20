@@ -439,11 +439,12 @@ public class LoginAndRegistration_GUI {
                         errorMessage.setText("Invalid password!");
                     } else { // log in!!!
                         GUIManager.loggedInUser = user;
+                        //update menubar text for loggedin status and enable menu item
+                        GUIManager.menu.updateLoggedInStatus();
                         ((Node) (event.getSource())).getScene().getWindow().hide();
                         GUIManager.swapScene("EventEditor");
                     }
                 }
-
             }
         } catch (SQLException | IOException e) {
             errorMessage.setText(e.getMessage());
