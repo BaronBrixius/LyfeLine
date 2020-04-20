@@ -27,8 +27,7 @@ public class GUIManager extends Application{
 		}
 
 		mainStage = primaryStage;
-		//mainStage.setScene(LoginAndRegistration_GUI.welcomeScreen()); 	//default scene
-		mainStage.setScene(new Scene(new EventEditor_GUI())); 	//GUI currently being worked on, delete for final version
+		mainStage.setScene(LoginAndRegistration_GUI.welcomeScreen()); 	//default scene
 		mainStage.setResizable(false);
 		changeStyle("DefaultStyle");
 		mainStage.show();
