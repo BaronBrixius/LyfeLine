@@ -16,10 +16,8 @@ class Event implements DBObject<Event> {
     private Date creationDate;
 
    public Event(){} //dummy constructor
-
-    public Event(User user, Timeline timeline) {         //defaults, bare minimum - only related to the logged in user, timeline working on and sets creation date
+    public Event(User user) {//defaults, bare minimum - only related to the logged in user, timeline working on and sets creation date
         this.userID = user.getUserID();
-        this.timelineID = timeline.getTimelineID();
 
     }
 
@@ -55,7 +53,7 @@ class Event implements DBObject<Event> {
 
         PreparedStatement out = DBM.conn.prepareStatement("INSERT INTO `events` (`EventType`, `EventName`, `EventDescription`,`StartYear`,`StartMonth`,`StartDay`,`StartHour`\"\n" +
                 "\t\t\t\t+ \",`StartMinute`,`StartSecond`,`StartMillisecond`,`EndYear`,`EndMonth`,`EndDay`,`EndHour`,`EndMinute`,`EndSecond`,\"\n" +
-                "\t\t\t\t+ \"`EndMillisecond`,`CreatedYear`,`CreatedMonth`,`CreatedDay`,`CreatedHour`,`CreatedMinute`,`CreatedSecond`,`CreatedMillisecond`,) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);", Statement.RETURN_GENERATED_KEYS);
+                "\t\t\t\t+ \"`EndMillisecond`,`CreatedYear`,`CreatedMonth`,`CreatedDay`,`CreatedHour`,`CreatedMinute`,`CreatedSecond`,`CreatedMillisecond`,`EventOwner`,) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);", Statement.RETURN_GENERATED_KEYS);
         out.setInt(1, eventType);
         out.setString(2, eventName);
         out.setString(3, eventDescription);
@@ -80,6 +78,7 @@ class Event implements DBObject<Event> {
         out.setInt(22, creationDate.getMinutes());
         out.setInt(23, creationDate.getSeconds());
         out.setInt(24, creationDate.getMilliseconds());
+        out.setInt(25, userID);
         return out;
     }
     @Override
@@ -114,8 +113,6 @@ class Event implements DBObject<Event> {
         return new  Event( eventID, timelineID,  userID,   startDate,  endDate, creationDate ,  eventName ,  eventDescription,  imageID);
 
     }
-
-
 
     @Override
     public void setID(int id) {
