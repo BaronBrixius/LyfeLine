@@ -1,28 +1,41 @@
+import javafx.fxml.FXML;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 public class Dashboard_GUI extends GridPane {
 
+	@FXML private Button adminGUI;
+	@FXML private Button btnDelete;
+	@FXML private Button btnEdit;
+	@FXML private Button btnCreate;
+	@FXML private TextFlow displayInfo;
+	@FXML private ListView list;
+	@FXML private TextField searchInput;
+	@FXML private CheckBox cbOnlyViewPersonalLines;
+	@FXML private ComboBox sortBy;
+
 	public Dashboard_GUI() {
+
+	}
+	
+	public Dashboard_GUI(int asd) {
 
 		// main layout
 		this.setVgap(5);
@@ -96,8 +109,8 @@ public class Dashboard_GUI extends GridPane {
 		adminGUI.setMinWidth(150);
 		dashboardOptions.getChildren().add(adminGUI);
 		adminGUI.setOnAction(event -> {
-			//OldGUIManager.swapScene(AdminRoleManager_GUI.AdminRoleManager());
-			//OldGUIManager.mainStage.setTitle("Admin Manager");
+			OldGUIManager.swapScene(new AdminRoleManager_GUI());
+			OldGUIManager.mainStage.setTitle("Admin Manager");
 		});
 		this.add(dashboardOptions, 0, 0);
 
@@ -131,7 +144,7 @@ public class Dashboard_GUI extends GridPane {
 		//this.add(btnLogOut, 2, 2);
 
 		btnLogOut.setOnAction(event -> {
-			//OldGUIManager.swapScene(LoginAndRegistration_GUI.welcomeScreen());
+			//GUIManager.swapScene("Welcome_Screen");
 		});
 
 		this.add(listOptions, 1, 0);
@@ -230,4 +243,15 @@ public class Dashboard_GUI extends GridPane {
 		return new Scene(layout);
 	}
 
+	public void createTimeline(ActionEvent event) {
+	}
+
+	public void editTimeline(ActionEvent event) {
+	}
+
+	public void deleteConfirmation(ActionEvent event) {
+	}
+
+	public void adminScreen(ActionEvent event) {
+	}
 }
