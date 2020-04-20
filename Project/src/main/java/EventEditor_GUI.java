@@ -116,8 +116,16 @@ public class EventEditor_GUI extends VBox {
 
     @FXML
     private void close() throws IOException {
-        //If this.event fields != textboxes throw warning,unsaved changes -> before exit or
+        if(!this.event.getEventName().equals(titleInput.getText()) || !this.event.getEventDescrition().equals(descriptionInput.getText()) || !this.event.getEventStart().toString().equals(startInput.getValue().format(DateTimeFormatter.ofPattern("yyyyMMdd"+0+0+0+0))) ||this.event.getEventEnd().toString().equals(endInput.getValue().format(DateTimeFormatter.ofPattern("yyyyMMdd"+0+0+0+0)))) {//then something also for image later to see if changed
+            //do you wanna save and exit or just save?
+                     //if save and exit:
+                     //saveEvent();
+                    //GUIManager.swapScene("example");
+                    //else
+                     //GUIManager.swapScene("example");
+        }
         //close editor, return to previous screen
+        else
         GUIManager.swapScene("example");
         System.out.println("Button pressed.");
     }

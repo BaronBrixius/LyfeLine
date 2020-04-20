@@ -148,9 +148,21 @@ class Event implements DBObject<Event> {
         this.imageID = image;
     }
 
-    //Getter for editing Event fields
+    //Getters for Event fields
     public int  getEventID() {
         return this.eventID;
+    }
+    public String getEventDescrition() {
+        return this.eventDescription;
+    }
+    public String  getEventName() {
+        return this.eventName;
+    }
+    public Date  getEventStart() {
+        return this.startDate;
+    }
+    public Date  getEventEnd() {
+        return this.endDate;
     }
 
 
