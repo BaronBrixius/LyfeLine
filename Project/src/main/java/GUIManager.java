@@ -30,7 +30,7 @@ public class GUIManager extends Application{
 		}
 
 		mainStage = primaryStage;
-		mainStage.setScene(LoginAndRegistration_GUI.welcomeScreen()); //default scene
+		mainStage.setScene(LoginAndRegistration_GUI.welcomeScreen()); 	//default scene
 		mainStage.setResizable(false);
 		changeStyle("DefaultStyle");
 		mainStage.show();
