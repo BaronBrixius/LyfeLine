@@ -403,7 +403,7 @@ public class LoginAndRegistration_GUI extends VBox {
                 DBM.insertIntoDB(new User(usernameInput.getText(), emailInput.getText(), passwordInput.getText()));
                 // close the window once successful, and switch to the dashboard
                 ((Node) (event.getSource())).getScene().getWindow().hide();
-                //GUIManager.swapScene(new Dashboard_GUI());
+                //OldGUIManager.swapScene(new Dashboard_GUI());
             }
         } catch (IllegalArgumentException | SQLException e) {
             errorMessage.setText(e.getMessage());
