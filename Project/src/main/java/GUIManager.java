@@ -9,7 +9,6 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.sql.SQLException;
 
-
 public class GUIManager extends Application {
 
     //currently logged in user, null if no log in
@@ -50,7 +49,7 @@ public class GUIManager extends Application {
         mainStage = primaryStage;
         mainStage.setScene(new Scene(main));
 
-        swapScene("Welcome_Screen");
+        swapScene("EventEditor");
         applyStyle("DefaultStyle");
 
         mainStage.show();

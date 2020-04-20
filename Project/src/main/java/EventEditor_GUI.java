@@ -9,7 +9,6 @@ import java.util.Optional;
 
 public class EventEditor_GUI extends VBox {
 
-
     @FXML
     TextField titleInput = new TextField();
     @FXML
@@ -39,8 +38,10 @@ public class EventEditor_GUI extends VBox {
 
     @FXML
     private void uploadImage() {
-        //don't implement, not part of current sprint
-        System.out.println("Button pressed.");
+        /*//don't implement, not part of current sprint
+        System.out.println("Button pressed.");*/
+
+        changeEvent(new Event());
     }
 
     public boolean changeEvent(int eventID) {       //is this even needed? don't implement yet
@@ -53,6 +54,7 @@ public class EventEditor_GUI extends VBox {
 
     public boolean changeEvent(Event event) {       //is this even needed? don't implement yet
         this.event = event;
+        System.out.println("change event");
         return populateDisplay();
     }
 
@@ -99,7 +101,6 @@ public class EventEditor_GUI extends VBox {
         System.out.println("Delete event.");
         return true;
     }
-
 
     @FXML
     private void close() throws IOException {
