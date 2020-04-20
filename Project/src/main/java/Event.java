@@ -9,7 +9,7 @@ class Event implements DBObject<Event> {
     private int userID;
     private String description;
     private  String title;
-    private String imagePath;//For now, not sure how we handle this later on
+    private int imageID;//For now, not sure how we handle this later on
     private  Date startDate;
     private  Date endDate;
     private Date creationDate;
@@ -22,7 +22,7 @@ class Event implements DBObject<Event> {
 
     }
 
-    private Event(int eventID, int timelineID, int userID,  Date startDate, Date endDate, Date creationDate , String title , String description, String imagePath) {      //for reading from database
+    private Event(int eventID, int timelineID, int userID,  Date startDate, Date endDate, Date creationDate , String title , String description, int imageID) {      //for reading from database
         this.eventID = eventID;
         this. timelineID = timelineID;
         this.userID = userID;
@@ -31,7 +31,7 @@ class Event implements DBObject<Event> {
         this.creationDate = creationDate;
         this.title=title;
         this.description=description;
-        this.imagePath = imagePath;
+        this.imageID = imageID;
 
 
     }
