@@ -40,7 +40,7 @@ public class GUIManager extends Application {
         // Used to establish connection to the DB.
         try {
             new DBM();
-            DBM.setupSchema(); //comment out for testing of log in
+            //DBM.setupSchema(); //comment out for testing of log in
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -48,9 +48,12 @@ public class GUIManager extends Application {
         main = new VBox();
 
         loader = new FXMLLoader(getClass().getResource("FXML/TopMenu.fxml"));
-        menu = loader.getController();
+        
 
         main.getChildren().addAll(loader.load(), new Pane());
+        
+        menu = loader.getController();
+        menu.updateLoggedInStatus();
 
         mainStage = primaryStage;
         mainStage.setScene(new Scene(main));
