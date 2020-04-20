@@ -4,11 +4,15 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 public class GUIManager extends Application {
 
-    static Stage stage;
-    static Scene scene;
+	//currently logged in user, null if no log in
+	public static User loggedInUser;
+	public static Stage mainStage;
+	public static String mainStyle;
+    public static Scene scene;
 
     public static void main(String[] args) {
         launch(args);
@@ -19,7 +23,7 @@ public class GUIManager extends Application {
     }
 
     public static void applyStyle(String style) {
-        stage.getScene().getStylesheets().add("File:src/main/resources/styles/" + style + ".css");
+        mainStage.getScene().getStylesheets().add("File:src/main/resources/styles/" + style + ".css");
     }
 
     //default window set up
@@ -29,7 +33,7 @@ public class GUIManager extends Application {
         // Used to establish connection to the DB.
 		/*try {
 			new DBM();
-			DBM.setupSchema();
+			DBM.setupSchema(); //comment out for testing of log in
 		}
 		catch (SQLException e) {
 			e.printStackTrace();
@@ -40,7 +44,7 @@ public class GUIManager extends Application {
         scene = new Scene(FXMLLoader.load(GUIManager.class.getResource("FXML/EventEditor.fxml")));   //GUI element currently being worked on, delete for final version
         stage.setScene(scene);
         applyStyle("DefaultStyle");
-        stage.show();
+        mainStage.show();
     }
 
 }

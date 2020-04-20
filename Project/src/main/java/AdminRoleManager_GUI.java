@@ -8,6 +8,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -15,12 +16,18 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.layout.Border;
+import javafx.scene.layout.BorderStroke;
+import javafx.scene.layout.BorderStrokeStyle;
+import javafx.scene.layout.BorderWidths;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
@@ -30,6 +37,7 @@ import java.util.List;
 
 public class AdminRoleManager_GUI extends GridPane {
 	private ListView<User> userListView;
+
 
 	public AdminRoleManager_GUI(){
 
@@ -44,30 +52,20 @@ public class AdminRoleManager_GUI extends GridPane {
 				userList.add(u);
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			
 		}
-
-		// headline
-		final Text headLine = new Text("Role Management");
-		Font thirty = new Font("Serif", 40);
-		headLine.setFont(thirty);
-		headLine.setTranslateX(130);
-		GridPane.setColumnSpan(headLine, 4);
 
 		// custom toggleswitch
 		AdminToggleSwitch toggle = new AdminToggleSwitch(userList);
 		GridPane.setColumnSpan(toggle, 3);
-		toggle.setTranslateX(40);
-		toggle.setTranslateY(40);
+
 
 		// informative text for toggle function
 		Text textToggle = new Text("Toggle admin");
-		textToggle.setFont(Font.font(12));
-		textToggle.setFill(Color.BLACK);
-		textToggle.setTranslateX(57);
-		textToggle.setTranslateY(77);
 
+
+
+		/*
 		// background for user information & toggle function
 		Rectangle bg = new Rectangle(300, 240);
 		bg.setFill(Color.WHITE);
@@ -78,13 +76,10 @@ public class AdminRoleManager_GUI extends GridPane {
 		bg.setArcWidth(7);
 		bg.setArcHeight(7);
 		GridPane.setRowSpan(bg, 3);
+		*/
 
 		// displays status of user (User/ admin)
 		Text textStatus = new Text();
-		textStatus.setFont(Font.font(18));
-		textStatus.setFill(Color.BLACK);
-		textStatus.setTranslateX(40);
-		textStatus.setTranslateY(50);
 		textStatus.textProperty()
 				.bind(Bindings.when(toggle.switchedOn).then("Status: ADMIN").otherwise("Status: USER"));
 
@@ -93,14 +88,11 @@ public class AdminRoleManager_GUI extends GridPane {
 
 		// user information
 		Text textUser = new Text("User: " + userList.get(0).getUserEmail());
-		textUser.setFont(Font.font(18));
-		textUser.setFill(Color.BLACK);
-		textUser.setTranslateX(40);
-		textUser.setTranslateY(50);
+
+
 
 		// list display of timelines
 		userListView = new ListView<>();
-		userListView.setEditable(false);
 
 		// approach adapted from https://stackoverflow.com/a/36657553
 		userListView.setCellFactory(param -> new ListCell<User>() {
@@ -117,16 +109,11 @@ public class AdminRoleManager_GUI extends GridPane {
 		});
 
 		userListView.setItems(userList);
-		userListView.setTranslateY(50);
 		userListView.setPrefWidth(300);
 		userListView.getSelectionModel().select(0);
 
 		GridPane.setRowSpan(userListView, 3);
 
-		// layout of left column
-		VBox listOptions = new VBox();
-		listOptions.setSpacing(10);
-		listOptions.setTranslateY(50);
 		// search field
 		TextField searchInput = new TextField("search here");
 		searchInput.focusedProperty().addListener(ov -> {
@@ -136,6 +123,7 @@ public class AdminRoleManager_GUI extends GridPane {
 
 		// sort order selection
 		ComboBox<String> sortBy = new ComboBox<String>();
+		sortBy.setPrefWidth(300);
 		sortBy.setValue("Sort By");
 		ObservableList<String> sortOptions = FXCollections.observableArrayList();
 		sortOptions.add("Alphabetically");
@@ -143,15 +131,13 @@ public class AdminRoleManager_GUI extends GridPane {
 		sortOptions.add("User ID");
 		sortOptions.add("Reverse User ID");
 		sortBy.setItems(sortOptions);
-		listOptions.getChildren().addAll(sortBy, searchInput);
+		
 
 		// back button
 		Button btnBack = new Button("Back");
 		btnBack.getStyleClass().add("smallButton");
 		btnBack.setOnAction(event -> {
-
-			//GUIManager.swapScene(new Dashboard_GUI());
-
+			//OldGUIManager.swapScene(new Dashboard_GUI());
 		});
 
 		// sort order selection events
@@ -182,10 +168,42 @@ public class AdminRoleManager_GUI extends GridPane {
 			}
 		});
 
-		this.add(bg, 0, 2);
-		this.add(headLine, 0, 0);
+
+		Region spacer = new Region();
+
+		VBox userInfo = new VBox();
+		userInfo.setMinWidth(300);
+		userInfo.setSpacing(10);
+		userInfo.getChildren().addAll(textUser,textStatus,toggle,textToggle,spacer,btnBack);
+		userInfo.setBorder(new Border(new BorderStroke(Color.web("#1aa9cd"),BorderStrokeStyle.SOLID, new CornerRadii(3.0), new BorderWidths(2))));
+		userInfo.setPadding(new Insets(10, 10, 10, 10));
+		VBox.setVgrow(spacer, Priority.SOMETIMES);
+
+
+
+		textUser.getStyleClass().add("mediumText");
+		textStatus.getStyleClass().add("mediumText");
+		textToggle.getStyleClass().add("mediumText");
+
+		VBox userListBox = new VBox();
+		userListBox.setSpacing(10);
+		userListBox.setPadding(new Insets(10, 10, 10, 10));
+		userListBox.getChildren().addAll(sortBy,searchInput,userListView);
+
+		//pane.add(userInfo, 0, 0);
+		//pane.add(userListBox, 1, 0);
+
+
+		//VBox everything = LoginAndRegistration_GUI.dropDownMenus();
+		//everything.getChildren().add(pane);
+
+		//Scene scene = new Scene(everything);
+
+
+		//this.add(bg, 0, 2);
+		//this.add(headLine, 0, 0);
 		this.add(textUser, 0, 2);
-		this.add(listOptions, 4, 2);
+		//this.add(listOptions, 4, 2);
 		this.add(userListView, 4, 3);
 		this.add(toggle, 0, 4);
 		this.add(textToggle, 0, 4);

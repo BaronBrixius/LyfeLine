@@ -1,25 +1,29 @@
 /*This File holds all the CSS Style commands that are applied to all Nodes in a Scene*/
 
 /*.root applies to everything in a scene and overrides all other commands in this file. Use carefully.*/
-.root{
+.root{/*Use carefully.*/
     -fx-background-color: #f4f4f4;
-    -fx-spacing: 5px;
 }
 
-/*Text applies to any free floating text, does not apply to text in Buttons, TextFields, etc.
+/*Text applies to any free floating text (inc. TextField), does not apply to text in Buttons, etc.
 "-fx-text-fill" does not work here, use "fx-fill" to color the text instead.*/
 Text{
     -fx-font-size: 1.75em;
 }
 
+<<<<<<< HEAD:Project/src/main/resources/DefaultStyle.css
+=======
 
 GridPane {
     -fx-vgap: 5px;
     -fx-hgap: 5px;
 }
+>>>>>>> origin/Ben_FXML_Work:Project/src/main/resources/styles/DefaultStyle.css
 
 .label{
     -fx-padding: 5 0 0 0;
+    -fx-font-size: 1.5em;
+    -fx-font-weight: bold;
 }
 
 /*The following apply to any object of the corresponding name.*/
@@ -57,14 +61,12 @@ GridPane {
 }
 
 .menu-item{
-    -fx-focus-color: transparent;
-    -fx-faint-focus-color: transparent;
+
 }
 
 .menu-bar{
-    -fx-font-size: .55em;
-    -fx-focus-color: transparent;
-    -fx-faint-focus-color: transparent;
+    -fx-font-size: .6em;
+    -fx-font-weight: lighter;
 }
 
 .combo-box{
@@ -109,6 +111,32 @@ for example:      buttonName.getStyleClass().add("smallButton");                
 .smallText{
     -fx-font-size: 1em;
 }
+
+.popupButton{
+    -fx-font-size: 1.3em;
+    -fx-font-weight: bold;
+    -fx-pref-height: 35px;
+    -fx-pref-width: 90px;
+}
+
+.popupButton:hover {
+    -fx-background-color: #126c82;
+    -fx-scale-y: 1.1;
+}
+
+.hoverRed:hover {
+    -fx-background-color: #ff4251;
+    -fx-scale-y: 1.1;
+}
+
+.mediumText{
+	-fx-font-size: 1.5em;
+}
+
+
+
+
+
 
 /*Here is a list of useful CSS commands:
 -fx-text-fill: black; (sets text color)
