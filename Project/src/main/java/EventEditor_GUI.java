@@ -67,7 +67,7 @@ public class EventEditor_GUI extends VBox {
     }
 
     @FXML
-    private boolean saveEvent() throws SQLException {
+    private boolean saveEvent()  {
 
         //setters to update each field of this.event, based on the current info in the text fields
          this.event.setTitle(titleInput.getText());
@@ -100,9 +100,17 @@ public class EventEditor_GUI extends VBox {
         if (result.get() == ButtonType.CANCEL)
             return false;
 
-        // delete event from DB, on this and all other timelines
-        System.out.println("Delete event.");
-        return true;
+        try {
+            if (this.event.getEventID() == 0)
+                throw new IllegalArgumentException("event not in database");
+            else
+                DBM.deleteFromDB(event);
+            return true;
+        } catch (SQLException e){
+            return false;
+        }
+
+
     }
 
 
