@@ -1,3 +1,4 @@
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -58,26 +59,6 @@ public class LoginAndRegistration_GUI extends VBox {
         registerStage.show();
     }
 
-    public void LoginAndRegistration_GUI1() {
-
-        //This button opens the Dashboard Scene in the same window.
-        Button guest = new Button("Continue as guest");
-        guest.setOnAction(event -> {
-
-            //GUIManager.swapScene(new Dashboard_GUI());
-        });
-
-        //Temp button to open Timeline editor
-        Button timelines = new Button("Timelines");
-        timelines.setOnAction(event -> {
-            //GUIManager.swapScene(new TimelineEditor_GUI());
-
-        });
-
-
-
-    }
-
     @FXML
     public void close(MouseEvent mouseEvent) {
         ((Node) (mouseEvent.getSource())).getScene().getWindow().hide();
@@ -125,13 +106,7 @@ public class LoginAndRegistration_GUI extends VBox {
 
     @FXML
     public void timelineScreen() throws IOException, SQLException {
-
-        //Timeline timeline = new Timeline(69, "Fish line", "what aaat", "scale", "theme", new Date(1995, 6, 15, 8, 13, 30, 4), new Date(2008, 3, 5, 9, 43, 20, 4), new Date(2020, 6, 1, 10, 13, 30, 40), 69, true);
-
         GUIManager.swapScene("Timeline_Editor_Screen");
-        //TimelineEditor_GUI gui = new TimelineEditor_GUI(timeline);
-        //gui.populateFields(new Timeline(69, "Fish line", "what aaat", "scale", "theme", new Date(1995, 6, 15, 8, 13, 30, 4), new Date(2008, 3, 5, 9, 43, 20, 4), new Date(2020, 6, 1, 10, 13, 30, 40), 69, true));
-
     }
 
 

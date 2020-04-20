@@ -28,8 +28,6 @@
                 style="-fx-font-size: 2em;" text="Login" textAlignment="CENTER"/>
         <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" style="-fx-font-size: 2em;"
                 text="Register" textAlignment="CENTER" onMouseClicked="#registerScreen"/>
-        <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" style="-fx-font-size: 2em;"
-                text="Continue as guest" textAlignment="CENTER"/>
         <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" text="Timelines"
                 textAlignment="CENTER" onMouseClicked="#timelineScreen"/>
     </HBox>

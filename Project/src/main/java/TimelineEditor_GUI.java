@@ -3,12 +3,18 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 
 import java.io.IOException;
+import java.net.URL;
 import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.List;
+import java.util.ResourceBundle;
 
 public class TimelineEditor_GUI {
 
@@ -20,18 +26,14 @@ public class TimelineEditor_GUI {
     @FXML private ComboBox timeInput;
 
 
-    public TimelineEditor_GUI() throws IOException {
-        //this(new Timeline());
+    public TimelineEditor_GUI() {
+
     }
+
 
     @FXML
-    public void initialize() {
-        //populateFields();
-    }
-
-
-    public TimelineEditor_GUI(Timeline timeline) {
-        //GUIManager.swapScene("TimelineEditor_GUI");
+    public void initialize() throws IOException {
+        Timeline timeline = new Timeline(); //If editing instead of creating, make this equal to the Timeline to be edited.
 
         titleInput = new TextArea(timeline.getName());
 
@@ -51,9 +53,9 @@ public class TimelineEditor_GUI {
         */
         keywordsInput = new TextArea(keywordsList.toString());
 
-        startDateInput = new DatePicker();    //timeline.getStartDate.toLocaleDate() in constructor
+        startDateInput = new DatePicker();    //put timeline.getStartDate.toLocaleDate() in constructor
 
-        endDateInput = new DatePicker();  //timeline.getEndDate.toLocaleDate() in constructor
+        endDateInput = new DatePicker();  //put timeline.getEndDate.toLocaleDate() in constructor
 
         ObservableList<String> timeUnits = FXCollections.observableArrayList();
         timeUnits.addAll("Seconds", "Minutes", "Hours", "Days", "Years");
