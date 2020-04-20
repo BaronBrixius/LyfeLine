@@ -2,6 +2,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.MenuBar;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -15,7 +16,7 @@ public class GUIManager extends Application {
     //currently logged in user, null if no log in
     public static User loggedInUser;
     public static Stage mainStage;
-    public static MenuBar menu;
+    public static TopMenu menu;
     public static VBox main;
 
     public static void main(String[] args) {
@@ -44,7 +45,7 @@ public class GUIManager extends Application {
 
         main = new VBox();
 
-        menu = FXMLLoader.load(GUIManager.class.getResource("FXML/TopMenu.fxml"));
+        menu =FXMLLoader.load(GUIManager.class.getResource("FXML/TopMenu.fxml"));
         main.getChildren().addAll(menu, new Pane());
 
         mainStage = primaryStage;
