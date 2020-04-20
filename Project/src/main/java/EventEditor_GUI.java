@@ -1,10 +1,5 @@
 import javafx.fxml.FXML;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 import java.io.IOException;
@@ -38,7 +33,7 @@ public class EventEditor_GUI extends VBox {
     }
 
     @FXML
-    private void toggleHasDuration(){
+    private void toggleHasDuration() {
         endInput.setDisable(!hasDuration.isSelected());
     }
 
@@ -70,19 +65,19 @@ public class EventEditor_GUI extends VBox {
     private boolean saveEvent() throws SQLException {
 
         //setters to update each field of this.event, based on the current info in the text fields
-         this.event.setTitle(titleInput.getText());
-         this.event.setDescription(descriptionInput.getText());
-         this.event.setStartDate(startInput.getValue().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
-         this.event.setEndDate(endInput.getValue().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
-         //this.event.setImage(); later
+        this.event.setTitle(titleInput.getText());
+        this.event.setDescription(descriptionInput.getText());
+        this.event.setStartDate(startInput.getValue().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+        this.event.setEndDate(endInput.getValue().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+        //this.event.setImage(); later
 
         try {
-         if (this.event.getEventID() == 0)
-            DBM.insertIntoDB(event);
-        else
-            DBM.updateInDB(event);
-         return true;
-        } catch (SQLException e){
+            if (this.event.getEventID() == 0)
+                DBM.insertIntoDB(event);
+            else
+                DBM.updateInDB(event);
+            return true;
+        } catch (SQLException e) {
             return false;
         }
 

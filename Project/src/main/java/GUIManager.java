@@ -1,24 +1,29 @@
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.MenuBar;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.sql.SQLException;
 
+
 public class GUIManager extends Application {
 
-	//currently logged in user, null if no log in
-	public static User loggedInUser;
-	public static Stage mainStage;
-    public static Scene mainScene;
+    //currently logged in user, null if no log in
+    public static User loggedInUser;
+    public static Stage mainStage;
+    public static MenuBar menu;
+    public static VBox main;
 
     public static void main(String[] args) {
         launch(args);
     }
 
     public static void swapScene(String fxml) throws IOException {
-        mainScene.setRoot(FXMLLoader.load(GUIManager.class.getResource("FXML/" + fxml + ".fxml")));
+        main.getChildren().set(1, FXMLLoader.load(GUIManager.class.getResource("FXML/" + fxml + ".fxml")));
     }
 
     public static void applyStyle(String style) {
@@ -30,18 +35,24 @@ public class GUIManager extends Application {
     public void start(Stage primaryStage) throws Exception {
 
         // Used to establish connection to the DB.
-		try {
-			new DBM();
-			DBM.setupSchema(); //comment out for testing of log in
-		}
-		catch (SQLException e) {
-			e.printStackTrace();
-		}
+        try {
+            new DBM();
+            DBM.setupSchema(); //comment out for testing of log in
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        main = new VBox();
+
+        menu = FXMLLoader.load(GUIManager.class.getResource("FXML/TopMenu.fxml"));
+        main.getChildren().addAll(menu, new Pane());
 
         mainStage = primaryStage;
-        mainScene = new Scene(FXMLLoader.load(GUIManager.class.getResource("FXML/Welcome_Screen.fxml")));     //default page
-        mainStage.setScene(mainScene);
+        mainStage.setScene(new Scene(main));
+
+        swapScene("Welcome_Screen");
         applyStyle("DefaultStyle");
+
         mainStage.show();
     }
 
