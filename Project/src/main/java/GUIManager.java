@@ -40,8 +40,7 @@ public class GUIManager extends Application {
 		}*/
 
         mainStage = primaryStage;
-        //scene = new Scene(FXMLLoader.load(GUIManager.class.getResource("FXML/WelcomeScreen.fxml")));     //default page
-        scene = new Scene(FXMLLoader.load(GUIManager.class.getResource("FXML/EventEditor.fxml")));   //GUI element currently being worked on, delete for final version
+        scene = new Scene(FXMLLoader.load(GUIManager.class.getResource("FXML/Welcome_Screen.fxml")));     //default page
         mainStage.setScene(scene);
         applyStyle("DefaultStyle");
         mainStage.show();
