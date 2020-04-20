@@ -110,7 +110,7 @@ public class EventEditor_GUI extends VBox {
     private void close() throws IOException {
         //If this.event fields != textboxes throw warning,unsaved changes -> before exit or
         //close editor, return to previous screen
-        GUIManager.swapScene("example");
+        GUIManager.swapScene("Register_Screen");
         System.out.println("Button pressed.");
     }
 }
