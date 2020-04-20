@@ -35,10 +35,10 @@ class Main {
             DBM.insertIntoDB(test1); //Here are two timelines with same name == ok because I changed userID
             Timeline test3 = new Timeline(0, "My other timeline", "Very cool timeline", "Month", "pink", new Date(1,0,0,0,0,0,0), new Date(2,0,0,0,0,0,0),  new Date(2,0,0,0,0,0,0), 11, false);
             DBM.insertIntoDB(test3); //Here are two timelines with same name == NOT OK because I now same  userID and same name
-            Timeline test4 = new Timeline(0, "My other timeline", "Very cool timeline", "Month", "pink", new Date(1,0,0,0,0,0,0), new Date(2,0,0,0,0,0,0),  new Date(2,0,0,0,0,0,0), 11, false);
-            DBM.insertIntoDB(test3);
 
 
+            Date testing = new Date(1984,24,10,0,0,0,0);
+            System.out.println(testing.toString());
             User teacher = new User("Hans Ove", "Hans@math.biz", "Passw0rd!");
             if (User.validateUnique("Hans@math.biz"))
                 DBM.insertIntoDB(teacher);

@@ -78,6 +78,11 @@ for example:      buttonName.getStyleClass().add("smallButton");                
     -fx-pref-width: 150px;
 }
 
+.dashBoard{
+    -fx-pref-height: 75px;
+
+}
+
 .tinyButton{
     -fx-pref-width: 90px;
     -fx-pref-height: 25px;

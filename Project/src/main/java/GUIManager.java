@@ -1,15 +1,14 @@
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
+import javafx.scene.control.MenuItem;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.sql.SQLException;
-
 
 public class GUIManager extends Application {
 
@@ -18,13 +17,16 @@ public class GUIManager extends Application {
     public static Stage mainStage;
     public static TopMenu menu;
     public static VBox main;
+    public static FXMLLoader loader;
 
     public static void main(String[] args) {
         launch(args);
     }
 
-    public static void swapScene(String fxml) throws IOException {
-        main.getChildren().set(1, FXMLLoader.load(GUIManager.class.getResource("FXML/" + fxml + ".fxml")));
+    public static <T> T swapScene(String fxml) throws IOException {
+        loader = new FXMLLoader(GUIManager.class.getResource("FXML/" + fxml + ".fxml"));
+        main.getChildren().set(1, loader.load());
+        return loader.getController();
     }
 
     public static void applyStyle(String style) {
@@ -45,8 +47,10 @@ public class GUIManager extends Application {
 
         main = new VBox();
 
-        menu =FXMLLoader.load(GUIManager.class.getResource("FXML/TopMenu.fxml"));
-        main.getChildren().addAll(menu, new Pane());
+        loader = new FXMLLoader(getClass().getResource("FXML/TopMenu.fxml"));
+        menu = loader.getController();
+
+        main.getChildren().addAll(loader.load(), new Pane());
 
         mainStage = primaryStage;
         mainStage.setScene(new Scene(main));
