@@ -8,6 +8,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
@@ -66,7 +67,7 @@ public class EventEditor_GUI extends VBox {
     }
 
     @FXML
-    private boolean saveEvent() {
+    private boolean saveEvent() throws SQLException {
 
         //setters to update each field of this.event, based on the current info in the text fields
          this.event.setTitle(titleInput.getText());
@@ -76,16 +77,15 @@ public class EventEditor_GUI extends VBox {
          //this.event.setImage(); later
 
         try {
-         if (this.event.getEventID = 0)
-            DBM.addToDB(event);
+         if (this.event.getEventID() == 0)
+            DBM.insertIntoDB(event);
         else
             DBM.updateInDB(event);
          return true;
         } catch (SQLException e){
             return false;
         }
-        System.out.println("Button pressed.");
-        return false;
+
     }
 
     @FXML
