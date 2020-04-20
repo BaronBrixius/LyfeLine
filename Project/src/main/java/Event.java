@@ -72,6 +72,22 @@ class Event implements DBObject<Event> {
     public void setID(int id) {
         this.eventID = id;
     }
+    //Setters for editing Event fields
+    public void setTitle(String title) {
+        this.title = title;
+    }
+    public void setDescription(String description) {
+        this.description = description;
+    }
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
+    public void setImage(String image) {
+        this.imagePath = image;
+    }
 
     @Override
     public PreparedStatement getUpdateQuery() throws SQLException {
