@@ -12,18 +12,25 @@ class Event implements DBObject<Event> {
     private  Date end;
     private Date creationDate;
 
+   public Event(){} //dummy constructor
 
-    public Event(User user, Timeline timeline) {         //defaults, bare minimum - only related to the logged in user
+    public Event(User user, Timeline timeline) {         //defaults, bare minimum - only related to the logged in user, timeline working on and sets creation date
         this.userID = user.getUserID();
         this.timelineID = timeline.getTimelineID();
-        this.creationDate = new Date().currentDate();
 
     }
 
-
-
-    private Event(int eventID, int eventType, int startYear, int startMonth, int startDay, String start) {      //for reading from database
+    private Event(int eventID, int timelineID, int userID,  Date startDate, Date endDate, Date creationDate , String title , String description, String imagePath) {      //for reading from database
         this.eventID = eventID;
+        this. timelineID = timelineID;
+        this.userID = userID;
+        this.start = startDate;
+        this.end = endDate;
+        this.creationDate = creationDate;
+        this.title=title;
+        this.description=description;
+        this.imagePath = imagePath;
+
 
     }
 

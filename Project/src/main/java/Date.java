@@ -22,18 +22,7 @@ public class Date implements Comparable<Date> {
 		this.milliseconds = milliseconds;
 	}
 
-	public Date currentDate(){
-		Date current = null;
-		Calendar calendar = Calendar.getInstance();
-		current.setYear(calendar.get(Calendar.YEAR));
-		current.setMonth(calendar.get(Calendar.MONTH));
-		current.setDay(calendar.get(Calendar.DATE));
-		current.setHours(calendar.get(Calendar.HOUR));
-		current.setMinutes(calendar.get(Calendar.MINUTE));
-		current.setSeconds(calendar.get(Calendar.SECOND));
-		current.setMilliseconds(calendar.get(Calendar.MILLISECOND));;
-		return current;
-	}
+
 
 	@Override
 	public String toString() {
