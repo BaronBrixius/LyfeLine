@@ -8,7 +8,7 @@ class Main {
     public static void main(String[] args) {
         PreparedStatement stmt;
         try {
-            new DBM();
+            new DBM("jdbc:mysql://localhost?useTimezone=true&serverTimezone=UTC", "Halli", "dragon", "project");
             DBM.setupSchema();       //destroys + remakes DB with default settings, can comment this out after first run if desired
 
             Event now = new Event(1, 2020, 4, 9);
@@ -23,7 +23,7 @@ class Main {
 
             //Makes a list of events from the DB and prints it
             stmt = DBM.conn.prepareStatement("SELECT * FROM events");
-            List<Event> eventList = DBM.getFromDB(stmt, new Event());           //blank object so functional interface method can be accessed
+            List<Event> eventList = DBM.getFromDB(DBM.conn.prepareStatement("SELECT * FROM events"), new Event());           //blank object so functional interface method can be accessed
             System.out.println("\nEvent List:");
             for (Event e : eventList)
                 System.out.println(e);
@@ -37,19 +37,17 @@ class Main {
 
             User professorChaos = new User("Seeqwul Encurshun', 'BigDoc@abuseme.biz', 'FunPass', 'TheSalt', '1'); -- ", "email@yo.mama", "Passw0rd!");    //SQL injection attempt
             DBM.insertIntoDB(professorChaos);
-            DBM.insertIntoDB(new User("Ben", "Ben@gmail.com", "Passw0rd!"));
-            DBM.insertIntoDB(new User("Max", "Max@gmail.com", "Passw0rd!"));
-            DBM.insertIntoDB(new User("Dillon", "Dillon@gmail.com", "Passw0rd!"));
-            DBM.insertIntoDB(new User("Firas", "Firas@gmail.com", "Passw0rd!"));
-            DBM.insertIntoDB(new User("Lasse", "Lasse@gmail.com", "Passw0rd!"));
-            DBM.insertIntoDB(new User("Haraldur", "Haraldur@gmail.com", "Passw0rd!"));
-            DBM.insertIntoDB(new User("Vytautas", "Vytautas@gmail.com", "Passw0rd!"));
-            DBM.insertIntoDB(new User("Timothy", "Timothy@gmail.com", "Passw0rd!"));
-            DBM.insertIntoDB(new User("Matas", "Matas@gmail.com", "Passw0rd!"));
-            DBM.insertIntoDB(new User("Lorenz", "Lorenz@gmail.com", "Passw0rd!"));
-            DBM.insertIntoDB(new User("Chris", "Chris@gmail.com", "Passw0rd!"));
-            DBM.insertIntoDB(new User("Jan", "Jan@gmail.com", "Passw0rd!"));
-            
+            //I add 3 timelines manually to get the exception that this user has already this timelinename in it - timeline 2 is good but 3 is the same so exception is thrown
+            Timeline test = new Timeline(0, "My timeline", "Very cool timeline", "Month", "pink", new Date(1,0,0,0,0,0,0), new Date(2,0,0,0,0,0,0),  new Date(2,0,0,0,0,0,0), 10, false);
+            DBM.insertIntoDB(test);
+            Timeline test1 = new Timeline(0, "My other timeline", "Very cool timeline", "Month", "pink", new Date(1,0,0,0,0,0,0), new Date(2,0,0,0,0,0,0),  new Date(2,0,0,0,0,0,0), 10, false);
+            DBM.insertIntoDB(test1); //Here are two timelines with same name == ok because I changed userID
+            Timeline test3 = new Timeline(0, "My other timeline", "Very cool timeline", "Month", "pink", new Date(1,0,0,0,0,0,0), new Date(2,0,0,0,0,0,0),  new Date(2,0,0,0,0,0,0), 11, false);
+            DBM.insertIntoDB(test3); //Here are two timelines with same name == NOT OK because I now same  userID and same name
+            Timeline test4 = new Timeline(0, "My other timeline", "Very cool timeline", "Month", "pink", new Date(1,0,0,0,0,0,0), new Date(2,0,0,0,0,0,0),  new Date(2,0,0,0,0,0,0), 11, false);
+            DBM.insertIntoDB(test3);
+
+
             User teacher = new User("Hans Ove", "Hans@math.biz", "Passw0rd!");
             if (User.validateUnique("Hans@math.biz"))
                 DBM.insertIntoDB(teacher);

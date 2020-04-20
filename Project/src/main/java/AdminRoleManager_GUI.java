@@ -9,7 +9,9 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.effect.DropShadow;
@@ -24,19 +26,27 @@ import javafx.util.Duration;
 
 import java.sql.SQLException;
 import java.util.Comparator;
+import java.util.List;
 
-public abstract class AdminRoleManager_GUI extends Application {
-    static ListView<User> userListView;
+public class AdminRoleManager_GUI extends GridPane {
+	private ListView<User> userListView;
 
-	public static Scene AdminRoleManager() throws SQLException {
-		GridPane pane = new GridPane();
+	public AdminRoleManager_GUI(){
 
-		pane.setVgap(5);
-		pane.setHgap(5);
-		pane.setPadding(new Insets(10, 10, 10, 10));
+		this.setVgap(5);
+		this.setHgap(5);
+		this.setPadding(new Insets(10, 10, 10, 10));
 
-
-        final ObservableList<User> userList = FXCollections.observableArrayList(DBM.getFromDB(DBM.conn.prepareStatement("SELECT * FROM users "), new User()));
+		final ObservableList<User> userList = FXCollections.observableArrayList(); 
+		try {
+			List<User> usersFromDB = DBM.getFromDB(DBM.conn.prepareStatement("SELECT * FROM users "), new User());
+			for(User u : usersFromDB) {
+				userList.add(u);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		// headline
 		final Text headLine = new Text("Role Management");
@@ -76,7 +86,7 @@ public abstract class AdminRoleManager_GUI extends Application {
 		textStatus.setTranslateX(40);
 		textStatus.setTranslateY(50);
 		textStatus.textProperty()
-				.bind(Bindings.when(toggle.switchedOnProperty()).then("Status: ADMIN").otherwise("Status: USER"));
+				.bind(Bindings.when(toggle.switchedOn).then("Status: ADMIN").otherwise("Status: USER"));
 
 		// default sort order
 		userList.sort(Comparator.comparing(User::getUserName));
@@ -89,11 +99,27 @@ public abstract class AdminRoleManager_GUI extends Application {
 		textUser.setTranslateY(50);
 
 		// list display of timelines
-        userListView = new ListView<>();
+		userListView = new ListView<>();
 		userListView.setEditable(false);
+
+		// approach adapted from https://stackoverflow.com/a/36657553
+		userListView.setCellFactory(param -> new ListCell<User>() {
+			@Override
+			protected void updateItem(User item, boolean empty) {
+				super.updateItem(item, empty);
+
+				if (empty || item == null || item.getUserEmail() == null) {
+					setText(null);
+				} else {
+					setText("ID: " + item.getUserID() + " - " + item.getUserEmail());
+				}
+			}
+		});
+
 		userListView.setItems(userList);
 		userListView.setTranslateY(50);
 		userListView.setPrefWidth(300);
+		userListView.getSelectionModel().select(0);
 
 		GridPane.setRowSpan(userListView, 3);
 
@@ -103,6 +129,10 @@ public abstract class AdminRoleManager_GUI extends Application {
 		listOptions.setTranslateY(50);
 		// search field
 		TextField searchInput = new TextField("search here");
+		searchInput.focusedProperty().addListener(ov -> {
+			if (searchInput.isFocused())
+				searchInput.setText("");
+		});
 
 		// sort order selection
 		ComboBox<String> sortBy = new ComboBox<String>();
@@ -115,95 +145,97 @@ public abstract class AdminRoleManager_GUI extends Application {
 		sortBy.setItems(sortOptions);
 		listOptions.getChildren().addAll(sortBy, searchInput);
 
-		try {
-			// sort order selection events
-			sortBy.getSelectionModel().selectedIndexProperty().addListener(ov -> {
-				switch (sortBy.getSelectionModel().getSelectedIndex()) {
-				case 0:
-					userList.sort((t1, t2) -> (t1.getUserName().compareTo(t2.getUserName())));
-					break;
-				case 1:
-					userList.sort((t1, t2) -> (t2.getUserName().compareTo(t1.getUserName())));
-					break;
-				case 2:
-					userList.sort((t1, t2) -> (Integer.compare(t1.getUserID(), t2.getUserID())));
-					break;
-				case 3:
-					userList.sort((t1, t2) -> (Integer.compare(t2.getUserID(), t1.getUserID())));
-					break;
-				}
-			});
+		// back button
+		Button btnBack = new Button("Back");
+		btnBack.getStyleClass().add("smallButton");
+		btnBack.setOnAction(event -> {
 
+			//GUIManager.swapScene(new Dashboard_GUI());
 
-			userListView.getSelectionModel().selectedIndexProperty().addListener(ov -> {
+		});
 
+		// sort order selection events
+		sortBy.getSelectionModel().selectedIndexProperty().addListener(ov -> {
+			switch (sortBy.getSelectionModel().getSelectedIndex()) {
+			case 0:
+				userList.sort((t1, t2) -> (t1.getUserName().compareTo(t2.getUserName())));
+				break;
+			case 1:
+				userList.sort((t1, t2) -> (t2.getUserName().compareTo(t1.getUserName())));
+				break;
+			case 2:
+				userList.sort((t1, t2) -> (Integer.compare(t1.getUserID(), t2.getUserID())));
+				break;
+			case 3:
+				userList.sort((t1, t2) -> (Integer.compare(t2.getUserID(), t1.getUserID())));
+				break;
+			}
+		});
+
+		userListView.getSelectionModel().selectedIndexProperty().addListener(ov -> {
+
+			if (userListView.getSelectionModel().getSelectedIndex() >= 0) {
 				textUser.setText(
 						"User: " + userList.get(userListView.getSelectionModel().getSelectedIndex()).getUserEmail());
 
 				toggle.switchedOn.set(userList.get(userListView.getSelectionModel().getSelectedIndex()).getAdmin());
-			});
+			}
+		});
 
-			userListView.getSelectionModel().select(0);
-		} catch (IndexOutOfBoundsException ignored) {
-		}
+		this.add(bg, 0, 2);
+		this.add(headLine, 0, 0);
+		this.add(textUser, 0, 2);
+		this.add(listOptions, 4, 2);
+		this.add(userListView, 4, 3);
+		this.add(toggle, 0, 4);
+		this.add(textToggle, 0, 4);
+		this.add(textStatus, 0, 3);
+		this.add(btnBack, 0, 5);
 
-		pane.add(bg, 0, 2);
-		pane.add(headLine, 0, 0);
-		pane.add(textUser, 0, 2);
-		pane.add(listOptions, 4, 2);
-		pane.add(userListView, 4, 3);
-		pane.add(toggle, 0, 4);
-		pane.add(textToggle, 0, 4);
-		pane.add(textStatus, 0, 3);
-
-		return new Scene(pane);
 	}
 
-	static class AdminToggleSwitch extends ToggleSwitch {
+	private class AdminToggleSwitch extends ToggleSwitch {
 
-		private BooleanProperty switchedOn = new SimpleBooleanProperty(false);
-
-		private TranslateTransition translateAnimation = new TranslateTransition(Duration.seconds(0.25));
-		private FillTransition fillAnimation = new FillTransition(Duration.seconds(0.25));
-
-		private ParallelTransition animation = new ParallelTransition(translateAnimation, fillAnimation);
-
-		public BooleanProperty switchedOnProperty() {
-			return switchedOn;
-		}
+		private final BooleanProperty switchedOn = new SimpleBooleanProperty(false);
 
 		public AdminToggleSwitch(ObservableList<User> userList) {
+			switchedOn.setValue(userList.get(0).getAdmin());
+
 			Rectangle background = new Rectangle(100, 50);
 			background.setArcWidth(50);
 			background.setArcHeight(50);
 			background.setFill(Color.WHITE);
 			background.setStroke(Color.LIGHTGRAY);
 
-			Circle trigger = new Circle(25);
-			trigger.setCenterX(25);
-			trigger.setCenterY(25);
-			trigger.setFill(Color.DARKRED);
+			Circle trigger = new Circle(25, 25, 25);
+			trigger.setFill(Color.WHITE);
 			trigger.setStroke(Color.LIGHTGRAY);
+			trigger.setEffect(new DropShadow(2, Color.valueOf("0x000000ff")));
 
-			DropShadow shadow = new DropShadow();
-			shadow.setRadius(2);
-			trigger.setEffect(shadow);
-
+			TranslateTransition translateAnimation = new TranslateTransition(Duration.seconds(0.25));
 			translateAnimation.setNode(trigger);
+
+			FillTransition fillAnimation = new FillTransition(Duration.seconds(0.25));
 			fillAnimation.setShape(background);
+
+			ParallelTransition animation = new ParallelTransition(translateAnimation, fillAnimation);
 
 			getChildren().addAll(background, trigger);
 
+			trigger.setTranslateX(switchedOn.get() ? 100 - 50 : 0);
+			background.setFill(switchedOn.get() ? Color.LIGHTGREEN : Color.WHITE);
+			trigger.setFill(switchedOn.get() ? Color.WHITE : Color.DARKRED);
+
 			switchedOn.addListener((obs, oldState, newState) -> {
-				boolean isOn = newState;
+				setDisable(true);
 
-				translateAnimation.setToX(isOn ? 100 - 50 : 0);
-				fillAnimation.setFromValue(isOn ? Color.WHITE : Color.LIGHTGREEN);
-				fillAnimation.setToValue(isOn ? Color.LIGHTGREEN : Color.WHITE);
-
-                trigger.setFill(isOn ? Color.WHITE : Color.DARKRED);
+				translateAnimation.setToX(newState ? 100 - 50 : 0);
+				fillAnimation.setFromValue(newState ? Color.WHITE : Color.LIGHTGREEN);
+				fillAnimation.setToValue(newState ? Color.LIGHTGREEN : Color.WHITE);
+				trigger.setFill(newState ? Color.WHITE : Color.DARKRED);
 
 				animation.play();
+				animation.setOnFinished(e -> setDisable(false));
 			});
 
 			setOnMouseClicked(event -> { // add functionality here

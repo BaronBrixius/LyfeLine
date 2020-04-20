@@ -111,6 +111,7 @@ class UserTest {
 		PreparedStatement out = DBM.conn.prepareStatement(sql   , Statement.RETURN_GENERATED_KEYS);
 		out.setBoolean(1, tester.getAdmin());
 		assertEquals(out.toString() ,tester.getInsertQuery().toString());
+		//Exception testing
 		tester.setID(1);
 		Exception exception = assertThrows(SQLIntegrityConstraintViolationException.class, () -> {
 			tester.getInsertQuery();
@@ -150,12 +151,24 @@ class UserTest {
 		users[1] = users[1].createFromDB(rs);
         assertEquals("lalli@hotmail.com", users[1].getUserEmail());
 
-
 	}
 
 	@Test
 	public void getDeleteQuery() throws SQLException {
+		User testerNotInDB = new User("Halli","halli@hotmail.com", "Th3Mind'5EyE!");
+		//Test exception, if user ID = 0 (not in DB)
+		Exception exception = assertThrows(SQLDataException.class, () -> {
+			testerNotInDB.getDeleteQuery();
+		});
+		String actualMessage = exception.getMessage();
+		String expectedMessage = ("User not in database cannot be updated.");
+		assertTrue(actualMessage.contains(expectedMessage));
 
+		//Ended up comparing the strings from the PreparedStatement created with getInsertQuery and the one created manually by picking the fields from the same user
+		int userID= users[1].getUserID();
+		String sql = "DELETE FROM `users` WHERE (`UserID` = " + userID +")";
+		PreparedStatement out = DBM.conn.prepareStatement(sql , Statement.RETURN_GENERATED_KEYS);
+		assertEquals(out.toString() ,users[1].getDeleteQuery().toString());
 	}
 
 	@Test

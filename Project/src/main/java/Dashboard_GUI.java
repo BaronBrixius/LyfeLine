@@ -15,75 +15,71 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 
-public class Dashboard_GUI {
+public class Dashboard_GUI extends GridPane {
 
-	public static Scene DashboardScreen() {
+	public Dashboard_GUI() {
 
 		// main layout
-		GridPane pane = new GridPane();
-		pane.setVgap(5);
-		pane.setHgap(5);
-		pane.setPadding(new Insets(10, 10, 10, 10));
+		this.setVgap(5);
+		this.setHgap(5);
+		this.setPadding(new Insets(10, 10, 10, 10));
 
 		// holds timelines from DB
 		ObservableList<Timeline> timelines = FXCollections.observableArrayList();
-		List<Timeline> timelinesFromDB=null;
-		
+		List<Timeline> timelinesFromDB = null;
+
 		try {
 			PreparedStatement stmt = DBM.conn.prepareStatement("SELECT * FROM timelines");
 			timelinesFromDB = DBM.getFromDB(stmt, new Timeline());
-			
-			
+
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
-		for(Timeline t: timelinesFromDB) {
+		for (Timeline t : timelinesFromDB) {
 			timelines.add(t);
 		}
-		
-		
+
 		// default sort order
 		timelines.sort((t1, t2) -> (t1.getName().compareTo(t2.getName())));
 
 		// list display of timelines
 		ListView<Timeline> list = new ListView<Timeline>(timelines);
-		
-		//approach adapted from https://stackoverflow.com/a/36657553
+
+		// approach adapted from https://stackoverflow.com/a/36657553
 		list.setCellFactory(param -> new ListCell<Timeline>() {
 			@Override
-            protected void updateItem(Timeline item, boolean empty) {
-                super.updateItem(item, empty);
+			protected void updateItem(Timeline item, boolean empty) {
+				super.updateItem(item, empty);
 
-                if (empty || item == null || item.getName() == null) {
-                    setText(null);
-                } else {
-                    setText(item.getName());
-                }
-            }
+				if (empty || item == null || item.getName() == null) {
+					setText(null);
+				} else {
+					setText(item.getName());
+				}
+			}
 		});
-		
+
 		list.setMinWidth(200);
 		list.getSelectionModel().select(0);
-		pane.add(list, 2, 0);
+		this.add(list, 2, 0);
 
-		//layout of dashboard options / only for scene switch purposes for now
+		// layout of dashboard options / only for scene switch purposes for now
 		VBox dashboardOptions = new VBox();
 		dashboardOptions.setSpacing(10);
 		Button adminGUI = new Button("Admin Manager");
 		adminGUI.getStyleClass().add("smallButton");
 		adminGUI.setMinWidth(150);
 		dashboardOptions.getChildren().add(adminGUI);
-		adminGUI.setOnAction(event->{
-			try {
-				GUIManager.swapScene(AdminRoleManager_GUI.AdminRoleManager());
-			} catch (SQLException e) {
-				e.printStackTrace();		//probably annoying, but useful until more final version
-			}
+		adminGUI.setOnAction(event -> {
+
+			//OldGUIManager.swapScene(AdminRoleManager_GUI.AdminRoleManager());
+			//OldGUIManager.mainStage.setTitle("Admin Manager");
+
 		});
-		pane.add(dashboardOptions, 0, 0);
-		
+		this.add(dashboardOptions, 0, 0);
+
 		// layout of column to the left of the listview
 		VBox listOptions = new VBox();
 		listOptions.setSpacing(10);
@@ -107,7 +103,18 @@ public class Dashboard_GUI {
 		sortBy.setItems(sortOptions);
 		listOptions.getChildren().add(sortBy);
 
-		pane.add(listOptions, 1, 0);
+		Button btnLogOut = new Button("Log Out");
+		btnLogOut.getStyleClass().add("smallButton");
+		btnLogOut.getStyleClass().add("logOutButton");
+		this.add(btnLogOut, 2, 2);
+
+		btnLogOut.setOnAction(event -> {
+
+			//OldGUIManager.swapScene(LoginAndRegistration_GUI.welcomeScreen());
+
+		});
+
+		this.add(listOptions, 1, 0);
 
 		// sort order selection events
 		sortBy.getSelectionModel().selectedIndexProperty().addListener(ov -> {
@@ -127,11 +134,7 @@ public class Dashboard_GUI {
 			}
 		});
 
-		pane.setAlignment(Pos.CENTER);
-
-		// finalizes and returns scene
-		Scene scene = new Scene(pane, 600, 400);
-		return scene;
+		this.setAlignment(Pos.CENTER);
 
 	}
 
