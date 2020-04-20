@@ -40,8 +40,7 @@ public class GUIManager extends Application {
 		}
 
         mainStage = primaryStage;
-        //scene = new Scene(FXMLLoader.load(GUIManager.class.getResource("FXML/Welcome_Screen.fxml")));     //default page
-        scene = new Scene(FXMLLoader.load(GUIManager.class.getResource("FXML/Register_Screen.fxml")));
+        scene = new Scene(FXMLLoader.load(GUIManager.class.getResource("FXML/Welcome_Screen.fxml")));     //default page
         mainStage.setScene(scene);
         applyStyle("DefaultStyle");
         mainStage.show();
