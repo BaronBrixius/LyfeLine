@@ -8,8 +8,8 @@ class Event implements DBObject<Event> {
     private String description;
     private  String title;
     private String imagePath;//For now, not sure how we handle this later on
-    private  Date start;
-    private  Date end;
+    private  Date startDate;
+    private  Date endDate;
     private Date creationDate;
 
    public Event(){} //dummy constructor
@@ -24,8 +24,8 @@ class Event implements DBObject<Event> {
         this.eventID = eventID;
         this. timelineID = timelineID;
         this.userID = userID;
-        this.start = startDate;
-        this.end = endDate;
+        this.startDate = startDate;
+        this.endDate = endDate;
         this.creationDate = creationDate;
         this.title=title;
         this.description=description;
@@ -77,11 +77,24 @@ class Event implements DBObject<Event> {
     public PreparedStatement getUpdateQuery() throws SQLException {
         if (eventID == 0)
             throw new SQLDataException("Event not in database cannot be updated.");
-        PreparedStatement out = DBM.conn.prepareStatement("UPDATE `events` SET `EventType` = ?, `StartYear` = ?, `StartMonth` = ?, `StartDay` = ? WHERE (`EventID` = ?);");
-        out.setInt(1, eventType);
-        out.setInt(2, startYear);
-        out.setInt(3, startMonth);
-        out.setInt(4, startDay);
+        PreparedStatement out = DBM.conn.prepareStatement("UPDATE `events` SET `EventTitle` = ?, `EventDescription` = ?, `EventImage` = ?, `StartYear` = ?,  `StartMonth` = ?,  `StartDay` = ?,  `StartHour` = ?,  `StartMinute` = ?,  `StartSecond` = ?,  `StartMillisecond` = ?,    `EndYear` = ?,  `EndMonth` = ?,  `EndDay` = ?,  `EndHour` = ?,  `EndMinute` = ?,  `EndSecond` = ?,  `EndMillisecond` = ? = ? WHERE (`EventID` = ?);");
+        out.setString(1, this.title);
+        out.setString(2, this.description);
+        out.setString(3, this.imagePath);
+        out.setInt(5, startDate.getYear());
+        out.setInt(6, startDate.getMonth());
+        out.setInt(7, startDate.getDay());
+        out.setInt(8, startDate.getHours());
+        out.setInt(9, startDate.getMinutes());
+        out.setInt(10, startDate.getSeconds());
+        out.setInt(11, startDate.getMilliseconds());
+        out.setInt(12, endDate.getYear());
+        out.setInt(13, endDate.getMonth());
+        out.setInt(14, endDate.getDay());
+        out.setInt(15, endDate.getHours());
+        out.setInt(16, endDate.getMinutes());
+        out.setInt(17, endDate.getSeconds());
+        out.setInt(18, endDate.getMilliseconds());
         out.setInt(5, eventID);
         return out;
     }
