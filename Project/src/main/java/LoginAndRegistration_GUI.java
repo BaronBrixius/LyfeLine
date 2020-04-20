@@ -1,23 +1,25 @@
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-import javax.swing.text.PasswordView;
-
 import java.sql.PreparedStatement;
+
+import java.io.IOException;
+
 import java.sql.SQLException;
 import java.util.List;
 
-public class LoginAndRegistration_GUI {
+public class LoginAndRegistration_GUI extends VBox {
 
+/*
 	public static Scene welcomeScreen() {
 		// This is the Start Window
 		GUIManager.mainStage.setTitle("Welcome Screen");
@@ -308,14 +310,14 @@ public class LoginAndRegistration_GUI {
 			loggedInText.setText("Logged in as: " + GUIManager.loggedInUser.getUserEmail());
 			loggedInText.setDisable(false);
 		}
-		
+
 		MenuItem logout = new MenuItem("Logout");
 		logout.setOnAction(event -> {
 			GUIManager.loggedInUser=null;
-			GUIManager.swapScene(LoginAndRegistration_GUI.welcomeScreen());
+			//GUIManager.swapScene(LoginAndRegistration_GUI.welcomeScreen());
 		});
 		loggedInText.getItems().addAll(logout);
-		
+
 
 		loggedInBar.getMenus().add(loggedInText);
 
@@ -326,4 +328,99 @@ public class LoginAndRegistration_GUI {
 
 		return vbox;
 	}
+
+*/
+    @FXML private TextField usernameInput;
+    @FXML private PasswordField passwordInput;
+    @FXML private Text errorMessage;
+    @FXML private TextField emailInput;
+    @FXML public PasswordField confirmPasswordInput;
+
+
+
+    public LoginAndRegistration_GUI() {
+
+    }
+
+    @FXML
+    private void loginScreen() throws IOException {
+        //This is the Stage for the Login Window
+        Stage loginStage = new Stage();
+        loginStage.setTitle("Login Screen");
+        loginStage.initOwner(GUIManager.mainStage);                 //These two lines make sure you can't click back to the Start Window,
+
+        loginStage.initModality(Modality.WINDOW_MODAL);     //so you can't have 10 Login Windows open at once.
+
+        Parent root = FXMLLoader.load(GUIManager.class.getResource("fxml/Login_Screen.fxml"));
+        loginStage.setScene(new Scene(root));
+        loginStage.getScene().getStylesheets().add("File:src/main/resources/styles/DefaultStyle.css");
+        loginStage.show();
+    }
+
+    @FXML
+    private void registerScreen() throws IOException {
+        //This is the Stage for the Register Window
+        Stage registerStage = new Stage();
+        registerStage.setTitle("Register Screen");
+
+        registerStage.initOwner(GUIManager.mainStage);              //These are the same as before, prevents the window from losing focus until closed.
+        registerStage.initModality(Modality.WINDOW_MODAL);  //I don't actually know what Modality is, Google just said this works and it does.
+
+        Parent root = FXMLLoader.load(GUIManager.class.getResource("fxml/Register_Screen.fxml"));
+        registerStage.setScene(new Scene(root));
+        registerStage.getScene().getStylesheets().add("File:src/main/resources/styles/DefaultStyle.css");
+        registerStage.show();
+    }
+
+    @FXML
+    public void close(MouseEvent mouseEvent) {
+        ((Node) (mouseEvent.getSource())).getScene().getWindow().hide();
+    }
+
+    @FXML
+    public void registerUser(MouseEvent event) {
+
+        //Reset the error message if the input fields match after getting the error
+        errorMessage.setText("");
+        try {
+
+            // Check if the email is valid (unique)
+            if (!User.validateUnique(emailInput.getText())) {
+                errorMessage.setText("Email already in use");
+
+                //If the passwordInput's text does not equal the confirmPasswordInput's text
+            } else if (!passwordInput.getText().equals(confirmPasswordInput.getText())) {
+                errorMessage.setText("Error: the inputted passwords do not match.");
+
+                // Check if the Username field is not empty
+            } else if (usernameInput.getText().equals("")) {
+                errorMessage.setText("Please enter a Username");
+
+
+                // If everything checks out, create a new user
+            } else {
+
+                DBM.insertIntoDB(new User(usernameInput.getText(), emailInput.getText(), passwordInput.getText()));
+                // close the window once successful, and switch to the dashboard
+                ((Node) (event.getSource())).getScene().getWindow().hide();
+                //GUIManager.swapScene(new Dashboard_GUI());
+            }
+        } catch (IllegalArgumentException | SQLException e) {
+            errorMessage.setText(e.getMessage());
+        }
+
+    }
+
+    @FXML
+    public void loginUser(MouseEvent event) {
+        //To be implemented later.
+        System.out.println("The \"Login\" button has been pressed.");
+    }
+
+    @FXML
+    public void timelineScreen() throws IOException {
+        GUIManager.swapScene("Timeline_Editor_Screen");
+    }
+
+
 }

@@ -35,15 +35,15 @@ import java.sql.SQLException;
 import java.util.Comparator;
 import java.util.List;
 
-public abstract class AdminRoleManager_GUI extends Application {
-	static ListView<User> userListView;
+public class AdminRoleManager_GUI extends GridPane {
+	private ListView<User> userListView;
 
-	public static Scene AdminRoleManager() {
-		GridPane pane = new GridPane();
 
-		pane.setVgap(5);
-		pane.setHgap(5);
-		pane.setPadding(new Insets(10, 10, 10, 10));
+	public AdminRoleManager_GUI(){
+
+		this.setVgap(5);
+		this.setHgap(5);
+		this.setPadding(new Insets(10, 10, 10, 10));
 
 		final ObservableList<User> userList = FXCollections.observableArrayList(); 
 		try {
@@ -137,8 +137,7 @@ public abstract class AdminRoleManager_GUI extends Application {
 		Button btnBack = new Button("Back");
 		btnBack.getStyleClass().add("smallButton");
 		btnBack.setOnAction(event -> {
-			GUIManager.swapScene(Dashboard_GUI.DashboardScreen());
-			GUIManager.mainStage.setTitle("Dashboard");
+			//OldGUIManager.swapScene(new Dashboard_GUI());
 		});
 
 		// sort order selection events
@@ -169,8 +168,9 @@ public abstract class AdminRoleManager_GUI extends Application {
 			}
 		});
 
+
 		Region spacer = new Region();
-		
+
 		VBox userInfo = new VBox();
 		userInfo.setMinWidth(300);
 		userInfo.setSpacing(10);
@@ -178,33 +178,43 @@ public abstract class AdminRoleManager_GUI extends Application {
 		userInfo.setBorder(new Border(new BorderStroke(Color.web("#1aa9cd"),BorderStrokeStyle.SOLID, new CornerRadii(3.0), new BorderWidths(2))));
 		userInfo.setPadding(new Insets(10, 10, 10, 10));
 		VBox.setVgrow(spacer, Priority.SOMETIMES);
-		
-		
-		
+
+
+
 		textUser.getStyleClass().add("mediumText");
 		textStatus.getStyleClass().add("mediumText");
 		textToggle.getStyleClass().add("mediumText");
-		
+
 		VBox userListBox = new VBox();
 		userListBox.setSpacing(10);
 		userListBox.setPadding(new Insets(10, 10, 10, 10));
 		userListBox.getChildren().addAll(sortBy,searchInput,userListView);
-		
-		pane.add(userInfo, 0, 0);
-		pane.add(userListBox, 1, 0);
-		
-		
-		VBox everything = LoginAndRegistration_GUI.dropDownMenus();
-		everything.getChildren().add(pane);
-		
-		Scene scene = new Scene(everything);
 
-		return scene;
+		//pane.add(userInfo, 0, 0);
+		//pane.add(userListBox, 1, 0);
+
+
+		//VBox everything = LoginAndRegistration_GUI.dropDownMenus();
+		//everything.getChildren().add(pane);
+
+		//Scene scene = new Scene(everything);
+
+
+		//this.add(bg, 0, 2);
+		//this.add(headLine, 0, 0);
+		this.add(textUser, 0, 2);
+		//this.add(listOptions, 4, 2);
+		this.add(userListView, 4, 3);
+		this.add(toggle, 0, 4);
+		this.add(textToggle, 0, 4);
+		this.add(textStatus, 0, 3);
+		this.add(btnBack, 0, 5);
+
 	}
 
-	static class AdminToggleSwitch extends ToggleSwitch {
+	private class AdminToggleSwitch extends ToggleSwitch {
 
-		private BooleanProperty switchedOn = new SimpleBooleanProperty(false);
+		private final BooleanProperty switchedOn = new SimpleBooleanProperty(false);
 
 		public AdminToggleSwitch(ObservableList<User> userList) {
 			switchedOn.setValue(userList.get(0).getAdmin());
