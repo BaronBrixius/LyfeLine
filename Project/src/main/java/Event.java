@@ -7,8 +7,9 @@ class Event implements DBObject<Event> {
     private int eventID = 0;
     private int timelineID = 0;
     private int userID;
-    private String description;
-    private  String title;
+    private int eventType;
+    private String eventName;
+    private String eventDescription;
     private int imageID;//For now, not sure how we handle this later on
     private  Date startDate;
     private  Date endDate;
@@ -29,8 +30,8 @@ class Event implements DBObject<Event> {
         this.startDate = startDate;
         this.endDate = endDate;
         this.creationDate = creationDate;
-        this.title=title;
-        this.description=description;
+        this.eventName=title;
+        this.eventDescription=description;
         this.imageID = imageID;
 
 
@@ -72,13 +73,13 @@ class Event implements DBObject<Event> {
         out.setInt(15, endDate.getMinutes());
         out.setInt(16, endDate.getSeconds());
         out.setInt(17, endDate.getMilliseconds());
-        out.setInt(18, dateCreated.getYear());
-        out.setInt(19, dateCreated.getMonth());
-        out.setInt(20, dateCreated.getDay());
-        out.setInt(21, dateCreated.getHours());
-        out.setInt(22, dateCreated.getMinutes());
-        out.setInt(23, dateCreated.getSeconds());
-        out.setInt(24, dateCreated.getMilliseconds());
+        out.setInt(18, creationDate.getYear());
+        out.setInt(19, creationDate.getMonth());
+        out.setInt(20, creationDate.getDay());
+        out.setInt(21, creationDate.getHours());
+        out.setInt(22, creationDate.getMinutes());
+        out.setInt(23, creationDate.getSeconds());
+        out.setInt(24, creationDate.getMilliseconds());
         return out;
     }
     @Override
@@ -110,10 +111,8 @@ class Event implements DBObject<Event> {
         int CreatedMillisecond = rs.getInt("CreatedMillisecond");
        // String start = rs.getString("Start");       //probably don't need to pull from table, can recalculate here, but I wanted to test it a bit
 
-        return new Event(eventID, eventType,eventName, eventDescription,
-                new Date(StartYear,StartMonth,StartDay,StartHour,StartMinute,StartSecond,StartMillisecond),
-                new Date(EndYear,EndMonth,EndDay,EndHour,EndMinute,EndSecond,EndMillisecond),
-                new Date(CreatedYear,CreatedMonth,CreatedDay,CreatedHour,CreatedMinute,CreatedSecond,CreatedMillisecond));
+        return new  Event( eventID, timelineID,  userID,   startDate,  endDate, creationDate ,  eventName ,  eventDescription,  imageID);
+
     }
 
 
@@ -124,10 +123,10 @@ class Event implements DBObject<Event> {
     }
     //Setters for editing Event fields
     public void setTitle(String title) {
-        this.title = title;
+        this.eventName = title;
     }
     public void setDescription(String description) {
-        this.description = description;
+        this.eventDescription = description;
     }
     public void setStartDate(String startDate) {
        String string = startDate;
@@ -145,8 +144,8 @@ class Event implements DBObject<Event> {
         int date = Integer.parseInt(parts[2]);;
         this.endDate = new Date(year,month,date,0,0,0,0);
     }
-    public void setImage(String image) {
-        this.imagePath = image;
+    public void setImage(int image) {
+        this.imageID = image;
     }
 
     //Getter for editing Event fields
@@ -160,9 +159,9 @@ class Event implements DBObject<Event> {
         if (eventID == 0)
             throw new SQLDataException("Event not in database cannot be updated.");
         PreparedStatement out = DBM.conn.prepareStatement("UPDATE `events` SET `EventTitle` = ?, `EventDescription` = ?, `EventImage` = ?, `StartYear` = ?,  `StartMonth` = ?,  `StartDay` = ?,  `StartHour` = ?,  `StartMinute` = ?,  `StartSecond` = ?,  `StartMillisecond` = ?,    `EndYear` = ?,  `EndMonth` = ?,  `EndDay` = ?,  `EndHour` = ?,  `EndMinute` = ?,  `EndSecond` = ?,  `EndMillisecond` = ? = ? WHERE (`EventID` = ?);");
-        out.setString(1, this.title);
-        out.setString(2, this.description);
-        out.setString(3, this.imagePath);
+        out.setString(1, this.eventName);
+        out.setString(2, this.eventDescription);
+        out.setInt(3, this.imageID);
         out.setInt(5, startDate.getYear());
         out.setInt(6, startDate.getMonth());
         out.setInt(7, startDate.getDay());
@@ -190,6 +189,6 @@ class Event implements DBObject<Event> {
 
     @Override
     public String toString() {
-        return "EventID: " + eventID + " EventType: " + eventType+"EventName"+eventName+"eventDescription"+eventDescription+" Start Date: "+startDate+" End Date: "+endDate+" Created: "+dateCreated;
+        return "EventID: " + eventID + " EventType: " + eventType+"EventName"+eventName+"eventDescription"+eventDescription+" Start Date: "+startDate+" End Date: "+endDate+" Created: "+creationDate;
     }
 }
