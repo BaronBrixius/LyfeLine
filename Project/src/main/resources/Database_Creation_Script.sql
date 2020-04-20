@@ -1,9 +1,10 @@
 CREATE TABLE `events`
 (
     `EventID`          int              NOT NULL AUTO_INCREMENT,
-    `EventType`        tinyint          NOT NULL,
-    `EventName`        nvarchar(100)    DEFAULT NULL,
+    `UserID`           int          NOT NULL,
+    `EventTitle`        nvarchar(100)    DEFAULT NULL,
     `EventDescription` nvarchar(5000)   DEFAULT NULL,
+    `EventImage`        nvarchar(100)    DEFAULT NULL,
     `StartYear`        bigint           NOT NULL,
     `StartMonth`       tinyint unsigned NOT NULL,
     `StartDay`         tinyint unsigned NOT NULL,
@@ -12,11 +13,36 @@ CREATE TABLE `events`
     `EndMonth`         tinyint unsigned DEFAULT NULL,
     `EndDay`           tinyint unsigned DEFAULT NULL,
     `EndTime`          time             DEFAULT NULL,
+    `CreatedYear`         bigint            DEFAULT NULL,
+    `CreatedMonth`        tinyint unsigned  DEFAULT NULL,
+    `CreatedDay`          tinyint unsigned  DEFAULT NULL,
+    `CreatedHour`         tinyint unsigned  DEFAULT NULL,
+    `CreatedMinute`       tinyint unsigned  DEFAULT NULL,
+    `CreatedSecond`       tinyint unsigned  DEFAULT NULL,
+    `CreatedMillisecond`  smallint unsigned DEFAULT NULL,
     PRIMARY KEY (`EventID`),
     UNIQUE KEY `EventID_UNIQUE` (`EventID`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_general_ci;
+
+
+  CREATE TRIGGER CreatedDateTime
+    BEFORE INSERT
+    ON events
+    FOR EACH ROW
+BEGIN
+    if (isnull(new.`CreatedYear`)) then
+        set new.`CreatedYear` = YEAR(NOW());
+        set new.`CreatedMonth` = MONTH(NOW());
+        set new.`CreatedDay` = DAY(NOW());
+        set new.`CreatedHour` = HOUR(NOW());
+        set new.`CreatedMinute` = MINUTE(NOW());
+        set new.`CreatedSecond` = SECOND(NOW());
+        set new.`CreatedMillisecond` = CAST(UNIX_TIMESTAMP(CURTIME(3)) % 1 * 1000 AS unsigned);
+    end if;
+END;
+
 
 
   -- Groups and groupevents wont be used, here for explanation only
@@ -38,6 +64,7 @@ CREATE TABLE `events`
       `EndMonth`         tinyint unsigned DEFAULT NULL,
       `EndDay`           tinyint unsigned DEFAULT NULL,
       `EndTime`          time             DEFAULT NULL,
+
       PRIMARY KEY (`GroupID`),
       UNIQUE KEY `GroupID_UNIQUE` (`GroupID`)
   ) ENGINE = InnoDB

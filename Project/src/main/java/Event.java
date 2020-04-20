@@ -2,32 +2,36 @@ import java.sql.*;
 import java.util.List;
 
 class Event implements DBObject<Event> {
-    int eventID = 0;
-    private final String eventName = "New Event";
-    private final int eventType;
-    private final int startYear;
-    private final int startMonth;
-    private final int startDay;
-    private String start;
+    private int eventID = 0;
+    private int timelineID = 0;
+    private int userID;
+    private String description;
+    private  String title;
+    private String imagePath;//For now, not sure how we handle this later on
+    private  Date start;
+    private  Date end;
+    private Date creationDate;
 
-    public Event() {         //defaults
-        this(1, -44, 3, 15);
+   public Event(){} //dummy constructor
+
+    public Event(User user, Timeline timeline) {         //defaults, bare minimum - only related to the logged in user, timeline working on and sets creation date
+        this.userID = user.getUserID();
+        this.timelineID = timeline.getTimelineID();
+
     }
 
-    public Event(int eventType, int startYear, int startMonth, int startDay) {
-        this.eventType = eventType;
-        this.startYear = startYear;
-        this.startMonth = startMonth;
-        this.startDay = startDay;
-    }
-
-    private Event(int eventID, int eventType, int startYear, int startMonth, int startDay, String start) {      //for reading from database
+    private Event(int eventID, int timelineID, int userID,  Date startDate, Date endDate, Date creationDate , String title , String description, String imagePath) {      //for reading from database
         this.eventID = eventID;
-        this.eventType = eventType;
-        this.startYear = startYear;
-        this.startMonth = startMonth;
-        this.startDay = startDay;
-        this.start = start;
+        this. timelineID = timelineID;
+        this.userID = userID;
+        this.start = startDate;
+        this.end = endDate;
+        this.creationDate = creationDate;
+        this.title=title;
+        this.description=description;
+        this.imagePath = imagePath;
+
+
     }
 
     //Some examples of working with the database
@@ -46,7 +50,7 @@ class Event implements DBObject<Event> {
         int startYear = rs.getInt("StartYear");
         int startMonth = rs.getInt("StartMonth");
         int startDay = rs.getInt("StartDay");
-       // String start = rs.getString("Start");       //probably don't need to pull from table, can recalculate here, but I wanted to test it a bit
+        // String start = rs.getString("Start");       //probably don't need to pull from table, can recalculate here, but I wanted to test it a bit
 
         return new Event(eventID, eventType, startYear, startMonth, startDay, start);
     }

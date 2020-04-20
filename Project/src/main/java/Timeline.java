@@ -192,4 +192,9 @@ public class Timeline implements DBObject<Timeline>{
 	public Date getDateCreated() {
 		return dateCreated;
 	}
+
+	public int getTimelineID() {
+		return timelineID;
+	}
+
 }
