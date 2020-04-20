@@ -48,7 +48,7 @@ END;
 
 CREATE TABLE `Images` (
  `ImageID` int NOT NULL AUTO_INCREMENT,
- `ImageULR` character(500) DEFAULT NULL,
+ `ImageULR` character(255) DEFAULT NULL,
   PRIMARY KEY (`ImageID`),
   UNIQUE KEY `ImageID_UNIQUE` (`ImageID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -129,7 +129,6 @@ CREATE TABLE `timelines`
     `CreatedMillisecond`  smallint unsigned DEFAULT NULL,
     `Private`             boolean           DEFAULT true,
     `TimelineOwner`       int,
-
     PRIMARY KEY (`TimelineID`),
     UNIQUE KEY `TimelineID_UNIQUE` (`TimelineID`)
 ) ENGINE = InnoDB
@@ -145,7 +144,7 @@ CREATE TABLE `timelines`
       `TimelineID` int NOT NULL,
       `EventID` int NOT NULL,
       CONSTRAINT `pK_timelinesevent` PRIMARY KEY (eventID,timelineID),
-      CONSTRAINT `fk_timelineevents_events1` FOREIGN KEY (`EventID`) REFERENCES `events` (`EventID`),
+      CONSTRAINT `fk_timelineevents_events1` FOREIGN KEY (`EventID`) REFERENCES `events` (`EventID`), ON DELETE CASCADE,
       CONSTRAINT `fk_timelineevents_timelines` FOREIGN KEY (`TimelineID`) REFERENCES `timelines` (`TimelineID`)
   ) ENGINE = InnoDB
     DEFAULT CHARSET = utf8mb4
