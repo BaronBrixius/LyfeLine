@@ -3,7 +3,6 @@
 /*.root applies to everything in a scene and overrides all other commands in this file. Use carefully.*/
 .root{
     -fx-background-color: #f4f4f4;
-    -fx-spacing: 5px;
 }
 
 /*Text applies to any free floating text (inc. TextField), does not apply to text in Buttons, etc.
@@ -12,10 +11,6 @@ Text{
     -fx-font-size: 1.75em;
 }
 
-GridPane {
-    -fx-vgap: 5px;
-    -fx-hgap: 5px;
-}
 
 .label{
     -fx-padding: 5 0 0 0;
