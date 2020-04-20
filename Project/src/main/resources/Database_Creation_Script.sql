@@ -24,6 +24,11 @@ CREATE TABLE `events` (
   `CreatedMinute` tinyint unsigned DEFAULT NULL,
   `CreatedSecond` tinyint unsigned DEFAULT NULL,
   `CreatedMillisecond` smallint unsigned DEFAULT NULL,
+  `ImageID` int DEFAULT NULL,
+  `UserID` int DEFAULT NULL,
+  `timelineID` int DEFAULT NULL,
+
+
   PRIMARY KEY (`EventID`),
   UNIQUE KEY `EventID_UNIQUE` (`EventID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

@@ -23,22 +23,18 @@ class Event implements DBObject<Event> {
 
     }
 
-    private Event(int eventID, int timelineID, int userID,  Date startDate, Date endDate, Date creationDate , String title , String description, int imageID) {      //for reading from database
+    private Event(int eventID, int timelineID, int userID,  Date startDate, Date endDate, Date creationDate , String eventName , String description, int imageID) {      //for reading from database
         this.eventID = eventID;
         this. timelineID = timelineID;
         this.userID = userID;
         this.startDate = startDate;
         this.endDate = endDate;
         this.creationDate = creationDate;
-        this.eventName=title;
+        this.eventName=eventName;
         this.eventDescription=description;
         this.imageID = imageID;
 
-
     }
-
-
-
     //Some examples of working with the database
     /*static List<Event> getAll() throws SQLException {
         return DBM.getFromDB(DBM.conn.prepareStatement("SELECT * FROM events"), new Event());     //blank object so functional interface method can be accessed
@@ -52,10 +48,11 @@ class Event implements DBObject<Event> {
     public PreparedStatement getInsertQuery() throws SQLException, RuntimeException {
         if (eventID > 0)
             throw new SQLIntegrityConstraintViolationException("Event is already in DB.");
+         this.userID = GUIManager.loggedInUser.getUserID();
 
         PreparedStatement out = DBM.conn.prepareStatement("INSERT INTO `events` (`EventType`, `EventName`, `EventDescription`,`StartYear`,`StartMonth`,`StartDay`,`StartHour`\"\n" +
                 "\t\t\t\t+ \",`StartMinute`,`StartSecond`,`StartMillisecond`,`EndYear`,`EndMonth`,`EndDay`,`EndHour`,`EndMinute`,`EndSecond`,\"\n" +
-                "\t\t\t\t+ \"`EndMillisecond`,`CreatedYear`,`CreatedMonth`,`CreatedDay`,`CreatedHour`,`CreatedMinute`,`CreatedSecond`,`CreatedMillisecond`,) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);", Statement.RETURN_GENERATED_KEYS);
+                "\t\t\t\t+ \"`EndMillisecond`,`CreatedYear`,`CreatedMonth`,`CreatedDay`,`CreatedHour`,`CreatedMinute`,`CreatedSecond`,`CreatedMillisecond`,`ImageID`,`UserID`, `timelineID`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);", Statement.RETURN_GENERATED_KEYS);
         out.setInt(1, eventType);
         out.setString(2, eventName);
         out.setString(3, eventDescription);
@@ -80,6 +77,10 @@ class Event implements DBObject<Event> {
         out.setInt(22, creationDate.getMinutes());
         out.setInt(23, creationDate.getSeconds());
         out.setInt(24, creationDate.getMilliseconds());
+        out.setInt(25,imageID);
+        out.setInt(26,userID );
+        out.setInt(26,timelineID );
+
         return out;
     }
     @Override
@@ -109,13 +110,19 @@ class Event implements DBObject<Event> {
         int CreatedMinute = rs.getInt("CreatedMinute");
         int CreatedSecond = rs.getInt("CreatedSecond");
         int CreatedMillisecond = rs.getInt("CreatedMillisecond");
-       // String start = rs.getString("Start");       //probably don't need to pull from table, can recalculate here, but I wanted to test it a bit
+        int ImageID=rs.getInt("ImageID");
+        int UserId=rs.getInt("UserID");
+        int timelineID=rs.getInt("timelineID");
 
-        return new  Event( eventID, timelineID,  userID,   startDate,  endDate, creationDate ,  eventName ,  eventDescription,  imageID);
+
+       // String start = rs.getString("Start");       //probably don't need to pull from table, can recalculate here, but I wanted to test it a bit
+            //ERoOR
+        return new  Event( eventID, timelineID,  UserId,
+                new Date(StartYear,StartMonth,StartDay,StartHour,StartMinute,StartSecond,StartMillisecond),
+                new Date(EndYear,EndMonth,EndDay,EndHour,EndMinute,EndSecond,EndMillisecond),
+                new Date(CreatedYear,CreatedMonth,CreatedDay,CreatedHour,CreatedMinute,CreatedSecond,CreatedMillisecond),eventName,eventDescription,ImageID);
 
     }
-
-
 
     @Override
     public void setID(int id) {
