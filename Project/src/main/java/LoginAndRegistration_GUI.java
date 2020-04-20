@@ -413,9 +413,43 @@ public class LoginAndRegistration_GUI extends VBox {
 
     @FXML
     public void loginUser(MouseEvent event) {
-        //To be implemented later.
-        System.out.println("The \"Login\" button has been pressed.");
+// Reset the error message if the input fields match after getting the error
+        errorMessage.setText("");
+
+        try {
+            if (usernameInput.getText().trim().equals("") || passwordInput.getText().trim().equals("")) { // invalid
+                // inputs
+                errorMessage.setText("Username or password invalid!");
+            } else { // valid inputs
+                PreparedStatement stmt = DBM.conn.prepareStatement("SELECT * FROM users WHERE userEmail = ?");
+                stmt.setString(1, usernameInput.getText());
+                // list of users that match the input email (hopefully length 1)
+                List<User> dbResult = DBM.getFromDB(stmt, new User());
+                if (dbResult.size() > 1)
+                    throw new SQLException(
+                            "Multiple users found, something went horribly wrong, contact tech support!");
+                else if (dbResult.size() == 0) { // no user found
+                    errorMessage.setText("Email not found in database!");
+                } else { // user found, time for password check
+                    User user = dbResult.get(0);
+
+                    boolean isValid = user.verifyPass(passwordInput.getText(), user.getEncrypted(), user.getSalt());
+
+                    if (!isValid) {
+                        errorMessage.setText("Invalid password!");
+                    } else { // log in!!!
+                        GUIManager.loggedInUser = user;
+                        ((Node) (event.getSource())).getScene().getWindow().hide();
+                        GUIManager.swapScene("EventEditor");
+                    }
+                }
+
+            }
+        } catch (SQLException | IOException e) {
+            errorMessage.setText(e.getMessage());
+        }
     }
+
 
     @FXML
     public void timelineScreen() throws IOException {
