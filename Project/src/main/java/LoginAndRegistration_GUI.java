@@ -17,7 +17,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
-public class LoginAndRegistration_GUI extends VBox {
+public class LoginAndRegistration_GUI {
 
 /*
 	public static Scene welcomeScreen() {

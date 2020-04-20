@@ -1,13 +1,12 @@
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.layout.VBox;
 
 import java.io.IOException;
 import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
-public class EventEditor_GUI extends VBox {
+public class EventEditor_GUI {
 
     @FXML
     TextField titleInput = new TextField();
