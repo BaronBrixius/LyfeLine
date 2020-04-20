@@ -110,7 +110,7 @@ public class Dashboard_GUI extends GridPane {
 		Button btnLogOut = new Button("Log Out");
 		btnLogOut.getStyleClass().add("smallButton");
 		btnLogOut.getStyleClass().add("logOutButton");
-		this.add(btnLogOut, 2, 2);
+		//this.add(btnLogOut, 2, 2);
 
 		btnLogOut.setOnAction(event -> {
 			//OldGUIManager.swapScene(LoginAndRegistration_GUI.welcomeScreen());
@@ -151,13 +151,13 @@ public class Dashboard_GUI extends GridPane {
 		// Popup confirmation
 		Stage delConfirm = new Stage();
 		delConfirm.setTitle("Confirm Deletion");
-		delConfirm.initOwner(GUIManager.mainStage);
+		delConfirm.initOwner(OldGUIManager.mainStage);
 		delConfirm.initModality(Modality.WINDOW_MODAL);
 		delConfirm.setResizable(false);
 
 		btnDelete.setOnAction(event -> {
 			delConfirm.setScene(deletePopup(list.getSelectionModel().getSelectedItem().getName()));
-			delConfirm.getScene().getStylesheets().add("File:src/main/resources/" + GUIManager.mainStyle + ".css");
+			delConfirm.getScene().getStylesheets().add("File:src/main/resources/styles/" + OldGUIManager.mainStyle + ".css");
 			delConfirm.show();
 		});
 

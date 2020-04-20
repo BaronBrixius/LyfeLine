@@ -1,4 +1,5 @@
 import javafx.application.Application;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
@@ -18,13 +19,13 @@ public class OldGUIManager extends Application{
 	public void start(Stage primaryStage) throws Exception {
 
 		// Used to establish connection to the DB.
-		/*try {
+		try {
 			new DBM();
 			DBM.setupSchema();
 		}
 		catch (SQLException e) {
 			e.printStackTrace();
-		}*/
+		}
 
 		mainStage = primaryStage;
 		//mainStage.setScene(LoginAndRegistration_GUI.welcomeScreen()); 	//default scene
@@ -40,9 +41,14 @@ public class OldGUIManager extends Application{
 		changeStyle(mainStyle);
 	}
 
+	public static void swapScene(Parent parent) {
+		mainStage.setScene(new Scene(parent));
+		changeStyle(mainStyle);
+	}
+
 	public static void changeStyle(String styleName) {
 		mainStyle = styleName;
-		mainStage.getScene().getStylesheets().add("File:src/main/resources/"+ mainStyle +".css");
+		mainStage.getScene().getStylesheets().add("File:src/main/resources/styles/"+ mainStyle +".css");
 	}
 
 }
