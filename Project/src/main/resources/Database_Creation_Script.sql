@@ -150,7 +150,7 @@ CREATE TABLE `timelines`
     CONSTRAINT `fk_timelineevents_timelines`
         FOREIGN KEY (`TimelineID`)
         REFERENCES `timelines` (`TimelineID`)
-)
+);
 
 
 CREATE TRIGGER CreatedDateTime
