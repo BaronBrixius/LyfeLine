@@ -5,10 +5,15 @@
     -fx-background-color: #f4f4f4;
 }
 
-/*Text applies to any free floating text, does not apply to text in Buttons, TextFields, etc.
+/*Text applies to any free floating text (inc. TextField), does not apply to text in Buttons, etc.
 "-fx-text-fill" does not work here, use "fx-fill" to color the text instead.*/
 Text{
     -fx-font-size: 1.75em;
+}
+
+
+.label{
+    -fx-padding: 5 0 0 0;
 }
 
 /*The following apply to any object of the corresponding name.*/
@@ -21,6 +26,8 @@ Text{
     -fx-background-color: #1aa9cd;
     -fx-background-radius: 222px;
 }
+
+
 /*This is what the button looks like when you hover over it*/
 .button:hover {
     -fx-background-color: #126c82;
@@ -89,6 +96,15 @@ for example:      buttonName.getStyleClass().add("smallButton");                
     -fx-background-color: #ff4251;
     -fx-scale-y: 1.1;
 }
+
+.mediumText{
+	-fx-font-size: 1.5em;
+}
+
+
+
+
+
 
 /*Here is a list of useful CSS commands:
 -fx-text-fill: black; (sets text color)

@@ -6,13 +6,16 @@ import java.sql.SQLException;
 
 public class GUIManager extends Application{
 
+	//currently logged in user, null if no log in
+	public static User loggedInUser;
+	public static Stage mainStage;
+	public static String mainStyle;
+	
+	//entry point of our application
 	public static void main(String[] args) {
 		launch(args);
 	}
-
-	public static Stage mainStage;
-	public static String mainStyle;
-
+	
 	//default window set up
 	@Override
 	public void start(Stage primaryStage) throws Exception {
@@ -20,14 +23,14 @@ public class GUIManager extends Application{
 		// Used to establish connection to the DB.
 		try {
 			new DBM();
-			DBM.setupSchema();
+			DBM.setupSchema(); //comment out for testing of log in
 		}
 		catch (SQLException e) {
 			e.printStackTrace();
 		}
 
 		mainStage = primaryStage;
-		mainStage.setScene(LoginAndRegistration_GUI.welcomeScreen()); //default scene
+		mainStage.setScene(LoginAndRegistration_GUI.welcomeScreen()); 	//default scene
 		mainStage.setResizable(false);
 		changeStyle("DefaultStyle");
 		mainStage.show();

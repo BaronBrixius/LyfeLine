@@ -23,7 +23,8 @@ import javafx.stage.Stage;
 public class Dashboard_GUI {
 
 	public static Scene DashboardScreen() {
-
+		//everything including menu bar
+		VBox everything = new VBox();
 		// main layout
 		GridPane pane = new GridPane();
 		pane.setVgap(5);
@@ -108,6 +109,16 @@ public class Dashboard_GUI {
 		sortBy.setItems(sortOptions);
 		listOptions.getChildren().add(sortBy);
 
+		Button btnLogOut = new Button("Log Out");
+		btnLogOut.getStyleClass().add("smallButton");
+		btnLogOut.getStyleClass().add("logOutButton");
+		pane.add(btnLogOut, 2, 2);
+
+		btnLogOut.setOnAction(event -> {
+			GUIManager.loggedInUser=null;
+			GUIManager.swapScene(LoginAndRegistration_GUI.welcomeScreen());
+		});
+
 		pane.add(listOptions, 1, 0);
 
 		// sort order selection events
@@ -129,6 +140,8 @@ public class Dashboard_GUI {
 		});
 
 		pane.setAlignment(Pos.CENTER);
+		
+		everything.getChildren().addAll(LoginAndRegistration_GUI.dropDownMenus(),pane);
 
 		// Delete timeline button
 		Button btnDelete = new Button("Delete");
@@ -160,7 +173,7 @@ public class Dashboard_GUI {
 		});
 
 		// finalizes and returns scene
-		Scene scene = new Scene(pane, 600, 400);
+		Scene scene = new Scene(everything, 600, 400);
 		return scene;
 
 	}
