@@ -1,5 +1,6 @@
 CREATE TABLE `events` (
   `EventID` int NOT NULL AUTO_INCREMENT,
+  `EventOwner` int NOT NULL
   `EventType` tinyint NOT NULL,
   `EventName` nvarchar(100) DEFAULT NULL,
   `EventDescription` nvarchar(5000) DEFAULT NULL,
@@ -130,7 +131,6 @@ CREATE TABLE `timelines`
     `CreatedMillisecond`  smallint unsigned DEFAULT NULL,
     `Private`             boolean           DEFAULT true,
     `TimelineOwner`       int,
-
     PRIMARY KEY (`TimelineID`),
     UNIQUE KEY `TimelineID_UNIQUE` (`TimelineID`)
 ) ENGINE = InnoDB
@@ -140,14 +140,17 @@ CREATE TABLE `timelines`
 
   CREATE TABLE `timelineevents`
   (
-      `TimelineID` int NOT NULL,
-      `EventID` int NOT NULL,
-      CONSTRAINT `pK_timelinesevent` PRIMARY KEY (eventID,timelineID),
-      CONSTRAINT `fk_timelineevents_events1` FOREIGN KEY (`EventID`) REFERENCES `events` (`EventID`),
-      CONSTRAINT `fk_timelineevents_timelines` FOREIGN KEY (`TimelineID`) REFERENCES `timelines` (`TimelineID`)
-  ) ENGINE = InnoDB
-    DEFAULT CHARSET = utf8mb4
-    COLLATE = utf8mb4_general_ci;
+    `TimelineID` int NOT NULL,
+    `EventID` int NOT NULL,
+    CONSTRAINT `pK_timelinesevent` PRIMARY KEY (eventID,timelineID),
+    CONSTRAINT `fk_timelineevents_events1`
+        FOREIGN KEY (`EventID`)
+        REFERENCES `events` (`EventID`)
+        ON DELETE CASCADE,
+    CONSTRAINT `fk_timelineevents_timelines`
+        FOREIGN KEY (`TimelineID`)
+        REFERENCES `timelines` (`TimelineID`)
+)
 
 
 CREATE TRIGGER CreatedDateTime
@@ -165,6 +168,9 @@ BEGIN
         set new.`CreatedMillisecond` = CAST(UNIX_TIMESTAMP(CURTIME(3)) % 1 * 1000 AS unsigned);
     end if;
 END;
+
+
+
 
 
 -- This part is for populating tables with dummy data

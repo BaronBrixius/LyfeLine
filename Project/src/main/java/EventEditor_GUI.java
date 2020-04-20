@@ -64,7 +64,7 @@ public class EventEditor_GUI extends VBox {
     }
 
     @FXML
-    private boolean saveEvent() throws SQLException {
+    private boolean saveEvent()  {
 
         //setters to update each field of this.event, based on the current info in the text fields
         this.event.setTitle(titleInput.getText());
@@ -97,15 +97,31 @@ public class EventEditor_GUI extends VBox {
         if (result.get() == ButtonType.CANCEL)
             return false;
 
-        // delete event from DB, on this and all other timelines
-        System.out.println("Delete event.");
-        return true;
+        try {
+            if (this.event.getEventID() == 0)
+                throw new IllegalArgumentException("event not in database");
+            else
+                DBM.deleteFromDB(event);
+            return true;
+        } catch (SQLException e){
+            return false;
+        }
+
+
     }
 
     @FXML
     private void close() throws IOException {
-        //If this.event fields != textboxes throw warning,unsaved changes -> before exit or
+        if(!this.event.getEventName().equals(titleInput.getText()) || !this.event.getEventDescrition().equals(descriptionInput.getText()) || !this.event.getEventStart().toString().equals(startInput.getValue().format(DateTimeFormatter.ofPattern("yyyyMMdd"+0+0+0+0))) ||this.event.getEventEnd().toString().equals(endInput.getValue().format(DateTimeFormatter.ofPattern("yyyyMMdd"+0+0+0+0)))) {//then something also for image later to see if changed
+            //do you wanna save and exit or just save?
+                     //if save and exit:
+                     //saveEvent();
+                    //GUIManager.swapScene("example");
+                    //else
+                     //GUIManager.swapScene("example");
+        }
         //close editor, return to previous screen
+        else
         GUIManager.swapScene("example");
         System.out.println("Button pressed.");
     }
