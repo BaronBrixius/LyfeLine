@@ -40,6 +40,7 @@ public class EventEditor_GUI extends VBox {
         endInput.setDisable(!hasDuration.isSelected());
     }
 
+    @FXML
     private void uploadImage() {
         //don't implement, not part of current sprint
         System.out.println("Button pressed.");
@@ -65,6 +66,7 @@ public class EventEditor_GUI extends VBox {
 
     @FXML
     private boolean saveEvent() {
+        
         //setters to update each field of this.event, based on the current info in the text fields
 
         /*try {
@@ -100,6 +102,7 @@ public class EventEditor_GUI extends VBox {
 
     @FXML
     private void close() throws IOException {
+        //If this.event fields != textboxes throw warning,unsaved changes -> before exit or
         //close editor, return to previous screen
         GUIManager.swapScene("example");
         System.out.println("Button pressed.");
