@@ -101,6 +101,12 @@ class Event implements DBObject<Event> {
         this.imagePath = image;
     }
 
+    //Getter for editing Event fields
+    public int  getEventID() {
+        return this.eventID;
+    }
+
+
     @Override
     public PreparedStatement getUpdateQuery() throws SQLException {
         if (eventID == 0)
