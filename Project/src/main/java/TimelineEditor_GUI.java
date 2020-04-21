@@ -13,7 +13,8 @@ public class TimelineEditor_GUI {
     @FXML private DatePicker startDateInput;
     @FXML private DatePicker endDateInput;
     @FXML private ComboBox<String> timeInput;
-
+    
+    public static Timeline activeTimeline;
 
     public TimelineEditor_GUI() {
 
@@ -21,10 +22,10 @@ public class TimelineEditor_GUI {
 
     @FXML
     private void initialize() throws SQLException {
-        //Timeline here just to test field populating. Replace replace it with the proper timeline, or with blank timeline if creating.
-    	Timeline timeline = new Timeline();
+        //Timeline here just to test field populating. Replace it with the proper timeline, or with blank timeline if creating.
+    	Timeline activeTimeline = new Timeline();
 
-        titleInput.setText(Timeline.getTimelineName());
+        titleInput.setText(activeTimeline.getTimelineName());
 
         descriptionInput.setText(""); //put timeline.getTimelineDescription, or however it's called, into the constructor.
 
