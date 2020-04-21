@@ -275,4 +275,7 @@ public class Timeline implements DBObject<Timeline>{
 		this.isPrivate = isPrivate;
 	}
 	
+	public void setTimelineOwner(int TimelineOwner) {
+		this.timelineOwner = TimelineOwner;
+	}
 }
