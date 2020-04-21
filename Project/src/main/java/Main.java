@@ -8,18 +8,9 @@ class Main {
     public static void main(String[] args) {
         PreparedStatement stmt;
         try {
-            new DBM();
+            new DBM("jdbc:mysql://localhost?useTimezone=true&serverTimezone=UTC", "root", "AJnuHA^8VKHht=uB", "project");
             DBM.setupSchema();       //destroys + remakes DB with default settings, can comment this out after first run if desired
 
-            Event now = new Event(1, 2020, 4, 9);
-            Event then = new Event(2, -44, 3, 15);
-            DBM.insertIntoDB(now, then);
-
-            try {                   //throws as a demonstration of anti-dupe
-                DBM.insertIntoDB(now);
-            } catch (SQLIntegrityConstraintViolationException e) {
-                System.err.println(e.getMessage() + " (This is just a demonstration exception. -Max)");
-            }
 
             //Makes a list of events from the DB and prints it
             stmt = DBM.conn.prepareStatement("SELECT * FROM events");
@@ -37,7 +28,17 @@ class Main {
 
             User professorChaos = new User("Seeqwul Encurshun', 'BigDoc@abuseme.biz', 'FunPass', 'TheSalt', '1'); -- ", "email@yo.mama", "Passw0rd!");    //SQL injection attempt
             DBM.insertIntoDB(professorChaos);
+            //I add 3 timelines manually to get the exception that this user has already this timelinename in it - timeline 2 is good but 3 is the same so exception is thrown
+            Timeline test = new Timeline(0, "My timeline", "Very cool timeline", "Month", "pink", new Date(1,0,0,0,0,0,0), new Date(2,0,0,0,0,0,0),  new Date(2,0,0,0,0,0,0), 10, false);
+            DBM.insertIntoDB(test);
+            Timeline test1 = new Timeline(0, "My other timeline", "Very cool timeline", "Month", "pink", new Date(1,0,0,0,0,0,0), new Date(2,0,0,0,0,0,0),  new Date(2,0,0,0,0,0,0), 10, false);
+            DBM.insertIntoDB(test1); //Here are two timelines with same name == ok because I changed userID
+            Timeline test3 = new Timeline(0, "My other timeline", "Very cool timeline", "Month", "pink", new Date(1,0,0,0,0,0,0), new Date(2,0,0,0,0,0,0),  new Date(2,0,0,0,0,0,0), 11, false);
+            DBM.insertIntoDB(test3); //Here are two timelines with same name == NOT OK because I now same  userID and same name
 
+
+            Date testing = new Date(1984,24,10,0,0,0,0);
+            System.out.println(testing.toString());
             User teacher = new User("Hans Ove", "Hans@math.biz", "Passw0rd!");
             if (User.validateUnique("Hans@math.biz"))
                 DBM.insertIntoDB(teacher);

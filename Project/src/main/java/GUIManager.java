@@ -1,47 +1,58 @@
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.MenuBar;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.sql.SQLException;
 
-public class GUIManager extends Application{
+public class GUIManager extends Application {
 
-	public static void main(String[] args) {
-		launch(args);
-	}
+    //currently logged in user, null if no log in
+    public static User loggedInUser;
+    public static Stage mainStage;
+    public static MenuBar menu;
+    public static VBox main;
 
-	public static Stage mainStage;
-	public static String mainStyle;
+    public static void main(String[] args) {
+        launch(args);
+    }
 
-	//default window set up
-	@Override
-	public void start(Stage primaryStage) throws Exception {
+    public static void swapScene(String fxml) throws IOException {
+        main.getChildren().set(1, FXMLLoader.load(GUIManager.class.getResource("FXML/" + fxml + ".fxml")));
+    }
 
-		// Used to establish connection to the DB.
-		try {
-			new DBM();
-			DBM.setupSchema();
-		}
-		catch (SQLException e) {
-			e.printStackTrace();
-		}
+    public static void applyStyle(String style) {
+        mainStage.getScene().getStylesheets().add("File:src/main/resources/styles/" + style + ".css");
+    }
 
-		mainStage = primaryStage;
-		mainStage.setScene(LoginAndRegistration_GUI.welcomeScreen()); //default scene
-		mainStage.setResizable(false);
-		changeStyle("DefaultStyle");
-		mainStage.show();
-	}
+    //default window set up
+    @Override
+    public void start(Stage primaryStage) throws Exception {
 
-	//is used when swapping scenes inside classes. use the static classes that return scenes
-	public static void swapScene(Scene scene) {
-		mainStage.setScene(scene);
-		changeStyle(mainStyle);
-	}
+        // Used to establish connection to the DB.
+        try {
+            new DBM();
+            DBM.setupSchema(); //comment out for testing of log in
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
-	public static void changeStyle(String styleName) {
-		mainStyle = styleName;
-		mainStage.getScene().getStylesheets().add("File:src/main/resources/"+ mainStyle +".css");
-	}
+        main = new VBox();
+
+        menu = FXMLLoader.load(GUIManager.class.getResource("FXML/TopMenu.fxml"));
+        main.getChildren().addAll(menu, new Pane());
+
+        mainStage = primaryStage;
+        mainStage.setScene(new Scene(main));
+
+        swapScene("EventEditor");
+        applyStyle("DefaultStyle");
+
+        mainStage.show();
+    }
 
 }
