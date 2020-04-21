@@ -16,7 +16,7 @@ public class TimelineEditor_GUI {
 
 
     public TimelineEditor_GUI() {
-
+        GUIManager.mainStage.setTitle("Timeline Editor");
     }
 
     @FXML
@@ -42,6 +42,7 @@ public class TimelineEditor_GUI {
         keywordsInput.setText(keywordsList.toString());
 
         //startDateInput.setValue();    //put timeline.getStartDate.toLocaleDate() as parameter
+
 
         //endDateInput.setValue();  //put timeline.getEndDate.toLocaleDate() as parameter
 

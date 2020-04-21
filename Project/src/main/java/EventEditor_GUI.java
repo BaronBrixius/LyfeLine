@@ -8,22 +8,16 @@ import java.util.Optional;
 
 public class EventEditor_GUI {
 
-    @FXML
-    TextField titleInput = new TextField();
-    @FXML
-    TextArea descriptionInput = new TextArea();
-    @FXML
-    DatePicker startInput = new DatePicker();
-    @FXML
-    CheckBox hasDuration = new CheckBox();
-    @FXML
-    DatePicker endInput = new DatePicker();             //only a datepicker for skeleton, will figure best way to enter info later
-    @FXML
-    ComboBox<String> imageInput = new ComboBox<>();
+    @FXML TextField titleInput = new TextField();
+    @FXML TextArea descriptionInput = new TextArea();
+    @FXML DatePicker startInput = new DatePicker();
+    @FXML CheckBox hasDuration = new CheckBox();
+    @FXML DatePicker endInput = new DatePicker();             //only a datepicker for skeleton, will figure best way to enter info later
+    @FXML ComboBox<String> imageInput = new ComboBox<>();
     private Event event;
 
     public EventEditor_GUI() {
-
+        GUIManager.mainStage.setTitle("Event Editor");
     }
 
     public void initialize() {
