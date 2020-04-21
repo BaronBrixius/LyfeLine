@@ -13,22 +13,17 @@ import javafx.scene.text.Text;
 
 public class AdminRoleManager_GUI{
 
-	@FXML
-	private Text userText;
-	@FXML
-	private Text userSatus;
-	@FXML
-	private ListView<User> listView;
-	@FXML
-	private CheckBox toggle;
-	@FXML
-	private ComboBox <String> sortBy;
+	@FXML private Text userText;
+	@FXML private Text userSatus;
+	@FXML private ListView<User> listView;
+	@FXML private CheckBox toggle;
+	@FXML private ComboBox <String> sortBy;
 	
 	
 	final ObservableList<User> userList = FXCollections.observableArrayList();
 
 	public AdminRoleManager_GUI() {
-
+		GUIManager.mainStage.setTitle("Admin Role Manager");
 	}
 
 	@FXML

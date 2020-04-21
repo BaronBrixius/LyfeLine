@@ -36,11 +36,92 @@ public class Dashboard_GUI extends GridPane {
 	@FXML private ComboBox sortBy;
 
 	public Dashboard_GUI() {
+		GUIManager.mainStage.setTitle("Dashboard");
+	}
 
-
+	@FXML
+	private void initialize() {
 
 	}
 
+	@FXML
+	public void createTimeline(ActionEvent event) {
+	}
+
+	@FXML
+	public void editTimeline(ActionEvent event) {
+	}
+
+	@FXML
+	public void adminScreen(ActionEvent event) throws IOException {
+		GUIManager.swapScene("AdminRoleManager");
+	}
+
+	// open DeletePopUp
+	@FXML
+	public void deleteConfirmation(ActionEvent event) throws IOException {
+
+		Stage delConfirm = new Stage();
+		delConfirm.setTitle("Confirm Deletion");
+		delConfirm.initOwner(GUIManager.mainStage);
+		delConfirm.initModality(Modality.WINDOW_MODAL);
+		delConfirm.setResizable(false);
+
+
+		delConfirm.setScene(new Scene(FXMLLoader.load(GUIManager.class.getResource("FXML/DeletePopup.fxml"))));
+		//list.getSelectionModel().getSelectedItem().getName())
+		delConfirm.getScene().getStylesheets().add("File:src/main/resources/styles/" + "DefaultStyle" + ".css");
+		delConfirm.show();
+
+	}
+
+	@FXML
+	public void deleteConfirm(ActionEvent actionEvent) {
+		((Node) (actionEvent.getSource())).getScene().getWindow().hide();
+		System.out.println("Deleted");
+	}
+
+	@FXML
+	public void deleteCancel(ActionEvent actionEvent) {
+		((Node) (actionEvent.getSource())).getScene().getWindow().hide();
+		System.out.println("Cancelled");
+	}
+
+}
+
+// DO NOT DELETE
+
+//	private static Scene deletePopup(String timelineName) {
+//		// Row 1 - Info Text
+//		Text displayTxt = new Text("Delete Timeline " + timelineName + "?");
+//
+//
+//		// Row 2 - Buttons Hbox
+//		Button btnConfirm = new Button("Confirm");
+//		btnConfirm.getStyleClass().add("popupButton");
+//		btnConfirm.getStyleClass().add("hoverRed");
+//		btnConfirm.setOnAction(event -> ((Node) (event.getSource())).getScene().getWindow().hide());
+//
+//		Button btnCancel = new Button("Cancel");
+//		btnCancel.getStyleClass().add("popupButton");
+//		btnCancel.setOnAction(event -> ((Node) (event.getSource())).getScene().getWindow().hide());
+//
+//		HBox hboxButtons = new HBox();
+//		hboxButtons.setSpacing(75);
+//		hboxButtons.setAlignment(Pos.CENTER);
+//		hboxButtons.getChildren().addAll(btnConfirm, btnCancel);
+//
+//
+//		// Extra scene params
+//		VBox layout = new VBox();
+//		layout.setPadding(new Insets(20, 20, 20, 20));
+//		layout.setSpacing(35);
+//		layout.setAlignment(Pos.CENTER);
+//		layout.getChildren().addAll(displayTxt, hboxButtons);
+//
+//
+//		return new Scene(layout);
+//	}
 //	public Dashboard_GUI(int asd) {
 //
 //		// main layout
@@ -218,97 +299,3 @@ public class Dashboard_GUI extends GridPane {
 //	}
 
 
-
-
-	@FXML
-	public void createTimeline(ActionEvent event) {
-	}
-
-	@FXML
-	public void editTimeline(ActionEvent event) {
-	}
-
-
-
-
-	// DO NOT DELETE
-	
-//	private static Scene deletePopup(String timelineName) {
-//		// Row 1 - Info Text
-//		Text displayTxt = new Text("Delete Timeline " + timelineName + "?");
-//
-//
-//		// Row 2 - Buttons Hbox
-//		Button btnConfirm = new Button("Confirm");
-//		btnConfirm.getStyleClass().add("popupButton");
-//		btnConfirm.getStyleClass().add("hoverRed");
-//		btnConfirm.setOnAction(event -> ((Node) (event.getSource())).getScene().getWindow().hide());
-//
-//		Button btnCancel = new Button("Cancel");
-//		btnCancel.getStyleClass().add("popupButton");
-//		btnCancel.setOnAction(event -> ((Node) (event.getSource())).getScene().getWindow().hide());
-//
-//		HBox hboxButtons = new HBox();
-//		hboxButtons.setSpacing(75);
-//		hboxButtons.setAlignment(Pos.CENTER);
-//		hboxButtons.getChildren().addAll(btnConfirm, btnCancel);
-//
-//
-//		// Extra scene params
-//		VBox layout = new VBox();
-//		layout.setPadding(new Insets(20, 20, 20, 20));
-//		layout.setSpacing(35);
-//		layout.setAlignment(Pos.CENTER);
-//		layout.getChildren().addAll(displayTxt, hboxButtons);
-//
-//
-//		return new Scene(layout);
-//	}
-
-
-	@FXML
-	public void adminScreen(ActionEvent event) {
-	}
-
-
-
-
-	
-
-	@FXML
-	private void intialize() {
-
-	}
-
-
-	// open DeletePopUp
-	@FXML
-	public void deleteConfirmation(ActionEvent event) throws IOException {
-
-		Stage delConfirm = new Stage();
-		delConfirm.setTitle("Confirm Deletion");
-		delConfirm.initOwner(GUIManager.mainStage);
-		delConfirm.initModality(Modality.WINDOW_MODAL);
-		delConfirm.setResizable(false);
-
-
-		delConfirm.setScene(new Scene(FXMLLoader.load(GUIManager.class.getResource("FXML/" + "DeletePopup" + ".fxml"))));
-		//list.getSelectionModel().getSelectedItem().getName())
-		delConfirm.getScene().getStylesheets().add("File:src/main/resources/styles/" + "DefaultStyle" + ".css");
-		delConfirm.show();
-
-	}
-
-	public void deleteConfirm(ActionEvent actionEvent) {
-		((Node) (actionEvent.getSource())).getScene().getWindow().hide();
-		System.out.println("Deleted");
-	}
-
-	public void deleteCancel(ActionEvent actionEvent) {
-		((Node) (actionEvent.getSource())).getScene().getWindow().hide();
-		System.out.println("Cancelled");
-	}
-
-
-
-}
