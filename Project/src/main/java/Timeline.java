@@ -17,13 +17,13 @@ public class Timeline implements DBObject<Timeline>{
 	private List<Event> eventList;
 
 	public Timeline() {
-		
+
 	}
 
-	public Timeline(int TimeLineID, String TimelineName, String TimelineDescription, String Scale, String Theme, Date StartDate, Date Enddate, Date DateCreated, int TimelineOwner, boolean Private) throws SQLException {
+	private Timeline(int TimeLineID, String TimelineName, String TimelineDescription, String Scale, String Theme, Date StartDate, Date Enddate, Date DateCreated, int TimelineOwner, boolean Private) throws SQLException {
 
 		this.timelineID=TimeLineID;
-		setTimelineName(TimelineName, TimelineOwner);
+		this.timelineName = TimelineName;
 		this.scale=Scale;
 		this.timelineDescription=TimelineDescription;
 		this.theme=Theme;
