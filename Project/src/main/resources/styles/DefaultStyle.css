@@ -1,24 +1,20 @@
 /*This File holds all the CSS Style commands that are applied to all Nodes in a Scene*/
 
 /*.root applies to everything in a scene and overrides all other commands in this file. Use carefully.*/
-.root{
+.root{/*Use carefully.*/
     -fx-background-color: #f4f4f4;
-    -fx-spacing: 5px;
 }
 
-/*Text applies to any free floating text, does not apply to text in Buttons, TextFields, etc.
+/*Text applies to any free floating text (inc. TextField), does not apply to text in Buttons, etc.
 "-fx-text-fill" does not work here, use "fx-fill" to color the text instead.*/
 Text{
     -fx-font-size: 1.75em;
 }
 
-GridPane {
-    -fx-vgap: 5px;
-    -fx-hgap: 5px;
-}
-
 .label{
     -fx-padding: 5 0 0 0;
+    -fx-font-size: 1.5em;
+    -fx-font-weight: bold;
 }
 
 /*The following apply to any object of the corresponding name.*/
@@ -43,13 +39,25 @@ GridPane {
     -fx-pref-height: 30px;
 }
 
+.text-area{
+    -fx-pref-height: 105px;
+    -fx-pref-width: 400px;
+    -fx-wrap-text: true;
+    -fx-font-size: 15px;
+}
+
+.smallTextArea{
+    -fx-pref-height: 40px;
+
+}
+
 .menu-item{
 
 }
 
 .menu-bar{
-    -fx-font-size: 1.1em;
-
+    -fx-font-size: .6em;
+    -fx-font-weight: lighter;
 }
 
 .combo-box{
@@ -67,7 +75,13 @@ for example:      buttonName.getStyleClass().add("smallButton");                
     -fx-font-size: 1.3em;
     -fx-font-weight: bold;
     -fx-pref-height: 50px;
-    -fx-pref-width: 175px;
+    -fx-pref-width: 150px;
+}
+
+.tinyButton{
+    -fx-pref-width: 90px;
+    -fx-pref-height: 25px;
+    -fx-font-size: 12;
 }
 
 .smallButton:hover {
@@ -81,9 +95,39 @@ for example:      buttonName.getStyleClass().add("smallButton");                
     -fx-scale-y: 1.1;
 }
 
+.headertext{
+    -fx-font-size: 24;
+}
+
 .smallText{
     -fx-font-size: 1em;
 }
+
+.popupButton{
+    -fx-font-size: 1.3em;
+    -fx-font-weight: bold;
+    -fx-pref-height: 35px;
+    -fx-pref-width: 90px;
+}
+
+.popupButton:hover {
+    -fx-background-color: #126c82;
+    -fx-scale-y: 1.1;
+}
+
+.hoverRed:hover {
+    -fx-background-color: #ff4251;
+    -fx-scale-y: 1.1;
+}
+
+.mediumText{
+	-fx-font-size: 1.5em;
+}
+
+
+
+
+
 
 /*Here is a list of useful CSS commands:
 -fx-text-fill: black; (sets text color)

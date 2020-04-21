@@ -1,47 +1,49 @@
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.sql.SQLException;
 
-public class GUIManager extends Application{
+public class GUIManager extends Application {
 
-	public static void main(String[] args) {
-		launch(args);
-	}
-
+	//currently logged in user, null if no log in
+	public static User loggedInUser;
 	public static Stage mainStage;
 	public static String mainStyle;
+    public static Scene scene;
 
-	//default window set up
-	@Override
-	public void start(Stage primaryStage) throws Exception {
+    public static void main(String[] args) {
+        launch(args);
+    }
 
-		// Used to establish connection to the DB.
+    public static void swapScene(String fxml) throws IOException {
+        scene.setRoot(FXMLLoader.load(GUIManager.class.getResource("FXML/" + fxml + ".fxml")));
+    }
+
+    public static void applyStyle(String style) {
+        mainStage.getScene().getStylesheets().add("File:src/main/resources/styles/" + style + ".css");
+    }
+
+    //default window set up
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+
+        // Used to establish connection to the DB.
 		try {
 			new DBM();
-			DBM.setupSchema();
+			DBM.setupSchema(); //comment out for testing of log in
 		}
 		catch (SQLException e) {
 			e.printStackTrace();
 		}
 
-		mainStage = primaryStage;
-		mainStage.setScene(LoginAndRegistration_GUI.welcomeScreen()); 	//default scene
-		mainStage.setResizable(false);
-		changeStyle("DefaultStyle");
-		mainStage.show();
-	}
-
-	//is used when swapping scenes inside classes. use the static classes that return scenes
-	public static void swapScene(Scene scene) {
-		mainStage.setScene(scene);
-		changeStyle(mainStyle);
-	}
-
-	public static void changeStyle(String styleName) {
-		mainStyle = styleName;
-		mainStage.getScene().getStylesheets().add("File:src/main/resources/"+ mainStyle +".css");
-	}
+        mainStage = primaryStage;
+        scene = new Scene(FXMLLoader.load(GUIManager.class.getResource("FXML/Welcome_Screen.fxml")));     //default page
+        mainStage.setScene(scene);
+        applyStyle("DefaultStyle");
+        mainStage.show();
+    }
 
 }
