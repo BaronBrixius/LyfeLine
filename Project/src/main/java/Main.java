@@ -8,7 +8,7 @@ class Main {
     public static void main(String[] args) {
         PreparedStatement stmt;
         try {
-            new DBM("jdbc:mysql://localhost?useTimezone=true&serverTimezone=UTC", "Halli", "dragon", "project");
+            new DBM("jdbc:mysql://localhost?useTimezone=true&serverTimezone=UTC", "root", "AJnuHA^8VKHht=uB", "project"); //AJnuHA^8VKHht=uB Default password
             DBM.setupSchema();       //destroys + remakes DB with default settings, can comment this out after first run if desired
 
 
@@ -36,7 +36,7 @@ class Main {
             Timeline test3 = new Timeline(0, "My other timeline", "Very cool timeline", "Month", "pink", new Date(1,0,0,0,0,0,0), new Date(2,0,0,0,0,0,0),  new Date(2,0,0,0,0,0,0), 11, false);
             DBM.insertIntoDB(test3); //Here are two timelines with same name == NOT OK because I now same  userID and same name
             Timeline test4 = new Timeline(0, "My other timeline", "Very cool timeline", "Month", "pink", new Date(1,0,0,0,0,0,0), new Date(2,0,0,0,0,0,0),  new Date(2,0,0,0,0,0,0), 11, false);
-            DBM.insertIntoDB(test3);
+            DBM.insertIntoDB(test4);
 
 
             User teacher = new User("Hans Ove", "Hans@math.biz", "Passw0rd!");
