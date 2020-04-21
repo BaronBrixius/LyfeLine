@@ -15,9 +15,8 @@ public class Timeline implements DBObject<Timeline>{
 	private int timelineOwner;
 	private boolean isPrivate=false;
 	private List<Event> eventList;
-
 	public Timeline() {
-		
+		timelineOwner = GUIManager.loggedInUser.getUserID();
 	}
 
 	public Timeline(int TimeLineID, String TimelineName, String TimelineDescription, String Scale, String Theme, Date StartDate, Date Enddate, Date DateCreated, int TimelineOwner, boolean Private) throws SQLException {
@@ -40,7 +39,6 @@ public class Timeline implements DBObject<Timeline>{
 	public PreparedStatement getInsertQuery() throws SQLException {
 		if (timelineID > 0)
 			throw new SQLIntegrityConstraintViolationException("TimelineID is already in DB.");
-		this.timelineOwner = GUIManager.loggedInUser.getUserID();
 		
 		PreparedStatement out = DBM.conn.prepareStatement("INSERT INTO `timelines` ( `Scale`,`TimelineName`, `TimelineDescription`, `Theme`,`StartYear`,`StartMonth`,`StartDay`,`StartHour`"
 				+ ",`StartMinute`,`StartSecond`,`StartMillisecond`,`EndYear`,`EndMonth`,`EndDay`,`EndHour`,`EndMinute`,`EndSecond`,"
