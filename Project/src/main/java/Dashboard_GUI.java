@@ -13,6 +13,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
@@ -23,7 +24,12 @@ import javafx.scene.text.TextFlow;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import javax.swing.*;
+
 public class Dashboard_GUI extends GridPane {
+
+
+
 
 	@FXML private Button adminGUI;
 	@FXML private Button btnDelete;
@@ -36,8 +42,6 @@ public class Dashboard_GUI extends GridPane {
 	@FXML private ComboBox sortBy;
 
 	public Dashboard_GUI() {
-
-
 
 	}
 
@@ -284,27 +288,22 @@ public class Dashboard_GUI extends GridPane {
 		Stage delConfirm = new Stage();
 		delConfirm.setTitle("Confirm Deletion");
 		delConfirm.initOwner(GUIManager.mainStage);
+
 		delConfirm.initModality(Modality.WINDOW_MODAL);
 		delConfirm.setResizable(false);
 
+		FXMLLoader popupDeletion = new FXMLLoader(GUIManager.class.getResource("fxml/DeletePopup.fxml"));
+		delConfirm.setScene(new Scene(popupDeletion.load()));
 
-		delConfirm.setScene(new Scene(FXMLLoader.load(GUIManager.class.getResource("FXML/" + "DeletePopup" + ".fxml"))));
-		//list.getSelectionModel().getSelectedItem().getName())
-		delConfirm.getScene().getStylesheets().add("File:src/main/resources/styles/" + "DefaultStyle" + ".css");
+
+		Popup deletionPopup = popupDeletion.getController();
+		deletionPopup.setDisplayTxt("Are you sure you want to delete " + list.getSelectionModel().getSelectedItem() +"?");
+		deletionPopup.setList(list);
 		delConfirm.show();
 
 	}
 
-	public void deleteConfirm(ActionEvent actionEvent) {
-		((Node) (actionEvent.getSource())).getScene().getWindow().hide();
-		System.out.println("Deleted");
+
+	public void initialize() {
 	}
-
-	public void deleteCancel(ActionEvent actionEvent) {
-		((Node) (actionEvent.getSource())).getScene().getWindow().hide();
-		System.out.println("Cancelled");
-	}
-
-
-
 }

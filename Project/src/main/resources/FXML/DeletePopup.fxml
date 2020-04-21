@@ -7,9 +7,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="150" spacing="35.0" stylesheets="@../styles/DefaultStyle.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Dashboard_GUI">
+<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="150" spacing="35.0" stylesheets="@../styles/DefaultStyle.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Popup">
    <children>
-      <Text fx:id="displayTxt" strokeType="OUTSIDE" strokeWidth="0.0" text="Are you sure you want to delete XXX ?" />
+      <Text fx:id="displayTxt" strokeType="OUTSIDE" strokeWidth="0.0" text="it didn't work"/>
       <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0" spacing="75.0">
          <children>
             <Button fx:id="btnConfirm" mnemonicParsing="false" onAction="#deleteConfirm" text="Confirm">

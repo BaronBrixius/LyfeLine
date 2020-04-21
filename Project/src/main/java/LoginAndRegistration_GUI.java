@@ -370,6 +370,7 @@ public class LoginAndRegistration_GUI extends VBox {
         registerStage.setScene(new Scene(root));
         registerStage.getScene().getStylesheets().add("File:src/main/resources/styles/DefaultStyle.css");
         registerStage.show();
+
     }
 
     @FXML
