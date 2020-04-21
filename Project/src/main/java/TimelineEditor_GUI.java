@@ -19,7 +19,7 @@ public class TimelineEditor_GUI {
     public TimelineEditor_GUI() {
 
     }
-
+    
     @FXML
     private void initialize() throws SQLException {
         //Timeline here just to test field populating. Replace it with the proper timeline, or with blank timeline if creating.
