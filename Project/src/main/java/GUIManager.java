@@ -13,13 +13,12 @@ import java.sql.SQLException;
 public class GUIManager extends Application {
 
     //currently logged in user, null if no log in
-    public static User loggedInUser = new User("Seeqwul Encurshun'", "email@yo.mama", "Passw0rd!");
+    public static User loggedInUser;
     public static Stage mainStage;
     public static MenuBar menu;
     public static VBox main;
 
     public static void main(String[] args) {
-        loggedInUser.setAdmin(true);
         launch(args);
     }
 
