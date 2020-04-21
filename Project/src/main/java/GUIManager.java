@@ -15,15 +15,18 @@ public class GUIManager extends Application {
     //currently logged in user, null if no log in
     public static User loggedInUser;
     public static Stage mainStage;
-    public static MenuBar menu;
+    public static TopMenu menu;
     public static VBox main;
+    public static FXMLLoader loader;
 
     public static void main(String[] args) {
         launch(args);
     }
 
-    public static void swapScene(String fxml) throws IOException {
-        main.getChildren().set(1, FXMLLoader.load(GUIManager.class.getResource("FXML/" + fxml + ".fxml")));
+    public static <T> T swapScene(String fxml) throws IOException {
+        loader = new FXMLLoader(GUIManager.class.getResource("FXML/" + fxml + ".fxml"));
+        main.getChildren().set(1, loader.load());
+        return loader.getController();
     }
 
     public static void applyStyle(String style) {
@@ -37,20 +40,25 @@ public class GUIManager extends Application {
         // Used to establish connection to the DB.
         try {
             new DBM();
-            DBM.setupSchema(); //comment out for testing of log in
+            //DBM.setupSchema(); //comment out for testing of log in
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
         main = new VBox();
 
-        menu = FXMLLoader.load(GUIManager.class.getResource("FXML/TopMenu.fxml"));
-        main.getChildren().addAll(menu, new Pane());
+        loader = new FXMLLoader(getClass().getResource("FXML/TopMenu.fxml"));
+        
+
+        main.getChildren().addAll(loader.load(), new Pane());
+        
+        menu = loader.getController();
+        menu.updateLoggedInStatus();
 
         mainStage = primaryStage;
         mainStage.setScene(new Scene(main));
 
-        swapScene("Timeline_Editor_Screen");
+        swapScene("Welcome_Screen");
         applyStyle("DefaultStyle");
 
         mainStage.show();
