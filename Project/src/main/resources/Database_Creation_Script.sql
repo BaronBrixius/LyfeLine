@@ -138,7 +138,19 @@ CREATE TABLE `timelines`
   COLLATE = utf8mb4_general_ci;
 
 
-  ccccc
+  CREATE TABLE timelineevents
+  (
+    TimelineID int NOT NULL,
+    EventID int NOT NULL,
+    CONSTRAINT pK_timelinesevent PRIMARY KEY (eventID,timelineID),
+    CONSTRAINT fk_timelineevents_events1
+        FOREIGN KEY (EventID)
+        REFERENCES events (EventID)
+        ON DELETE CASCADE,
+    CONSTRAINT fk_timelineevents_timelines
+        FOREIGN KEY (TimelineID)
+        REFERENCES timelines (TimelineID)
+);
 
 
 CREATE TRIGGER CreatedDateTime
