@@ -138,9 +138,6 @@ CREATE TABLE `timelines`
   COLLATE = utf8mb4_general_ci;
 
 
-  ccccc
-
-
 CREATE TRIGGER CreatedDateTime
     BEFORE INSERT
     ON timelines

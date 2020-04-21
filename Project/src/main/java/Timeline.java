@@ -198,47 +198,47 @@ public class Timeline implements DBObject<Timeline>{
 	
 	//Getters
 	public int getTimelineID() {
-		return timelineID;
+		return this.timelineID;
 	}
 	
 	public String getName() {
-		return timelineName;
+		return this.timelineName;
 	}
 
 	public String getScale() {
-		return scale;
+		return this.scale;
 	}
 	
 	public String getTimelineDescription() {
-		return timelineDescription;
+		return this.timelineDescription;
 	}
 
 	public String getTimelineName() {
-		return timelineName;
+		return this.timelineName;
 	}
 	
 	public String getTheme() {
-		return theme;
+		return this.theme;
 	}
 	
 	public Date getStartDate() {
-		return startDate;
+		return this.startDate;
 	}
 	
 	public Date getEndDate() {
-		return endDate;
+		return this.endDate;
 	}
 	
 	public Date getDateCreated() {
-		return dateCreated;
+		return this.dateCreated;
 	}
 	
 	public int getTimelineOwner() {
-		return timelineOwner;
+		return this.timelineOwner;
 	}
 	
 	public boolean getPrivate() {
-		return isPrivate;
+		return this.isPrivate;
 	}
 	
 	//Setters
