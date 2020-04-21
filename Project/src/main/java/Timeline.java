@@ -40,7 +40,8 @@ public class Timeline implements DBObject<Timeline>{
 	public PreparedStatement getInsertQuery() throws SQLException {
 		if (timelineID > 0)
 			throw new SQLIntegrityConstraintViolationException("TimelineID is already in DB.");
-
+		this.timelineOwner = GUIManager.loggedInUser.getUserID();
+		
 		PreparedStatement out = DBM.conn.prepareStatement("INSERT INTO `timelines` ( `Scale`,`TimelineName`, `TimelineDescription`, `Theme`,`StartYear`,`StartMonth`,`StartDay`,`StartHour`"
 				+ ",`StartMinute`,`StartSecond`,`StartMillisecond`,`EndYear`,`EndMonth`,`EndDay`,`EndHour`,`EndMinute`,`EndSecond`,"
 				+ "`EndMillisecond`,`CreatedYear`,`CreatedMonth`,`CreatedDay`,`CreatedHour`,`CreatedMinute`,`CreatedSecond`,`CreatedMillisecond`,"
