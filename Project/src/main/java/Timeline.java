@@ -199,4 +199,7 @@ public class Timeline implements DBObject<Timeline>{
 		return timelineID;
 	}
 
+	public int getTimelineOwnerID() {
+		return timelineOwner;
+	}
 }

@@ -9,6 +9,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -145,11 +147,23 @@ public class Dashboard_GUI {
 		delConfirm.setScene(new Scene(popupDeletion.load()));
 
 		Popup deletionPopup = popupDeletion.getController();
-		if (list.getSelectionModel().getSelectedItem() != null) {
+		if (list.getSelectionModel().getSelectedItem() != null && list.getSelectionModel().getSelectedItem().getTimelineOwnerID() == GUIManager.loggedInUser.getUserID()) {
+			displayInfo.getChildren().clear();
 			deletionPopup.setDisplayTxt(
 					"Are you sure you want to delete " + list.getSelectionModel().getSelectedItem().getName() + "?");
 			deletionPopup.setList(list);
 			delConfirm.show();
+		} else if (list.getSelectionModel().getSelectedItem() == null) {
+			displayInfo.getChildren().clear();
+			Text error = new Text("No timeline selected.");
+			error.setFill(Color.RED);
+			displayInfo.getChildren().add(error);
+		}
+		else if (list.getSelectionModel().getSelectedItem().getTimelineOwnerID() != GUIManager.loggedInUser.getUserID()) {
+			displayInfo.getChildren().clear();
+			Text error = new Text("You are not the owner of this timeline.");
+			error.setFill(Color.RED);
+			displayInfo.getChildren().add(error);
 		}
 	}
 
