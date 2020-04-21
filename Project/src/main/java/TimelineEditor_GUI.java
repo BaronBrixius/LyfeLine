@@ -1,20 +1,9 @@
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.*;
 
 import java.io.IOException;
-import java.net.URL;
-import java.sql.Date;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.ResourceBundle;
 
 public class TimelineEditor_GUI {
 
@@ -23,22 +12,21 @@ public class TimelineEditor_GUI {
     @FXML private TextArea keywordsInput;
     @FXML private DatePicker startDateInput;
     @FXML private DatePicker endDateInput;
-    @FXML private ComboBox timeInput;
+    @FXML private ComboBox<String> timeInput;
 
 
     public TimelineEditor_GUI() {
 
     }
 
-
     @FXML
-    public void initialize() throws IOException {
-        Timeline timeline = new Timeline(); //If editing instead of creating, make this equal to the Timeline to be edited.
+    private void initialize() throws SQLException {
+        //Timeline here just to test field populating. Replace replace it with the proper timeline, or with blank timeline if creating.
+        Timeline timeline = new Timeline();
 
-        titleInput = new TextArea(timeline.getName());
+        titleInput.setText(timeline.getName());
 
-        descriptionInput = new TextArea();  //put timeline.getTimelineDescription, or however it's called, into the constructor.
-
+        descriptionInput.setText(""); //put timeline.getTimelineDescription, or however it's called, into the constructor.
 
         StringBuilder keywordsList = new StringBuilder();
         /*
@@ -51,15 +39,11 @@ public class TimelineEditor_GUI {
         }
         keywordsList.append(timeline.getKeywords.get(timeline.getKeywords.size - 1));
         */
-        keywordsInput = new TextArea(keywordsList.toString());
+        keywordsInput.setText(keywordsList.toString());
 
-        startDateInput = new DatePicker();    //put timeline.getStartDate.toLocaleDate() in constructor
+        //startDateInput.setValue();    //put timeline.getStartDate.toLocaleDate() as parameter
 
-        endDateInput = new DatePicker();  //put timeline.getEndDate.toLocaleDate() in constructor
-
-        ObservableList<String> timeUnits = FXCollections.observableArrayList();
-        timeUnits.addAll("Seconds", "Minutes", "Hours", "Days", "Years");
-        timeInput = new ComboBox<>(timeUnits);
+        //endDateInput.setValue();  //put timeline.getEndDate.toLocaleDate() as parameter
 
     }
 

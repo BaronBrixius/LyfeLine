@@ -1,13 +1,12 @@
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.layout.VBox;
 
 import java.io.IOException;
 import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
-public class EventEditor_GUI extends VBox {
+public class EventEditor_GUI {
 
     @FXML
     TextField titleInput = new TextField();
@@ -28,7 +27,6 @@ public class EventEditor_GUI extends VBox {
     }
 
     public void initialize() {
-        populateDisplay();
     }
 
     @FXML
@@ -41,10 +39,10 @@ public class EventEditor_GUI extends VBox {
         /*//don't implement, not part of current sprint
         System.out.println("Button pressed.");*/
 
-        changeEvent(new Event());
+        setEvent(new Event());
     }
 
-    public boolean changeEvent(int eventID) {       //is this even needed? don't implement yet
+    public boolean setEvent(int eventID) {       //is this even needed? don't implement yet
         /*Event newEvent = logic to find Event in database and get its info
         if (newEvent != null)
             return changeEvent(newEvent);*/
@@ -52,9 +50,8 @@ public class EventEditor_GUI extends VBox {
         return false;
     }
 
-    public boolean changeEvent(Event event) {       //is this even needed? don't implement yet
+    public boolean setEvent(Event event) {       //is this even needed? don't implement yet
         this.event = event;
-        System.out.println("change event");
         return populateDisplay();
     }
 
@@ -106,23 +103,20 @@ public class EventEditor_GUI extends VBox {
         } catch (SQLException e){
             return false;
         }
-
-
     }
 
     @FXML
     private void close() throws IOException {
-        if(!this.event.getEventName().equals(titleInput.getText()) || !this.event.getEventDescrition().equals(descriptionInput.getText()) || !this.event.getEventStart().toString().equals(startInput.getValue().format(DateTimeFormatter.ofPattern("yyyyMMdd"+0+0+0+0))) ||this.event.getEventEnd().toString().equals(endInput.getValue().format(DateTimeFormatter.ofPattern("yyyyMMdd"+0+0+0+0)))) {//then something also for image later to see if changed
+        //if(!this.event.getEventName().equals(titleInput.getText()) || !this.event.getEventDescrition().equals(descriptionInput.getText()) || !this.event.getEventStart().toString().equals(startInput.getValue().format(DateTimeFormatter.ofPattern("yyyyMMdd"+0+0+0+0))) ||this.event.getEventEnd().toString().equals(endInput.getValue().format(DateTimeFormatter.ofPattern("yyyyMMdd"+0+0+0+0)))) {//then something also for image later to see if changed
             //do you wanna save and exit or just save?
                      //if save and exit:
                      //saveEvent();
                     //GUIManager.swapScene("example");
                     //else
                      //GUIManager.swapScene("example");
-        }
+        //}
         //close editor, return to previous screen
-        else
-        GUIManager.swapScene("example");
-        System.out.println("Button pressed.");
+        //else
+            GUIManager.previousPage();
     }
 }

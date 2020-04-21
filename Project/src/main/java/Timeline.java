@@ -15,15 +15,15 @@ public class Timeline implements DBObject<Timeline>{
 	private int timelineOwner;
 	private boolean isPrivate=false;
 	private List<Event> eventList;
-
+	
 	public Timeline() {
-		
+
 	}
 
-	public Timeline(int TimeLineID, String TimelineName, String TimelineDescription, String Scale, String Theme, Date StartDate, Date Enddate, Date DateCreated, int TimelineOwner, boolean Private) throws SQLException {
+	private Timeline(int TimeLineID, String TimelineName, String TimelineDescription, String Scale, String Theme, Date StartDate, Date Enddate, Date DateCreated, int TimelineOwner, boolean Private) throws SQLException {
 
 		this.timelineID=TimeLineID;
-		setTimelineName(TimelineName, TimelineOwner);
+		this.timelineName = TimelineName;
 		this.scale=Scale;
 		this.timelineDescription=TimelineDescription;
 		this.theme=Theme;
@@ -32,6 +32,8 @@ public class Timeline implements DBObject<Timeline>{
 		this.dateCreated=DateCreated;
 		this.timelineOwner=TimelineOwner;
 		this.isPrivate=Private;
+		//timelineOwner = 007; //for testing with dummy timelines
+		//timelineOwner = GUIManager.loggedInUser.getUserID();
 	}
 
 
@@ -40,7 +42,7 @@ public class Timeline implements DBObject<Timeline>{
 	public PreparedStatement getInsertQuery() throws SQLException {
 		if (timelineID > 0)
 			throw new SQLIntegrityConstraintViolationException("TimelineID is already in DB.");
-
+		
 		PreparedStatement out = DBM.conn.prepareStatement("INSERT INTO `timelines` ( `Scale`,`TimelineName`, `TimelineDescription`, `Theme`,`StartYear`,`StartMonth`,`StartDay`,`StartHour`"
 				+ ",`StartMinute`,`StartSecond`,`StartMillisecond`,`EndYear`,`EndMonth`,`EndDay`,`EndHour`,`EndMinute`,`EndSecond`,"
 				+ "`EndMillisecond`,`CreatedYear`,`CreatedMonth`,`CreatedDay`,`CreatedHour`,`CreatedMinute`,`CreatedSecond`,`CreatedMillisecond`,"
