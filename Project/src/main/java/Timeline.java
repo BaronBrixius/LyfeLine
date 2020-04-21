@@ -15,8 +15,9 @@ public class Timeline implements DBObject<Timeline>{
 	private int timelineOwner;
 	private boolean isPrivate=false;
 	private List<Event> eventList;
+	
 	public Timeline() {
-		timelineOwner = GUIManager.loggedInUser.getUserID();
+		
 	}
 
 	public Timeline(int TimeLineID, String TimelineName, String TimelineDescription, String Scale, String Theme, Date StartDate, Date Enddate, Date DateCreated, int TimelineOwner, boolean Private) throws SQLException {
@@ -31,6 +32,8 @@ public class Timeline implements DBObject<Timeline>{
 		this.dateCreated=DateCreated;
 		this.timelineOwner=TimelineOwner;
 		this.isPrivate=Private;
+		//timelineOwner = 777; for testing with dummy timelines
+		timelineOwner = GUIManager.loggedInUser.getUserID();
 	}
 
 
