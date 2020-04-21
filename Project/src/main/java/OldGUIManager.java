@@ -29,7 +29,7 @@ public class OldGUIManager extends Application{
 
 		mainStage = primaryStage;
 		//mainStage.setScene(LoginAndRegistration_GUI.welcomeScreen()); 	//default scene
-		mainStage.setScene(new Scene(new Dashboard_GUI())); 	//GUI currently being worked on, delete for final version
+		mainStage.setScene(new Scene(new AdminRoleManager_GUI())); 	//GUI currently being worked on, delete for final version
 		mainStage.setResizable(false);
 		changeStyle("DefaultStyle");
 		mainStage.show();

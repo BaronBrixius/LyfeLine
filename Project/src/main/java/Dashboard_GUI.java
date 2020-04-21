@@ -34,6 +34,7 @@ public class Dashboard_GUI extends GridPane {
 	@FXML private TextField searchInput;
 	@FXML private CheckBox cbOnlyViewPersonalLines;
 	@FXML private ComboBox sortBy;
+	@FXML Text displayTxt;
 
 	public Dashboard_GUI() {
 
@@ -292,7 +293,8 @@ public class Dashboard_GUI extends GridPane {
 		//list.getSelectionModel().getSelectedItem().getName())
 		delConfirm.getScene().getStylesheets().add("File:src/main/resources/styles/" + "DefaultStyle" + ".css");
 		delConfirm.show();
-
+		displayTxt = new Text();
+		displayTxt.setText("Open");
 	}
 
 	public void deleteConfirm(ActionEvent actionEvent) {

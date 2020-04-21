@@ -121,7 +121,6 @@ public class EventEditor_GUI {
         }
         //close editor, return to previous screen
         else
-        GUIManager.swapScene("example");
-        System.out.println("Button pressed.");
+        GUIManager.swapScene("EventSelector");
     }
 }
