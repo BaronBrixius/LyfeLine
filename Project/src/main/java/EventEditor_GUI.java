@@ -30,7 +30,7 @@ public class EventEditor_GUI {
     private Event event;
 
     public EventEditor_GUI() {
-
+        GUIManager.mainStage.setTitle("Event Editor");
     }
 
     public void initialize() {
