@@ -17,7 +17,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
-public class LoginAndRegistration_GUI extends VBox {
+public class LoginAndRegistration_GUI {
 
 /*
 	public static Scene welcomeScreen() {
@@ -351,7 +351,7 @@ public class LoginAndRegistration_GUI extends VBox {
 
         loginStage.initModality(Modality.WINDOW_MODAL);     //so you can't have 10 Login Windows open at once.
 
-        Parent root = FXMLLoader.load(GUIManager.class.getResource("fxml/Login_Screen.fxml"));
+        Parent root = FXMLLoader.load(GUIManager.class.getResource("FXML/Login_Screen.fxml"));
         loginStage.setScene(new Scene(root));
         loginStage.getScene().getStylesheets().add("File:src/main/resources/styles/DefaultStyle.css");
         loginStage.show();
@@ -366,7 +366,7 @@ public class LoginAndRegistration_GUI extends VBox {
         registerStage.initOwner(GUIManager.mainStage);              //These are the same as before, prevents the window from losing focus until closed.
         registerStage.initModality(Modality.WINDOW_MODAL);  //I don't actually know what Modality is, Google just said this works and it does.
 
-        Parent root = FXMLLoader.load(GUIManager.class.getResource("fxml/Register_Screen.fxml"));
+        Parent root = FXMLLoader.load(GUIManager.class.getResource("FXML/Register_Screen.fxml"));
         registerStage.setScene(new Scene(root));
         registerStage.getScene().getStylesheets().add("File:src/main/resources/styles/DefaultStyle.css");
         registerStage.show();
@@ -403,7 +403,7 @@ public class LoginAndRegistration_GUI extends VBox {
                 DBM.insertIntoDB(new User(usernameInput.getText(), emailInput.getText(), passwordInput.getText()));
                 // close the window once successful, and switch to the dashboard
                 ((Node) (event.getSource())).getScene().getWindow().hide();
-                //GUIManager.swapScene(new Dashboard_GUI());
+                //OldGUIManager.swapScene(new Dashboard_GUI());
             }
         } catch (IllegalArgumentException | SQLException e) {
             errorMessage.setText(e.getMessage());
@@ -439,11 +439,16 @@ public class LoginAndRegistration_GUI extends VBox {
                         errorMessage.setText("Invalid password!");
                     } else { // log in!!!
                         GUIManager.loggedInUser = user;
+                        
+                        //update menubar text for loggedin status and enable menu item
+                        GUIManager.menu.updateLoggedInStatus();
+                        
+                        //hide login window
                         ((Node) (event.getSource())).getScene().getWindow().hide();
-                        GUIManager.swapScene("EventEditor");
+                        GUIManager.swapScene("Dashboard");
+                        
                     }
                 }
-
             }
         } catch (SQLException | IOException e) {
             errorMessage.setText(e.getMessage());

@@ -11,45 +11,58 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.collections.FXCollections?>
+<?import java.lang.String?>
 
-<GridPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="TimelineEditor_GUI">
+
+<GridPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
+          fx:controller="TimelineEditor_GUI">
    <columnConstraints>
-      <ColumnConstraints hgrow="SOMETIMES" maxWidth="733.3333282470703" minWidth="10.0" prefWidth="365.0" />
-      <ColumnConstraints hgrow="SOMETIMES" maxWidth="653.3333740234375" minWidth="0.0" prefWidth="375.0" />
-      <ColumnConstraints hgrow="SOMETIMES" maxWidth="660.0" minWidth="10.0" prefWidth="495.6666259765625" />
+      <ColumnConstraints hgrow="SOMETIMES" maxWidth="733.3333282470703" minWidth="10.0" prefWidth="365.0"/>
+      <ColumnConstraints hgrow="SOMETIMES" maxWidth="653.3333740234375" minWidth="0.0" prefWidth="375.0"/>
+      <ColumnConstraints hgrow="SOMETIMES" maxWidth="660.0" minWidth="10.0" prefWidth="495.6666259765625"/>
    </columnConstraints>
    <rowConstraints>
-      <RowConstraints maxHeight="729.0" minHeight="10.0" prefHeight="634.0" vgrow="SOMETIMES" />
-      <RowConstraints maxHeight="330.0" minHeight="10.0" prefHeight="112.0" vgrow="SOMETIMES" />
+      <RowConstraints maxHeight="729.0" minHeight="10.0" prefHeight="634.0" vgrow="SOMETIMES"/>
+      <RowConstraints maxHeight="330.0" minHeight="10.0" prefHeight="112.0" vgrow="SOMETIMES"/>
    </rowConstraints>
    <padding>
-      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
    </padding>
-   <children>
-      <HBox alignment="CENTER" prefHeight="166.0" prefWidth="533.0" spacing="10.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
-         <children>
-            <Button mnemonicParsing="false" onMouseClicked="#save" text="Save" />
-            <Button mnemonicParsing="false" onMouseClicked="#cancel" text="Cancel" />
-         </children>
-      </HBox>
-      <VBox prefHeight="737.0" prefWidth="0.0" spacing="10.0" style="-fx-background-color: gray; -fx-border-color: black; -fx-border-width: 3;" GridPane.rowSpan="2">
-         <padding>
-            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-         </padding>
-         <children>
-            <Label text="Title" />
-            <TextArea fx:id="titleInput" prefHeight="51.0" prefWidth="195.0" />
-            <Label layoutX="10.0" layoutY="10.0" text="Description" />
-            <TextArea fx:id="descriptionInput" layoutX="10.0" layoutY="27.0" prefHeight="51.0" prefWidth="195.0" />
-            <Label layoutX="10.0" layoutY="78.0" text="KeyWords" />
-            <TextArea fx:id="keywordsInput" layoutX="10.0" layoutY="95.0" prefHeight="51.0" prefWidth="195.0" />
-            <Label layoutX="10.0" layoutY="146.0" text="Start Date" />
-            <DatePicker fx:id="startDateInput" />
-            <Label layoutX="10.0" layoutY="214.0" text="End Date" />
-            <DatePicker fx:id="endDateInput" />
-            <Label layoutX="10.0" layoutY="282.0" text="Time Units" />
-            <ComboBox fx:id="timeInput" prefWidth="150.0" />
-         </children>
-      </VBox>
-   </children>
+   <HBox alignment="CENTER" prefHeight="166.0" prefWidth="533.0" spacing="10.0" GridPane.columnIndex="2"
+         GridPane.rowIndex="1">
+      <Button mnemonicParsing="false" onMouseClicked="#save" text="Save"/>
+      <Button mnemonicParsing="false" onMouseClicked="#cancel" text="Cancel"/>
+   </HBox>
+   <VBox prefHeight="737.0" prefWidth="0.0" spacing="10.0"
+         style="-fx-background-color: gray; -fx-border-color: black; -fx-border-width: 3;" GridPane.rowSpan="2">
+      <padding>
+         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+      </padding>
+      <Label text="Title"/>
+      <TextArea fx:id="titleInput" prefHeight="51.0" prefWidth="195.0"/>
+      <Label layoutX="10.0" layoutY="10.0" text="Description"/>
+      <TextArea fx:id="descriptionInput" layoutX="10.0" layoutY="27.0" prefHeight="51.0" prefWidth="195.0"/>
+      <Label layoutX="10.0" layoutY="78.0" text="KeyWords"/>
+      <TextArea fx:id="keywordsInput" layoutX="10.0" layoutY="95.0" prefHeight="51.0" prefWidth="195.0"/>
+      <Label layoutX="10.0" layoutY="146.0" text="Start Date"/>
+      <DatePicker fx:id="startDateInput"/>
+      <Label layoutX="10.0" layoutY="214.0" text="End Date"/>
+      <DatePicker fx:id="endDateInput"/>
+      <Label layoutX="10.0" layoutY="282.0" text="Time Units"/>
+      <ComboBox fx:id="timeInput" prefWidth="150.0">
+      <items>
+         <FXCollections fx:factory="observableArrayList">
+            <String fx:value="Seconds"/>
+            <String fx:value="Minutes"/>
+            <String fx:value="Hours"/>
+            <String fx:value="Days"/>
+            <String fx:value="Years"/>
+         </FXCollections>
+      </items>
+   </ComboBox>
+
+
+
+</VBox>
 </GridPane>
