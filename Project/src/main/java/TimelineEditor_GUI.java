@@ -22,9 +22,9 @@ public class TimelineEditor_GUI {
     @FXML
     private void initialize() throws SQLException {
         //Timeline here just to test field populating. Replace replace it with the proper timeline, or with blank timeline if creating.
-        Timeline timeline = new Timeline(0, "My timeline", "Very cool timeline", "Month", "pink", new Date(1,0,0,0,0,0,0), new Date(2,0,0,0,0,0,0),  new Date(2,0,0,0,0,0,0), 10, false);
+    	Timeline timeline = new Timeline();
 
-        titleInput.setText(timeline.getName());
+        titleInput.setText(Timeline.getTimelineName());
 
         descriptionInput.setText(""); //put timeline.getTimelineDescription, or however it's called, into the constructor.
 

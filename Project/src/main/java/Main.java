@@ -7,6 +7,7 @@ import java.util.List;
 class Main {
     public static void main(String[] args) {
         PreparedStatement stmt;
+        PreparedStatement stmt2;
         try {
             new DBM("jdbc:mysql://localhost?useTimezone=true&serverTimezone=UTC", "root", "AJnuHA^8VKHht=uB", "project");
             DBM.setupSchema();       //destroys + remakes DB with default settings, can comment this out after first run if desired
@@ -28,6 +29,8 @@ class Main {
 
             User professorChaos = new User("Seeqwul Encurshun', 'BigDoc@abuseme.biz', 'FunPass', 'TheSalt', '1'); -- ", "email@yo.mama", "Passw0rd!");    //SQL injection attempt
             DBM.insertIntoDB(professorChaos);
+            
+            /*
             //I add 3 timelines manually to get the exception that this user has already this timelinename in it - timeline 2 is good but 3 is the same so exception is thrown
             Timeline test = new Timeline(0, "My timeline", "Very cool timeline", "Month", "pink", new Date(1,0,0,0,0,0,0), new Date(2,0,0,0,0,0,0),  new Date(2,0,0,0,0,0,0), 10, false);
             DBM.insertIntoDB(test);
@@ -35,7 +38,7 @@ class Main {
             DBM.insertIntoDB(test1); //Here are two timelines with same name == ok because I changed userID
             Timeline test3 = new Timeline(0, "My other timeline", "Very cool timeline", "Month", "pink", new Date(1,0,0,0,0,0,0), new Date(2,0,0,0,0,0,0),  new Date(2,0,0,0,0,0,0), 11, false);
             DBM.insertIntoDB(test3); //Here are two timelines with same name == NOT OK because I now same  userID and same name
-
+			*/
 
             Date testing = new Date(1984,24,10,0,0,0,0);
             System.out.println(testing.toString());
@@ -48,6 +51,13 @@ class Main {
             //Example of Prepared Statement with field value
             stmt = DBM.conn.prepareStatement("SELECT * FROM users WHERE userEmail = ?");
             stmt.setString(1, teacher.getUserEmail());
+            
+          //PreparedStatement for printing out timelines
+            stmt2 = DBM.conn.prepareStatement("SELECT * FROM timelines");
+            List<Timeline> timelineList = DBM.getFromDB(stmt2, new Timeline());          
+            System.out.println("\nTimeline List:");
+            for (Timeline f : timelineList)
+                System.out.println(f);
 
             List<User> userList = DBM.getFromDB(stmt, new User());    //blank object so functional interface method can be accessed
             System.out.println("\nUser:");
