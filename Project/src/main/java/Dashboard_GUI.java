@@ -273,11 +273,12 @@ public class Dashboard_GUI extends GridPane {
 
 
 
-	}
+	
 
 	@FXML
 	private void intialize() {
 
+	}
 
 
 	// open DeletePopUp
