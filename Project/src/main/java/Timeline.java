@@ -16,10 +16,25 @@ public class Timeline implements DBObject<Timeline>{
 	private boolean isPrivate=false;
 	private List<Event> eventList;
 
+	//Default timeline
 	public Timeline() {
-
+		
 	}
-
+	
+	//Public method for creating the timeline
+	public Timeline(String TimelineName, String TimelineDescription, String Scale, String Theme, Date StartDate, Date Enddate, Date DateCreated, int TimelineOwner, boolean Private) throws SQLException {
+		this.timelineName = TimelineName;
+		this.scale=Scale;
+		this.timelineDescription=TimelineDescription;
+		this.theme=Theme;
+		this.startDate=StartDate;
+		this.endDate=Enddate;
+		this.dateCreated=DateCreated;
+		this.timelineOwner = GUIManager.loggedInUser.getUserID();
+		this.isPrivate=Private;
+	}
+	
+	
 	private Timeline(int TimeLineID, String TimelineName, String TimelineDescription, String Scale, String Theme, Date StartDate, Date Enddate, Date DateCreated, int TimelineOwner, boolean Private) throws SQLException {
 
 		this.timelineID=TimeLineID;
@@ -180,21 +195,84 @@ public class Timeline implements DBObject<Timeline>{
 	}
 
 
+	
+	//Getters
+	public int getTimelineID() {
+		return timelineID;
+	}
+	
+	public String getName() {
+		return timelineName;
+	}
+
+	public String getScale() {
+		return scale;
+	}
+	
+	public String getTimelineDescription() {
+		return timelineDescription;
+	}
+
+	public String getTimelineName() {
+		return timelineName;
+	}
+	
+	public String getTheme() {
+		return theme;
+	}
+	
+	public Date getStartDate() {
+		return startDate;
+	}
+	
+	public Date getEndDate() {
+		return endDate;
+	}
+	
+	public Date getDateCreated() {
+		return dateCreated;
+	}
+	
+	public int getTimelineOwner() {
+		return timelineOwner;
+	}
+	
+	public boolean getPrivate() {
+		return isPrivate;
+	}
+	
+	//Setters
 	@Override
 	public void setID(int id) {
 	this.timelineID=id;
 	}
 	
-	public String getName() {
-		return this.timelineName;
+	public void setScale(String sc) {
+		this.scale=sc;
+	}
+	
+	public void setTimelineName(String name) {
+		this.timelineName=name;
+	}
+	
+	public void setTimelineDescription(String description) {
+		this.timelineDescription = description;
 	}
 
-	public Date getDateCreated() {
-		return dateCreated;
+	public void setTheme(String theme) {
+		this.theme = theme;
 	}
-
-	public int getTimelineID() {
-		return timelineID;
+	
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
 	}
-
+	
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+	}
+	
+	public void setPrivate(boolean isPrivate) {
+		this.isPrivate = isPrivate;
+	}
+	
 }
