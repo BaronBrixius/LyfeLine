@@ -31,7 +31,7 @@ class Event implements DBObject<Event> {
         this.eventName=title;
         this.eventDescription=description;
         this.imageID = imageID;
-
+        
 
     }
 
