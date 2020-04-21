@@ -165,6 +165,7 @@ CREATE TABLE timelineevents
     CONSTRAINT fk_timelineevents_timelines
         FOREIGN KEY (TimelineID)
             REFERENCES timelines (TimelineID)
+            ON DELETE CASCADE
 );
 
 
