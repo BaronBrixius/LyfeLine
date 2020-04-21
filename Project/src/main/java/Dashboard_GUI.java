@@ -30,7 +30,7 @@ public class Dashboard_GUI extends GridPane {
 	@FXML private Button btnEdit;
 	@FXML private Button btnCreate;
 	@FXML private TextFlow displayInfo;
-	@FXML private ListView list;
+	@FXML private ListView<Timeline> list;
 	@FXML private TextField searchInput;
 	@FXML private CheckBox cbOnlyViewPersonalLines;
 	@FXML private ComboBox sortBy;
@@ -273,7 +273,10 @@ public class Dashboard_GUI extends GridPane {
 
 
 
+	}
 
+	@FXML
+	private void intialize() {
 
 
 
