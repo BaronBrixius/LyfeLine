@@ -440,7 +440,7 @@ public class LoginAndRegistration_GUI extends VBox {
                     } else { // log in!!!
                         GUIManager.loggedInUser = user;
                         ((Node) (event.getSource())).getScene().getWindow().hide();
-                        GUIManager.swapScene("EventEditor");
+                        GUIManager.swapScene("Dashboard");
                     }
                 }
 

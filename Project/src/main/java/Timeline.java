@@ -159,10 +159,10 @@ public class Timeline implements DBObject<Timeline>{
 
 	//This method will set the name of the timeline if this user has not timeline with the same name already in the DB
 	public void setTimelineName(String name, int userID) throws SQLException, IllegalArgumentException{
-		if (validName(name,userID)) //uses this private method for validation
+		//if (validName(name,userID)) //uses this private method for validation
 			this.timelineName = name;
-		else
-			throw new IllegalArgumentException("This user has already a timeline with this name, choose another name or remove the former timeline");
+		//else
+		//	throw new IllegalArgumentException("This user has already a timeline with this name, choose another name or remove the former timeline");
 	}
    //This method takes the new timeline name and the userID that is creating the line and checks if the name is already in the DB, in relation with this user
 
