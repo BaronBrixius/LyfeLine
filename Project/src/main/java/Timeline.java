@@ -20,7 +20,7 @@ public class Timeline implements DBObject<Timeline>{
 
 	}
 
-	private Timeline(int TimeLineID, String TimelineName, String TimelineDescription, String Scale, String Theme, Date StartDate, Date Enddate, Date DateCreated, int TimelineOwner, boolean Private) throws SQLException {
+	public Timeline(int TimeLineID, String TimelineName, String TimelineDescription, String Scale, String Theme, Date StartDate, Date Enddate, Date DateCreated, int TimelineOwner, boolean Private) throws SQLException {
 
 		this.timelineID=TimeLineID;
 		this.timelineName = TimelineName;

@@ -1,33 +1,36 @@
-CREATE TABLE `events` (
-  `EventID` int NOT NULL AUTO_INCREMENT,
-  `EventOwner` int NOT NULL,
-  `EventType` tinyint NOT NULL,
-  `EventName` nvarchar(100) DEFAULT NULL,
-  `EventDescription` nvarchar(5000) DEFAULT NULL,
-  `StartYear` bigint NOT NULL,
-  `StartMonth` tinyint unsigned NOT NULL,
-  `StartDay` tinyint unsigned NOT NULL,
-  `StartHour` tinyint unsigned  NULL,
-  `StartMinute` tinyint unsigned  NULL,
-  `StartSecond` tinyint unsigned  NULL,
-  `StartMillisecond` smallint unsigned  NULL,
-  `EndYear` bigint DEFAULT NULL,
-  `EndMonth` tinyint unsigned DEFAULT NULL,
-  `EndDay` tinyint unsigned DEFAULT NULL,
-  `EndHour` tinyint unsigned DEFAULT NULL,
-  `EndMinute` tinyint unsigned DEFAULT NULL,
-  `EndSecond` tinyint unsigned DEFAULT NULL,
-  `EndMillisecond` smallint unsigned DEFAULT NULL,
-  `CreatedYear` bigint DEFAULT NULL,
-  `CreatedMonth` tinyint unsigned DEFAULT NULL,
-  `CreatedDay` tinyint unsigned DEFAULT NULL,
-  `CreatedHour` tinyint unsigned DEFAULT NULL,
-  `CreatedMinute` tinyint unsigned DEFAULT NULL,
-  `CreatedSecond` tinyint unsigned DEFAULT NULL,
-  `CreatedMillisecond` smallint unsigned DEFAULT NULL,
-  PRIMARY KEY (`EventID`),
-  UNIQUE KEY `EventID_UNIQUE` (`EventID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+CREATE TABLE `events`
+(
+    `EventID`            int               NOT NULL AUTO_INCREMENT,
+    `EventOwner`         int               NOT NULL,
+    `EventType`          tinyint           NOT NULL,
+    `EventName`          nvarchar(100)     DEFAULT NULL,
+    `EventDescription`   nvarchar(5000)    DEFAULT NULL,
+    `StartYear`          bigint            NOT NULL,
+    `StartMonth`         tinyint unsigned  NOT NULL,
+    `StartDay`           tinyint unsigned  NOT NULL,
+    `StartHour`          tinyint unsigned  NULL,
+    `StartMinute`        tinyint unsigned  NULL,
+    `StartSecond`        tinyint unsigned  NULL,
+    `StartMillisecond`   smallint unsigned NULL,
+    `EndYear`            bigint            DEFAULT NULL,
+    `EndMonth`           tinyint unsigned  DEFAULT NULL,
+    `EndDay`             tinyint unsigned  DEFAULT NULL,
+    `EndHour`            tinyint unsigned  DEFAULT NULL,
+    `EndMinute`          tinyint unsigned  DEFAULT NULL,
+    `EndSecond`          tinyint unsigned  DEFAULT NULL,
+    `EndMillisecond`     smallint unsigned DEFAULT NULL,
+    `CreatedYear`        bigint            DEFAULT NULL,
+    `CreatedMonth`       tinyint unsigned  DEFAULT NULL,
+    `CreatedDay`         tinyint unsigned  DEFAULT NULL,
+    `CreatedHour`        tinyint unsigned  DEFAULT NULL,
+    `CreatedMinute`      tinyint unsigned  DEFAULT NULL,
+    `CreatedSecond`      tinyint unsigned  DEFAULT NULL,
+    `CreatedMillisecond` smallint unsigned DEFAULT NULL,
+    PRIMARY KEY (`EventID`),
+    UNIQUE KEY `EventID_UNIQUE` (`EventID`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_general_ci;
 
 
 CREATE TRIGGER CreatedDateTime2
@@ -47,57 +50,69 @@ BEGIN
 END;
 
 
-CREATE TABLE `Images` (
- `ImageID` int NOT NULL AUTO_INCREMENT,
- `ImageULR` character(255) DEFAULT NULL,
-  PRIMARY KEY (`ImageID`),
-  UNIQUE KEY `ImageID_UNIQUE` (`ImageID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+CREATE TABLE `Images`
+(
+    `ImageID`  int NOT NULL AUTO_INCREMENT,
+    `ImageULR` character(255) DEFAULT NULL,
+    PRIMARY KEY (`ImageID`),
+    UNIQUE KEY `ImageID_UNIQUE` (`ImageID`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_general_ci;
 
 
-CREATE TABLE `groups` (
-  `GroupID` int NOT NULL AUTO_INCREMENT,
-  `GroupName` nvarchar(100) DEFAULT NULL,
-  `GroupDescription` nvarchar(5000) DEFAULT NULL,
-  `Scale` tinyint NOT NULL,
-  `Public` tinyint(1) DEFAULT '0',
-  `FontID` tinyint DEFAULT '1',
-  `FontSize` tinyint DEFAULT '12',
-  `ThemeID` tinyint DEFAULT '1',
-  `StartYear` bigint NOT NULL,
-  `StartMonth` tinyint unsigned NOT NULL,
-  `StartDay` tinyint unsigned NOT NULL,
-  `StartTime` time NOT NULL,
-  `EndYear` bigint NOT NULL,
-  `EndMonth` tinyint unsigned DEFAULT NULL,
-  `EndDay` tinyint unsigned DEFAULT NULL,
-  `EndTime` time DEFAULT NULL,
-  PRIMARY KEY (`GroupID`),
-  UNIQUE KEY `GroupID_UNIQUE` (`GroupID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+CREATE TABLE `groups`
+(
+    `GroupID`          int              NOT NULL AUTO_INCREMENT,
+    `GroupName`        nvarchar(100)    DEFAULT NULL,
+    `GroupDescription` nvarchar(5000)   DEFAULT NULL,
+    `Scale`            tinyint          NOT NULL,
+    `Public`           tinyint(1)       DEFAULT '0',
+    `FontID`           tinyint          DEFAULT '1',
+    `FontSize`         tinyint          DEFAULT '12',
+    `ThemeID`          tinyint          DEFAULT '1',
+    `StartYear`        bigint           NOT NULL,
+    `StartMonth`       tinyint unsigned NOT NULL,
+    `StartDay`         tinyint unsigned NOT NULL,
+    `StartTime`        time             NOT NULL,
+    `EndYear`          bigint           NOT NULL,
+    `EndMonth`         tinyint unsigned DEFAULT NULL,
+    `EndDay`           tinyint unsigned DEFAULT NULL,
+    `EndTime`          time             DEFAULT NULL,
+    PRIMARY KEY (`GroupID`),
+    UNIQUE KEY `GroupID_UNIQUE` (`GroupID`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_general_ci;
 
 
-CREATE TABLE `groupevents` (
-  `GroupID` int NOT NULL,
-  `EventID` int NOT NULL,
-  PRIMARY KEY (`GroupID`,`EventID`),
-  KEY `fk_groupevents_events1_idx` (`EventID`),
-  CONSTRAINT `fk_groupevents_events1` FOREIGN KEY (`EventID`) REFERENCES `events` (`EventID`),
-  CONSTRAINT `fk_groupevents_groups` FOREIGN KEY (`GroupID`) REFERENCES `groups` (`GroupID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+CREATE TABLE `groupevents`
+(
+    `GroupID` int NOT NULL,
+    `EventID` int NOT NULL,
+    PRIMARY KEY (`GroupID`, `EventID`),
+    KEY `fk_groupevents_events1_idx` (`EventID`),
+    CONSTRAINT `fk_groupevents_events1` FOREIGN KEY (`EventID`) REFERENCES `events` (`EventID`),
+    CONSTRAINT `fk_groupevents_groups` FOREIGN KEY (`GroupID`) REFERENCES `groups` (`GroupID`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_general_ci;
 
 
-CREATE TABLE `users` (
-  `UserID` int NOT NULL AUTO_INCREMENT,
-  `UserName` nvarchar(100) DEFAULT NULL,
-  `UserEmail` nvarchar(100) NOT NULL,
-  `Password` nvarchar(90) NOT NULL,
-  `Salt` nvarchar(30) NOT NULL,
-  `Admin` tinyint DEFAULT '0',
-  PRIMARY KEY (`UserID`),
-  UNIQUE KEY `UserID_UNIQUE` (`UserID`),
-  UNIQUE KEY `UserEmail_UNIQUE` (`UserEmail`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+CREATE TABLE `users`
+(
+    `UserID`    int           NOT NULL AUTO_INCREMENT,
+    `UserName`  nvarchar(100) DEFAULT NULL,
+    `UserEmail` nvarchar(100) NOT NULL,
+    `Password`  nvarchar(90)  NOT NULL,
+    `Salt`      nvarchar(30)  NOT NULL,
+    `Admin`     tinyint       DEFAULT '0',
+    PRIMARY KEY (`UserID`),
+    UNIQUE KEY `UserID_UNIQUE` (`UserID`),
+    UNIQUE KEY `UserEmail_UNIQUE` (`UserEmail`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_general_ci;
 
 
 -- Code for creating timelines
@@ -138,8 +153,6 @@ CREATE TABLE `timelines`
   COLLATE = utf8mb4_general_ci;
 
 
-  ccccc
-
 
 CREATE TRIGGER CreatedDateTime
     BEFORE INSERT
@@ -156,9 +169,6 @@ BEGIN
         set new.`CreatedMillisecond` = CAST(UNIX_TIMESTAMP(CURTIME(3)) % 1 * 1000 AS unsigned);
     end if;
 END;
-
-
-
 
 
 -- This part is for populating tables with dummy data
@@ -215,20 +225,32 @@ INSERT INTO `timelines`
  `StartMinute`, `StartSecond`, `StartMillisecond`, `EndYear`, `EndMonth`, `EndDay`, `EndHour`, `EndMinute`, `EndSecond`,
  `EndMillisecond`, `CreatedYear`, `CreatedMonth`, `CreatedDay`, `CreatedHour`, `CreatedMinute`, `CreatedSecond`,
  `CreatedMillisecond`, `Private`, `TimelineOwner`)
-VALUES (01, 12, 'Fall of Rome', 'Out with a wimper, not a bang', 'dark', -350, 5, 20, 4, 43, 32, 213, 2001, 5, 20, 4, 43, 32, 213, 2000, 5, 20, 4, 43,
+VALUES (01, 12, 'Fall of Rome', 'Out with a wimper, not a bang', 'dark', -350, 5, 20, 4, 43, 32, 213, 2001, 5, 20, 4,
+        43, 32, 213, 2000, 5, 20, 4, 43,
         32, 213, default, 1),
        (02, 2, 'New Timeline', '', 'dark', 2020, 5, 20, 4, 43, 32, 213, 2005, 5, 20, 4, 43, 32, 213, 2003, 5, 20, 4,
         43, 32, 213, default, 1),
-       (03, 4, 'Hound of Baskervilles', 'Investigation of an attempted murder', 'light', 1902, 5, 20, 4, 43, 32, 213, 2006, 5, 20, 4, 43, 32, 213, 2003, 5, 20, 3,
+       (03, 4, 'Hound of Baskervilles', 'Investigation of an attempted murder', 'light', 1902, 5, 20, 4, 43, 32, 213,
+        2006, 5, 20, 4, 43, 32, 213, 2003, 5, 20, 3,
         43, 32, 213, default, 2),
-       (04, 17, 'Dr. Strangelove', 'A dark comedy on nuclear war', 'dark', 1987, 5, 20, 4, 43, 32, 213, 2008, 5, 20, 4, 43, 32, 213, 2007, 5, 20, 4, 43,
+       (04, 17, 'Dr. Strangelove', 'A dark comedy on nuclear war', 'dark', 1987, 5, 20, 4, 43, 32, 213, 2008, 5, 20, 4,
+        43, 32, 213, 2007, 5, 20, 4, 43,
         32, 213, default, 2),
-       (05, 11, 'Incredibly, Wastefully Long Timeline Name', '', 'light', 2020, 5, 20, 4, 43, 32, 213, 2009, 5, 20, 4, 43, 32, 213, 2008, 5, 20, 4,
+       (05, 11, 'Incredibly, Wastefully Long Timeline Name', '', 'light', 2020, 5, 20, 4, 43, 32, 213, 2009, 5, 20, 4,
+        43, 32, 213, 2008, 5, 20, 4,
         43, 32, 213, default, 3),
-       (06, 2, 'Bronze Age Collapse', 'When civilization reset', 'light', -13000, 5, 20, 4, 43, 32, 213, 2010, 5, 20, 4, 43, 32, 213, 2009, 5, 20, 4,
+       (06, 2, 'Bronze Age Collapse', 'When civilization reset', 'light', -13000, 5, 20, 4, 43, 32, 213, 2010, 5, 20, 4,
+        43, 32, 213, 2009, 5, 20, 4,
         43, 32, 213, default, 4),
-       (07, 59, 'Life of Bacillus', 'Life and times of a bacterium', 'mad', 2020, 5, 20, 4, 43, 32, 213, 1505, 5, 20, 4, 43, 32, 213, 2000, 5, 20, 4, 46,
+       (07, 59, 'Life of Bacillus', 'Life and times of a bacterium', 'mad', 2020, 5, 20, 4, 43, 32, 213, 1505, 5, 20, 4,
+        43, 32, 213, 2000, 5, 20, 4, 46,
         32, 213, default, 5),
-       (08, 22, 'Decay of Ununoctium', 'Radioactive decay - a study', 'dark', 2020, 5, 20, 4, 43, 32, 213, 1555, 5, 20, 4, 43, 32, 213, 1550, 5, 20, 4, 43,
+       (08, 22, 'Decay of Ununoctium', 'Radioactive decay - a study', 'dark', 2020, 5, 20, 4, 43, 32, 213, 1555, 5, 20,
+        4, 43, 32, 213, 1550, 5, 20, 4, 43,
         32, 213, default, 6)
 ;
+
+
+INSERT INTO `events` (`EventOwner`, `EventType`, `EventName`, `EventDescription`, `StartYear`, `StartMonth`,
+                                `StartDay`, `StartHour`, `StartMinute`, `StartSecond`, `StartMillisecond`)
+VALUES ('1', '1', 'Crossing the Rubicon', 'Long story', '0', '0', '0', '0', '0', '0', '0');
