@@ -15,7 +15,11 @@ class Event implements DBObject<Event> {
     private  Date endDate;
     private Date creationDate;
 
-   public Event(){} //dummy constructor
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
+    public Event(){} //dummy constructor
     public Event(User user) {//defaults, bare minimum - only related to the logged in user, timeline working on and sets creation date
         this.userID = user.getUserID();
 
@@ -200,4 +204,5 @@ class Event implements DBObject<Event> {
     public String toString() {
         return "EventID: " + eventID + " EventType: " + eventType+"EventName"+eventName+"eventDescription"+eventDescription+" Start Date: "+startDate+" End Date: "+endDate+" Created: "+creationDate;
     }
+
 }
