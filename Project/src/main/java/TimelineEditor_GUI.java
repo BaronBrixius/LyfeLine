@@ -3,7 +3,9 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 
 import java.io.IOException;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.List;
 
 public class TimelineEditor_GUI {
 
@@ -15,6 +17,9 @@ public class TimelineEditor_GUI {
     @FXML private ComboBox<String> timeInput;
     
     public static Timeline activeTimeline;
+    PreparedStatement stmt2;
+    
+    int id = 1;
 
     public TimelineEditor_GUI() {
 
@@ -23,13 +28,29 @@ public class TimelineEditor_GUI {
     @FXML
     private void initialize() throws SQLException {
         //Timeline here just to test field populating. Replace it with the proper timeline, or with blank timeline if creating.
-    	Timeline activeTimeline = new Timeline();
-
-        titleInput.setText(activeTimeline.getTimelineName());
-
-        descriptionInput.setText(""); //put timeline.getTimelineDescription, or however it's called, into the constructor.
+    	
+    	//This is for constructing a new timeline.
+    	if (activeTimeline != null) {
+    		Timeline activeTimeline = new Timeline(titleInput.getText(), descriptionInput.getText(), null, null, null, null, null, 0, false);
+    	}
+    	else {
+    		//Get a timeline from DB. Such ineficient, much sad!
+    		stmt2 = DBM.conn.prepareStatement("SELECT * FROM timelines WHERE timelineID = " + id);
+    		List<Timeline> timelineList = DBM.getFromDB(stmt2, new Timeline());          
+            activeTimeline = timelineList.get(0);
+            titleInput.setText(activeTimeline.getTimelineName());
+            descriptionInput.setText(activeTimeline.getTimelineDescription());
+            
+    		
+    		
+    	}
+    		
 
         StringBuilder keywordsList = new StringBuilder();
+        
+       
+        
+        
         /*
         This is how I'm assuming the keywords get into the TextArea when they are implemented.
         Store them as a String Array, and append them one by one to a StringBuilder.
@@ -51,11 +72,13 @@ public class TimelineEditor_GUI {
     @FXML
     public void save(MouseEvent event) {
         System.out.println("The Save button has been pushed.");
+        
     }
 
     @FXML
     public void cancel() throws IOException {
         GUIManager.swapScene("Welcome_Screen");
+        activeTimeline = null;
     }
 
 
