@@ -48,7 +48,7 @@ class Event implements DBObject<Event> {
     public PreparedStatement getInsertQuery() throws SQLException, RuntimeException {
         if (eventID > 0)
             throw new SQLIntegrityConstraintViolationException("Event is already in DB.");
-         this.userID = GUIManager.loggedInUser.getUserID();
+
 
         PreparedStatement out = DBM.conn.prepareStatement("INSERT INTO `events` (`EventType`, `EventName`, `EventDescription`,`StartYear`,`StartMonth`,`StartDay`,`StartHour`\"\n" +
                 "\t\t\t\t+ \",`StartMinute`,`StartSecond`,`StartMillisecond`,`EndYear`,`EndMonth`,`EndDay`,`EndHour`,`EndMinute`,`EndSecond`,\"\n" +

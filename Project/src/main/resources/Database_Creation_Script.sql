@@ -27,8 +27,6 @@ CREATE TABLE `events` (
   `ImageID` int DEFAULT NULL,
   `UserID` int DEFAULT NULL,
   `timelineID` int DEFAULT NULL,
-
-
   PRIMARY KEY (`EventID`),
   UNIQUE KEY `EventID_UNIQUE` (`EventID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -53,7 +51,7 @@ END;
 
 CREATE TABLE `Images` (
  `ImageID` int NOT NULL AUTO_INCREMENT,
- `ImageULR` character(255) DEFAULT NULL,
+ `ImageULR` character (255) DEFAULT NULL,
   PRIMARY KEY (`ImageID`),
   UNIQUE KEY `ImageID_UNIQUE` (`ImageID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -220,7 +218,7 @@ VALUES ('1', 'Ben', 'Ben@gmail.com',
 
 
 
-INSERT INTO `timelines`
+ `timelines`
 (`TimelineID`,
  `Scale`, `TimelineName`, `TimelineDescription`, `Theme`, `StartYear`, `StartMonth`, `StartDay`, `StartHour`,
  `StartMinute`, `StartSecond`, `StartMillisecond`, `EndYear`, `EndMonth`, `EndDay`, `EndHour`, `EndMinute`, `EndSecond`,
