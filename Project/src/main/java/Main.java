@@ -7,6 +7,7 @@ import java.util.List;
 class Main {
     public static void main(String[] args) {
         PreparedStatement stmt;
+        PreparedStatement stmt2;
         try {
             new DBM("jdbc:mysql://localhost?useTimezone=true&serverTimezone=UTC", "root", "AJnuHA^8VKHht=uB", "project"); //AJnuHA^8VKHht=uB Default password
             DBM.setupSchema();       //destroys + remakes DB with default settings, can comment this out after first run if desired
@@ -38,7 +39,7 @@ class Main {
             Timeline test4 = new Timeline(0, "My other timeline", "Very cool timeline", "Month", "pink", new Date(1,0,0,0,0,0,0), new Date(2,0,0,0,0,0,0),  new Date(2,0,0,0,0,0,0), 11, false);
             DBM.insertIntoDB(test4);
 
-
+            
             User teacher = new User("Hans Ove", "Hans@math.biz", "Passw0rd!");
             if (User.validateUnique("Hans@math.biz"))
                 DBM.insertIntoDB(teacher);
@@ -53,6 +54,14 @@ class Main {
             System.out.println("\nUser:");
             for (User e : userList)
                 System.out.println(e);
+            
+           //PreparedStatement for printing out timelines
+            stmt2 = DBM.conn.prepareStatement("SELECT * FROM timelines");
+            List<Timeline> timelineList = DBM.getFromDB(stmt2, new Timeline());          
+            System.out.println("\nTimeline List:");
+            for (Timeline f : timelineList)
+                System.out.println(f);
+            
 
         } catch (FileNotFoundException | SQLException | ClassNotFoundException e) {
             e.printStackTrace();

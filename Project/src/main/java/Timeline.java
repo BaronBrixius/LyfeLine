@@ -32,8 +32,8 @@ public class Timeline implements DBObject<Timeline>{
 		this.dateCreated=DateCreated;
 		this.timelineOwner=TimelineOwner;
 		this.isPrivate=Private;
-		//timelineOwner = 777; for testing with dummy timelines
-		timelineOwner = GUIManager.loggedInUser.getUserID();
+		//timelineOwner = 007; //for testing with dummy timelines
+		//timelineOwner = GUIManager.loggedInUser.getUserID();
 	}
 
 
