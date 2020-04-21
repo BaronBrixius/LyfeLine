@@ -1,30 +1,17 @@
 import javafx.fxml.FXML;
-
-import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.List;
-
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-
-import javax.swing.*;
 
 public class Dashboard_GUI {
 
@@ -46,12 +33,16 @@ public class Dashboard_GUI {
 	private CheckBox cbOnlyViewPersonalLines;
 	@FXML
 	private ComboBox sortBy;
+	@FXML
+	private GridPane gridButtons;
 
 	public void initialize() {
+		gridButtons.setVisible(GUIManager.loggedInUser.getAdmin());
+		gridButtons.setDisable(!GUIManager.loggedInUser.getAdmin());
 
 		// Fill ListView with the timelines
 		try {
-			PreparedStatement stmt = DBM.conn.prepareStatement("SELECT * FROM timelines"); 
+			PreparedStatement stmt = DBM.conn.prepareStatement("SELECT * FROM timelines");
 			list.setItems(FXCollections.observableArrayList(DBM.getFromDB(stmt, new Timeline())));
 		} catch (SQLException e) {
 			System.err.println("Could not get timelines from database.");
@@ -78,13 +69,6 @@ public class Dashboard_GUI {
 		sortOptions.add("Oldest");
 		sortBy.setItems(sortOptions);
 
-		sorting();
-
-		// Initialised sorting
-		list.getItems().sort((t1, t2) -> (t1.getName().compareTo(t2.getName())));
-	}
-
-	public void sorting() {
 		// Sort order selection events
 		sortBy.getSelectionModel().selectedIndexProperty().addListener(ov -> {
 			switch (sortBy.getSelectionModel().getSelectedIndex()) {
@@ -102,6 +86,16 @@ public class Dashboard_GUI {
 				break;
 			}
 		});
+
+		// Initialised sorting
+		list.getItems().sort((t1, t2) -> (t1.getName().compareTo(t2.getName())));
+
+		// Search field
+		searchInput.focusedProperty().addListener(ov -> {
+			if (searchInput.isFocused())
+				searchInput.setText("");
+		});
+
 	}
 
 	@FXML
@@ -110,7 +104,8 @@ public class Dashboard_GUI {
 		if (cbOnlyViewPersonalLines.isSelected()) {
 			try {
 				PreparedStatement stmt = DBM.conn.prepareStatement("SELECT * FROM timelines WHERE TimelineOwner = ?");
-				stmt.setInt(1, /* GUIManager.loggedInUser.getUserID() */ 1); // uncomment this for real version
+				stmt.setInt(1, GUIManager.loggedInUser.getUserID()); // GUIManager.loggedInUser.getUserID() uncomment
+																		// this for real version
 				list.setItems(FXCollections.observableArrayList(DBM.getFromDB(stmt, new Timeline())));
 			} catch (SQLException e) {
 				System.err.println("Could not get timelines from database.");
@@ -150,11 +145,12 @@ public class Dashboard_GUI {
 		delConfirm.setScene(new Scene(popupDeletion.load()));
 
 		Popup deletionPopup = popupDeletion.getController();
-		deletionPopup.setDisplayTxt(
-				"Are you sure you want to delete " + list.getSelectionModel().getSelectedItem().getName() + "?");
-		deletionPopup.setList(list);
-		delConfirm.show();
-
+		if (list.getSelectionModel().getSelectedItem() != null) {
+			deletionPopup.setDisplayTxt(
+					"Are you sure you want to delete " + list.getSelectionModel().getSelectedItem().getName() + "?");
+			deletionPopup.setList(list);
+			delConfirm.show();
+		}
 	}
 
 	@FXML

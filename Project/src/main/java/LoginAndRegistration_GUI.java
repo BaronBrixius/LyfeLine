@@ -459,7 +459,7 @@ public class LoginAndRegistration_GUI {
 
     @FXML
     public void timelineScreen() throws IOException {
-        GUIManager.swapScene("Timeline_Editor_Screen");
+        GUIManager.swapScene("Dashboard");
     }
 
 

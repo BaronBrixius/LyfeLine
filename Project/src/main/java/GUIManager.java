@@ -65,7 +65,7 @@ public class GUIManager extends Application {
         mainStage = primaryStage;
         mainStage.setScene(new Scene(main));
 
-        swapScene("Dashboard");
+        swapScene("Welcome_Screen");
         applyStyle("DefaultStyle");
 
         mainStage.show();
