@@ -153,18 +153,18 @@ CREATE TABLE `timelines`
   COLLATE = utf8mb4_general_ci;
 
 
-  CREATE TABLE timelineevents
-  (
+CREATE TABLE timelineevents
+(
     TimelineID int NOT NULL,
-    EventID int NOT NULL,
-    CONSTRAINT pK_timelinesevent PRIMARY KEY (eventID,timelineID),
+    EventID    int NOT NULL,
+    CONSTRAINT pK_timelinesevent PRIMARY KEY (eventID, timelineID),
     CONSTRAINT fk_timelineevents_events1
         FOREIGN KEY (EventID)
-        REFERENCES events (EventID)
-        ON DELETE CASCADE,
+            REFERENCES events (EventID)
+            ON DELETE CASCADE,
     CONSTRAINT fk_timelineevents_timelines
         FOREIGN KEY (TimelineID)
-        REFERENCES timelines (TimelineID)
+            REFERENCES timelines (TimelineID)
 );
 
 
@@ -266,5 +266,9 @@ VALUES (01, 12, 'Fall of Rome', 'Out with a wimper, not a bang', 'dark', -350, 5
 
 
 INSERT INTO `events` (`EventOwner`, `EventType`, `EventName`, `EventDescription`, `StartYear`, `StartMonth`,
-                                `StartDay`, `StartHour`, `StartMinute`, `StartSecond`, `StartMillisecond`)
+                      `StartDay`, `StartHour`, `StartMinute`, `StartSecond`, `StartMillisecond`)
 VALUES ('1', '1', 'Crossing the Rubicon', 'Long story', '0', '0', '0', '0', '0', '0', '0');
+
+
+INSERT INTO `timelineevents` (`TimelineID`, `EventID`)
+VALUES ('1', '1');

@@ -1,9 +1,11 @@
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListView;
 
+import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
@@ -12,18 +14,28 @@ public class EventSelector {
     public ComboBox<Timeline> timelineList;
     @FXML
     public ListView<Event> eventList;
+    @FXML
+    public Button viewButton;
 
     public void initialize() {
         populateTimelineList();
 
         timelineList.getSelectionModel().selectedIndexProperty().addListener(e ->
-            populateEventList()
+                populateEventList()
         );
 
+        eventList.getSelectionModel().selectedIndexProperty().addListener(e ->
+                viewButton.setDisable(eventList.getSelectionModel().selectedIndexProperty() == null)
+        );
     }
 
-    public void openEvent(ActionEvent actionEvent) {
-        eventList.getSelectionModel().getSelectedItem();
+    public void newEvent(ActionEvent actionEvent) throws IOException {
+        GUIManager.swapScene("EventEditor");
+    }
+
+    public void openEvent(ActionEvent actionEvent) throws IOException {
+        EventEditor_GUI editor = GUIManager.swapScene("EventEditor");
+        editor.setEvent(eventList.getSelectionModel().getSelectedItem());
     }
 
     public void close(ActionEvent actionEvent) {
@@ -42,7 +54,7 @@ public class EventSelector {
         }
     }
 
-    private void populateEventList(){
+    private void populateEventList() {
         try {
             PreparedStatement stmt = DBM.conn.prepareStatement("SELECT * FROM events a " +
                     "INNER JOIN timelineevents b " +
