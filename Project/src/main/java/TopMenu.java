@@ -7,10 +7,8 @@ import javafx.fxml.FXML;
 
 public class TopMenu {
 
-    @FXML
-    MenuItem saveButton = new MenuItem();
-    @FXML
-    Menu loggedInStatus = new Menu();
+    @FXML MenuItem saveButton = new MenuItem();
+    @FXML Menu loggedInStatus = new Menu();
 
     @FXML
     public void saveFile(ActionEvent actionEvent) {
