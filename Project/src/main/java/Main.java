@@ -64,7 +64,7 @@ class Main {
                 System.out.println(f);
             
 
-        } catch (FileNotFoundException | SQLException | ClassNotFoundException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         } finally {
             try {
