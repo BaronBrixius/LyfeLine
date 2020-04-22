@@ -50,6 +50,33 @@ BEGIN
 END;
 
 
+-- Lookup table for the scale column of timeline table
+
+
+CREATE TABLE `scale_lookup` (
+    `ID`   int           NOT NULL AUTO_INCREMENT,
+    `unit` nvarchar(20)  NOT NULL,
+    PRIMARY KEY (`ID`))
+    ENGINE=InnoDB
+    AUTO_INCREMENT=9
+    DEFAULT CHARSET=utf8mb4
+    COLLATE=utf8mb4_general_ci;
+
+
+INSERT INTO `scale_lookup`
+(`ID`,
+ `unit`)
+VALUES (01, 'Seconds'),
+       (02, 'Minutes'),
+       (03, 'Hours'),
+       (04, 'Days'),
+       (05, 'Weeks'),
+       (06, 'Months'),
+       (07, 'Years'),
+       (08, 'Decades');
+
+
+
 CREATE TABLE `Images`
 (
     `ImageID`  int NOT NULL AUTO_INCREMENT,
@@ -114,32 +141,13 @@ CREATE TABLE `users`
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_general_ci;
 
--- Lookup table for the scale column of timeline table
-CREATE TABLE `scale_lookup`
-(
-`ID` int NOT NULL AUTO_INCREMENT,
-`unit` nvarchar(20)  NOT NULL,
-PRIMARY KEY (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
-INSERT INTO `scale_lookup`
-(`ID`,
- `unit`)
-VALUES (01, 'Seconds'),
-       (02, 'Minutes'),
-       (03, 'Hours'),
-       (04, 'Days'),
-       (05, 'Weeks'),
-       (06, 'Months'),
-       (07, 'Years'),
-       (08, 'Decades');
 
 
 -- Code for creating timelines
 CREATE TABLE `timelines`
 (
     `TimelineID`          int               NOT NULL AUTO_INCREMENT,
-    `Scale` int DEFAULT NULL,
+    `Scale`               int               DEFAULT NULL,
     `TimelineName`        nvarchar(100)     DEFAULT NULL,
     `TimelineDescription` nvarchar(5000)    DEFAULT NULL,
     `Theme`               nvarchar(100)     DEFAULT NULL,
@@ -167,7 +175,9 @@ CREATE TABLE `timelines`
     `Private`             boolean           DEFAULT true,
     `TimelineOwner`       int,
     PRIMARY KEY (`TimelineID`),
-    UNIQUE KEY `TimelineID_UNIQUE` (`TimelineID`)
+    UNIQUE KEY `TimelineID_UNIQUE` (`TimelineID`),
+    KEY `FK_Scale` (`Scale`),
+    CONSTRAINT `FK_Scale` FOREIGN KEY (`Scale`) REFERENCES `scale_lookup` (`ID`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_general_ci;

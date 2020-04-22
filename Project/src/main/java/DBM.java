@@ -10,7 +10,7 @@ class DBM {
     static private final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
     static String DB_URL = "jdbc:mysql://localhost?useTimezone=true&serverTimezone=UTC";
     static String USER = "root";
-    static String PASS = "AJnuHA^8VKHht=uB";
+    static String PASS = "Password123";
     static String SCHEMA = "project";
     static Connection conn = null;
     static String creationScript = "src/main/resources/Database_Creation_Script.sql";
