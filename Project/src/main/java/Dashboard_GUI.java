@@ -6,6 +6,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
@@ -74,18 +75,18 @@ public class Dashboard_GUI {
 		// Sort order selection events
 		sortBy.getSelectionModel().selectedIndexProperty().addListener(ov -> {
 			switch (sortBy.getSelectionModel().getSelectedIndex()) {
-			case 0:
-				list.getItems().sort((t1, t2) -> (t1.getName().compareTo(t2.getName())));
-				break;
-			case 1:
-				list.getItems().sort((t1, t2) -> (t2.getName().compareTo(t1.getName())));
-				break;
-			case 2:
-				list.getItems().sort((t1, t2) -> (t2.getDateCreated().compareTo(t1.getDateCreated())));
-				break;
-			case 3:
-				list.getItems().sort((t1, t2) -> (t1.getDateCreated().compareTo(t2.getDateCreated())));
-				break;
+				case 0:
+					list.getItems().sort((t1, t2) -> (t1.getName().compareTo(t2.getName())));
+					break;
+				case 1:
+					list.getItems().sort((t1, t2) -> (t2.getName().compareTo(t1.getName())));
+					break;
+				case 2:
+					list.getItems().sort((t1, t2) -> (t2.getDateCreated().compareTo(t1.getDateCreated())));
+					break;
+				case 3:
+					list.getItems().sort((t1, t2) -> (t1.getDateCreated().compareTo(t2.getDateCreated())));
+					break;
 			}
 		});
 
@@ -97,28 +98,11 @@ public class Dashboard_GUI {
 			if (searchInput.isFocused())
 				searchInput.setText("");
 		});
+	}
 
 	@FXML
 	public void adminScreen(ActionEvent event) throws IOException {
 		GUIManager.swapScene("AdminRoleManager");
-	}
-
-	// open DeletePopUp
-	@FXML
-	public void deleteConfirmation(ActionEvent event) throws IOException {
-
-		Stage delConfirm = new Stage();
-		delConfirm.setTitle("Confirm Deletion");
-		delConfirm.initOwner(GUIManager.mainStage);
-		delConfirm.initModality(Modality.WINDOW_MODAL);
-		delConfirm.setResizable(false);
-
-
-		delConfirm.setScene(new Scene(FXMLLoader.load(GUIManager.class.getResource("FXML/DeletePopup.fxml"))));
-		//list.getSelectionModel().getSelectedItem().getName())
-		delConfirm.getScene().getStylesheets().add("File:src/main/resources/styles/" + "DefaultStyle" + ".css");
-		delConfirm.show();
-
 	}
 
 	@FXML
@@ -199,9 +183,4 @@ public class Dashboard_GUI {
 			displayInfo.getChildren().add(error);
 		}
 	}
-
-	@FXML
-	public void adminScreen(ActionEvent event) {
-	}
-
 }
