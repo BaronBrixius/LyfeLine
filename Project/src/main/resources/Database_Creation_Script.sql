@@ -9,10 +9,10 @@ CREATE TABLE `events`
     `StartYear`          bigint            NOT NULL,
     `StartMonth`         tinyint unsigned  NOT NULL,
     `StartDay`           tinyint unsigned  NOT NULL,
-    `StartHour`          tinyint unsigned  NULL,
-    `StartMinute`        tinyint unsigned  NULL,
-    `StartSecond`        tinyint unsigned  NULL,
-    `StartMillisecond`   smallint unsigned NULL,
+    `StartHour`          tinyint unsigned  NOT NULL,
+    `StartMinute`        tinyint unsigned  NOT NULL,
+    `StartSecond`        tinyint unsigned  NOT NULL,
+    `StartMillisecond`   smallint unsigned NOT NULL,
     `EndYear`            bigint            DEFAULT NULL,
     `EndMonth`           tinyint unsigned  DEFAULT NULL,
     `EndDay`             tinyint unsigned  DEFAULT NULL,
@@ -34,7 +34,7 @@ CREATE TABLE `events`
   COLLATE = utf8mb4_general_ci;
 
 
-CREATE TRIGGER CreatedDateTime2
+CREATE TRIGGER CreatedDateTimeEvents
     BEFORE INSERT
     ON events
     FOR EACH ROW
@@ -47,6 +47,22 @@ BEGIN
         set new.`CreatedMinute` = MINUTE(NOW());
         set new.`CreatedSecond` = SECOND(NOW());
         set new.`CreatedMillisecond` = CAST(UNIX_TIMESTAMP(CURTIME(3)) % 1 * 1000 AS unsigned);
+    end if;
+END;
+
+CREATE TRIGGER EndDate
+    BEFORE INSERT
+    ON events
+    FOR EACH ROW
+BEGIN
+    if (isnull(new.`EndYear`)) then
+        set new.`EndYear` = new.StartYear;
+        set new.`EndMonth` = new.StartMonth;
+        set new.`EndDay` = new.StartDay;
+        set new.`EndHour` = new.StartHour;
+        set new.`EndMinute` = new.StartMinute;
+        set new.`EndSecond` = new.StartSecond;
+        set new.`EndMillisecond` = new.StartMillisecond;
     end if;
 END;
 

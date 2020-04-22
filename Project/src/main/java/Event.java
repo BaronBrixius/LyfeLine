@@ -9,15 +9,14 @@ class Event implements DBObject<Event> {
     private String eventDescription = "";
     private int imageID;//For now, not sure how we handle this later on
     private Date startDate = new Date();
-    private Date endDate;
-    private Date creationDate = new Date();
+    private Date endDate = new Date();
+    private Date creationDate;
 
     public Event() {
     } //dummy constructor
 
     public Event(User user) {//defaults, bare minimum - only related to the logged in user, timeline working on and sets creation date
         this.userID = user.getUserID();
-
     }
 
     private Event(int eventID, int userID, Date startDate, Date endDate, Date creationDate, String title, String description, int imageID) {      //for reading from database

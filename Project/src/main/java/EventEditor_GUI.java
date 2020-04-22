@@ -159,19 +159,26 @@ public class EventEditor_GUI {
 
     void updateEvent() {
         //setters to update each field of this.event, based on the current info in the text fields
-        this.event.setTitle(titleInput.getText());
-        this.event.setDescription(descriptionInput.getText());
+        event.setTitle(titleInput.getText());
+        event.setDescription(descriptionInput.getText());
         LocalDate start = startDate.getValue();
-        this.event.setStartDate(new Date(start.getYear(), start.getMonth().getValue(), start.getDayOfMonth(), startTime1.getValue(), startTime2.getValue(), startTime3.getValue(), 0));
-        LocalDate end = endDate.getValue();
-        this.event.setEndDate(new Date(end.getYear(), end.getMonth().getValue(), end.getDayOfMonth(), endTime1.getValue(), endTime2.getValue(), endTime3.getValue(), 0));
+        event.setStartDate(new Date(start.getYear(), start.getMonth().getValue(), start.getDayOfMonth(), startTime1.getValue(), startTime2.getValue(), startTime3.getValue(), 0));
+
+        LocalDate end;
+        if (hasDuration.isSelected()) {
+            end = endDate.getValue();
+            event.setEndDate(new Date(end.getYear(), end.getMonth().getValue(), end.getDayOfMonth(), endTime1.getValue(), endTime2.getValue(), endTime3.getValue(), 0));
+        }
+        else                //if it has no duration, end = start
+            event.setEndDate(event.getStartDate());
+
         //this.event.setImage(); later
     }
 
     private boolean saveEvent() {
         updateEvent();
         try {
-            if (this.event.getEventID() == 0)
+            if (event.getEventID() == 0)
                 DBM.insertIntoDB(event);
             else
                 DBM.updateInDB(event);
@@ -213,10 +220,10 @@ public class EventEditor_GUI {
         LocalDate end = endDate.getValue();
         Date readEnd = new Date(end.getYear(), end.getMonth().getValue(), end.getDayOfMonth(), endTime1.getValue(), endTime2.getValue(), endTime3.getValue(), 0);
 
-        return (!this.event.getEventName().equals(titleInput.getText())
-                || !this.event.getEventDescrition().equals(descriptionInput.getText())
-                || this.event.getStartDate().compareTo(readStart) != 0
-                || this.event.getEndDate().compareTo(readEnd) != 0
+        return (!event.getEventName().equals(titleInput.getText())
+                || !event.getEventDescrition().equals(descriptionInput.getText())
+                || event.getStartDate().compareTo(readStart) != 0
+                || event.getEndDate().compareTo(readEnd) != 0
                 //then something also for image later to see if changed
         );
     }
