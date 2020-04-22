@@ -26,7 +26,7 @@ public class TimelineEditor_GUI {
     public TimelineEditor_GUI() {
         GUIManager.mainStage.setTitle("Timeline Editor");
     }
-
+    
     @FXML
     private void initialize() throws SQLException {
     	
