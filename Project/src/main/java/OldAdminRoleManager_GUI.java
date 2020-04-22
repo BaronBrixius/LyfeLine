@@ -34,7 +34,7 @@ import javafx.util.Duration;
 import java.sql.SQLException;
 import java.util.Comparator;
 import java.util.List;
-
+/*
 public class OldAdminRoleManager_GUI extends GridPane {
 	private ListView<User> userListView;
 
@@ -65,7 +65,7 @@ public class OldAdminRoleManager_GUI extends GridPane {
 
 
 
-		/*
+
 		// background for user information & toggle function
 		Rectangle bg = new Rectangle(300, 240);
 		bg.setFill(Color.WHITE);
@@ -76,7 +76,7 @@ public class OldAdminRoleManager_GUI extends GridPane {
 		bg.setArcWidth(7);
 		bg.setArcHeight(7);
 		GridPane.setRowSpan(bg, 3);
-		*/
+
 
 		// displays status of user (User/ admin)
 		Text textStatus = new Text();
@@ -268,3 +268,4 @@ public class OldAdminRoleManager_GUI extends GridPane {
 		}
 	}
 }
+*/

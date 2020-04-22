@@ -32,7 +32,7 @@ public class TimelineEditor_GUI {
     	
     	//This is for constructing a new timeline.
     	if (activeTimeline != null) {
-    		Timeline activeTimeline = new Timeline(titleInput.getText(), descriptionInput.getText(), null, null, null, null, null, 0, false);
+    		Timeline activeTimeline = new Timeline(titleInput.getText(), descriptionInput.getText(), 1, null, null, null, null, 0, false);
     		
     		//Timeline(String TimelineName, String TimelineDescription, String Scale, String Theme, Date StartDate, Date Enddate, Date DateCreated, 
     				//int TimelineOwner, boolean Private) Date(LocalDate.now())
