@@ -1,5 +1,4 @@
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 
@@ -58,16 +57,22 @@ public class EventEditor_GUI {
         endTime.setDisable(!hasDuration.isSelected());
     }
 
-    public void toggleEditMode() {       //I know this is ugly right now
+    public void toggleEditMode() {      //I know this is ugly right now
+        if (editable && hasChanges())   //if unsaved changes, try to save
+            if (!saveConfirm())         //if save cancelled, don't change mode
+                return;
+
         editable = !editable;
         titleInput.setEditable(editable);
         descriptionInput.setEditable(editable);
         startDate.setEditable(editable);
-
-        //for (Spinner (Spinner) s:  startTime.getChildren())
-        //    s.setEditable(editable);
+        startTime1.setEditable(editable);
+        startTime2.setEditable(editable);
+        startTime3.setEditable(editable);
         endDate.setEditable(editable);
-        //endTime.setEditable(editable);
+        endTime1.setEditable(editable);
+        endTime2.setEditable(editable);
+        endTime3.setEditable(editable);
         imageInput.setEditable(editable);
         uploadButton.setVisible(editable);
         uploadButton.setDisable(!editable);
@@ -119,8 +124,7 @@ public class EventEditor_GUI {
         this.event.setDescription(descriptionInput.getText());
         this.event.setStartDate(startDate.getValue().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
 
-        //if ()
-            this.event.setEndDate(endDate.getValue().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+            this.event.setEndDate((hasDuration.isSelected()) ? endDate.getValue().format(DateTimeFormatter.ofPattern("yyyy-MM-dd") : event.getStartDate()));
         //this.event.setImage(); later
 
         try {
@@ -159,18 +163,19 @@ public class EventEditor_GUI {
         }
     }
 
+    private boolean hasChanges() {
+        return (this.event.getEventName().equals(titleInput.getText())
+                || !this.event.getEventDescrition().equals(descriptionInput.getText())
+                || !this.event.getStartDate().toString().equals(startDate.getValue().format(DateTimeFormatter.ofPattern("yyyyMMdd" + 0 + 0 + 0 + 0)))
+                || this.event.getEndDate().toString().equals(endDate.getValue().format(DateTimeFormatter.ofPattern("yyyyMMdd" + 0 + 0 + 0 + 0)))
+                //then something also for image later to see if changed
+        );
+    }
+
     @FXML
     private void close() throws IOException {
-        if (!this.event.getEventName().equals(titleInput.getText())
-                || !this.event.getEventDescrition().equals(descriptionInput.getText())
-                || !this.event.getEventStart().toString().equals(startDate.getValue().format(DateTimeFormatter.ofPattern("yyyyMMdd" + 0 + 0 + 0 + 0)))
-                || this.event.getEventEnd().toString().equals(endDate.getValue().format(DateTimeFormatter.ofPattern("yyyyMMdd" + 0 + 0 + 0 + 0))))
-            //then something also for image later to see if changed
-            //do you wanna save and exit or just save?
-            //if save and exit:
-            saveConfirm();
-            //close editor, return to previous screen
-        else
-            GUIManager.previousPage();
+        if (hasChanges())
+            saveConfirm();        //do you wanna save and exit or just save?
+        GUIManager.previousPage();        //close editor, return to previous screen
     }
 }
