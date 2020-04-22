@@ -1,6 +1,7 @@
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
+import javafx.util.StringConverter;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -113,22 +114,28 @@ public class EventEditor_GUI {
     }
 
     private boolean populateDisplay() {
-
-        event.setEndDate(new Date(4, 3, 4, 5, 3, 4, 3));
+        event.setStartDate(new Date(4, 3, 4, 5, 3,4, 3));
+        event.setEndDate(new Date(1654, 3, 4, 5, 3,4, 3));
 
         titleInput.setText(event.getEventName());
         descriptionInput.setText(event.getEventDescrition());
 
         if (event.getStartDate().getMonth() == 0)
+        {
             startDate.setValue(LocalDate.of(0, 1, 1));
-        else
-            startDate.setValue(LocalDate.of(event.getStartDate().getYear(), event.getStartDate().getMonth(), event.getStartDate().getDay()));
-
-        if (event.getStartDate() != event.getEndDate()) {
-            hasDuration.setSelected(true);
-            toggleHasDuration();
-            endDate.setValue(LocalDate.of(event.getEndDate().getYear(), event.getEndDate().getMonth(), event.getEndDate().getDay()));
+            endDate.setValue(LocalDate.of(0, 1, 1));
         }
+        else
+        {
+            startDate.setValue(LocalDate.of(event.getStartDate().getYear(), event.getStartDate().getMonth(), event.getStartDate().getDay()));
+            if (event.getStartDate() != event.getEndDate())
+            {
+                hasDuration.setSelected(true);
+                toggleHasDuration();
+                endDate.setValue(LocalDate.of(event.getEndDate().getYear(), event.getEndDate().getMonth(), event.getEndDate().getDay()));
+            }
+        }
+
 
         startTime1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, event.getStartDate().getSeconds()));
         startTime2.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, event.getStartDate().getMinutes()));
@@ -225,4 +232,7 @@ public class EventEditor_GUI {
             saveConfirm();        //do you wanna save and exit or just save?
         GUIManager.previousPage();        //close editor, return to previous screen
     }
+
+
+
 }
