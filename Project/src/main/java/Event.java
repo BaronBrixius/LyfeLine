@@ -3,7 +3,6 @@ import java.util.List;
 
 class Event implements DBObject<Event> {
     private int eventID = 0;
-    private int timelineID = 0;
     private int userID;
     private int eventType;
     private String eventName = "";
@@ -21,9 +20,8 @@ class Event implements DBObject<Event> {
 
     }
 
-    private Event(int eventID, int timelineID, int userID, Date startDate, Date endDate, Date creationDate, String title, String description, int imageID) {      //for reading from database
+    private Event(int eventID, int userID, Date startDate, Date endDate, Date creationDate, String title, String description, int imageID) {      //for reading from database
         this.eventID = eventID;
-        this.timelineID = timelineID;
         this.userID = userID;
         this.startDate = startDate;
         this.endDate = endDate;
@@ -34,6 +32,8 @@ class Event implements DBObject<Event> {
 
 
     }
+
+
 
     static List<Integer> getYears() throws SQLException {
         return DBM.getFromDB(DBM.conn.prepareStatement("SELECT StartYear FROM events"), rs -> rs.getInt("StartYear"));
@@ -92,7 +92,8 @@ class Event implements DBObject<Event> {
     @Override
     public Event createFromDB(ResultSet rs) throws SQLException {
         int eventID = rs.getInt("EventID");
-        int eventType = rs.getInt("EventType");
+        int imageID = rs.getInt("EventType");
+        int ownerID = rs.getInt("EventOwner");
         String eventName = rs.getString("EventName");
         String eventDescription = rs.getString("EventDescription");
         int StartYear = rs.getInt("StartYear");
@@ -116,10 +117,11 @@ class Event implements DBObject<Event> {
         int CreatedMinute = rs.getInt("CreatedMinute");
         int CreatedSecond = rs.getInt("CreatedSecond");
         int CreatedMillisecond = rs.getInt("CreatedMillisecond");
-        // String start = rs.getString("Start");       //probably don't need to pull from table, can recalculate here, but I wanted to test it a bit
+        Date start = new Date(StartYear, StartMonth, StartDay, StartHour, StartMinute, StartSecond, StartMillisecond);
+        Date end = new Date(EndYear, EndMonth, EndDay, EndHour, EndMinute , EndSecond, EndMillisecond);
+        Date created = new Date(CreatedYear, CreatedMonth, CreatedDay, CreatedHour, CreatedMinute, CreatedSecond, CreatedMillisecond);
 
-        return new Event(eventID, timelineID, userID, startDate, endDate, creationDate, eventName, eventDescription, imageID);
-
+        return new Event(eventID, ownerID, start, end, created, eventName, eventDescription, imageID);
     }
 
     @Override
