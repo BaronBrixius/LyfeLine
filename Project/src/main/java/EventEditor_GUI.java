@@ -228,15 +228,10 @@ public class EventEditor_GUI {
         Date readStart = new Date(start.getYear(), start.getMonth().getValue(), start.getDayOfMonth(),
                 startTime1.getValue(), startTime2.getValue(), startTime3.getValue(), event.getStartDate().getMilliseconds());   //milliseconds not implemented yet, do we need to?
         LocalDate end = endDate.getValue();
-<<<<<<< Project/src/main/java/EventEditor_GUI.java
+
         //If end is null, set end equal to start
         Date readEnd = end != null ? new Date(end.getYear(), end.getMonth().getValue(), end.getDayOfMonth(), endTime1.getValue(), endTime2.getValue(), endTime3.getValue(), 0) : readStart;
 
-
-=======
-        Date readEnd = new Date(end.getYear(), end.getMonth().getValue(), end.getDayOfMonth(),
-                endTime1.getValue(), endTime2.getValue(), endTime3.getValue(), event.getEndDate().getMilliseconds());           //milliseconds not implemented yet, do we need to?
->>>>>>> Project/src/main/java/EventEditor_GUI.java
 
         return (
                 !event.getEventName().equals(titleInput.getText())
