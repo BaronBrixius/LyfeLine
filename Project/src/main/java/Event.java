@@ -190,7 +190,7 @@ class Event implements DBObject<Event> {
         if (eventID == 0)
             throw new SQLDataException("Event not in database cannot be updated.");
         PreparedStatement out = DBM.conn.prepareStatement("UPDATE `events` SET `EventTitle` = ?, `EventDescription` = ?, `EventImage` = ?, `StartYear` = ?,  `StartMonth` = ?,  `StartDay` = ?,  `StartHour` = ?,  `StartMinute` = ?,  " +
-                "`StartSecond` = ?,  `StartMillisecond` = ?,    `EndYear` = ?,  `EndMonth` = ?,  `EndDay` = ?,  `EndHour` = ?,  `EndMinute` = ?,  `EndSecond` = ?,  `EndMillisecond` = ? = ? WHERE (`EventID` = ?);");
+                "`StartSecond` = ?,  `StartMillisecond` = ?,    `EndYear` = ?,  `EndMonth` = ?,  `EndDay` = ?,  `EndHour` = ?,  `EndMinute` = ?,  `EndSecond` = ?,  `EndMillisecond` = ? WHERE (`EventID` = ?);");
         out.setString(1, this.eventName);
         out.setString(2, this.eventDescription);
         out.setInt(3, this.imageID);
