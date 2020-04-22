@@ -51,15 +51,6 @@ public class EventEditor_GUI {
             deleteButton.setDisable(true);
         }
 
-
-        startTime1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 60, 0));
-        startTime2.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 60, 0));
-        startTime3.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 24, 0));
-
-        endTime1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 60, 0));
-        endTime2.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 60, 0));
-        endTime3.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 24, 0));
-
     }
 
     @FXML
@@ -114,24 +105,19 @@ public class EventEditor_GUI {
 
         titleInput.setText(event.getEventName());
         descriptionInput.setText(event.getEventDescrition());
-        
 
-        startTime1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 60, event.getEndDate().getSeconds()));
-        startTime2.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 60, event.getEndDate().getMinutes()));
-        startTime3.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 24, event.getEndDate().getHours()));
-
-        if (event.getEndDate() != null)
-        {
-            endTime1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 60, event.getEndDate().getSeconds()));
-            endTime2.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 60, event.getEndDate().getMinutes()));
-            endTime3.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 24, event.getEndDate().getHours()));
-        }
+        if (event.getStartDate().getMonth() == 0)
+            startDate.setValue(LocalDate.of(0, 1, 1));
         else
-        {
-            endTime1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 60, 0));
-            endTime2.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 60, 0));
-            endTime3.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 24, 0));
-        }
+            startDate.setValue(LocalDate.of(event.getStartDate().getYear(), event.getStartDate().getMonth(), event.getStartDate().getDay()));
+
+        startTime1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, event.getStartDate().getSeconds()));
+        startTime2.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, event.getStartDate().getMinutes()));
+        startTime3.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23, event.getStartDate().getHours()));
+
+        endTime1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, event.getEndDate().getSeconds()));
+        endTime2.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, event.getEndDate().getMinutes()));
+        endTime3.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23, event.getEndDate().getHours()));
 
 
         return false;
