@@ -52,6 +52,8 @@ public class GUIManager extends Application {
             e.printStackTrace();
         }
 
+        loggedInUser = DBM.getFromDB(DBM.conn.prepareStatement("SELECT * FROM users"), new User()).get(0);
+
         main = new VBox();
 
         loader = new FXMLLoader(getClass().getResource("FXML/TopMenu.fxml"));
@@ -65,8 +67,7 @@ public class GUIManager extends Application {
         mainStage = primaryStage;
         mainStage.setScene(new Scene(main));
 
-        swapScene("Welcome_Screen");
-        //swapScene("AdminRoleManager");
+        swapScene("EventSelector");
         applyStyle("DefaultStyle");
 
         mainStage.show();

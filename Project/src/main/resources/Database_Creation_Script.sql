@@ -3,15 +3,16 @@ CREATE TABLE `events`
     `EventID`            int               NOT NULL AUTO_INCREMENT,
     `EventOwner`         int               NOT NULL,
     `EventType`          tinyint           NOT NULL,
+    `EventImage`         tinyint           DEFAULT NULL,
     `EventName`          nvarchar(100)     DEFAULT NULL,
     `EventDescription`   nvarchar(5000)    DEFAULT NULL,
     `StartYear`          bigint            NOT NULL,
     `StartMonth`         tinyint unsigned  NOT NULL,
     `StartDay`           tinyint unsigned  NOT NULL,
-    `StartHour`          tinyint unsigned  NULL,
-    `StartMinute`        tinyint unsigned  NULL,
-    `StartSecond`        tinyint unsigned  NULL,
-    `StartMillisecond`   smallint unsigned NULL,
+    `StartHour`          tinyint unsigned  NOT NULL,
+    `StartMinute`        tinyint unsigned  NOT NULL,
+    `StartSecond`        tinyint unsigned  NOT NULL,
+    `StartMillisecond`   smallint unsigned NOT NULL,
     `EndYear`            bigint            DEFAULT NULL,
     `EndMonth`           tinyint unsigned  DEFAULT NULL,
     `EndDay`             tinyint unsigned  DEFAULT NULL,
@@ -33,7 +34,7 @@ CREATE TABLE `events`
   COLLATE = utf8mb4_general_ci;
 
 
-CREATE TRIGGER CreatedDateTime2
+CREATE TRIGGER CreatedDateTimeEvents
     BEFORE INSERT
     ON events
     FOR EACH ROW
@@ -49,18 +50,36 @@ BEGIN
     end if;
 END;
 
+CREATE TRIGGER EndDate
+    BEFORE INSERT
+    ON events
+    FOR EACH ROW
+BEGIN
+    if (isnull(new.`EndYear`)) then
+        set new.`EndYear` = new.StartYear;
+        set new.`EndMonth` = new.StartMonth;
+        set new.`EndDay` = new.StartDay;
+        set new.`EndHour` = new.StartHour;
+        set new.`EndMinute` = new.StartMinute;
+        set new.`EndSecond` = new.StartSecond;
+        set new.`EndMillisecond` = new.StartMillisecond;
+    end if;
+END;
+
 
 -- Lookup table for the scale column of timeline table
 
 
-CREATE TABLE `scale_lookup` (
-    `ID`   int           NOT NULL AUTO_INCREMENT,
-    `unit` nvarchar(20)  NOT NULL,
-    PRIMARY KEY (`ID`))
-    ENGINE=InnoDB
-    AUTO_INCREMENT=9
-    DEFAULT CHARSET=utf8mb4
-    COLLATE=utf8mb4_general_ci;
+CREATE TABLE `scale_lookup`
+(
+    `ID`   int          NOT NULL AUTO_INCREMENT,
+    `unit` nvarchar(20) NOT NULL,
+    PRIMARY KEY (`ID`)
+)
+    ENGINE = InnoDB
+    AUTO_INCREMENT = 9
+    DEFAULT CHARSET = utf8mb4
+    COLLATE = utf8mb4_general_ci;
 
 
 INSERT INTO `scale_lookup`
@@ -140,7 +159,6 @@ CREATE TABLE `users`
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_general_ci;
-
 
 
 -- Code for creating timelines
