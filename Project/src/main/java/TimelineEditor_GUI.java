@@ -32,7 +32,7 @@ public class TimelineEditor_GUI {
     	
     	//This is for constructing a new timeline.
     	if (activeTimeline != null) {
-    		Timeline activeTimeline = new Timeline(titleInput.getText(), descriptionInput.getText(), 1, null, null, null, null, 0, false);
+    		activeTimeline = new Timeline(titleInput.getText(), descriptionInput.getText(), 1, null, null, null, null, 0, false);
     		
     		//Timeline(String TimelineName, String TimelineDescription, String Scale, String Theme, Date StartDate, Date Enddate, Date DateCreated, 
     				//int TimelineOwner, boolean Private) Date(LocalDate.now())
@@ -50,10 +50,6 @@ public class TimelineEditor_GUI {
     		
 
         StringBuilder keywordsList = new StringBuilder();
-        
-       
-        
-        
         /*
         This is how I'm assuming the keywords get into the TextArea when they are implemented.
         Store them as a String Array, and append them one by one to a StringBuilder.
@@ -66,10 +62,7 @@ public class TimelineEditor_GUI {
         */
         keywordsInput.setText(keywordsList.toString());
 
-        //startDateInput.setValue();    //put timeline.getStartDate.toLocaleDate() as parameter
 
-
-        //endDateInput.setValue();  //put timeline.getEndDate.toLocaleDate() as parameter
 
     }
 
