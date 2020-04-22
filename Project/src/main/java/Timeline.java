@@ -4,7 +4,7 @@ import java.util.List;
 public class Timeline implements DBObject<Timeline> {
 
     private int timelineID;
-    private String scale;
+    private int scale;
     private String timelineName;
     private String theme;
     private Date startDate;
@@ -18,7 +18,7 @@ public class Timeline implements DBObject<Timeline> {
     public Timeline() {
     }
 
-    private Timeline(int TimeLineID, String TimelineName, String TimelineDescription, String Scale, String Theme, Date StartDate, Date Enddate, Date DateCreated, int TimelineOwner, boolean Private) throws SQLException {
+    private Timeline(int TimeLineID, String TimelineName, String TimelineDescription, int Scale, String Theme, Date StartDate, Date Enddate, Date DateCreated, int TimelineOwner, boolean Private) throws SQLException {
 
         this.timelineID = TimeLineID;
         this.timelineName = TimelineName;
@@ -44,7 +44,7 @@ public class Timeline implements DBObject<Timeline> {
                 + ",`StartMinute`,`StartSecond`,`StartMillisecond`,`EndYear`,`EndMonth`,`EndDay`,`EndHour`,`EndMinute`,`EndSecond`,"
                 + "`EndMillisecond`,`CreatedYear`,`CreatedMonth`,`CreatedDay`,`CreatedHour`,`CreatedMinute`,`CreatedSecond`,`CreatedMillisecond`,"
                 + "`Private`,`TimelineOwner`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
-        out.setString(1, scale);
+        out.setInt(1, scale);
         out.setString(2, timelineName);
         out.setString(3, timelineDescription);
         out.setString(4, theme);
@@ -77,7 +77,7 @@ public class Timeline implements DBObject<Timeline> {
     @Override
     public PreparedStatement getUpdateQuery() throws SQLException {
         PreparedStatement out = DBM.conn.prepareStatement("UPDATE `timelines` SET `Scale` = ?, `TimelineName` = ?, `TimelineDescription` = ?,  `Theme` = ?,   `StartYear` = ?,  `StartMonth` = ?,  `StartDay` = ?,  `StartHour` = ?,  `StartMinute` = ?,  `StartSecond` = ?,  `StartMillisecond` = ?,    `EndYear` = ?,  `EndMonth` = ?,  `EndDay` = ?,  `EndHour` = ?,  `EndMinute` = ?,  `EndSecond` = ?,  `EndMillisecond` = ?,   `CreatedYear` = ?,  `ECreatedMonth` = ?,  `CreatedDay` = ?,  `CreatedHour` = ?,  `CreatedMinute` = ?,  `CreatedSecond` = ?,  `CreatedMillisecond` = ?, `Private` = ? WHERE (`TimelineID` = ?)");
-        out.setString(1, scale);
+        out.setInt(1, scale);
         out.setString(2, timelineName);
         out.setString(3, timelineDescription);
         out.setString(4, theme);
@@ -122,7 +122,7 @@ public class Timeline implements DBObject<Timeline> {
     @Override
     public Timeline createFromDB(ResultSet rs) throws SQLException {
         int TimelineID = rs.getInt("TimelineID");
-        String Scale = rs.getString("Scale");
+        int Scale = rs.getInt("Scale");
         String TimelineName = rs.getString("TimelineName");
         String TimelineDesription = rs.getString("TimelineDescription");
         String Theme = rs.getString("Theme");
