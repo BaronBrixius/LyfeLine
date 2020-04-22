@@ -60,41 +60,42 @@ public class TimelineEditor_GUI {
 
 	@FXML
 	public void save(MouseEvent event) {
-		System.out.println("The Save button has been pushed.");
+		//System.out.println("The Save button has been pushed.");
+		//Creating a new timeline will run in here
+		//System.out.println("First printout" + activeTimeline);
 		if (activeTimeline == null) {
 			try {
 				Date dateCreated = new Date(LocalDate.now().getYear(), LocalDate.now().getMonthValue(), LocalDate.now().getDayOfMonth());
-				//int year, int month, int day, int hours, int minutes, int seconds, int milliseconds)
+				//create a new timeline object to work with.
 				activeTimeline = new Timeline(titleInput.getText(), descriptionInput.getText(), 1, null, dateCreated, dateCreated,
 						dateCreated, 0, false);
-				
+
 				//Write new timeline into DB
 				DBM.insertIntoDB(activeTimeline);
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 		}
-		activeTimeline.setTimelineName(titleInput.getText());
-		activeTimeline.setTimelineDescription(descriptionInput.getText());
-		//int Scale - TBA
-		//String Theme - TBAdescriptionInput
-		activeTimeline.setScale(timeInput.getSelectionModel().getSelectedIndex());
-		LocalDate start = startDateInput.getValue();
-		activeTimeline.setStartDate(new Date(start.getYear(), start.getMonthValue(), start.getDayOfMonth()));
-		LocalDate end = endDateInput.getValue();
-		activeTimeline.setEndDate(new Date(end.getYear(), end.getMonthValue(), end.getDayOfMonth()));
-		//Public/Private Selection - TBA
-		
-		try {
-			DBM.updateInDB(activeTimeline);
-		} catch (SQLException e) {
-			e.printStackTrace();
+		//This part is for editing an existing timeline
+		else {
+			activeTimeline.setTimelineName(titleInput.getText());
+			activeTimeline.setTimelineDescription(descriptionInput.getText());
+			activeTimeline.setScale((timeInput.getSelectionModel().getSelectedIndex()) + 1);
+			LocalDate start = startDateInput.getValue();
+			activeTimeline.setStartDate(new Date(start.getYear(), start.getMonthValue(), start.getDayOfMonth()));
+			LocalDate end = endDateInput.getValue();
+			activeTimeline.setEndDate(new Date(end.getYear(), end.getMonthValue(), end.getDayOfMonth()));
+			//Public/Private Selection - TBA
+			try {
+				DBM.updateInDB(activeTimeline);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
-		
 		// Timeline.activeTimeline.getInsertQuery();
 		System.out.println(activeTimeline);
-		
-		
+
+
 	}
 
 	@FXML
@@ -124,6 +125,9 @@ public class TimelineEditor_GUI {
 					activeTimeline.getStartDate().getMonth(), activeTimeline.getStartDate().getDay()));
 			endDateInput.setValue(LocalDate.of(activeTimeline.getEndDate().getYear(),
 					activeTimeline.getEndDate().getMonth(), activeTimeline.getEndDate().getDay()));
+			timeInput.getSelectionModel().select(activeTimeline.getScale() - 1);
+			//activeTimeline.setScale((timeInput.getSelectionModel().getSelectedIndex()) + 1);
+			//System.out.println(activeTimeline.getScale());
 		}
 	}
 

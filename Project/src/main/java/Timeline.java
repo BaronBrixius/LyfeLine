@@ -91,7 +91,10 @@ public class Timeline implements DBObject<Timeline> {
 
     @Override
     public PreparedStatement getUpdateQuery() throws SQLException {
-        PreparedStatement out = DBM.conn.prepareStatement("UPDATE `timelines` SET `Scale` = ?, `TimelineName` = ?, `TimelineDescription` = ?,  `Theme` = ?,   `StartYear` = ?,  `StartMonth` = ?,  `StartDay` = ?,  `StartHour` = ?,  `StartMinute` = ?,  `StartSecond` = ?,  `StartMillisecond` = ?,    `EndYear` = ?,  `EndMonth` = ?,  `EndDay` = ?,  `EndHour` = ?,  `EndMinute` = ?,  `EndSecond` = ?,  `EndMillisecond` = ?,   `CreatedYear` = ?,  `ECreatedMonth` = ?,  `CreatedDay` = ?,  `CreatedHour` = ?,  `CreatedMinute` = ?,  `CreatedSecond` = ?,  `CreatedMillisecond` = ?, `Private` = ? WHERE (`TimelineID` = ?)");
+        PreparedStatement out = DBM.conn.prepareStatement("UPDATE `timelines` SET `Scale` = ?, `TimelineName` = ?, `TimelineDescription` = ?,  `Theme` = ?,   "
+        		+ "`StartYear` = ?,  `StartMonth` = ?,  `StartDay` = ?,  `StartHour` = ?,  `StartMinute` = ?,  `StartSecond` = ?,  "
+        		+ "`StartMillisecond` = ?,    `EndYear` = ?,  `EndMonth` = ?,  `EndDay` = ?,  `EndHour` = ?,  `EndMinute` = ?,  "
+        		+ "`EndSecond` = ?,  `EndMillisecond` = ?, `Private` = ? WHERE (`TimelineID` = ?)");
         out.setInt(1, scale);
         out.setString(2, timelineName);
         out.setString(3, timelineDescription);
@@ -110,15 +113,15 @@ public class Timeline implements DBObject<Timeline> {
         out.setInt(16, endDate.getMinutes());
         out.setInt(17, endDate.getSeconds());
         out.setInt(18, endDate.getMilliseconds());
-        out.setInt(19, dateCreated.getYear());
+        /*out.setInt(19, dateCreated.getYear());
         out.setInt(20, dateCreated.getMonth());
         out.setInt(21, dateCreated.getDay());
         out.setInt(22, dateCreated.getHours());
         out.setInt(23, dateCreated.getMinutes());
         out.setInt(24, dateCreated.getSeconds());
-        out.setInt(25, dateCreated.getMilliseconds());
-        out.setBoolean(26, isPrivate);
-        out.setInt(27, timelineOwner);
+        out.setInt(25, dateCreated.getMilliseconds()); */
+        out.setBoolean(19, isPrivate);
+        out.setInt(20, timelineOwner);
         return out;
     }
 
