@@ -8,12 +8,12 @@ class Event implements DBObject<Event> {
     private int timelineID = 0;
     private int userID;
     private int eventType;
-    private String eventName;
-    private String eventDescription;
+    private String eventName = "";
+    private String eventDescription = "";
     private int imageID;//For now, not sure how we handle this later on
-    private  Date startDate;
-    private  Date endDate;
-    private Date creationDate;
+    private Date startDate = new Date();
+    private Date endDate = new Date();
+    private Date creationDate = new Date();
 
     public Date getCreationDate() {
         return creationDate;
@@ -163,10 +163,10 @@ class Event implements DBObject<Event> {
     public String  getEventName() {
         return this.eventName;
     }
-    public Date  getEventStart() {
+    public Date getStartDate() {
         return this.startDate;
     }
-    public Date  getEventEnd() {
+    public Date getEndDate() {
         return this.endDate;
     }
 
