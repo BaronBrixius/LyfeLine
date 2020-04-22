@@ -1,6 +1,7 @@
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
+import javafx.util.StringConverter;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -132,13 +133,15 @@ public class EventEditor_GUI {
         }
 
 
-        startTime1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, event.getStartDate().getSeconds()));
+        startTime1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, event.getStartDate().getHours()));
         startTime2.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, event.getStartDate().getMinutes()));
-        startTime3.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23, event.getStartDate().getHours()));
+        startTime3.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23, event.getStartDate().getSeconds()));
 
-        endTime1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, event.getEndDate().getSeconds()));
+        endTime1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, event.getEndDate().getHours()));
         endTime2.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, event.getEndDate().getMinutes()));
-        endTime3.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23, event.getEndDate().getHours()));
+        endTime3.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23, event.getEndDate().getSeconds()));
+
+
 
         return false;
     }
@@ -227,4 +230,5 @@ public class EventEditor_GUI {
             saveConfirm();        //do you wanna save and exit or just save?
         GUIManager.previousPage();        //close editor, return to previous screen
     }
+    
 }
