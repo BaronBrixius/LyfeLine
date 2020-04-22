@@ -1,19 +1,13 @@
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
+import javafx.scene.control.*;
 
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Comparator;
+import java.util.Optional;
 
 public class EventSelector {
     @FXML
@@ -54,8 +48,6 @@ public class EventSelector {
 
         timelineList.getSelectionModel().selectedIndexProperty().addListener(e -> {
             populateEventList();
-            viewButton.setDisable(true);
-            deleteButton.setDisable(true);
         });
 
         eventList.getSelectionModel().selectedIndexProperty().addListener(e -> {
@@ -79,23 +71,27 @@ public class EventSelector {
         //go back to somewhere
     }
 
-    public void deleteEvent() throws SQLException, IOException {
+    public boolean deleteEvent() throws SQLException, IOException {
+        Alert confirmDelete = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmDelete.setTitle("Confirm Delete");
+        confirmDelete.setHeaderText("Deleting this event will remove it from all other timelines as well.");
+        confirmDelete.setContentText("Are you ok with this?");
 
-        Stage delConfirm = new Stage();
-        delConfirm.setTitle("Confirm Deletion");
-        delConfirm.initOwner(GUIManager.mainStage);
+        Optional<ButtonType> result = confirmDelete.showAndWait();
 
-        delConfirm.initModality(Modality.WINDOW_MODAL);
-        delConfirm.setResizable(false);
+        if (result.get() == ButtonType.CANCEL)
+            return false;
 
+        try {
+            if (eventList.getSelectionModel().getSelectedItem().getEventID() == 0)
+                throw new IllegalArgumentException("event not in database");
 
-        FXMLLoader popupDeletion = new FXMLLoader(GUIManager.class.getResource("fxml/Popup.fxml"));
-        delConfirm.setScene(new Scene(popupDeletion.load()));
-
-        Popup deletionPopup = popupDeletion.getController();
-        deletionPopup.setMode(1);
-
-        DBM.deleteFromDB(eventList.getSelectionModel().getSelectedItems());
+            DBM.deleteFromDB(eventList.getSelectionModel().getSelectedItem());
+            populateEventList();
+            return true;
+        } catch (SQLException e) {
+            return false;
+        }
     }
 
     private void populateTimelineList() {
@@ -119,6 +115,10 @@ public class EventSelector {
             if (timelineID > 0) {
                 stmt.setInt(1, timelineList.getSelectionModel().getSelectedItem().getTimelineID());
                 eventList.setItems(FXCollections.observableArrayList(DBM.getFromDB(stmt, new Event())));
+
+                eventList.getSelectionModel().clearSelection();
+                viewButton.setDisable(true);
+                deleteButton.setDisable(true);
             }
         } catch (SQLException e) {
             System.err.println("Could not get events from database.");
