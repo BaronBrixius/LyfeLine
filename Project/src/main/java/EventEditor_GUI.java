@@ -54,6 +54,13 @@ public class EventEditor_GUI {
     boolean editable = true;
     private Event event;
 
+
+
+    EventSelector prevScreen;
+    public void setPrevScreen(EventSelector prevScreen) {             //TODO delete this inelegant solution
+        this.prevScreen = prevScreen;
+    }
+
     public void initialize() {
         if (
                 GUIManager.loggedInUser == null ||          //TODO delete this when hooked up to rest of program
@@ -227,6 +234,7 @@ public class EventEditor_GUI {
                 DBM.deleteFromDB(event);
                 close();
             }
+            prevScreen.populateEventList();             //TODO delete this inelegant solution
             return true;
         } catch (SQLException | IOException e) {
             return false;
