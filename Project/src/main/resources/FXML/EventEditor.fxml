@@ -39,7 +39,7 @@
     <Button fx:id="uploadButton" alignment="CENTER" onAction="#uploadImage" styleClass="tinyButton" text="Upload img" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="10" />
     <ComboBox fx:id="imageInput" prefWidth="175.0" GridPane.columnSpan="2" GridPane.rowIndex="10" />
     <Region prefHeight="30" GridPane.rowIndex="11" GridPane.vgrow="ALWAYS" />
-    <Button fx:id="editButton" alignment="CENTER" maxHeight="30" onAction="#toggleEditMode" styleClass="smallButton" text="Save" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="12" />
+    <Button fx:id="editButton" alignment="CENTER" maxHeight="30" onAction="#saveEditButton" styleClass="smallButton" text="Save" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="12" />
     <Button fx:id="deleteButton" alignment="CENTER" maxHeight="30" onAction="#deleteEvent" styleClass="smallButton" text="Delete" GridPane.halignment="CENTER" GridPane.rowIndex="13" />
     <Button alignment="CENTER" maxHeight="30" onAction="#close" styleClass="smallButton" text="Close" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="13" />
    <HBox fx:id="startTime" GridPane.columnIndex="1" GridPane.rowIndex="6">

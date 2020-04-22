@@ -133,7 +133,7 @@ class Event implements DBObject<Event> {
     public void setDescription(String description) {
         this.eventDescription = description;
     }
-    public void setStartDate(String startDate) {
+    /*public void setStartDate(String startDate) {
        String string = startDate;
        String[] parts = string.split("-");
        int year = Integer.parseInt(parts[0]);
@@ -141,14 +141,23 @@ class Event implements DBObject<Event> {
        int date = Integer.parseInt(parts[2]);;
         this.startDate = new Date(year,month,date,0,0,0,0);
     }
-    public void setEndDate(String endDate) {
+    public void setDateEnd(String endDate) {
         String string = endDate;
         String[] parts = string.split("-");
         int year = Integer.parseInt(parts[0]);
         int month = Integer.parseInt(parts[1]);;
         int date = Integer.parseInt(parts[2]);;
         this.endDate = new Date(year,month,date,0,0,0,0);
+    }*/
+
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
     }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
+
     public void setImage(int image) {
         this.imageID = image;
     }
