@@ -118,6 +118,7 @@ public class Timeline implements DBObject<Timeline> {
         out.setInt(24, dateCreated.getSeconds());
         out.setInt(25, dateCreated.getMilliseconds());
         out.setBoolean(26, isPrivate);
+        out.setInt(27, timelineOwner);
         return out;
     }
 

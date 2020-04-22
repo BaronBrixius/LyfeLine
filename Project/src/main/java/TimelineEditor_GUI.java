@@ -25,9 +25,8 @@ public class TimelineEditor_GUI {
 	private ComboBox<String> timeInput;
 
 	private Timeline activeTimeline;
-	PreparedStatement stmt2;
+	PreparedStatement stmt;
 
-	int id = 0;
 
 	public TimelineEditor_GUI() {
 		GUIManager.mainStage.setTitle("Timeline Editor");
@@ -62,16 +61,40 @@ public class TimelineEditor_GUI {
 	@FXML
 	public void save(MouseEvent event) {
 		System.out.println("The Save button has been pushed.");
+		if (activeTimeline == null) {
+			try {
+				Date dateCreated = new Date(LocalDate.now().getYear(), LocalDate.now().getMonthValue(), LocalDate.now().getDayOfMonth());
+				//int year, int month, int day, int hours, int minutes, int seconds, int milliseconds)
+				activeTimeline = new Timeline(titleInput.getText(), descriptionInput.getText(), 1, null, dateCreated, dateCreated,
+						dateCreated, 0, false);
+				
+				//Write new timeline into DB
+				DBM.insertIntoDB(activeTimeline);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
 		activeTimeline.setTimelineName(titleInput.getText());
-		activeTimeline.setTimelineDescription(activeTimeline.getTimelineDescription());
+		activeTimeline.setTimelineDescription(descriptionInput.getText());
+		//int Scale - TBA
+		//String Theme - TBAdescriptionInput
 		activeTimeline.setScale(timeInput.getSelectionModel().getSelectedIndex());
 		LocalDate start = startDateInput.getValue();
 		activeTimeline.setStartDate(new Date(start.getYear(), start.getMonthValue(), start.getDayOfMonth()));
 		LocalDate end = endDateInput.getValue();
 		activeTimeline.setEndDate(new Date(end.getYear(), end.getMonthValue(), end.getDayOfMonth()));
+		//Public/Private Selection - TBA
+		
+		try {
+			DBM.updateInDB(activeTimeline);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		
 		// Timeline.activeTimeline.getInsertQuery();
 		System.out.println(activeTimeline);
+		
+		
 	}
 
 	@FXML
@@ -93,9 +116,6 @@ public class TimelineEditor_GUI {
 
 			}
 
-			// Timeline(String TimelineName, String TimelineDescription, String Scale,
-			// String Theme, Date StartDate, Date Enddate, Date DateCreated,
-			// int TimelineOwner, boolean Private) Date(LocalDate.now())
 		} else {
 			// Get a timeline from DB. Such ineficient, much sad!
 			titleInput.setText(activeTimeline.getTimelineName());
