@@ -2,10 +2,12 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.text.Text;
 
 import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.Optional;
 
 public class EventEditor_GUI {
@@ -78,7 +80,36 @@ public class EventEditor_GUI {
         endTime.setDisable(!hasDuration.isSelected());
     }
 
-    public void saveEditButton() {
+    public void saveEditButton() {      //I know this is ugly right now
+        LocalDate start;
+        LocalDate end;
+        Date readStart = new Date();
+        Date readEnd = new Date();
+
+
+        try {
+            //Date Picker is literally bugged, this line works around it.
+            startDate.setValue(startDate.getConverter().fromString(startDate.getEditor().getText()));
+            //Convert the Date Picker to Date and see if problems happen
+            start = startDate.getValue();
+            readStart = new Date(start.getYear(), start.getMonth().getValue(), start.getDayOfMonth(),
+                    startTime1.getValue(), startTime2.getValue(), startTime3.getValue(), event.getStartDate().getMilliseconds());   //milliseconds not implemented yet, do we need to?
+        }catch (NullPointerException e) {errorMessage.setText("Start date can't be empty."); return;}
+        catch (DateTimeParseException d) {errorMessage.setText("Start date's format is improper."); return;}
+
+        //If the End Date is selected, check it for problems too.
+        if (hasDuration.isSelected())
+        {
+            try {
+                endDate.setValue(endDate.getConverter().fromString(endDate.getEditor().getText()));
+                end = endDate.getValue();
+                readEnd = new Date(end.getYear(), end.getMonth().getValue(), end.getDayOfMonth(), endTime1.getValue(), endTime2.getValue(), endTime3.getValue(), 0);
+
+            }catch (NullPointerException e) {errorMessage.setText("End date can't be empty if selected."); return;}
+            catch (DateTimeParseException d) {errorMessage.setText("End date's format is improper."); return;}
+        }
+
+
         if (editable && hasChanges())   //if unsaved changes, try to save
             if (!saveConfirm())         //if save cancelled, don't change mode
                 return;
@@ -183,12 +214,14 @@ public class EventEditor_GUI {
         event.setTitle(titleInput.getText());
         event.setDescription(descriptionInput.getText());
         //There is a bug with typing in a DatePicker, this line fixes that.
-        startDate.setValue(startDate.getConverter().fromString(startDate.getEditor().getText()));
-        endDate.setValue(endDate.getConverter().fromString(endDate.getEditor().getText()));
+
         event.setDescription(descriptionInput.getText().replaceAll("([^\r])\n", "$1\r\n"));
+
         LocalDate start = startDate.getValue();
         event.setStartDate(new Date(start.getYear(), start.getMonth().getValue(), start.getDayOfMonth(),
                 startTime1.getValue(), startTime2.getValue(), startTime3.getValue(), event.getStartDate().getMilliseconds()));  //milliseconds not implemented yet, do we need to?
+
+
 
         LocalDate end;
         if (hasDuration.isSelected()) {
@@ -197,6 +230,7 @@ public class EventEditor_GUI {
                     endTime1.getValue(), endTime2.getValue(), endTime3.getValue(), event.getEndDate().getMilliseconds()));      //milliseconds not implemented yet, do we need to?
         } else                //if it has no duration, end = start
             event.setEndDate(event.getStartDate());
+
 
         //this.event.setImage(); later
     }
@@ -245,7 +279,6 @@ public class EventEditor_GUI {
         LocalDate start = startDate.getValue();
         Date readStart = new Date(start.getYear(), start.getMonth().getValue(), start.getDayOfMonth(),
                 startTime1.getValue(), startTime2.getValue(), startTime3.getValue(), event.getStartDate().getMilliseconds());   //milliseconds not implemented yet, do we need to?
-        LocalDate end = endDate.getValue();
 
         //If end is null, set end equal to start
         Date readEnd = new Date(end.getYear(), end.getMonth().getValue(), end.getDayOfMonth(), endTime1.getValue(), endTime2.getValue(), endTime3.getValue(), event.getEndDate().getMilliseconds());
