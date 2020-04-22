@@ -5,7 +5,6 @@ import javafx.scene.layout.HBox;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 public class EventEditor_GUI {
@@ -115,7 +114,7 @@ public class EventEditor_GUI {
 
     private boolean populateDisplay() {
 
-        event.setEndDate(new Date(4, 3, 4, 5, 3,4, 3));
+        event.setEndDate(new Date(4, 3, 4, 5, 3, 4, 3));
 
         titleInput.setText(event.getEventName());
         descriptionInput.setText(event.getEventDescrition());
@@ -125,8 +124,7 @@ public class EventEditor_GUI {
         else
             startDate.setValue(LocalDate.of(event.getStartDate().getYear(), event.getStartDate().getMonth(), event.getStartDate().getDay()));
 
-        if (event.getStartDate() != event.getEndDate())
-        {
+        if (event.getStartDate() != event.getEndDate()) {
             hasDuration.setSelected(true);
             toggleHasDuration();
             endDate.setValue(LocalDate.of(event.getEndDate().getYear(), event.getEndDate().getMonth(), event.getEndDate().getDay()));
@@ -157,16 +155,19 @@ public class EventEditor_GUI {
         return saveEvent();
     }
 
-    private boolean saveEvent() {
+    void updateEvent(){
         //setters to update each field of this.event, based on the current info in the text fields
         this.event.setTitle(titleInput.getText());
         this.event.setDescription(descriptionInput.getText());
         LocalDate start = startDate.getValue();
         this.event.setStartDate(new Date(start.getYear(), start.getMonth().getValue(), start.getYear(), start.getYear(), start.getYear(), start.getYear(), 0));
-
-        //   this.event.setEndDate((hasDuration.isSelected()) ? endDate.getValue().format(DateTimeFormatter.ofPattern("yyyy-MM-dd") : event.getStartDate()));
+        LocalDate end = endDate.getValue();
+        this.event.setEndDate(new Date(end.getYear(), end.getMonth().getValue(), end.getYear(), end.getYear(), end.getYear(), end.getYear(), 0));
         //this.event.setImage(); later
+    }
 
+    private boolean saveEvent() {
+        updateEvent();
         try {
             if (this.event.getEventID() == 0)
                 DBM.insertIntoDB(event);
@@ -205,10 +206,15 @@ public class EventEditor_GUI {
     }
 
     private boolean hasChanges() {
+        LocalDate start = startDate.getValue();
+        Date readStart = new Date(start.getYear(), start.getMonth().getValue(), start.getYear(), start.getYear(), start.getYear(), start.getYear(), 0);
+        LocalDate end = endDate.getValue();
+        Date readEnd = new Date(end.getYear(), end.getMonth().getValue(), end.getYear(), end.getYear(), end.getYear(), end.getYear(), 0);
+
         return (this.event.getEventName().equals(titleInput.getText())
-                || !this.event.getEventDescrition().equals(descriptionInput.getText())
-                || !this.event.getStartDate().toString().equals(startDate.getValue().format(DateTimeFormatter.ofPattern("yyyyMMdd" + 0 + 0 + 0 + 0)))
-                || this.event.getEndDate().toString().equals(endDate.getValue().format(DateTimeFormatter.ofPattern("yyyyMMdd" + 0 + 0 + 0 + 0)))
+                || this.event.getEventDescrition().equals(descriptionInput.getText())
+                || this.event.getStartDate().equals(readStart)
+                || this.event.getEndDate().equals(readEnd)
                 //then something also for image later to see if changed
         );
     }
