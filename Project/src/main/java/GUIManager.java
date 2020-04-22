@@ -39,8 +39,8 @@ public class GUIManager extends Application {
 
         // Used to establish connection to the DB.
         try {
-            new DBM("jdbc:mysql://localhost?useTimezone=true&serverTimezone=UTC", "root", "AJnuHA^8VKHht=uB", "project");
-            //DBM.setupSchema(); //comment out for testing of log in
+            new DBM();
+            DBM.setupSchema(); //comment out for testing of log in
         } catch (SQLException e) {
             e.printStackTrace();
         }
