@@ -50,6 +50,7 @@ public class EventEditor_GUI {
             deleteButton.setVisible(false);
             deleteButton.setDisable(true);
         }
+
     }
 
     @FXML
@@ -162,6 +163,10 @@ public class EventEditor_GUI {
     void updateEvent() {
         //setters to update each field of this.event, based on the current info in the text fields
         event.setTitle(titleInput.getText());
+        event.setDescription(descriptionInput.getText());
+        //There is a bug with typing in a DatePicker, this line fixes that.
+        startDate.setValue(startDate.getConverter().fromString(startDate.getEditor().getText()));
+        endDate.setValue(endDate.getConverter().fromString(endDate.getEditor().getText()));
         event.setDescription(descriptionInput.getText().replaceAll("([^\r])\n", "$1\r\n"));
         LocalDate start = startDate.getValue();
         event.setStartDate(new Date(start.getYear(), start.getMonth().getValue(), start.getDayOfMonth(),
@@ -223,8 +228,10 @@ public class EventEditor_GUI {
         Date readStart = new Date(start.getYear(), start.getMonth().getValue(), start.getDayOfMonth(),
                 startTime1.getValue(), startTime2.getValue(), startTime3.getValue(), event.getStartDate().getMilliseconds());   //milliseconds not implemented yet, do we need to?
         LocalDate end = endDate.getValue();
-        Date readEnd = new Date(end.getYear(), end.getMonth().getValue(), end.getDayOfMonth(),
-                endTime1.getValue(), endTime2.getValue(), endTime3.getValue(), event.getEndDate().getMilliseconds());           //milliseconds not implemented yet, do we need to?
+
+        //If end is null, set end equal to start
+        Date readEnd = end != null ? new Date(end.getYear(), end.getMonth().getValue(), end.getDayOfMonth(), endTime1.getValue(), endTime2.getValue(), endTime3.getValue(), 0) : readStart;
+
 
         return (
                 !event.getEventName().equals(titleInput.getText())
