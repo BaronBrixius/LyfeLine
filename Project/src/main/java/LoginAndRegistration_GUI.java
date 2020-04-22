@@ -140,11 +140,6 @@ public class LoginAndRegistration_GUI {
         }
     }
 
-    @FXML
-    public void timelineScreen() throws IOException {
-        GUIManager.swapScene("Dashboard");
-    }
-
 }
 
 /*
