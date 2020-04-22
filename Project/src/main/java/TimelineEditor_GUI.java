@@ -83,7 +83,7 @@ public class TimelineEditor_GUI {
 
     @FXML
     public void cancel() throws IOException {
-        GUIManager.swapScene("Welcome_Screen");
+        GUIManager.swapScene("Dashboard");
         activeTimeline = null;
     }
 
