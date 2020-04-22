@@ -69,8 +69,10 @@ public class EventEditor_GUI {
 
     void toggleEditable(boolean editable) {
         this.editable = editable;
+
         titleInput.setEditable(editable);
         descriptionInput.setEditable(editable);
+        hasDuration.setDisable(!editable);
 
         startDate.setEditable(editable);
         startTime1.setEditable(editable);
@@ -141,7 +143,6 @@ public class EventEditor_GUI {
             endTime3.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, event.getEndDate().getSeconds()));
         }
 
-
         return false;
     }
 
@@ -166,13 +167,16 @@ public class EventEditor_GUI {
         //There is a bug with typing in a DatePicker, this line fixes that.
         startDate.setValue(startDate.getConverter().fromString(startDate.getEditor().getText()));
         endDate.setValue(endDate.getConverter().fromString(endDate.getEditor().getText()));
+        event.setDescription(descriptionInput.getText().replaceAll("([^\r])\n", "$1\r\n"));
         LocalDate start = startDate.getValue();
-        event.setStartDate(new Date(start.getYear(), start.getMonth().getValue(), start.getDayOfMonth(), startTime1.getValue(), startTime2.getValue(), startTime3.getValue(), 0));
+        event.setStartDate(new Date(start.getYear(), start.getMonth().getValue(), start.getDayOfMonth(),
+                startTime1.getValue(), startTime2.getValue(), startTime3.getValue(), event.getStartDate().getMilliseconds()));  //milliseconds not implemented yet, do we need to?
 
         LocalDate end;
         if (hasDuration.isSelected()) {
             end = endDate.getValue();
-            event.setEndDate(new Date(end.getYear(), end.getMonth().getValue(), end.getDayOfMonth(), endTime1.getValue(), endTime2.getValue(), endTime3.getValue(), 0));
+            event.setEndDate(new Date(end.getYear(), end.getMonth().getValue(), end.getDayOfMonth(),
+                    endTime1.getValue(), endTime2.getValue(), endTime3.getValue(), event.getEndDate().getMilliseconds()));      //milliseconds not implemented yet, do we need to?
         }
         else                //if it has no duration, end = start
             event.setEndDate(event.getStartDate());
@@ -221,15 +225,22 @@ public class EventEditor_GUI {
 
     private boolean hasChanges() {
         LocalDate start = startDate.getValue();
-        Date readStart = new Date(start.getYear(), start.getMonth().getValue(), start.getDayOfMonth(), startTime1.getValue(), startTime2.getValue(), startTime3.getValue(), 0);
+        Date readStart = new Date(start.getYear(), start.getMonth().getValue(), start.getDayOfMonth(),
+                startTime1.getValue(), startTime2.getValue(), startTime3.getValue(), event.getStartDate().getMilliseconds());   //milliseconds not implemented yet, do we need to?
         LocalDate end = endDate.getValue();
+<<<<<<< Project/src/main/java/EventEditor_GUI.java
         //If end is null, set end equal to start
         Date readEnd = end != null ? new Date(end.getYear(), end.getMonth().getValue(), end.getDayOfMonth(), endTime1.getValue(), endTime2.getValue(), endTime3.getValue(), 0) : readStart;
 
 
+=======
+        Date readEnd = new Date(end.getYear(), end.getMonth().getValue(), end.getDayOfMonth(),
+                endTime1.getValue(), endTime2.getValue(), endTime3.getValue(), event.getEndDate().getMilliseconds());           //milliseconds not implemented yet, do we need to?
+>>>>>>> Project/src/main/java/EventEditor_GUI.java
 
-        return (!event.getEventName().equals(titleInput.getText())
-                || !event.getEventDescrition().equals(descriptionInput.getText())
+        return (
+                !event.getEventName().equals(titleInput.getText())
+                || !event.getEventDescrition().equals(descriptionInput.getText().replaceAll("([^\r])\n", "$1\r\n"))     //textArea tends to change the newline from \r\n to just \n which breaks some things
                 || event.getStartDate().compareTo(readStart) != 0
                 || event.getEndDate().compareTo(readEnd) != 0
                 //then something also for image later to see if changed
