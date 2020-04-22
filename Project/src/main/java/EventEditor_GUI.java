@@ -116,15 +116,15 @@ public class EventEditor_GUI {
         descriptionInput.setText(event.getEventDescrition());
         
 
-        startTime1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 60, event.getEventStart().getSeconds()));
-        startTime2.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 60, event.getEventStart().getMinutes()));
-        startTime3.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 24, event.getEventStart().getHours()));
+        startTime1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 60, event.getEndDate().getSeconds()));
+        startTime2.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 60, event.getEndDate().getMinutes()));
+        startTime3.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 24, event.getEndDate().getHours()));
 
-        if (event.getEventEnd() != null)
+        if (event.getEndDate() != null)
         {
-            endTime1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 60, event.getEventEnd().getSeconds()));
-            endTime2.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 60, event.getEventEnd().getMinutes()));
-            endTime3.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 24, event.getEventEnd().getHours()));
+            endTime1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 60, event.getEndDate().getSeconds()));
+            endTime2.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 60, event.getEndDate().getMinutes()));
+            endTime3.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 24, event.getEndDate().getHours()));
         }
         else
         {
