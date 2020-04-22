@@ -62,8 +62,16 @@ public class TimelineEditor_GUI {
 	@FXML
 	public void save(MouseEvent event) {
 		System.out.println("The Save button has been pushed.");
+		activeTimeline.setTimelineName(titleInput.getText());
+		activeTimeline.setTimelineDescription(activeTimeline.getTimelineDescription());
+		activeTimeline.setScale(timeInput.getSelectionModel().getSelectedIndex());
+		LocalDate start = startDateInput.getValue();
+		activeTimeline.setStartDate(new Date(start.getYear(), start.getMonthValue(), start.getDayOfMonth()));
+		LocalDate end = endDateInput.getValue();
+		activeTimeline.setEndDate(new Date(end.getYear(), end.getMonthValue(), end.getDayOfMonth()));
+		
 		// Timeline.activeTimeline.getInsertQuery();
-
+		System.out.println(activeTimeline);
 	}
 
 	@FXML
