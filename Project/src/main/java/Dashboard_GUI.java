@@ -156,10 +156,8 @@ public class Dashboard_GUI {
 	public void editTimeline(ActionEvent event) throws IOException {
 		if (activeTimeline != null) {
 			TimelineEditor_GUI editor = GUIManager.swapScene("Timeline_Editor_Screen");
-			editor.setActiveTimeline(activeTimeline);
-			System.out.println(activeTimeline.getName());
-			System.out.println(activeTimeline.getTimelineDescription());
-			System.out.println(activeTimeline.getTimelineID());
+			editor.setActiveTimeline(this.activeTimeline);
+			editor.populateDisplay();
 		}
 
 	}

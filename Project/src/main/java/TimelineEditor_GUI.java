@@ -27,7 +27,7 @@ public class TimelineEditor_GUI {
 	private Timeline activeTimeline;
 	PreparedStatement stmt2;
 
-	int id = 1;
+	int id = 0;
 
 	public TimelineEditor_GUI() {
 		GUIManager.mainStage.setTitle("Timeline Editor");
@@ -35,27 +35,7 @@ public class TimelineEditor_GUI {
 
 	@FXML
 	private void initialize() throws SQLException {
-
 		// This is for constructing a new timeline.
-		if (activeTimeline == null) {
-			Timeline activeTimeline = new Timeline(titleInput.getText(), descriptionInput.getText(), 1, null, null,
-					null, null, 0, false);
-
-			// Timeline(String TimelineName, String TimelineDescription, String Scale,
-			// String Theme, Date StartDate, Date Enddate, Date DateCreated,
-			// int TimelineOwner, boolean Private) Date(LocalDate.now())
-		} else {
-			// Get a timeline from DB. Such ineficient, much sad!
-			stmt2 = DBM.conn
-					.prepareStatement("SELECT * FROM timelines WHERE timelineID = " + activeTimeline.getTimelineID());
-			List<Timeline> timelineList = DBM.getFromDB(stmt2, new Timeline());
-			titleInput.setText(activeTimeline.getTimelineName());
-			descriptionInput.setText(activeTimeline.getTimelineDescription());
-			startDateInput.setValue(LocalDate.of(activeTimeline.getStartDate().getYear(),
-					activeTimeline.getStartDate().getMonth(), activeTimeline.getStartDate().getDay()));
-			endDateInput.setValue(LocalDate.of(activeTimeline.getEndDate().getYear(),
-					activeTimeline.getEndDate().getMonth(), activeTimeline.getEndDate().getDay()));
-		}
 
 		StringBuilder keywordsList = new StringBuilder();
 
@@ -88,12 +68,35 @@ public class TimelineEditor_GUI {
 
 	@FXML
 	public void cancel() throws IOException {
-		GUIManager.swapScene("Welcome_Screen");
+		GUIManager.swapScene("Dashboard");
 		activeTimeline = null;
 	}
 
-	public void setActiveTimeline(Timeline activeTimeline) {
-		this.activeTimeline = activeTimeline;
+	public void setActiveTimeline(Timeline a) {
+		this.activeTimeline = a;
+	}
+
+	public void populateDisplay() {
+		if (activeTimeline == null) {
+			try {
+				activeTimeline = new Timeline(titleInput.getText(), descriptionInput.getText(), 1, null, null, null,
+						null, 0, false);
+			} catch (SQLException e) {
+
+			}
+
+			// Timeline(String TimelineName, String TimelineDescription, String Scale,
+			// String Theme, Date StartDate, Date Enddate, Date DateCreated,
+			// int TimelineOwner, boolean Private) Date(LocalDate.now())
+		} else {
+			// Get a timeline from DB. Such ineficient, much sad!
+			titleInput.setText(activeTimeline.getTimelineName());
+			descriptionInput.setText(activeTimeline.getTimelineDescription());
+			startDateInput.setValue(LocalDate.of(activeTimeline.getStartDate().getYear(),
+					activeTimeline.getStartDate().getMonth(), activeTimeline.getStartDate().getDay()));
+			endDateInput.setValue(LocalDate.of(activeTimeline.getEndDate().getYear(),
+					activeTimeline.getEndDate().getMonth(), activeTimeline.getEndDate().getDay()));
+		}
 	}
 
 }
