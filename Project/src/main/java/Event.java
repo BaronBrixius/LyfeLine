@@ -98,6 +98,18 @@ class Event implements DBObject<Event> {
         return out;
     }
 
+    public void addToTimeline(int timelineID) throws SQLException {
+        PreparedStatement out = DBM.conn.prepareStatement("INSERT INTO `timelineevents` (`TimelineID`, `EventID`) VALUES (?, ?);");
+        out.setInt(1, timelineID);
+        out.setInt(2, this.eventID);
+        out.execute();
+
+    }
+    public void removeFromTimeline(int timelineID) throws SQLException {
+        PreparedStatement out = DBM.conn.prepareStatement("DELETE FROM `timelineevents` WHERE EventID = " + this.eventID + " AND TimelineID = " + timelineID+";");
+        out.execute();
+    }
+
     @Override
     public Event createFromDB(ResultSet rs) throws SQLException {
         int eventID = rs.getInt("EventID");
