@@ -9,7 +9,7 @@ class Event implements DBObject<Event> {
     private String eventDescription = "";
     private int imageID;//For now, not sure how we handle this later on
     private Date startDate = new Date();
-    private Date endDate = new Date();
+    private Date endDate;
     private Date creationDate = new Date();
 
     public Event() {
@@ -224,7 +224,7 @@ class Event implements DBObject<Event> {
 
     @Override
     public String toString() {
-        return "EventID: " + eventID + " EventType: " + eventType + "EventName" + eventName + "eventDescription" + eventDescription + " Start Date: " + startDate + " End Date: " + endDate + " Created: " + creationDate;
+        return "EventID: " + eventID + " EventType: " + eventType + " EventName " + eventName + " EventDescription " + eventDescription + " Start Date: " + startDate + " End Date: " + endDate + " Created: " + creationDate;
     }
 
 }

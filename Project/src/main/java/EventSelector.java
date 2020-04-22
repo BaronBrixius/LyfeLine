@@ -45,6 +45,30 @@ public class EventSelector {
             }
         });
 
+        timelineList.setCellFactory(param -> new ListCell<>() {
+            @Override
+            protected void updateItem(Timeline item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null || item.getName() == null) {
+                    setText(null);
+                } else {
+                    setText(item.getName());
+                }
+            }
+        });
+
+        eventList.setCellFactory(param -> new ListCell<>() {
+            @Override
+            protected void updateItem(Event item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null || item.getEventName() == null) {
+                    setText(null);
+                } else {
+                    setText(item.getEventName());
+                }
+            }
+        });
+
 
         timelineList.getSelectionModel().selectedIndexProperty().addListener(e -> {
             populateEventList();

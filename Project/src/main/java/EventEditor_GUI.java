@@ -1,7 +1,6 @@
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
-import javafx.util.StringConverter;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -142,7 +141,6 @@ public class EventEditor_GUI {
         endTime3.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23, event.getEndDate().getSeconds()));
 
 
-
         return false;
     }
 
@@ -220,7 +218,7 @@ public class EventEditor_GUI {
                 || !this.event.getEventDescrition().equals(descriptionInput.getText())
                 || this.event.getStartDate().compareTo(readStart) != 0
                 || this.event.getEndDate().compareTo(readEnd) != 0
-        //then something also for image later to see if changed
+                //then something also for image later to see if changed
         );
     }
 
@@ -230,5 +228,5 @@ public class EventEditor_GUI {
             saveConfirm();        //do you wanna save and exit or just save?
         GUIManager.previousPage();        //close editor, return to previous screen
     }
-    
+
 }
