@@ -1,5 +1,6 @@
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 
 import java.io.IOException;
@@ -10,21 +11,32 @@ import java.util.Optional;
 public class EventEditor_GUI {
 
     @FXML
+    public GridPane editor;
+    @FXML
     public Button editButton;
     @FXML
     public Button uploadButton;
     @FXML
     public Button deleteButton;
+
     @FXML
     public HBox startTime;
     @FXML
     public HBox endTime;
+    @FXML
     public Spinner<Integer> startTime1;
+    @FXML
     public Spinner<Integer> startTime2;
+    @FXML
     public Spinner<Integer> startTime3;
+    @FXML
     public Spinner<Integer> endTime1;
+    @FXML
     public Spinner<Integer> endTime2;
+    @FXML
     public Spinner<Integer> endTime3;
+
+    @FXML
     public Label headerText;
     @FXML
     TextField titleInput = new TextField();
@@ -38,6 +50,7 @@ public class EventEditor_GUI {
     DatePicker endDate = new DatePicker();             //only a datepicker for skeleton, will figure best way to enter info later
     @FXML
     ComboBox<String> imageInput = new ComboBox<>();
+
     boolean editable = true;
     private Event event;
 
@@ -50,7 +63,6 @@ public class EventEditor_GUI {
             deleteButton.setVisible(false);
             deleteButton.setDisable(true);
         }
-
     }
 
     @FXML
@@ -59,7 +71,7 @@ public class EventEditor_GUI {
         endTime.setDisable(!hasDuration.isSelected());
     }
 
-    public void saveEditButton() {      //I know this is ugly right now
+    public void saveEditButton() {
         if (editable && hasChanges())   //if unsaved changes, try to save
             if (!saveConfirm())         //if save cancelled, don't change mode
                 return;
@@ -74,10 +86,7 @@ public class EventEditor_GUI {
         descriptionInput.setEditable(editable);
         hasDuration.setDisable(!editable);
 
-        startDate.setEditable(editable);
-        startTime1.setEditable(editable);
-        startTime2.setEditable(editable);
-        startTime3.setEditable(editable);
+        startDate.setDisable(!editable);
         startTime1.setDisable(!editable);
         startTime2.setDisable(!editable);
         startTime3.setDisable(!editable);
@@ -93,6 +102,11 @@ public class EventEditor_GUI {
         imageInput.setEditable(editable);
         uploadButton.setVisible(editable);
         uploadButton.setDisable(!editable);
+
+        if (editable)
+            editor.getStylesheets().removeAll("styles/DisabledEditing.css");
+        else
+            editor.getStylesheets().add("styles/DisabledEditing.css");
 
         editButton.setText(editable ? "Save" : "Edit");
     }
@@ -127,14 +141,11 @@ public class EventEditor_GUI {
         startTime2.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, event.getStartDate().getMinutes()));
         startTime3.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, event.getStartDate().getSeconds()));
 
-        if (event.getStartDate().compareTo(event.getEndDate()) == 0)
-        {
+        if (event.getStartDate().compareTo(event.getEndDate()) == 0) {
             endTime1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23));
             endTime2.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59));
             endTime3.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59));
-        }
-        else
-        {
+        } else {
             hasDuration.setSelected(true);
             toggleHasDuration();
             endDate.setValue(LocalDate.of(event.getEndDate().getYear(), event.getEndDate().getMonth(), event.getEndDate().getDay()));
@@ -177,8 +188,7 @@ public class EventEditor_GUI {
             end = endDate.getValue();
             event.setEndDate(new Date(end.getYear(), end.getMonth().getValue(), end.getDayOfMonth(),
                     endTime1.getValue(), endTime2.getValue(), endTime3.getValue(), event.getEndDate().getMilliseconds()));      //milliseconds not implemented yet, do we need to?
-        }
-        else                //if it has no duration, end = start
+        } else                //if it has no duration, end = start
             event.setEndDate(event.getStartDate());
 
         //this.event.setImage(); later
@@ -230,14 +240,13 @@ public class EventEditor_GUI {
         LocalDate end = endDate.getValue();
 
         //If end is null, set end equal to start
-        Date readEnd = end != null ? new Date(end.getYear(), end.getMonth().getValue(), end.getDayOfMonth(), endTime1.getValue(), endTime2.getValue(), endTime3.getValue(), 0) : readStart;
-
+        Date readEnd = new Date(end.getYear(), end.getMonth().getValue(), end.getDayOfMonth(), endTime1.getValue(), endTime2.getValue(), endTime3.getValue(), event.getEndDate().getMilliseconds());
 
         return (
                 !event.getEventName().equals(titleInput.getText())
-                || !event.getEventDescrition().equals(descriptionInput.getText().replaceAll("([^\r])\n", "$1\r\n"))     //textArea tends to change the newline from \r\n to just \n which breaks some things
-                || event.getStartDate().compareTo(readStart) != 0
-                || event.getEndDate().compareTo(readEnd) != 0
+                        || !event.getEventDescrition().equals(descriptionInput.getText().replaceAll("([^\r])\n", "$1\r\n"))     //textArea tends to change the newline from \r\n to just \n which breaks some things
+                        || event.getStartDate().compareTo(readStart) != 0
+                        || event.getEndDate().compareTo(readEnd) != 0
                 //then something also for image later to see if changed
         );
     }

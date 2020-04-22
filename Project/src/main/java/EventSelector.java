@@ -83,6 +83,7 @@ public class EventSelector {
     public void newEvent(ActionEvent actionEvent) throws IOException {
         EventEditor_GUI editor = GUIManager.swapScene("EventEditor");
         editor.setEvent(new Event());
+
     }
 
     public void openEvent(ActionEvent actionEvent) throws IOException {

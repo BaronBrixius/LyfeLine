@@ -15,7 +15,7 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<GridPane alignment="CENTER_RIGHT" hgap="5" prefHeight="530.0" prefWidth="325.0" vgap="5" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="EventEditor_GUI">
+<GridPane fx:id="editor" alignment="CENTER_RIGHT" hgap="5" prefHeight="530.0" prefWidth="325.0" stylesheets="@../styles/Sidebar.css" vgap="5" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="EventEditor_GUI">
     <columnConstraints>
         <ColumnConstraints maxWidth="-Infinity" minWidth="-Infinity" prefWidth="150" />
         <ColumnConstraints maxWidth="-Infinity" minWidth="-Infinity" prefWidth="150" />
@@ -23,19 +23,19 @@
     <padding>
         <Insets bottom="10" left="10" right="10" top="10" />
     </padding>
-    <Label fx:id="headerText" styleClass="headertext" text="New Event" GridPane.columnSpan="2" />
-    <Label text="Title" GridPane.columnSpan="2" GridPane.rowIndex="1" GridPane.valignment="BOTTOM" />
+    <Label fx:id="headerText" styleClass="headertext" GridPane.columnSpan="2" />
+    <Label styleClass="smallText" text="Title" GridPane.columnSpan="2" GridPane.rowIndex="1" GridPane.valignment="BOTTOM" />
     <TextField fx:id="titleInput" GridPane.columnSpan="2" GridPane.rowIndex="2" />
-    <Label text="Description" GridPane.columnSpan="2" GridPane.rowIndex="3" GridPane.valignment="BOTTOM" />
-    <TextArea fx:id="descriptionInput" wrapText="true" GridPane.columnSpan="2" GridPane.rowIndex="4" />
-    <Label text="Start" GridPane.columnSpan="2" GridPane.rowIndex="5" GridPane.valignment="BOTTOM" />
+    <Label styleClass="smallText" text="Description" GridPane.columnSpan="2" GridPane.rowIndex="3" GridPane.valignment="BOTTOM" />
+    <TextArea fx:id="descriptionInput" styleClass="smallText" wrapText="true" GridPane.columnSpan="2" GridPane.rowIndex="4" />
+    <Label styleClass="smallText" text="Start" GridPane.columnSpan="2" GridPane.rowIndex="5" GridPane.valignment="BOTTOM" />
     <DatePicker fx:id="startDate" GridPane.rowIndex="6" />
     <HBox alignment="BOTTOM_LEFT" spacing="5.0" GridPane.rowIndex="7" GridPane.valignment="BOTTOM">
         <CheckBox fx:id="hasDuration" onAction="#toggleHasDuration" />
-        <Label contentDisplay="RIGHT" text="End" />
+        <Label contentDisplay="RIGHT" styleClass="smallText" text="End" />
     </HBox>
     <DatePicker fx:id="endDate" disable="true" GridPane.rowIndex="8" />
-    <Label text="Image" GridPane.columnSpan="2" GridPane.rowIndex="9" GridPane.valignment="BOTTOM" />
+    <Label styleClass="smallText" text="Image" GridPane.columnSpan="2" GridPane.rowIndex="9" GridPane.valignment="BOTTOM" />
     <Button fx:id="uploadButton" alignment="CENTER" onAction="#uploadImage" styleClass="tinyButton" text="Upload img" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="10" />
     <ComboBox fx:id="imageInput" prefWidth="175.0" GridPane.columnSpan="2" GridPane.rowIndex="10" />
     <Region prefHeight="30" GridPane.rowIndex="11" GridPane.vgrow="ALWAYS" />
