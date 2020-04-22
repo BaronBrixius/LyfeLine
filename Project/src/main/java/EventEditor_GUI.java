@@ -119,29 +119,27 @@ public class EventEditor_GUI {
         titleInput.setText(event.getEventName());
         descriptionInput.setText(event.getEventDescrition());
 
-        if (event.getStartDate().getMonth() == 0) {
-            startDate.setValue(LocalDate.of(0, 1, 1));
-            endDate.setValue(LocalDate.of(0, 1, 1));
-        } else {
-            headerText.setText("Edit Node");
-            startDate.setValue(LocalDate.of(event.getStartDate().getYear(), event.getStartDate().getMonth(), event.getStartDate().getDay()));
-            if (event.getStartDate() != event.getEndDate()) {
-                hasDuration.setSelected(true);
-                toggleHasDuration();
-                endDate.setValue(LocalDate.of(event.getEndDate().getYear(), event.getEndDate().getMonth(), event.getEndDate().getDay()));
-            }
-        }
-
+        startDate.setValue(LocalDate.of(event.getStartDate().getYear(), event.getStartDate().getMonth(), event.getStartDate().getDay()));
 
         startTime1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23, event.getStartDate().getHours()));
         startTime2.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, event.getStartDate().getMinutes()));
         startTime3.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, event.getStartDate().getSeconds()));
 
-        endTime1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23, event.getEndDate().getHours()));
-        endTime2.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, event.getEndDate().getMinutes()));
-        endTime3.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, event.getEndDate().getSeconds()));
-
-
+        if (event.getEndDate() == null)
+        {
+            endTime1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23));
+            endTime2.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59));
+            endTime3.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59));
+        }
+        else
+        {
+            hasDuration.setSelected(true);
+            toggleHasDuration();
+            endDate.setValue(LocalDate.of(event.getEndDate().getYear(), event.getEndDate().getMonth(), event.getEndDate().getDay()));
+            endTime1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23, event.getEndDate().getHours()));
+            endTime2.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, event.getEndDate().getMinutes()));
+            endTime3.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, event.getEndDate().getSeconds()));
+        }
 
         return false;
     }
