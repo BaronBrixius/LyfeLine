@@ -50,7 +50,6 @@ public class EventEditor_GUI {
             deleteButton.setVisible(false);
             deleteButton.setDisable(true);
         }
-
     }
 
     @FXML
@@ -71,14 +70,23 @@ public class EventEditor_GUI {
         this.editable = editable;
         titleInput.setEditable(editable);
         descriptionInput.setEditable(editable);
+
         startDate.setEditable(editable);
         startTime1.setEditable(editable);
         startTime2.setEditable(editable);
         startTime3.setEditable(editable);
+        startTime1.setDisable(!editable);
+        startTime2.setDisable(!editable);
+        startTime3.setDisable(!editable);
+
         endDate.setEditable(editable);
         endTime1.setEditable(editable);
         endTime2.setEditable(editable);
         endTime3.setEditable(editable);
+        endTime1.setDisable(!editable);
+        endTime2.setDisable(!editable);
+        endTime3.setDisable(!editable);
+
         imageInput.setEditable(editable);
         uploadButton.setVisible(editable);
         uploadButton.setDisable(!editable);
@@ -131,7 +139,6 @@ public class EventEditor_GUI {
         endTime1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, event.getEndDate().getSeconds()));
         endTime2.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, event.getEndDate().getMinutes()));
         endTime3.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23, event.getEndDate().getHours()));
-
 
         return false;
     }
