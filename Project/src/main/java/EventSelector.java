@@ -82,11 +82,13 @@ public class EventSelector {
 
     public void newEvent(ActionEvent actionEvent) throws IOException {
         EventEditor_GUI editor = GUIManager.swapScene("EventEditor");
+        editor.headerText.setText("New Event");
         editor.setEvent(new Event());
     }
 
     public void openEvent(ActionEvent actionEvent) throws IOException {
         EventEditor_GUI editor = GUIManager.swapScene("EventEditor");
+        editor.headerText.setText("Edit Event");
         editor.setEvent(eventList.getSelectionModel().getSelectedItem());
         editor.toggleEditable(false);
     }
