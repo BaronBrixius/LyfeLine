@@ -38,6 +38,7 @@ public class Dashboard_GUI {
 	private ComboBox sortBy;
 	@FXML
 	private GridPane gridButtons;
+	private Timeline activeTimeline;
 
 	public void initialize() {
 		gridButtons.setVisible(GUIManager.loggedInUser.getAdmin());
@@ -98,6 +99,10 @@ public class Dashboard_GUI {
 			if (searchInput.isFocused())
 				searchInput.setText("");
 		});
+
+		list.getSelectionModel().selectedIndexProperty().addListener(e -> {
+			activeTimeline = list.getSelectionModel().getSelectedItem();
+		});
 	}
 
 	@FXML
@@ -149,7 +154,13 @@ public class Dashboard_GUI {
 
 	@FXML
 	public void editTimeline(ActionEvent event) throws IOException {
-		GUIManager.swapScene("Timeline_Editor_Screen");
+		if (activeTimeline != null) {
+			TimelineEditor_GUI editor = GUIManager.swapScene("Timeline_Editor_Screen");
+			editor.setActiveTimeline(activeTimeline);
+			System.out.println(activeTimeline.getName());
+			System.out.println(activeTimeline.getTimelineDescription());
+			System.out.println(activeTimeline.getTimelineID());
+		}
 
 	}
 
