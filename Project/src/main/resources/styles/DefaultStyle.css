@@ -78,6 +78,11 @@ for example:      buttonName.getStyleClass().add("smallButton");                
     -fx-pref-width: 150px;
 }
 
+.dashBoard{
+    -fx-pref-height: 75px;
+
+}
+
 .tinyButton{
     -fx-pref-width: 90px;
     -fx-pref-height: 25px;
@@ -122,6 +127,34 @@ for example:      buttonName.getStyleClass().add("smallButton");                
 
 .mediumText{
 	-fx-font-size: 1.5em;
+}
+.date-picker .label {
+    -fx-padding: 0 0 0 0;
+    -fx-pref-width: 5px;
+    -fx-pref-height: 15px;
+
+}
+
+/*.button settings was making Date picker weird, so these are the default settings for it, slightly tweaked for consistency.*/
+.date-picker-popup .button {
+    -fx-background-color: -fx-outer-border, -fx-inner-border, -fx-body-color;
+    -fx-background-insets: 0, 1, 2;
+    -fx-color: transparent;
+    -fx-background-radius: 222;
+    -fx-pref-width: 55px;
+    -fx-pref-height: 15px;
+}
+
+.date-picker-popup > * > .spinner > .button:focused {
+    -fx-background-insets: -0.2, 1, 2, -1.4, 2.6;
+}
+
+.date-picker-popup > * > .spinner > .button:hover {
+    -fx-color: -fx-hover-base;
+}
+
+.date-picker-popup > * > .spinner > .button:armed {
+    -fx-color: -fx-pressed-base;
 }
 
 
