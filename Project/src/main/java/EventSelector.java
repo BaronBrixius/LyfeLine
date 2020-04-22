@@ -1,10 +1,16 @@
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.sql.PreparedStatement;
@@ -74,8 +80,22 @@ public class EventSelector {
         //go back to somewhere
     }
 
-    public void deleteEvent(ActionEvent actionEvent) throws SQLException {
-        //probably want a popup
+    public void deleteEvent() throws SQLException, IOException {
+
+        Stage delConfirm = new Stage();
+        delConfirm.setTitle("Confirm Deletion");
+        delConfirm.initOwner(GUIManager.mainStage);
+
+        delConfirm.initModality(Modality.WINDOW_MODAL);
+        delConfirm.setResizable(false);
+
+
+        FXMLLoader popupDeletion = new FXMLLoader(GUIManager.class.getResource("fxml/Popup.fxml"));
+        delConfirm.setScene(new Scene(popupDeletion.load()));
+
+        Popup deletionPopup = popupDeletion.getController();
+        deletionPopup.setMode(1);
+
         DBM.deleteFromDB(eventList.getSelectionModel().getSelectedItems());
     }
 

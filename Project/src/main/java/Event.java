@@ -50,6 +50,10 @@ class Event implements DBObject<Event> {
         return DBM.getFromDB(DBM.conn.prepareStatement("SELECT StartYear FROM events"), rs -> rs.getInt("StartYear"));
     }
 
+    public int getUserID() {
+        return userID;
+    }
+
     @Override
     public PreparedStatement getInsertQuery() throws SQLException, RuntimeException {
         if (eventID > 0)

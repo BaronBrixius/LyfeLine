@@ -1,12 +1,11 @@
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.util.converter.LocalTimeStringConverter;
+import javafx.scene.layout.HBox;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
 import java.util.Optional;
 
 public class EventEditor_GUI {
@@ -18,9 +17,15 @@ public class EventEditor_GUI {
     @FXML
     public Button deleteButton;
     @FXML
-    public Spinner<LocalTime> startTime;
+    public HBox startTime;
     @FXML
-    public Spinner<LocalTime> endTime;
+    public HBox endTime;
+    public Spinner<Integer> startTime1;
+    public Spinner<Integer> startTime2;
+    public Spinner<Integer> startTime3;
+    public Spinner<Integer> endTime1;
+    public Spinner<Integer> endTime2;
+    public Spinner<Integer> endTime3;
     @FXML
     TextField titleInput = new TextField();
     @FXML
@@ -36,46 +41,15 @@ public class EventEditor_GUI {
     boolean editable = true;
     private Event event;
 
-    public EventEditor_GUI() {
-        GUIManager.mainStage.setTitle("Event Editor");
-    }
-
     public void initialize() {
-        /*if (!GUIManager.loggedInUser.getAdmin()) {        //TODO uncomment this when hooked up to rest of program
+        if (
+                GUIManager.loggedInUser == null ||          //TODO delete this when hooked up to rest of program
+                        !GUIManager.loggedInUser.getAdmin()) {
             editButton.setVisible(false);
             editButton.setDisable(true);
             deleteButton.setVisible(false);
             deleteButton.setDisable(true);
-        }*/
-
-
-        startTime = new Spinner(new SpinnerValueFactory() {
-
-            {
-                setConverter(new LocalTimeStringConverter(FormatStyle.MEDIUM));
-            }
-
-            @Override
-            public void decrement(int steps) {
-                if (getValue() == null)
-                    setValue(LocalTime.now());
-                else {
-                    LocalTime time = (LocalTime) getValue();
-                    setValue(time.minusMinutes(steps));
-                }
-            }
-
-            @Override
-            public void increment(int steps) {
-                if (this.getValue() == null)
-                    setValue(LocalTime.now());
-                else {
-                    LocalTime time = (LocalTime) getValue();
-                    setValue(time.plusMinutes(steps));
-                }
-            }
-        });
-        startTime.setEditable(true);
+        }
     }
 
     @FXML
@@ -89,9 +63,11 @@ public class EventEditor_GUI {
         titleInput.setEditable(editable);
         descriptionInput.setEditable(editable);
         startDate.setEditable(editable);
-        startTime.setEditable(editable);
+
+        //for (Spinner (Spinner) s:  startTime.getChildren())
+        //    s.setEditable(editable);
         endDate.setEditable(editable);
-        endTime.setEditable(editable);
+        //endTime.setEditable(editable);
         imageInput.setEditable(editable);
         uploadButton.setVisible(editable);
         uploadButton.setDisable(!editable);
@@ -124,13 +100,27 @@ public class EventEditor_GUI {
     }
 
     @FXML
-    private boolean saveEvent() {
+    private boolean saveConfirm() {
+        Alert confirmsave = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmsave.setTitle("Confirm Save");
+        confirmsave.setHeaderText("Saving changes to this event will alter it for all other timelines as well.");
+        confirmsave.setContentText("Would you like to save?");
 
+        Optional<ButtonType> result = confirmsave.showAndWait();
+
+        if (result.get() == ButtonType.CANCEL)
+            return false;
+        return saveEvent();
+    }
+
+    private boolean saveEvent() {
         //setters to update each field of this.event, based on the current info in the text fields
         this.event.setTitle(titleInput.getText());
         this.event.setDescription(descriptionInput.getText());
         this.event.setStartDate(startDate.getValue().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
-        this.event.setEndDate(endDate.getValue().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+
+        //if ()
+            this.event.setEndDate(endDate.getValue().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
         //this.event.setImage(); later
 
         try {
@@ -142,7 +132,6 @@ public class EventEditor_GUI {
         } catch (SQLException e) {
             return false;
         }
-
     }
 
     @FXML
@@ -160,27 +149,28 @@ public class EventEditor_GUI {
         try {
             if (this.event.getEventID() == 0)
                 throw new IllegalArgumentException("event not in database");
-            else
+            else {
                 DBM.deleteFromDB(event);
+                close();
+            }
             return true;
-        } catch (SQLException e) {
+        } catch (SQLException | IOException e) {
             return false;
         }
     }
 
     @FXML
     private void close() throws IOException {
-        //if(!this.event.getEventName().equals(titleInput.getText()) || !this.event.getEventDescrition().equals(descriptionInput.getText()) || !this.event.getEventStart().toString().equals(startInput.getValue().format(DateTimeFormatter.ofPattern("yyyyMMdd"+0+0+0+0))) ||this.event.getEventEnd().toString().equals(endInput.getValue().format(DateTimeFormatter.ofPattern("yyyyMMdd"+0+0+0+0)))) {//then something also for image later to see if changed
-        //do you wanna save and exit or just save?
-        //if save and exit:
-        //saveEvent();
-        //GUIManager.swapScene("example");
-        //else
-        //GUIManager.swapScene("example");
-        //}
-        //close editor, return to previous screen
-        //else
-        GUIManager.previousPage();
+        if (!this.event.getEventName().equals(titleInput.getText())
+                || !this.event.getEventDescrition().equals(descriptionInput.getText())
+                || !this.event.getEventStart().toString().equals(startDate.getValue().format(DateTimeFormatter.ofPattern("yyyyMMdd" + 0 + 0 + 0 + 0)))
+                || this.event.getEventEnd().toString().equals(endDate.getValue().format(DateTimeFormatter.ofPattern("yyyyMMdd" + 0 + 0 + 0 + 0))))
+            //then something also for image later to see if changed
+            //do you wanna save and exit or just save?
+            //if save and exit:
+            saveConfirm();
+            //close editor, return to previous screen
+        else
+            GUIManager.previousPage();
     }
-
 }

@@ -42,8 +42,20 @@
     <Button fx:id="editButton" alignment="CENTER" maxHeight="30" onAction="#toggleEditMode" styleClass="smallButton" text="Save" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="12" />
     <Button fx:id="deleteButton" alignment="CENTER" maxHeight="30" onAction="#deleteEvent" styleClass="smallButton" text="Delete" GridPane.halignment="CENTER" GridPane.rowIndex="13" />
     <Button alignment="CENTER" maxHeight="30" onAction="#close" styleClass="smallButton" text="Close" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="13" />
-   <Spinner fx:id="startTime" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-   <Spinner fx:id="endTime" disable="true" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+   <HBox fx:id="startTime" GridPane.columnIndex="1" GridPane.rowIndex="6">
+      <children>
+         <Spinner fx:id="startTime1" />
+         <Spinner fx:id="startTime2" />
+         <Spinner fx:id="startTime3" />
+      </children>
+   </HBox>
+   <HBox fx:id="endTime" disable="true" GridPane.columnIndex="1" GridPane.rowIndex="8">
+      <children>
+         <Spinner fx:id="endTime1" />
+         <Spinner fx:id="endTime2" />
+         <Spinner fx:id="endTime3" />
+      </children>
+   </HBox>
    <rowConstraints>
       <RowConstraints />
       <RowConstraints />
