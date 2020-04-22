@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<GridPane alignment="CENTER_RIGHT" hgap="5" prefHeight="572.0" prefWidth="325.0" vgap="5" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="EventSelector">
+<GridPane fx:id="selector" alignment="CENTER_RIGHT" hgap="5" onMouseDragOver="#populateEventList" prefHeight="572.0" prefWidth="325.0" vgap="5" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="EventSelector">
     <columnConstraints>
         <ColumnConstraints maxWidth="-Infinity" minWidth="-Infinity" prefWidth="150.0" />
         <ColumnConstraints maxWidth="-Infinity" minWidth="-Infinity" prefWidth="150.0" />
@@ -19,7 +19,7 @@
         <Insets bottom="10" left="10" right="10" top="10" />
     </padding>
    <ComboBox fx:id="timelineList" prefWidth="150.0" promptText="Timeline" />
-   <ComboBox fx:id="sortBy" onAction="#sortEvents" prefWidth="150.0" promptText="Sort By" GridPane.rowIndex="1" />
+   <ComboBox fx:id="sortBy" prefWidth="150.0" promptText="Sort By" GridPane.rowIndex="1" />
    <TextField fx:id="searchBar" onAction="#search" text="Search..." GridPane.rowIndex="2" />
    <ListView fx:id="eventList" prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="2" GridPane.rowIndex="3" />
    <Button alignment="CENTER" maxHeight="30" onAction="#newEvent" styleClass="smallButton" text="New Event" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
