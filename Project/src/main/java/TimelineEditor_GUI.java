@@ -1,20 +1,13 @@
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.*;
 
 import java.io.IOException;
-import java.net.URL;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.ResourceBundle;
 
 public class TimelineEditor_GUI {
 
@@ -23,24 +16,44 @@ public class TimelineEditor_GUI {
     @FXML private TextArea keywordsInput;
     @FXML private DatePicker startDateInput;
     @FXML private DatePicker endDateInput;
-    @FXML private ComboBox timeInput;
-
+    @FXML private ComboBox<String> timeInput;
+    
+    public static Timeline activeTimeline;
+    PreparedStatement stmt2;
+    
+    int id = 1;
 
     public TimelineEditor_GUI() {
-
+        GUIManager.mainStage.setTitle("Timeline Editor");
     }
 
-
     @FXML
-    public void initialize() throws IOException {
-        Timeline timeline = new Timeline(); //If editing instead of creating, make this equal to the Timeline to be edited.
-
-        titleInput = new TextArea(timeline.getName());
-
-        descriptionInput = new TextArea();  //put timeline.getTimelineDescription, or however it's called, into the constructor.
-
+    private void initialize() throws SQLException {
+    	
+    	//This is for constructing a new timeline.
+    	if (activeTimeline != null) {
+    		Timeline activeTimeline = new Timeline(titleInput.getText(), descriptionInput.getText(), null, null, null, null, null, 0, false);
+    		
+    		//Timeline(String TimelineName, String TimelineDescription, String Scale, String Theme, Date StartDate, Date Enddate, Date DateCreated, 
+    				//int TimelineOwner, boolean Private) Date(LocalDate.now())
+    	}
+    	else {
+    		//Get a timeline from DB. Such ineficient, much sad!
+    		stmt2 = DBM.conn.prepareStatement("SELECT * FROM timelines WHERE timelineID = " + id);
+    		List<Timeline> timelineList = DBM.getFromDB(stmt2, new Timeline());          
+            activeTimeline = timelineList.get(0);
+            titleInput.setText(activeTimeline.getTimelineName());
+            descriptionInput.setText(activeTimeline.getTimelineDescription());
+            startDateInput.setValue(LocalDate.of(activeTimeline.getStartDate().getYear(), activeTimeline.getStartDate().getMonth(), activeTimeline.getStartDate().getDay()));
+            endDateInput.setValue(LocalDate.of(activeTimeline.getEndDate().getYear(), activeTimeline.getEndDate().getMonth(), activeTimeline.getEndDate().getDay()));	
+    	}
+    		
 
         StringBuilder keywordsList = new StringBuilder();
+        
+       
+        
+        
         /*
         This is how I'm assuming the keywords get into the TextArea when they are implemented.
         Store them as a String Array, and append them one by one to a StringBuilder.
@@ -51,26 +64,27 @@ public class TimelineEditor_GUI {
         }
         keywordsList.append(timeline.getKeywords.get(timeline.getKeywords.size - 1));
         */
-        keywordsInput = new TextArea(keywordsList.toString());
+        keywordsInput.setText(keywordsList.toString());
 
-        startDateInput = new DatePicker();    //put timeline.getStartDate.toLocaleDate() in constructor
+        //startDateInput.setValue();    //put timeline.getStartDate.toLocaleDate() as parameter
 
-        endDateInput = new DatePicker();  //put timeline.getEndDate.toLocaleDate() in constructor
 
-        ObservableList<String> timeUnits = FXCollections.observableArrayList();
-        timeUnits.addAll("Seconds", "Minutes", "Hours", "Days", "Years");
-        timeInput = new ComboBox<>(timeUnits);
+        //endDateInput.setValue();  //put timeline.getEndDate.toLocaleDate() as parameter
 
     }
 
     @FXML
     public void save(MouseEvent event) {
         System.out.println("The Save button has been pushed.");
+        //Timeline.activeTimeline.getInsertQuery();
+      
+        
     }
 
     @FXML
     public void cancel() throws IOException {
         GUIManager.swapScene("Welcome_Screen");
+        activeTimeline = null;
     }
 
 
