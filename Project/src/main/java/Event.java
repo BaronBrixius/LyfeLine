@@ -189,8 +189,8 @@ class Event implements DBObject<Event> {
     public PreparedStatement getUpdateQuery() throws SQLException {
         if (eventID == 0)
             throw new SQLDataException("Event not in database cannot be updated.");
-        PreparedStatement out = DBM.conn.prepareStatement("UPDATE `events` SET `EventTitle` = ?, `EventDescription` = ?, `EventImage` = ?, `StartYear` = ?,  `StartMonth` = ?,  `StartDay` = ?,  `StartHour` = ?,  `StartMinute` = ?,  " +
-                "`StartSecond` = ?,  `StartMillisecond` = ?,    `EndYear` = ?,  `EndMonth` = ?,  `EndDay` = ?,  `EndHour` = ?,  `EndMinute` = ?,  `EndSecond` = ?,  `EndMillisecond` = ? WHERE (`EventID` = ?);");
+        PreparedStatement out = DBM.conn.prepareStatement("UPDATE `events` SET `EventName` = ?, `EventDescription` = ?, `EventImage` = ?, `StartYear` = ?,  `StartMonth` = ?,  `StartDay` = ?,  `StartHour` = ?,  `StartMinute` = ?,  " +
+                "`StartSecond` = ?,  `StartMillisecond` = ?,    `EndYear` = ?,  `EndMonth` = ?,  `EndDay` = ?,  `EndHour` = ?,  `EndMinute` = ?,  `EndSecond` = ?,  `EndMillisecond` = ?, `EventOwner` = ?  WHERE (`EventID` = ?);");
         out.setString(1, this.eventName);
         out.setString(2, this.eventDescription);
         out.setInt(3, this.imageID);
@@ -208,7 +208,8 @@ class Event implements DBObject<Event> {
         out.setInt(15, endDate.getMinutes());
         out.setInt(16, endDate.getSeconds());
         out.setInt(17, endDate.getMilliseconds());
-        out.setInt(18, eventID);
+        out.setInt(18, userID);
+        out.setInt(19, eventID);
         return out;
     }
 
