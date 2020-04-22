@@ -258,6 +258,9 @@ public class Timeline implements DBObject<Timeline>{
 		this.timelineDescription = description;
 	}
 
+	public int getTimelineOwnerID() {
+		return timelineOwner;
+
 	public void setTheme(String theme) {
 		this.theme = theme;
 	}

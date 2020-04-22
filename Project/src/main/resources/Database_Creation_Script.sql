@@ -193,7 +193,7 @@ INSERT INTO `users`
     (`UserID`, `UserName`, `UserEmail`, `Password`, `Salt`, `Admin`)
 VALUES ('1', 'Ben', 'Ben@gmail.com',
         'FPUpkk14h2EWAX9J7q18Ue6QJ/VSrs5ulnaw/Tggo23smYvqcLKihIUARNQcxUpDSGXOGBsGo4gjKTikDfrpxw==',
-        'hXEFj6Yy9hanXVOUyACANrUi1eZs4f', '0'),
+        'hXEFj6Yy9hanXVOUyACANrUi1eZs4f', '1'),
        ('2', 'Max', 'Max@gmail.com',
         'bXKyPFQD//MW1XtOlVrgEDvEXIm9xzT+z4wBrMKR7DTHeETUPFlYpcuvanM/I2dPZSa5fQEnKc4E2D6ZD7sOiA==',
         'Q48XUaFIG4LITasAYZzSNUHskubTw5', '0'),
