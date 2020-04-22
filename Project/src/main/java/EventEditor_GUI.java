@@ -5,6 +5,7 @@ import javafx.scene.layout.HBox;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
@@ -50,6 +51,16 @@ public class EventEditor_GUI {
             deleteButton.setVisible(false);
             deleteButton.setDisable(true);
         }
+
+
+        startTime1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 60, 0));
+        startTime2.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 60, 0));
+        startTime3.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 24, 0));
+
+        endTime1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 60, 0));
+        endTime2.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 60, 0));
+        endTime3.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 24, 0));
+
     }
 
     @FXML
@@ -95,7 +106,29 @@ public class EventEditor_GUI {
     }
 
     private boolean populateDisplay() {
-        //populate fields with info from event, or leave blank if new event and such
+
+        titleInput.setText(event.getEventName());
+        descriptionInput.setText(event.getEventDescrition());
+        
+
+        startTime1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 60, event.getEventStart().getSeconds()));
+        startTime2.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 60, event.getEventStart().getMinutes()));
+        startTime3.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 24, event.getEventStart().getHours()));
+
+        if (event.getEventEnd() != null)
+        {
+            endTime1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 60, event.getEventEnd().getSeconds()));
+            endTime2.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 60, event.getEventEnd().getMinutes()));
+            endTime3.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 24, event.getEventEnd().getHours()));
+        }
+        else
+        {
+            endTime1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 60, 0));
+            endTime2.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 60, 0));
+            endTime3.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 24, 0));
+        }
+
+
         return false;
     }
 
