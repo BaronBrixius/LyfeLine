@@ -9,7 +9,7 @@ class Main {
         PreparedStatement stmt;
         PreparedStatement stmt2;
         try {
-            new DBM("jdbc:mysql://localhost?useTimezone=true&serverTimezone=UTC", "root", "AJnuHA^8VKHht=uB", "project");
+            new DBM();
             DBM.setupSchema();       //destroys + remakes DB with default settings, can comment this out after first run if desired
 
 
@@ -29,6 +29,11 @@ class Main {
 
             User professorChaos = new User("Seeqwul Encurshun', 'BigDoc@abuseme.biz', 'FunPass', 'TheSalt', '1'); -- ", "email@yo.mama", "Passw0rd!");    //SQL injection attempt
             DBM.insertIntoDB(professorChaos);
+<<<<<<< HEAD
+
+
+
+=======
             
             /*
             //I add 3 timelines manually to get the exception that this user has already this timelinename in it - timeline 2 is good but 3 is the same so exception is thrown
@@ -39,7 +44,8 @@ class Main {
             Timeline test3 = new Timeline(0, "My other timeline", "Very cool timeline", "Month", "pink", new Date(1,0,0,0,0,0,0), new Date(2,0,0,0,0,0,0),  new Date(2,0,0,0,0,0,0), 11, false);
             DBM.insertIntoDB(test3); //Here are two timelines with same name == NOT OK because I now same  userID and same name
 			*/
-
+          
+>>>>>>> 46c7ff7924f77a9add491ed7c808ccb8b4900cc3
             Date testing = new Date(1984,24,10,0,0,0,0);
             System.out.println(testing.toString());
             User teacher = new User("Hans Ove", "Hans@math.biz", "Passw0rd!");
@@ -64,7 +70,7 @@ class Main {
             for (User e : userList)
                 System.out.println(e);
 
-        } catch (FileNotFoundException | SQLException | ClassNotFoundException e) {
+        } catch (SQLException | ClassNotFoundException | FileNotFoundException e) {
             e.printStackTrace();
         } finally {
             try {

@@ -1,14 +1,14 @@
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
-import javafx.scene.layout.*;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Stack;
 
 public class GUIManager extends Application {
 
@@ -18,16 +18,23 @@ public class GUIManager extends Application {
     public static TopMenu menu;
     public static VBox main;
     public static FXMLLoader loader;
+    public static Stack<Node> pastPages = new Stack<>();
 
     public static void main(String[] args) {
         launch(args);
     }
 
     public static <T> T swapScene(String fxml) throws IOException {
+        pastPages.add(main.getChildren().get(1));
         loader = new FXMLLoader(GUIManager.class.getResource("FXML/" + fxml + ".fxml"));
         main.getChildren().set(1, loader.load());
         return loader.getController();
     }
+
+    public static void previousPage() {
+        main.getChildren().set(1, pastPages.pop());
+    }
+
 
     public static void applyStyle(String style) {
         mainStage.getScene().getStylesheets().add("File:src/main/resources/styles/" + style + ".css");
@@ -39,8 +46,8 @@ public class GUIManager extends Application {
 
         // Used to establish connection to the DB.
         try {
-            new DBM("jdbc:mysql://localhost?useTimezone=true&serverTimezone=UTC", "root", "AJnuHA^8VKHht=uB", "project");
-            //DBM.setupSchema(); //comment out for testing of log in
+            new DBM();
+            DBM.setupSchema(); //comment out for testing of log in
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -48,10 +55,10 @@ public class GUIManager extends Application {
         main = new VBox();
 
         loader = new FXMLLoader(getClass().getResource("FXML/TopMenu.fxml"));
-        
+
 
         main.getChildren().addAll(loader.load(), new Pane());
-        
+
         menu = loader.getController();
         menu.updateLoggedInStatus();
 

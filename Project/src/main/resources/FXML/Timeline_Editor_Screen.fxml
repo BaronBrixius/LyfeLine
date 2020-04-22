@@ -53,11 +53,7 @@
       <ComboBox fx:id="timeInput" prefWidth="150.0">
       <items>
          <FXCollections fx:factory="observableArrayList">
-            <String fx:value="Seconds"/>
-            <String fx:value="Minutes"/>
-            <String fx:value="Hours"/>
-            <String fx:value="Days"/>
-            <String fx:value="Years"/>
+            <String fx:value="Seconds"/> <String fx:value="Minutes"/> <String fx:value="Hours"/> <String fx:value="Days"/> <String fx:value="Years"/>
          </FXCollections>
       </items>
    </ComboBox>

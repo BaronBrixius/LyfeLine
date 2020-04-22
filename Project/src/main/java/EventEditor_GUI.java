@@ -9,6 +9,12 @@ import java.util.Optional;
 public class EventEditor_GUI {
 
     @FXML
+    public Button editButton;
+    @FXML
+    public Button uploadButton;
+    @FXML
+    public Button deleteButton;
+    @FXML
     TextField titleInput = new TextField();
     @FXML
     TextArea descriptionInput = new TextArea();
@@ -20,14 +26,20 @@ public class EventEditor_GUI {
     DatePicker endInput = new DatePicker();             //only a datepicker for skeleton, will figure best way to enter info later
     @FXML
     ComboBox<String> imageInput = new ComboBox<>();
+    boolean editable = true;
     private Event event;
 
     public EventEditor_GUI() {
-
+        GUIManager.mainStage.setTitle("Event Editor");
     }
 
     public void initialize() {
-        populateDisplay();
+        /*if (!GUIManager.loggedInUser.getAdmin()) {        //TODO uncomment this when hooked up to rest of program
+            editButton.setVisible(false);
+            editButton.setDisable(true);
+            deleteButton.setVisible(false);
+            deleteButton.setDisable(true);
+        }*/
     }
 
     @FXML
@@ -35,15 +47,26 @@ public class EventEditor_GUI {
         endInput.setDisable(!hasDuration.isSelected());
     }
 
-    @FXML
-    private void uploadImage() {
-        /*//don't implement, not part of current sprint
-        System.out.println("Button pressed.");*/
+    public void toggleEditMode() {       //I know this is ugly right now
+        editable = !editable;
+        titleInput.setEditable(editable);
+        descriptionInput.setEditable(editable);
+        startInput.setEditable(editable);
+        endInput.setEditable(editable);
+        imageInput.setEditable(editable);
+        uploadButton.setVisible(editable);
+        uploadButton.setDisable(!editable);
 
-        changeEvent(new Event());
+        editButton.setText(editable ? "Save" : "Edit");
     }
 
-    public boolean changeEvent(int eventID) {       //is this even needed? don't implement yet
+    @FXML
+    private void uploadImage() {
+        //don't implement, not part of current sprint
+        System.out.println("Button pressed.");
+    }
+
+    public boolean setEvent(int eventID) {       //is this even needed? don't implement yet
         /*Event newEvent = logic to find Event in database and get its info
         if (newEvent != null)
             return changeEvent(newEvent);*/
@@ -51,9 +74,8 @@ public class EventEditor_GUI {
         return false;
     }
 
-    public boolean changeEvent(Event event) {       //is this even needed? don't implement yet
+    public boolean setEvent(Event event) {
         this.event = event;
-        System.out.println("change event");
         return populateDisplay();
     }
 
@@ -63,7 +85,7 @@ public class EventEditor_GUI {
     }
 
     @FXML
-    private boolean saveEvent()  {
+    private boolean saveEvent() {
 
         //setters to update each field of this.event, based on the current info in the text fields
         this.event.setTitle(titleInput.getText());
@@ -102,26 +124,24 @@ public class EventEditor_GUI {
             else
                 DBM.deleteFromDB(event);
             return true;
-        } catch (SQLException e){
+        } catch (SQLException e) {
             return false;
         }
-
-
     }
 
     @FXML
     private void close() throws IOException {
-        if(!this.event.getEventName().equals(titleInput.getText()) || !this.event.getEventDescrition().equals(descriptionInput.getText()) || !this.event.getEventStart().toString().equals(startInput.getValue().format(DateTimeFormatter.ofPattern("yyyyMMdd"+0+0+0+0))) ||this.event.getEventEnd().toString().equals(endInput.getValue().format(DateTimeFormatter.ofPattern("yyyyMMdd"+0+0+0+0)))) {//then something also for image later to see if changed
-            //do you wanna save and exit or just save?
-                     //if save and exit:
-                     //saveEvent();
-                    //GUIManager.swapScene("example");
-                    //else
-                     //GUIManager.swapScene("example");
-        }
+        //if(!this.event.getEventName().equals(titleInput.getText()) || !this.event.getEventDescrition().equals(descriptionInput.getText()) || !this.event.getEventStart().toString().equals(startInput.getValue().format(DateTimeFormatter.ofPattern("yyyyMMdd"+0+0+0+0))) ||this.event.getEventEnd().toString().equals(endInput.getValue().format(DateTimeFormatter.ofPattern("yyyyMMdd"+0+0+0+0)))) {//then something also for image later to see if changed
+        //do you wanna save and exit or just save?
+        //if save and exit:
+        //saveEvent();
+        //GUIManager.swapScene("example");
+        //else
+        //GUIManager.swapScene("example");
+        //}
         //close editor, return to previous screen
-        else
-        GUIManager.swapScene("example");
-        System.out.println("Button pressed.");
+        //else
+        GUIManager.previousPage();
     }
+
 }
