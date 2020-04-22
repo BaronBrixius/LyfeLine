@@ -138,7 +138,7 @@ public class Dashboard_GUI {
 		}
 
 
-		//GUIManager.swapScene("Timeline_Editor_Screen");
+		GUIManager.swapScene("Timeline_Editor_Screen");
 	}
 
 	// open DeletePopUp
