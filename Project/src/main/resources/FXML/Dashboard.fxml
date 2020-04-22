@@ -66,5 +66,6 @@
             </Button>
         </HBox>
         <Button fx:id="adminGUI" alignment="CENTER" mnemonicParsing="false" onAction="#adminScreen" prefWidth="297.0" styleClass="dashBoard" text="Admin Manager" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+      <Button fx:id="eventEditorButton" mnemonicParsing="false" onAction="#openEventEditor" styleClass="smallButton" text="Event editor" GridPane.columnIndex="1" />
     </GridPane>
 </VBox>

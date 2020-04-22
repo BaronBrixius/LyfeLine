@@ -38,6 +38,8 @@ public class Dashboard_GUI {
 	private ComboBox sortBy;
 	@FXML
 	private GridPane gridButtons;
+	@FXML
+	private Button eventEditorButton; // created by Jan for meeting with teacher Thursday
 
 	public void initialize() {
 		gridButtons.setVisible(GUIManager.loggedInUser.getAdmin());
@@ -147,6 +149,15 @@ public class Dashboard_GUI {
 
 	@FXML
 	public void editTimeline(ActionEvent event) {
+	}
+	
+	@FXML
+	public void openEventEditor(ActionEvent event) { // created by Jan for meeting with teacher Thursday
+		try {
+			GUIManager.swapScene("MockupTimeline");
+		} catch (IOException e) {
+			
+		}
 	}
 
 	// open DeletePopUp
