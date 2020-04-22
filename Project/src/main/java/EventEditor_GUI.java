@@ -157,7 +157,7 @@ public class EventEditor_GUI {
         this.event.setDescription(descriptionInput.getText());
         this.event.setStartDate(startDate.getValue().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
 
-            this.event.setEndDate((hasDuration.isSelected()) ? endDate.getValue().format(DateTimeFormatter.ofPattern("yyyy-MM-dd") : event.getStartDate()));
+         //   this.event.setEndDate((hasDuration.isSelected()) ? endDate.getValue().format(DateTimeFormatter.ofPattern("yyyy-MM-dd") : event.getStartDate()));
         //this.event.setImage(); later
 
         try {
