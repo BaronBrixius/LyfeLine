@@ -72,7 +72,7 @@ public class EventSelector {
     public void openEvent(ActionEvent actionEvent) throws IOException {
         EventEditor_GUI editor = GUIManager.swapScene("EventEditor");
         editor.setEvent(eventList.getSelectionModel().getSelectedItem());
-        editor.toggleEditMode();
+        editor.toggleEditable(false);
     }
 
     public void close(ActionEvent actionEvent) {

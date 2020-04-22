@@ -59,12 +59,16 @@ public class EventEditor_GUI {
         endTime.setDisable(!hasDuration.isSelected());
     }
 
-    public void toggleEditMode() {      //I know this is ugly right now
+    public void saveEditButton() {      //I know this is ugly right now
         if (editable && hasChanges())   //if unsaved changes, try to save
             if (!saveConfirm())         //if save cancelled, don't change mode
                 return;
 
-        editable = !editable;
+        toggleEditable(!editable);
+    }
+
+    void toggleEditable(boolean editable) {
+        this.editable = editable;
         titleInput.setEditable(editable);
         descriptionInput.setEditable(editable);
         startDate.setEditable(editable);
@@ -141,9 +145,10 @@ public class EventEditor_GUI {
         //setters to update each field of this.event, based on the current info in the text fields
         this.event.setTitle(titleInput.getText());
         this.event.setDescription(descriptionInput.getText());
-        this.event.setStartDate(startDate.getValue().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+        LocalDate start = startDate.getValue();
+        this.event.setStartDate(new Date(start.getYear(), start.getMonth().getValue(), start.getYear(), start.getYear(), start.getYear(), start.getYear(), 0));
 
-         //   this.event.setEndDate((hasDuration.isSelected()) ? endDate.getValue().format(DateTimeFormatter.ofPattern("yyyy-MM-dd") : event.getStartDate()));
+        //   this.event.setEndDate((hasDuration.isSelected()) ? endDate.getValue().format(DateTimeFormatter.ofPattern("yyyy-MM-dd") : event.getStartDate()));
         //this.event.setImage(); later
 
         try {
