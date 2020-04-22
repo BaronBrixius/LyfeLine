@@ -41,6 +41,8 @@ public class EventEditor_GUI {
     @FXML
     public Label headerText;
     @FXML
+    public Text errorMessage;
+    @FXML
     TextField titleInput = new TextField();
     @FXML
     TextArea descriptionInput = new TextArea();
@@ -53,12 +55,12 @@ public class EventEditor_GUI {
     @FXML
     ComboBox<String> imageInput = new ComboBox<>();
 
+    int startYear;
+
     boolean editable = true;
+    EventSelector prevScreen;
     private Event event;
 
-
-
-    EventSelector prevScreen;
     public void setPrevScreen(EventSelector prevScreen) {             //TODO delete this inelegant solution
         this.prevScreen = prevScreen;
     }
@@ -94,19 +96,28 @@ public class EventEditor_GUI {
             start = startDate.getValue();
             readStart = new Date(start.getYear(), start.getMonth().getValue(), start.getDayOfMonth(),
                     startTime1.getValue(), startTime2.getValue(), startTime3.getValue(), event.getStartDate().getMilliseconds());   //milliseconds not implemented yet, do we need to?
-        }catch (NullPointerException e) {errorMessage.setText("Start date can't be empty."); return;}
-        catch (DateTimeParseException d) {errorMessage.setText("Start date's format is improper."); return;}
+        } catch (NullPointerException e) {
+            errorMessage.setText("Start date can't be empty.");
+            return;
+        } catch (DateTimeParseException d) {
+            errorMessage.setText("Start date's format is improper.");
+            return;
+        }
 
         //If the End Date is selected, check it for problems too.
-        if (hasDuration.isSelected())
-        {
+        if (hasDuration.isSelected()) {
             try {
                 endDate.setValue(endDate.getConverter().fromString(endDate.getEditor().getText()));
                 end = endDate.getValue();
                 readEnd = new Date(end.getYear(), end.getMonth().getValue(), end.getDayOfMonth(), endTime1.getValue(), endTime2.getValue(), endTime3.getValue(), 0);
 
-            }catch (NullPointerException e) {errorMessage.setText("End date can't be empty if selected."); return;}
-            catch (DateTimeParseException d) {errorMessage.setText("End date's format is improper."); return;}
+            } catch (NullPointerException e) {
+                errorMessage.setText("End date can't be empty if selected.");
+                return;
+            } catch (DateTimeParseException d) {
+                errorMessage.setText("End date's format is improper.");
+                return;
+            }
         }
 
 
@@ -212,15 +223,11 @@ public class EventEditor_GUI {
     void updateEvent() {
         //setters to update each field of this.event, based on the current info in the text fields
         event.setTitle(titleInput.getText());
-        event.setDescription(descriptionInput.getText());
-        //There is a bug with typing in a DatePicker, this line fixes that.
-
         event.setDescription(descriptionInput.getText().replaceAll("([^\r])\n", "$1\r\n"));
 
         LocalDate start = startDate.getValue();
         event.setStartDate(new Date(start.getYear(), start.getMonth().getValue(), start.getDayOfMonth(),
                 startTime1.getValue(), startTime2.getValue(), startTime3.getValue(), event.getStartDate().getMilliseconds()));  //milliseconds not implemented yet, do we need to?
-
 
 
         LocalDate end;
@@ -281,6 +288,7 @@ public class EventEditor_GUI {
                 startTime1.getValue(), startTime2.getValue(), startTime3.getValue(), event.getStartDate().getMilliseconds());   //milliseconds not implemented yet, do we need to?
 
         //If end is null, set end equal to start
+        LocalDate end = endDate.getValue();
         Date readEnd = new Date(end.getYear(), end.getMonth().getValue(), end.getDayOfMonth(), endTime1.getValue(), endTime2.getValue(), endTime3.getValue(), event.getEndDate().getMilliseconds());
 
         return (
