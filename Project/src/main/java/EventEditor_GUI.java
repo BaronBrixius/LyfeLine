@@ -114,6 +114,9 @@ public class EventEditor_GUI {
     }
 
     private boolean populateDisplay() {
+
+        event.setEndDate(new Date(4, 3, 4, 5, 3,4, 3));
+
         titleInput.setText(event.getEventName());
         descriptionInput.setText(event.getEventDescrition());
 
@@ -121,6 +124,13 @@ public class EventEditor_GUI {
             startDate.setValue(LocalDate.of(0, 1, 1));
         else
             startDate.setValue(LocalDate.of(event.getStartDate().getYear(), event.getStartDate().getMonth(), event.getStartDate().getDay()));
+
+        if (event.getStartDate() != event.getEndDate())
+        {
+            hasDuration.setSelected(true);
+            toggleHasDuration();
+            endDate.setValue(LocalDate.of(event.getEndDate().getYear(), event.getEndDate().getMonth(), event.getEndDate().getDay()));
+        }
 
         startTime1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, event.getStartDate().getSeconds()));
         startTime2.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, event.getStartDate().getMinutes()));
@@ -164,8 +174,9 @@ public class EventEditor_GUI {
                 DBM.updateInDB(event);
             return true;
         } catch (SQLException e) {
-            return true;
+            e.printStackTrace();
         }
+        return true;
     }
 
     @FXML
