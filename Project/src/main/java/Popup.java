@@ -11,12 +11,14 @@ import javafx.scene.text.Text;
 
 public class Popup {
 
+    @FXML private Text timelineDeletionText;
     @FXML private Text displayTxt;
     @FXML private Button btnCancel;
     @FXML private Button btnConfirm;
     private ListView<Timeline> list;
 
     public void initialize() {
+
     }
 
 
@@ -35,7 +37,7 @@ public class Popup {
     }
 
     public void setDisplayTxt(String displayTxt) {
-        this.displayTxt.setText(displayTxt);
+        this.timelineDeletionText.setText(displayTxt);
     }
 
     public void setList(ListView<Timeline> list) {
