@@ -98,6 +98,39 @@ public class Dashboard_GUI {
 				searchInput.setText("");
 		});
 
+	@FXML
+	public void adminScreen(ActionEvent event) throws IOException {
+		GUIManager.swapScene("AdminRoleManager");
+	}
+
+	// open DeletePopUp
+	@FXML
+	public void deleteConfirmation(ActionEvent event) throws IOException {
+
+		Stage delConfirm = new Stage();
+		delConfirm.setTitle("Confirm Deletion");
+		delConfirm.initOwner(GUIManager.mainStage);
+		delConfirm.initModality(Modality.WINDOW_MODAL);
+		delConfirm.setResizable(false);
+
+
+		delConfirm.setScene(new Scene(FXMLLoader.load(GUIManager.class.getResource("FXML/DeletePopup.fxml"))));
+		//list.getSelectionModel().getSelectedItem().getName())
+		delConfirm.getScene().getStylesheets().add("File:src/main/resources/styles/" + "DefaultStyle" + ".css");
+		delConfirm.show();
+
+	}
+
+	@FXML
+	public void deleteConfirm(ActionEvent actionEvent) {
+		((Node) (actionEvent.getSource())).getScene().getWindow().hide();
+		System.out.println("Deleted");
+	}
+
+	@FXML
+	public void deleteCancel(ActionEvent actionEvent) {
+		((Node) (actionEvent.getSource())).getScene().getWindow().hide();
+		System.out.println("Cancelled");
 	}
 
 	@FXML

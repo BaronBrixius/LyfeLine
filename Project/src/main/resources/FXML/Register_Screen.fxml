@@ -28,12 +28,12 @@
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
     </padding>
-    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Email Address" GridPane.halignment="RIGHT"/>
-    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Username" GridPane.halignment="RIGHT" GridPane.rowIndex="1"/>
-    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Password" GridPane.halignment="RIGHT" GridPane.rowIndex="2"/>
-    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Confirm Password" GridPane.halignment="RIGHT"
+    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Email Address" GridPane.halignment="LEFT"/>
+    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Username" GridPane.halignment="LEFT" GridPane.rowIndex="1"/>
+    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Password" GridPane.halignment="LEFT" GridPane.rowIndex="2"/>
+    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Confirm Password" GridPane.halignment="LEFT"
           GridPane.rowIndex="3"/>
-    <Text strokeType="OUTSIDE" strokeWidth="0.0" GridPane.halignment="RIGHT" GridPane.rowIndex="4"
+    <Text strokeType="OUTSIDE" strokeWidth="0.0" GridPane.halignment="LEFT" GridPane.rowIndex="4"
           styleClass="smallText" wrappingWidth="190" fx:id="errorMessage"/>
     <TextField GridPane.columnIndex="2"  fx:id="emailInput"/>
     <TextField GridPane.columnIndex="2" GridPane.rowIndex="1" fx:id="usernameInput"/>
