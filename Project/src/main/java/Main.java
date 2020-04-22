@@ -9,7 +9,7 @@ class Main {
         PreparedStatement stmt;
         PreparedStatement stmt2;
         try {
-            new DBM("jdbc:mysql://localhost?useTimezone=true&serverTimezone=UTC", "root", "Password123", "project"); //AJnuHA^8VKHht=uB Default password
+            new DBM(); //AJnuHA^8VKHht=uB Default password
             DBM.setupSchema();       //destroys + remakes DB with default settings, can comment this out after first run if desired
 
 
