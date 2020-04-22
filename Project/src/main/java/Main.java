@@ -55,16 +55,8 @@ class Main {
             System.out.println("\nUser:");
             for (User e : userList)
                 System.out.println(e);
-            
-           //PreparedStatement for printing out timelines
-            stmt2 = DBM.conn.prepareStatement("SELECT * FROM timelines");
-            List<Timeline> timelineList = DBM.getFromDB(stmt2, new Timeline());          
-            System.out.println("\nTimeline List:");
-            for (Timeline f : timelineList)
-                System.out.println(f);
-            
 
-        } catch (SQLException | ClassNotFoundException e) {
+        } catch (SQLException | ClassNotFoundException | FileNotFoundException e) {
             e.printStackTrace();
         } finally {
             try {
