@@ -3,6 +3,7 @@ CREATE TABLE `events`
     `EventID`            int               NOT NULL AUTO_INCREMENT,
     `EventOwner`         int               NOT NULL,
     `EventType`          tinyint           NOT NULL,
+    `EventImage`         tinyint           DEFAULT NULL,
     `EventName`          nvarchar(100)     DEFAULT NULL,
     `EventDescription`   nvarchar(5000)    DEFAULT NULL,
     `StartYear`          bigint            NOT NULL,
@@ -53,14 +54,16 @@ END;
 -- Lookup table for the scale column of timeline table
 
 
-CREATE TABLE `scale_lookup` (
-    `ID`   int           NOT NULL AUTO_INCREMENT,
-    `unit` nvarchar(20)  NOT NULL,
-    PRIMARY KEY (`ID`))
-    ENGINE=InnoDB
-    AUTO_INCREMENT=9
-    DEFAULT CHARSET=utf8mb4
-    COLLATE=utf8mb4_general_ci;
+CREATE TABLE `scale_lookup`
+(
+    `ID`   int          NOT NULL AUTO_INCREMENT,
+    `unit` nvarchar(20) NOT NULL,
+    PRIMARY KEY (`ID`)
+)
+    ENGINE = InnoDB
+    AUTO_INCREMENT = 9
+    DEFAULT CHARSET = utf8mb4
+    COLLATE = utf8mb4_general_ci;
 
 
 INSERT INTO `scale_lookup`
@@ -140,7 +143,6 @@ CREATE TABLE `users`
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_general_ci;
-
 
 
 -- Code for creating timelines
