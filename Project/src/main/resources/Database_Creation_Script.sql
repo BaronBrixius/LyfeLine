@@ -300,8 +300,8 @@ VALUES (01, 1, 'Fall of Rome', 'Out with a wimper, not a bang', 'dark', -350, 5,
 
 INSERT INTO `events` (`EventOwner`, `EventType`, `EventName`, `EventDescription`, `StartYear`, `StartMonth`,
                       `StartDay`, `StartHour`, `StartMinute`, `StartSecond`, `StartMillisecond`)
-VALUES ('1', '1', 'Crossing the Rubicon', 'Long story', '0', '0', '0', '0', '0', '0', '0'),
-       ('2', '1', 'Crossing the Rubicon', 'Long story', '0', '0', '0', '0', '0', '0', '0');
+VALUES ('1', '1', 'Crossing the Rubicon', 'Long story', '0', '1', '1', '0', '0', '0', '0'),
+       ('2', '1', 'Crossing the Rubicon', 'Long story', '0', '1', '1', '0', '0', '0', '0');
 
 
 INSERT INTO `timelineevents` (`TimelineID`, `EventID`)
