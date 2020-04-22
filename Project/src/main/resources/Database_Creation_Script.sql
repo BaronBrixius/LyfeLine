@@ -50,6 +50,33 @@ BEGIN
 END;
 
 
+-- Lookup table for the scale column of timeline table
+
+
+CREATE TABLE `scale_lookup` (
+    `ID`   int           NOT NULL AUTO_INCREMENT,
+    `unit` nvarchar(20)  NOT NULL,
+    PRIMARY KEY (`ID`))
+    ENGINE=InnoDB
+    AUTO_INCREMENT=9
+    DEFAULT CHARSET=utf8mb4
+    COLLATE=utf8mb4_general_ci;
+
+
+INSERT INTO `scale_lookup`
+(`ID`,
+ `unit`)
+VALUES (01, 'Seconds'),
+       (02, 'Minutes'),
+       (03, 'Hours'),
+       (04, 'Days'),
+       (05, 'Weeks'),
+       (06, 'Months'),
+       (07, 'Years'),
+       (08, 'Decades');
+
+
+
 CREATE TABLE `Images`
 (
     `ImageID`  int NOT NULL AUTO_INCREMENT,
@@ -115,11 +142,12 @@ CREATE TABLE `users`
   COLLATE = utf8mb4_general_ci;
 
 
+
 -- Code for creating timelines
 CREATE TABLE `timelines`
 (
     `TimelineID`          int               NOT NULL AUTO_INCREMENT,
-    `Scale`               nvarchar(100)     DEFAULT NULL,
+    `Scale`               int               DEFAULT NULL,
     `TimelineName`        nvarchar(100)     DEFAULT NULL,
     `TimelineDescription` nvarchar(5000)    DEFAULT NULL,
     `Theme`               nvarchar(100)     DEFAULT NULL,
@@ -147,7 +175,9 @@ CREATE TABLE `timelines`
     `Private`             boolean           DEFAULT true,
     `TimelineOwner`       int,
     PRIMARY KEY (`TimelineID`),
-    UNIQUE KEY `TimelineID_UNIQUE` (`TimelineID`)
+    UNIQUE KEY `TimelineID_UNIQUE` (`TimelineID`),
+    KEY `FK_Scale` (`Scale`),
+    CONSTRAINT `FK_Scale` FOREIGN KEY (`Scale`) REFERENCES `scale_lookup` (`ID`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_general_ci;
@@ -193,7 +223,7 @@ INSERT INTO `users`
     (`UserID`, `UserName`, `UserEmail`, `Password`, `Salt`, `Admin`)
 VALUES ('1', 'Ben', 'Ben@gmail.com',
         'FPUpkk14h2EWAX9J7q18Ue6QJ/VSrs5ulnaw/Tggo23smYvqcLKihIUARNQcxUpDSGXOGBsGo4gjKTikDfrpxw==',
-        'hXEFj6Yy9hanXVOUyACANrUi1eZs4f', '0'),
+        'hXEFj6Yy9hanXVOUyACANrUi1eZs4f', '1'),
        ('2', 'Max', 'Max@gmail.com',
         'bXKyPFQD//MW1XtOlVrgEDvEXIm9xzT+z4wBrMKR7DTHeETUPFlYpcuvanM/I2dPZSa5fQEnKc4E2D6ZD7sOiA==',
         'Q48XUaFIG4LITasAYZzSNUHskubTw5', '0'),
@@ -240,7 +270,7 @@ INSERT INTO `timelines`
  `StartMinute`, `StartSecond`, `StartMillisecond`, `EndYear`, `EndMonth`, `EndDay`, `EndHour`, `EndMinute`, `EndSecond`,
  `EndMillisecond`, `CreatedYear`, `CreatedMonth`, `CreatedDay`, `CreatedHour`, `CreatedMinute`, `CreatedSecond`,
  `CreatedMillisecond`, `Private`, `TimelineOwner`)
-VALUES (01, 12, 'Fall of Rome', 'Out with a wimper, not a bang', 'dark', -350, 5, 20, 4, 43, 32, 213, 2001, 5, 20, 4,
+VALUES (01, 1, 'Fall of Rome', 'Out with a wimper, not a bang', 'dark', -350, 5, 20, 4, 43, 32, 213, 2001, 5, 20, 4,
         43, 32, 213, 2000, 5, 20, 4, 43,
         32, 213, default, 1),
        (02, 2, 'New Timeline', '', 'dark', 2020, 5, 20, 4, 43, 32, 213, 2005, 5, 20, 4, 43, 32, 213, 2003, 5, 20, 4,
@@ -248,19 +278,19 @@ VALUES (01, 12, 'Fall of Rome', 'Out with a wimper, not a bang', 'dark', -350, 5
        (03, 4, 'Hound of Baskervilles', 'Investigation of an attempted murder', 'light', 1902, 5, 20, 4, 43, 32, 213,
         2006, 5, 20, 4, 43, 32, 213, 2003, 5, 20, 3,
         43, 32, 213, default, 2),
-       (04, 17, 'Dr. Strangelove', 'A dark comedy on nuclear war', 'dark', 1987, 5, 20, 4, 43, 32, 213, 2008, 5, 20, 4,
+       (04, 5, 'Dr. Strangelove', 'A dark comedy on nuclear war', 'dark', 1987, 5, 20, 4, 43, 32, 213, 2008, 5, 20, 4,
         43, 32, 213, 2007, 5, 20, 4, 43,
         32, 213, default, 2),
-       (05, 11, 'Incredibly, Wastefully Long Timeline Name', '', 'light', 2020, 5, 20, 4, 43, 32, 213, 2009, 5, 20, 4,
+       (05, 6, 'Incredibly, Wastefully Long Timeline Name', '', 'light', 2020, 5, 20, 4, 43, 32, 213, 2009, 5, 20, 4,
         43, 32, 213, 2008, 5, 20, 4,
         43, 32, 213, default, 3),
-       (06, 2, 'Bronze Age Collapse', 'When civilization reset', 'light', -13000, 5, 20, 4, 43, 32, 213, 2010, 5, 20, 4,
+       (06, 7, 'Bronze Age Collapse', 'When civilization reset', 'light', -13000, 5, 20, 4, 43, 32, 213, 2010, 5, 20, 4,
         43, 32, 213, 2009, 5, 20, 4,
         43, 32, 213, default, 4),
-       (07, 59, 'Life of Bacillus', 'Life and times of a bacterium', 'mad', 2020, 5, 20, 4, 43, 32, 213, 1505, 5, 20, 4,
+       (07, 8, 'Life of Bacillus', 'Life and times of a bacterium', 'mad', 2020, 5, 20, 4, 43, 32, 213, 1505, 5, 20, 4,
         43, 32, 213, 2000, 5, 20, 4, 46,
         32, 213, default, 5),
-       (08, 22, 'Decay of Ununoctium', 'Radioactive decay - a study', 'dark', 2020, 5, 20, 4, 43, 32, 213, 1555, 5, 20,
+       (08, 5, 'Decay of Ununoctium', 'Radioactive decay - a study', 'dark', 2020, 5, 20, 4, 43, 32, 213, 1555, 5, 20,
         4, 43, 32, 213, 1550, 5, 20, 4, 43,
         32, 213, default, 6)
 ;

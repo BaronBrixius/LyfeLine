@@ -47,7 +47,7 @@ public class GUIManager extends Application {
         // Used to establish connection to the DB.
         try {
             new DBM();
-            //DBM.setupSchema(); //comment out for testing of log in
+            DBM.setupSchema(); //comment out for testing of log in
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -65,8 +65,7 @@ public class GUIManager extends Application {
         mainStage = primaryStage;
         mainStage.setScene(new Scene(main));
 
-        swapScene("EventSelector");
-        //swapScene("AdminRoleManager");
+        swapScene("Welcome_Screen");
         applyStyle("DefaultStyle");
 
         mainStage.show();

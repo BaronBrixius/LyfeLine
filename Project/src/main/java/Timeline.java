@@ -4,7 +4,7 @@ import java.util.List;
 public class Timeline implements DBObject<Timeline> {
 
     private int timelineID;
-    private String scale;
+    private int scale;
     private String timelineName;
     private String theme;
     private Date startDate;
@@ -15,10 +15,26 @@ public class Timeline implements DBObject<Timeline> {
     private boolean isPrivate = false;
     private List<Event> eventList;
 
+    //Default timeline
     public Timeline() {
+
     }
 
-    private Timeline(int TimeLineID, String TimelineName, String TimelineDescription, String Scale, String Theme, Date StartDate, Date Enddate, Date DateCreated, int TimelineOwner, boolean Private) throws SQLException {
+    //Public method for creating the timeline
+    public Timeline(String TimelineName, String TimelineDescription, int Scale, String Theme, Date StartDate, Date Enddate, Date DateCreated, int TimelineOwner, boolean Private) throws SQLException {
+        this.timelineName = TimelineName;
+        this.scale = Scale;
+        this.timelineDescription = TimelineDescription;
+        this.theme = Theme;
+        this.startDate = StartDate;
+        this.endDate = Enddate;
+        this.dateCreated = DateCreated;
+        this.timelineOwner = GUIManager.loggedInUser.getUserID();
+        this.isPrivate = Private;
+    }
+
+
+    private Timeline(int TimeLineID, String TimelineName, String TimelineDescription, int Scale, String Theme, Date StartDate, Date Enddate, Date DateCreated, int TimelineOwner, boolean Private) throws SQLException {
 
         this.timelineID = TimeLineID;
         this.timelineName = TimelineName;
@@ -34,7 +50,6 @@ public class Timeline implements DBObject<Timeline> {
         //timelineOwner = GUIManager.loggedInUser.getUserID();
     }
 
-
     @Override
     public PreparedStatement getInsertQuery() throws SQLException {
         if (timelineID > 0)
@@ -44,7 +59,7 @@ public class Timeline implements DBObject<Timeline> {
                 + ",`StartMinute`,`StartSecond`,`StartMillisecond`,`EndYear`,`EndMonth`,`EndDay`,`EndHour`,`EndMinute`,`EndSecond`,"
                 + "`EndMillisecond`,`CreatedYear`,`CreatedMonth`,`CreatedDay`,`CreatedHour`,`CreatedMinute`,`CreatedSecond`,`CreatedMillisecond`,"
                 + "`Private`,`TimelineOwner`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
-        out.setString(1, scale);
+        out.setInt(1, scale);
         out.setString(2, timelineName);
         out.setString(3, timelineDescription);
         out.setString(4, theme);
@@ -77,7 +92,7 @@ public class Timeline implements DBObject<Timeline> {
     @Override
     public PreparedStatement getUpdateQuery() throws SQLException {
         PreparedStatement out = DBM.conn.prepareStatement("UPDATE `timelines` SET `Scale` = ?, `TimelineName` = ?, `TimelineDescription` = ?,  `Theme` = ?,   `StartYear` = ?,  `StartMonth` = ?,  `StartDay` = ?,  `StartHour` = ?,  `StartMinute` = ?,  `StartSecond` = ?,  `StartMillisecond` = ?,    `EndYear` = ?,  `EndMonth` = ?,  `EndDay` = ?,  `EndHour` = ?,  `EndMinute` = ?,  `EndSecond` = ?,  `EndMillisecond` = ?,   `CreatedYear` = ?,  `ECreatedMonth` = ?,  `CreatedDay` = ?,  `CreatedHour` = ?,  `CreatedMinute` = ?,  `CreatedSecond` = ?,  `CreatedMillisecond` = ?, `Private` = ? WHERE (`TimelineID` = ?)");
-        out.setString(1, scale);
+        out.setInt(1, scale);
         out.setString(2, timelineName);
         out.setString(3, timelineDescription);
         out.setString(4, theme);
@@ -110,19 +125,19 @@ public class Timeline implements DBObject<Timeline> {
     public PreparedStatement getDeleteQuery() throws SQLException {
         PreparedStatement out = DBM.conn.prepareStatement("DELETE t, e FROM `timelines` t " +
                 "LEFT JOIN timelineevents te " +
-                "ON t.TimelineID = te.TimelineID " +		//deletes orphaned events (i.e. events where there are no
-                "LEFT JOIN events e " +						//junction table records for them with a different TimelineID
+                "ON t.TimelineID = te.TimelineID " +        	//destroys orphaned events (i.e. events where there are no
+                "LEFT JOIN events e " +                        	//junction table records for them with a different TimelineID
                 "ON te.EventID = e.EventID AND e.EventID NOT IN (SELECT EventID FROM timelineevents WHERE TimelineID != ?) " +
                 "WHERE t.TimelineID = ? ");
         out.setInt(1, timelineID);
-		out.setInt(2, timelineID);
+        out.setInt(2, timelineID);
         return out;
     }
 
     @Override
     public Timeline createFromDB(ResultSet rs) throws SQLException {
         int TimelineID = rs.getInt("TimelineID");
-        String Scale = rs.getString("Scale");
+        int Scale = rs.getInt("Scale");
         String TimelineName = rs.getString("TimelineName");
         String TimelineDesription = rs.getString("TimelineDescription");
         String Theme = rs.getString("Theme");
@@ -162,7 +177,6 @@ public class Timeline implements DBObject<Timeline> {
         return "Time line ID: " + timelineID + " Time line Name: " + timelineName + " Time line Description: " + timelineDescription + " Private:" + isPrivate + " Scale:" + scale + " Theme: " + theme + " Start Date: " + startDate + " End Date: " + endDate + " Created: " + dateCreated + " Owner: " + timelineOwner;
     }
 
-
     //This method will set the name of the timeline if this user has not timeline with the same name already in the DB
     public void setTimelineName(String name, int userID) throws SQLException, IllegalArgumentException {
         if (validName(name, userID)) //uses this private method for validation
@@ -186,21 +200,90 @@ public class Timeline implements DBObject<Timeline> {
     }
 
 
-    @Override
-    public void setID(int id) {
-        this.timelineID = id;
+    //Getters
+    public int getTimelineID() {
+        return this.timelineID;
     }
 
     public String getName() {
         return this.timelineName;
     }
 
+    public int getScale() {
+        return this.scale;
+    }
+
+    public void setScale(int scale) {
+        this.scale = scale;
+    }
+
+    public String getTimelineDescription() {
+        return this.timelineDescription;
+    }
+
+    public void setTimelineDescription(String description) {
+        this.timelineDescription = description;
+    }
+
+    public String getTimelineName() {
+        return this.timelineName;
+    }
+
+    public void setTimelineName(String name) {
+        this.timelineName = name;
+    }
+
+    public String getTheme() {
+        return this.theme;
+    }
+
+    public void setTheme(String theme) {
+        this.theme = theme;
+    }
+
+    public Date getStartDate() {
+        return this.startDate;
+    }
+
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    public Date getEndDate() {
+        return this.endDate;
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
+
     public Date getDateCreated() {
-        return dateCreated;
+        return this.dateCreated;
     }
 
-    public int getTimelineID() {
-        return timelineID;
+    public int getTimelineOwner() {
+        return this.timelineOwner;
     }
 
+    public void setTimelineOwner(int TimelineOwner) {
+        this.timelineOwner = TimelineOwner;
+    }
+
+    public boolean getPrivate() {
+        return this.isPrivate;
+    }
+
+    public void setPrivate(boolean isPrivate) {
+        this.isPrivate = isPrivate;
+    }
+
+    //Setters
+    @Override
+    public void setID(int id) {
+        this.timelineID = id;
+    }
+
+    public int getTimelineOwnerID() {
+        return timelineOwner;
+    }
 }

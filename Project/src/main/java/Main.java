@@ -9,7 +9,7 @@ class Main {
         PreparedStatement stmt;
         PreparedStatement stmt2;
         try {
-            new DBM("jdbc:mysql://localhost?useTimezone=true&serverTimezone=UTC", "root", "AJnuHA^8VKHht=uB", "project"); //AJnuHA^8VKHht=uB Default password
+            new DBM();
             DBM.setupSchema();       //destroys + remakes DB with default settings, can comment this out after first run if desired
 
 
@@ -43,21 +43,20 @@ class Main {
             //Example of Prepared Statement with field value
             stmt = DBM.conn.prepareStatement("SELECT * FROM users WHERE userEmail = ?");
             stmt.setString(1, teacher.getUserEmail());
-
-            List<User> userList = DBM.getFromDB(stmt, new User());    //blank object so functional interface method can be accessed
-            System.out.println("\nUser:");
-            for (User e : userList)
-                System.out.println(e);
             
-           //PreparedStatement for printing out timelines
+          //PreparedStatement for printing out timelines
             stmt2 = DBM.conn.prepareStatement("SELECT * FROM timelines");
             List<Timeline> timelineList = DBM.getFromDB(stmt2, new Timeline());          
             System.out.println("\nTimeline List:");
             for (Timeline f : timelineList)
                 System.out.println(f);
-            
 
-        } catch (FileNotFoundException | SQLException | ClassNotFoundException e) {
+            List<User> userList = DBM.getFromDB(stmt, new User());    //blank object so functional interface method can be accessed
+            System.out.println("\nUser:");
+            for (User e : userList)
+                System.out.println(e);
+
+        } catch (SQLException | ClassNotFoundException | FileNotFoundException e) {
             e.printStackTrace();
         } finally {
             try {

@@ -55,6 +55,7 @@ public class LoginAndRegistration_GUI {
         registerStage.setScene(new Scene(FXMLLoader.load(GUIManager.class.getResource("FXML/Register_Screen.fxml"))));
         registerStage.getScene().getStylesheets().add("File:src/main/resources/styles/DefaultStyle.css");
         registerStage.show();
+
     }
 
     @FXML
@@ -141,7 +142,7 @@ public class LoginAndRegistration_GUI {
 
     @FXML
     public void timelineScreen() throws IOException {
-        GUIManager.swapScene("Timeline_Editor_Screen");
+        GUIManager.swapScene("Dashboard");
     }
 
 }
