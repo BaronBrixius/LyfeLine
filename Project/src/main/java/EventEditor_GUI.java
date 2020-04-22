@@ -1,7 +1,6 @@
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
-import javafx.util.StringConverter;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -114,22 +113,18 @@ public class EventEditor_GUI {
     }
 
     private boolean populateDisplay() {
-        event.setStartDate(new Date(4, 3, 4, 5, 3,4, 3));
-        event.setEndDate(new Date(1654, 3, 4, 5, 3,4, 3));
+        //event.setStartDate(new Date(4, 3, 4, 5, 3,4, 3));
+        //event.setEndDate(new Date(1654, 3, 4, 5, 3,4, 3));
 
         titleInput.setText(event.getEventName());
         descriptionInput.setText(event.getEventDescrition());
 
-        if (event.getStartDate().getMonth() == 0)
-        {
+        if (event.getStartDate().getMonth() == 0) {
             startDate.setValue(LocalDate.of(0, 1, 1));
             endDate.setValue(LocalDate.of(0, 1, 1));
-        }
-        else
-        {
+        } else {
             startDate.setValue(LocalDate.of(event.getStartDate().getYear(), event.getStartDate().getMonth(), event.getStartDate().getDay()));
-            if (event.getStartDate() != event.getEndDate())
-            {
+            if (event.getStartDate() != event.getEndDate()) {
                 hasDuration.setSelected(true);
                 toggleHasDuration();
                 endDate.setValue(LocalDate.of(event.getEndDate().getYear(), event.getEndDate().getMonth(), event.getEndDate().getDay()));
@@ -162,14 +157,14 @@ public class EventEditor_GUI {
         return saveEvent();
     }
 
-    void updateEvent(){
+    void updateEvent() {
         //setters to update each field of this.event, based on the current info in the text fields
         this.event.setTitle(titleInput.getText());
         this.event.setDescription(descriptionInput.getText());
         LocalDate start = startDate.getValue();
-        this.event.setStartDate(new Date(start.getYear(), start.getMonth().getValue(), start.getYear(), start.getYear(), start.getYear(), start.getYear(), 0));
+        this.event.setStartDate(new Date(start.getYear(), start.getMonth().getValue(), start.getDayOfMonth(), startTime1.getValue(), startTime2.getValue(), startTime3.getValue(), 0));
         LocalDate end = endDate.getValue();
-        this.event.setEndDate(new Date(end.getYear(), end.getMonth().getValue(), end.getYear(), end.getYear(), end.getYear(), end.getYear(), 0));
+        this.event.setEndDate(new Date(end.getYear(), end.getMonth().getValue(), end.getDayOfMonth(), endTime1.getValue(), endTime2.getValue(), endTime3.getValue(), 0));
         //this.event.setImage(); later
     }
 
@@ -214,15 +209,15 @@ public class EventEditor_GUI {
 
     private boolean hasChanges() {
         LocalDate start = startDate.getValue();
-        Date readStart = new Date(start.getYear(), start.getMonth().getValue(), start.getYear(), start.getYear(), start.getYear(), start.getYear(), 0);
+        Date readStart = new Date(start.getYear(), start.getMonth().getValue(), start.getDayOfMonth(), startTime1.getValue(), startTime2.getValue(), startTime3.getValue(), 0);
         LocalDate end = endDate.getValue();
-        Date readEnd = new Date(end.getYear(), end.getMonth().getValue(), end.getYear(), end.getYear(), end.getYear(), end.getYear(), 0);
+        Date readEnd = new Date(end.getYear(), end.getMonth().getValue(), end.getDayOfMonth(), endTime1.getValue(), endTime2.getValue(), endTime3.getValue(), 0);
 
-        return (this.event.getEventName().equals(titleInput.getText())
-                || this.event.getEventDescrition().equals(descriptionInput.getText())
-                || this.event.getStartDate().equals(readStart)
-                || this.event.getEndDate().equals(readEnd)
-                //then something also for image later to see if changed
+        return (!this.event.getEventName().equals(titleInput.getText())
+                || !this.event.getEventDescrition().equals(descriptionInput.getText())
+                || this.event.getStartDate().compareTo(readStart) != 0
+                || this.event.getEndDate().compareTo(readEnd) != 0
+        //then something also for image later to see if changed
         );
     }
 
@@ -232,7 +227,4 @@ public class EventEditor_GUI {
             saveConfirm();        //do you wanna save and exit or just save?
         GUIManager.previousPage();        //close editor, return to previous screen
     }
-
-
-
 }
