@@ -124,7 +124,7 @@ public class EventEditor_GUI {
         startTime2.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, event.getStartDate().getMinutes()));
         startTime3.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, event.getStartDate().getSeconds()));
 
-        if (event.getEndDate() == null)
+        if (event.getStartDate().compareTo(event.getEndDate()) == 0)
         {
             endTime1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23));
             endTime2.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59));
@@ -139,6 +139,7 @@ public class EventEditor_GUI {
             endTime2.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, event.getEndDate().getMinutes()));
             endTime3.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, event.getEndDate().getSeconds()));
         }
+
 
         return false;
     }
