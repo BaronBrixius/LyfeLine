@@ -99,7 +99,7 @@ VALUES (01, 'Seconds'),
 CREATE TABLE `Images`
 (
     `ImageID`  int NOT NULL AUTO_INCREMENT,
-    `ImageULR` character(255) DEFAULT NULL,
+    `ImageURL` varchar(255) DEFAULT NULL,
     PRIMARY KEY (`ImageID`),
     UNIQUE KEY `ImageID_UNIQUE` (`ImageID`)
 ) ENGINE = InnoDB
