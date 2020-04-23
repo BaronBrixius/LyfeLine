@@ -41,6 +41,8 @@ public class Popup {
             e.printStackTrace();
         }
         list.getItems().remove(list.getSelectionModel().getSelectedIndex());
+        list.getSelectionModel().select(null);
+
     }
 
     public void close() {
