@@ -18,7 +18,8 @@ import javafx.stage.Stage;
 
 public class Dashboard_GUI {
 
-	@FXML private Button adminGUI;
+	@FXML private Button eventEditorButton;
+    @FXML private Button adminGUI;
 	@FXML private Button btnDelete;
 	@FXML private Button btnEdit;
 	@FXML private Button btnCreate;
@@ -26,8 +27,9 @@ public class Dashboard_GUI {
 	@FXML private ListView<Timeline> list;
 	@FXML private TextField searchInput;
 	@FXML private CheckBox cbOnlyViewPersonalLines;
-	@FXML private ComboBox sortBy;
+	@FXML private ComboBox<String> sortBy;
 	@FXML private GridPane gridButtons;
+	@FXML private Text titleText;
 
 	
 	private Timeline activeTimeline;
@@ -141,6 +143,7 @@ public class Dashboard_GUI {
 			editor.populateDisplay();
 		}
 
+
 	}
 	
 	@FXML
@@ -150,6 +153,7 @@ public class Dashboard_GUI {
 		} catch (IOException e) {
 			
 		}
+
 	}
 
 	// open DeletePopUp
@@ -169,36 +173,50 @@ public class Dashboard_GUI {
 		Popup deletionPopup = popupDeletion.getController();
 		deletionPopup.setMode(1);
 		if (list.getSelectionModel().getSelectedItem() != null && list.getSelectionModel().getSelectedItem().getTimelineOwnerID() == GUIManager.loggedInUser.getUserID()) {
-			displayInfo.getChildren().clear();
+			titleText.setText("");
+			deletionPopup.setList(list);
 			deletionPopup.setDisplayTxt(
 					"Are you sure you want to delete " + list.getSelectionModel().getSelectedItem().getName() + "?");
-			deletionPopup.setList(list);
 			delConfirm.show();
-		} else if (list.getSelectionModel().getSelectedItem() == null) {
-			displayInfo.getChildren().clear();
-			Text error = new Text("No timeline selected.");
-			error.setFill(Color.RED);
-			displayInfo.getChildren().add(error);
-		} else if (list.getSelectionModel().getSelectedItem().getTimelineOwnerID() != GUIManager.loggedInUser
-				.getUserID()) {
-			displayInfo.getChildren().clear();
-			Text error = new Text("You are not the owner of this timeline.");
-			error.setFill(Color.RED);
-			displayInfo.getChildren().add(error);
+
 		}
+		//} else if (list.getSelectionModel().getSelectedItem() == null) {
+		//	displayInfo.getChildren().clear();
+		//	Text error = new Text("No timeline selected.");
+		//	error.setFill(Color.RED);
+		//	displayInfo.getChildren().add(error);
+		//}
+		//else if (list.getSelectionModel().getSelectedItem().getTimelineOwnerID() != GUIManager.loggedInUser.getUserID()) {
+		//	displayInfo.getChildren().clear();
+		//	Text error = new Text("You are not the owner of this timeline.");
+		//	error.setFill(Color.RED);
+		//	displayInfo.getChildren().add(error);
+		//}
 	}
 
 	@FXML
-	private void updateButtonDisplay() {
-		if (list.getSelectionModel().getSelectedItem() != null && list.getSelectionModel().getSelectedItem().getTimelineOwnerID() == GUIManager.loggedInUser.getUserID())
+	private void updateDisplays() {
+		if (list.getSelectionModel().getSelectedItem() != null)
 		{
-			btnDelete.setDisable(false);
-			btnEdit.setDisable(false);
-		}
-		else
-		{
-			btnDelete.setDisable(true);
-			btnEdit.setDisable(true);
+			if (list.getSelectionModel().getSelectedItem().getTimelineOwnerID() == GUIManager.loggedInUser.getUserID())
+			{
+				btnDelete.setDisable(false);
+				btnEdit.setDisable(false);
+			}
+			else
+			{
+				btnDelete.setDisable(true);
+				btnEdit.setDisable(true);
+			}
+
+			int year = list.getSelectionModel().getSelectedItem().getDateCreated().getYear();
+			int month = list.getSelectionModel().getSelectedItem().getDateCreated().getMonth();
+			int day = list.getSelectionModel().getSelectedItem().getDateCreated().getDay();
+
+			titleText.setText("Title: " + list.getSelectionModel().getSelectedItem().getName()
+			+ "\nDescription: " + list.getSelectionModel().getSelectedItem().getTimelineDescription()
+			+ "\nDate Created: " + year + "/" + month + "/" + day);
+
 		}
 	}
 }
