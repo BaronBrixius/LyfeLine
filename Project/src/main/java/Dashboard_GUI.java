@@ -6,9 +6,9 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
@@ -17,6 +17,17 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 public class Dashboard_GUI {
+
+	@FXML private Button adminGUI;
+	@FXML private Button btnDelete;
+	@FXML private Button btnEdit;
+	@FXML private Button btnCreate;
+	@FXML private TextFlow displayInfo;
+	@FXML private ListView<Timeline> list;
+	@FXML private TextField searchInput;
+	@FXML private CheckBox cbOnlyViewPersonalLines;
+	@FXML private ComboBox sortBy;
+	@FXML private GridPane gridButtons;
 
 	@FXML
 	private Button adminGUI;
@@ -40,7 +51,6 @@ public class Dashboard_GUI {
 	private GridPane gridButtons;
 	private Timeline activeTimeline;
 
-	public void initialize() {
 		gridButtons.setVisible(GUIManager.loggedInUser.getAdmin());
 		gridButtons.setDisable(!GUIManager.loggedInUser.getAdmin());
 
@@ -106,21 +116,10 @@ public class Dashboard_GUI {
 	}
 
 	@FXML
-	public void adminScreen(ActionEvent event) throws IOException {
+	public void adminScreen() throws IOException {
 		GUIManager.swapScene("AdminRoleManager");
 	}
 
-	@FXML
-	public void deleteConfirm(ActionEvent actionEvent) {
-		((Node) (actionEvent.getSource())).getScene().getWindow().hide();
-		System.out.println("Deleted");
-	}
-
-	@FXML
-	public void deleteCancel(ActionEvent actionEvent) {
-		((Node) (actionEvent.getSource())).getScene().getWindow().hide();
-		System.out.println("Cancelled");
-	}
 
 	@FXML
 	public void onlyUserTimelines() {
@@ -195,6 +194,20 @@ public class Dashboard_GUI {
 			Text error = new Text("You are not the owner of this timeline.");
 			error.setFill(Color.RED);
 			displayInfo.getChildren().add(error);
+		}
+	}
+
+	@FXML
+	private void updateButtonDisplay() {
+		if (list.getSelectionModel().getSelectedItem() != null && list.getSelectionModel().getSelectedItem().getTimelineOwnerID() == GUIManager.loggedInUser.getUserID())
+		{
+			btnDelete.setDisable(false);
+			btnEdit.setDisable(false);
+		}
+		else
+		{
+			btnDelete.setDisable(true);
+			btnEdit.setDisable(true);
 		}
 	}
 }
