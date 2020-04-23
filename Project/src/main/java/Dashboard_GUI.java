@@ -41,15 +41,14 @@ public class Dashboard_GUI {
 	private TextFlow displayInfo;
 	@FXML
 	private ListView<Timeline> list;
-	@FXML
-	private TextField searchInput;
-	@FXML
-	private CheckBox cbOnlyViewPersonalLines;
-	@FXML
-	private ComboBox sortBy;
-	@FXML
-	private GridPane gridButtons;
+	@FXML private TextField searchInput;
+	@FXML private CheckBox cbOnlyViewPersonalLines;
+	@FXML private ComboBox sortBy;
+	@FXML private GridPane gridButtons;
+	@FXML private Button eventEditorButton; // created by Jan for meeting with teacher Thursday
+
 	private Timeline activeTimeline;
+
 
 		gridButtons.setVisible(GUIManager.loggedInUser.getAdmin());
 		gridButtons.setDisable(!GUIManager.loggedInUser.getAdmin());
@@ -159,6 +158,15 @@ public class Dashboard_GUI {
 			editor.populateDisplay();
 		}
 
+	}
+	
+	@FXML
+	public void openEventEditor(ActionEvent event) { // created by Jan for meeting with teacher Thursday
+		try {
+			GUIManager.swapScene("MockupTimeline");
+		} catch (IOException e) {
+			
+		}
 	}
 
 	// open DeletePopUp
