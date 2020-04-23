@@ -97,7 +97,7 @@ class Event implements DBObject<Event> {
     }
 
     public void addToTimeline(int timelineID) throws SQLException {
-        PreparedStatement out = DBM.conn.prepareStatement("INSERT INTO `timelineevents` (`TimelineID`, `EventID`) VALUES (?, ?);");
+        PreparedStatement out = DBM.conn.prepareStatement("INSERT IGNORE INTO `timelineevents` (`TimelineID`, `EventID`) VALUES (?, ?);");
         out.setInt(1, timelineID);
         out.setInt(2, this.eventID);
         out.execute();
