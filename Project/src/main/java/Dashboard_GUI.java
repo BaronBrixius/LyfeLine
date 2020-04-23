@@ -30,9 +30,26 @@ public class Dashboard_GUI {
 	@FXML private GridPane gridButtons;
 
 	@FXML
-	private void initialize() {
-		btnDelete.setDisable(true);
-		btnEdit.setDisable(true);
+	private Button adminGUI;
+	@FXML
+	private Button btnDelete;
+	@FXML
+	private Button btnEdit;
+	@FXML
+	private Button btnCreate;
+	@FXML
+	private TextFlow displayInfo;
+	@FXML
+	private ListView<Timeline> list;
+	@FXML
+	private TextField searchInput;
+	@FXML
+	private CheckBox cbOnlyViewPersonalLines;
+	@FXML
+	private ComboBox sortBy;
+	@FXML
+	private GridPane gridButtons;
+	private Timeline activeTimeline;
 
 		gridButtons.setVisible(GUIManager.loggedInUser.getAdmin());
 		gridButtons.setDisable(!GUIManager.loggedInUser.getAdmin());
@@ -69,18 +86,18 @@ public class Dashboard_GUI {
 		// Sort order selection events
 		sortBy.getSelectionModel().selectedIndexProperty().addListener(ov -> {
 			switch (sortBy.getSelectionModel().getSelectedIndex()) {
-				case 0:
-					list.getItems().sort((t1, t2) -> (t1.getName().compareTo(t2.getName())));
-					break;
-				case 1:
-					list.getItems().sort((t1, t2) -> (t2.getName().compareTo(t1.getName())));
-					break;
-				case 2:
-					list.getItems().sort((t1, t2) -> (t2.getDateCreated().compareTo(t1.getDateCreated())));
-					break;
-				case 3:
-					list.getItems().sort((t1, t2) -> (t1.getDateCreated().compareTo(t2.getDateCreated())));
-					break;
+			case 0:
+				list.getItems().sort((t1, t2) -> (t1.getName().compareTo(t2.getName())));
+				break;
+			case 1:
+				list.getItems().sort((t1, t2) -> (t2.getName().compareTo(t1.getName())));
+				break;
+			case 2:
+				list.getItems().sort((t1, t2) -> (t2.getDateCreated().compareTo(t1.getDateCreated())));
+				break;
+			case 3:
+				list.getItems().sort((t1, t2) -> (t1.getDateCreated().compareTo(t2.getDateCreated())));
+				break;
 			}
 		});
 
@@ -91,6 +108,10 @@ public class Dashboard_GUI {
 		searchInput.focusedProperty().addListener(ov -> {
 			if (searchInput.isFocused())
 				searchInput.setText("");
+		});
+
+		list.getSelectionModel().selectedIndexProperty().addListener(e -> {
+			activeTimeline = list.getSelectionModel().getSelectedItem();
 		});
 	}
 
@@ -127,18 +148,17 @@ public class Dashboard_GUI {
 	@FXML
 	public void createTimeline(ActionEvent event) throws IOException {
 		GUIManager.swapScene("Timeline_Editor_Screen");
+
 	}
 
 	@FXML
 	public void editTimeline(ActionEvent event) throws IOException {
-
-		if (list.getSelectionModel().getSelectedItem() != null && list.getSelectionModel().getSelectedItem().getTimelineOwnerID() == GUIManager.loggedInUser.getUserID())
-		{
-
+		if (activeTimeline != null) {
+			TimelineEditor_GUI editor = GUIManager.swapScene("Timeline_Editor_Screen");
+			editor.setActiveTimeline(this.activeTimeline);
+			editor.populateDisplay();
 		}
 
-
-		GUIManager.swapScene("Timeline_Editor_Screen");
 	}
 
 	// open DeletePopUp
@@ -156,7 +176,8 @@ public class Dashboard_GUI {
 		delConfirm.setScene(new Scene(popupDeletion.load()));
 
 		Popup deletionPopup = popupDeletion.getController();
-		if (list.getSelectionModel().getSelectedItem() != null && list.getSelectionModel().getSelectedItem().getTimelineOwnerID() == GUIManager.loggedInUser.getUserID()) {
+		if (list.getSelectionModel().getSelectedItem() != null && list.getSelectionModel().getSelectedItem()
+				.getTimelineOwnerID() == GUIManager.loggedInUser.getUserID()) {
 			displayInfo.getChildren().clear();
 			deletionPopup.setDisplayTxt(
 					"Are you sure you want to delete " + list.getSelectionModel().getSelectedItem().getName() + "?");
@@ -167,8 +188,8 @@ public class Dashboard_GUI {
 			Text error = new Text("No timeline selected.");
 			error.setFill(Color.RED);
 			displayInfo.getChildren().add(error);
-		}
-		else if (list.getSelectionModel().getSelectedItem().getTimelineOwnerID() != GUIManager.loggedInUser.getUserID()) {
+		} else if (list.getSelectionModel().getSelectedItem().getTimelineOwnerID() != GUIManager.loggedInUser
+				.getUserID()) {
 			displayInfo.getChildren().clear();
 			Text error = new Text("You are not the owner of this timeline.");
 			error.setFill(Color.RED);
