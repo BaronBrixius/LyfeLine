@@ -6,9 +6,9 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
@@ -18,30 +18,23 @@ import javafx.stage.Stage;
 
 public class Dashboard_GUI {
 
-	@FXML
-	private Button adminGUI;
-	@FXML
-	private Button btnDelete;
-	@FXML
-	private Button btnEdit;
-	@FXML
-	private Button btnCreate;
-	@FXML
-	private TextFlow displayInfo;
-	@FXML
-	private ListView<Timeline> list;
-	@FXML
-	private TextField searchInput;
-	@FXML
-	private CheckBox cbOnlyViewPersonalLines;
-	@FXML
-	private ComboBox sortBy;
-	@FXML
-	private GridPane gridButtons;
+	@FXML private Button adminGUI;
+	@FXML private Button btnDelete;
+	@FXML private Button btnEdit;
+	@FXML private Button btnCreate;
+	@FXML private TextFlow displayInfo;
+	@FXML private ListView<Timeline> list;
+	@FXML private TextField searchInput;
+	@FXML private CheckBox cbOnlyViewPersonalLines;
+	@FXML private ComboBox sortBy;
+	@FXML private GridPane gridButtons;
+
+	
+	private Timeline activeTimeline;
 
 	public void initialize() {
-		gridButtons.setVisible(GUIManager.loggedInUser.getAdmin());
-		gridButtons.setDisable(!GUIManager.loggedInUser.getAdmin());
+	gridButtons.setVisible(GUIManager.loggedInUser.getAdmin());
+	gridButtons.setDisable(!GUIManager.loggedInUser.getAdmin());
 
 		// Fill ListView with the timelines
 		try {
@@ -75,18 +68,18 @@ public class Dashboard_GUI {
 		// Sort order selection events
 		sortBy.getSelectionModel().selectedIndexProperty().addListener(ov -> {
 			switch (sortBy.getSelectionModel().getSelectedIndex()) {
-				case 0:
-					list.getItems().sort((t1, t2) -> (t1.getName().compareTo(t2.getName())));
-					break;
-				case 1:
-					list.getItems().sort((t1, t2) -> (t2.getName().compareTo(t1.getName())));
-					break;
-				case 2:
-					list.getItems().sort((t1, t2) -> (t2.getDateCreated().compareTo(t1.getDateCreated())));
-					break;
-				case 3:
-					list.getItems().sort((t1, t2) -> (t1.getDateCreated().compareTo(t2.getDateCreated())));
-					break;
+			case 0:
+				list.getItems().sort((t1, t2) -> (t1.getName().compareTo(t2.getName())));
+				break;
+			case 1:
+				list.getItems().sort((t1, t2) -> (t2.getName().compareTo(t1.getName())));
+				break;
+			case 2:
+				list.getItems().sort((t1, t2) -> (t2.getDateCreated().compareTo(t1.getDateCreated())));
+				break;
+			case 3:
+				list.getItems().sort((t1, t2) -> (t1.getDateCreated().compareTo(t2.getDateCreated())));
+				break;
 			}
 		});
 
@@ -98,24 +91,17 @@ public class Dashboard_GUI {
 			if (searchInput.isFocused())
 				searchInput.setText("");
 		});
+
+		list.getSelectionModel().selectedIndexProperty().addListener(e -> {
+			activeTimeline = list.getSelectionModel().getSelectedItem();
+		});
 	}
 
 	@FXML
-	public void adminScreen(ActionEvent event) throws IOException {
+	public void adminScreen() throws IOException {
 		GUIManager.swapScene("AdminRoleManager");
 	}
 
-	@FXML
-	public void deleteConfirm(ActionEvent actionEvent) {
-		((Node) (actionEvent.getSource())).getScene().getWindow().hide();
-		System.out.println("Deleted");
-	}
-
-	@FXML
-	public void deleteCancel(ActionEvent actionEvent) {
-		((Node) (actionEvent.getSource())).getScene().getWindow().hide();
-		System.out.println("Cancelled");
-	}
 
 	@FXML
 	public void onlyUserTimelines() {
@@ -142,11 +128,28 @@ public class Dashboard_GUI {
 	}
 
 	@FXML
-	public void createTimeline(ActionEvent event) {
+	public void createTimeline(ActionEvent event) throws IOException {
+		GUIManager.swapScene("Timeline_Editor_Screen");
+
 	}
 
 	@FXML
-	public void editTimeline(ActionEvent event) {
+	public void editTimeline(ActionEvent event) throws IOException {
+		if (activeTimeline != null) {
+			TimelineEditor_GUI editor = GUIManager.swapScene("Timeline_Editor_Screen");
+			editor.setActiveTimeline(this.activeTimeline);
+			editor.populateDisplay();
+		}
+
+	}
+	
+	@FXML
+	public void openEventEditor(ActionEvent event) { // created by Jan for meeting with teacher Thursday
+		try {
+			GUIManager.swapScene("MockupTimeline");
+		} catch (IOException e) {
+			
+		}
 	}
 
 	// open DeletePopUp
@@ -176,12 +179,26 @@ public class Dashboard_GUI {
 			Text error = new Text("No timeline selected.");
 			error.setFill(Color.RED);
 			displayInfo.getChildren().add(error);
-		}
-		else if (list.getSelectionModel().getSelectedItem().getTimelineOwnerID() != GUIManager.loggedInUser.getUserID()) {
+		} else if (list.getSelectionModel().getSelectedItem().getTimelineOwnerID() != GUIManager.loggedInUser
+				.getUserID()) {
 			displayInfo.getChildren().clear();
 			Text error = new Text("You are not the owner of this timeline.");
 			error.setFill(Color.RED);
 			displayInfo.getChildren().add(error);
+		}
+	}
+
+	@FXML
+	private void updateButtonDisplay() {
+		if (list.getSelectionModel().getSelectedItem() != null && list.getSelectionModel().getSelectedItem().getTimelineOwnerID() == GUIManager.loggedInUser.getUserID())
+		{
+			btnDelete.setDisable(false);
+			btnEdit.setDisable(false);
+		}
+		else
+		{
+			btnDelete.setDisable(true);
+			btnEdit.setDisable(true);
 		}
 	}
 }
