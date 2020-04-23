@@ -149,7 +149,7 @@ public class Dashboard_GUI {
 	@FXML
 	public void openEventEditor(ActionEvent event) { // created by Jan for meeting with teacher Thursday
 		try {
-			GUIManager.swapScene("Timeline_Editor_Screen");
+			GUIManager.swapScene("MockupTimeline");
 		} catch (IOException e) {
 			
 		}
