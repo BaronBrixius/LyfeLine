@@ -1,5 +1,6 @@
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.text.Text;
@@ -40,11 +41,12 @@ public class Popup {
             e.printStackTrace();
         }
         list.getItems().remove(list.getSelectionModel().getSelectedIndex());
-
+        close();
     }
 
     public void close() {
-        btnCancel.getScene().getWindow().hide();
+        btnCancel .getScene().getWindow().hide();
+        System.out.println("here");
     }
 
     public void setDisplayTxt(String displayTxt) {
