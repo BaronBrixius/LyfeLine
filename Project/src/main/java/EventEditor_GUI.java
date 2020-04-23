@@ -1,12 +1,23 @@
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -14,6 +25,7 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 public class EventEditor_GUI {
 
@@ -66,6 +78,7 @@ public class EventEditor_GUI {
     boolean editable = true;
     EventSelector prevScreen;
     private Event event;
+
 
     public void setPrevScreen(EventSelector prevScreen) {             //TODO delete this inelegant solution
         this.prevScreen = prevScreen;
@@ -196,9 +209,60 @@ public class EventEditor_GUI {
     }
 
     @FXML
-    private void uploadImage() {
-        //don't implement, not part of current sprint
+    private void uploadImage() throws IOException {    //Only working now for .jpg
+         FileChooser chooser = new FileChooser();
+        chooser.setTitle("Open File");
+        File f = chooser.showOpenDialog(new Stage());
+        copyImage(f);
+
+
         System.out.println("Button pressed.");
+    }
+
+    public void copyImage(File f){
+        BufferedImage image = null;
+        int width = 963;    //width of the image
+        int height = 640;   //height of the image
+        //read image
+        try{
+            image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+            image = ImageIO.read(f);
+            System.out.println("Reading complete.");
+        }catch(IOException e){
+            System.out.println("Error: "+e);
+        }
+
+        //write image
+        try{
+            Random rnd = new Random();
+            String imageName = "image.jpg";
+            String outPath = "src/main/resources/images/";
+            while (folderHasImage(imageName)==true){
+            imageName = "image" + rnd.nextInt(5000) + ".jpg";}
+            f = new File(outPath + imageName);  //output file path
+            ImageIO.write(image, "jpg", f);
+            System.out.println("Writing complete.");
+        }catch(IOException e){
+            System.out.println("Error: "+e);
+        }
+
+    }
+
+    public boolean folderHasImage(String path){
+        File folder = new File("src/main/resources/images");
+        File[] listOfFiles = folder.listFiles();
+        List<String> images = new ArrayList<>();
+
+        for (int i = 0; i < listOfFiles.length; i++) {
+            if (listOfFiles[i].isFile()) {
+                images.add(listOfFiles[i].getName());
+            }
+        }
+        for(String s : images){
+            if (path.equalsIgnoreCase(s))
+                    return true;
+        }
+        return false;
     }
 
     public boolean setEvent(int eventID) {       //is this even needed? don't implement yet
