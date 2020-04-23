@@ -30,9 +30,12 @@ class Event implements DBObject<Event> {
         this.imageID = imageID;
     }
 
-
     static List<Integer> getYears() throws SQLException {
         return DBM.getFromDB(DBM.conn.prepareStatement("SELECT StartYear FROM events"), rs -> rs.getInt("StartYear"));
+    }
+
+    public int getImageID() {
+        return imageID;
     }
 
 
@@ -56,7 +59,7 @@ class Event implements DBObject<Event> {
 
         PreparedStatement out = DBM.conn.prepareStatement("INSERT INTO `events` (`EventType`, `EventName`, `EventDescription`,`StartYear`,`StartMonth`,`StartDay`,`StartHour`, " +
                 "`StartMinute`,`StartSecond`,`StartMillisecond`,`EndYear`,`EndMonth`,`EndDay`,`EndHour`,`EndMinute`,`EndSecond`, " +
-                "`EndMillisecond`,`CreatedYear`,`CreatedMonth`,`CreatedDay`,`CreatedHour`,`CreatedMinute`,`CreatedSecond`,`CreatedMillisecond`,`EventOwner`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);", Statement.RETURN_GENERATED_KEYS);
+                "`EndMillisecond`,`CreatedYear`,`CreatedMonth`,`CreatedDay`,`CreatedHour`,`CreatedMinute`,`CreatedSecond`,`CreatedMillisecond`,`EventOwner`, `EventImage`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);", Statement.RETURN_GENERATED_KEYS);
         out.setInt(1, eventType);
         out.setString(2, eventName);
         out.setString(3, eventDescription);
@@ -93,6 +96,10 @@ class Event implements DBObject<Event> {
             out.setInt(24, creationDate.getMilliseconds());
         }
         out.setInt(25, userID);
+        if (imageID == 0)
+            out.setNull(26, Types.INTEGER);
+        else
+            out.setInt(26, imageID);
         return out;
     }
 
@@ -103,15 +110,16 @@ class Event implements DBObject<Event> {
         out.execute();
 
     }
+
     public void removeFromTimeline(int timelineID) throws SQLException {
-        PreparedStatement out = DBM.conn.prepareStatement("DELETE FROM `timelineevents` WHERE EventID = " + this.eventID + " AND TimelineID = " + timelineID+";");
+        PreparedStatement out = DBM.conn.prepareStatement("DELETE FROM `timelineevents` WHERE EventID = " + this.eventID + " AND TimelineID = " + timelineID + ";");
         out.execute();
     }
 
     @Override
     public Event createFromDB(ResultSet rs) throws SQLException {
         int eventID = rs.getInt("EventID");
-        int imageID = rs.getInt("EventType");
+        int imageID = rs.getInt("EventImage");
         int ownerID = rs.getInt("EventOwner");
         String eventName = rs.getString("EventName");
         String eventDescription = rs.getString("EventDescription");

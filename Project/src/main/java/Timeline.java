@@ -178,7 +178,7 @@ public class Timeline implements DBObject<Timeline> {
 
     @Override
     public String toString() {
-        return "Time line ID: " + timelineID + " Time line Name: " + timelineName + " Time line Description: " + timelineDescription + " Private:" + isPrivate + " Scale:" + scale + " Theme: " + theme + " Start Date: " + startDate + " End Date: " + endDate + " Created: " + dateCreated + " Owner: " + timelineOwner;
+        return timelineName;
     }
 
     //This method will set the name of the timeline if this user has not timeline with the same name already in the DB

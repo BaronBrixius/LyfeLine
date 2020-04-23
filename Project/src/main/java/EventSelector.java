@@ -25,6 +25,7 @@ public class EventSelector {
     public TextField searchBar;
     @FXML
     public GridPane selector;
+    public Button newButton;
 
     public void initialize() {
         populateTimelineList();
@@ -61,9 +62,11 @@ public class EventSelector {
 
         timelineList.getSelectionModel().selectedIndexProperty().addListener(e -> {
             populateEventList();
+            newButton.setDisable(timelineList.getSelectionModel().selectedIndexProperty() == null);
         });
 
         eventList.getSelectionModel().selectedIndexProperty().addListener(e -> {
+            newButton.setDisable(timelineList.getSelectionModel().selectedIndexProperty() == null);
             viewButton.setDisable(eventList.getSelectionModel().selectedIndexProperty() == null);
             deleteButton.setDisable(eventList.getSelectionModel().selectedIndexProperty() == null);
         });
@@ -141,6 +144,7 @@ public class EventSelector {
 
             eventList.setItems(FXCollections.observableArrayList(DBM.getFromDB(stmt, new Event())));
             eventList.getSelectionModel().clearSelection();
+            newButton.setDisable(true);
             viewButton.setDisable(true);
             deleteButton.setDisable(true);
         } catch (SQLException e) {

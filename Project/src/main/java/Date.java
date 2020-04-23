@@ -2,7 +2,7 @@ import java.util.Calendar;
 
 public class Date implements Comparable<Date> {
 
-	private int year;
+	private int year = 1;
 	private int month = 1;
 	private int day = 1;
 	private int hours;
