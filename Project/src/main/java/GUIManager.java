@@ -1,47 +1,75 @@
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Stack;
 
-public class GUIManager extends Application{
+public class GUIManager extends Application {
 
-	public static void main(String[] args) {
-		launch(args);
-	}
+    //currently logged in user, null if no log in
+    public static User loggedInUser;
+    public static Stage mainStage;
+    public static TopMenu menu;
+    public static VBox main;
+    public static FXMLLoader loader;
+    public static Stack<Node> pastPages = new Stack<>();
 
-	public static Stage mainStage;
-	public static String mainStyle;
+    public static void main(String[] args) {
+        launch(args);
+    }
 
-	//default window set up
-	@Override
-	public void start(Stage primaryStage) throws Exception {
+    public static <T> T swapScene(String fxml) throws IOException {
+        pastPages.add(main.getChildren().get(1));
+        loader = new FXMLLoader(GUIManager.class.getResource("FXML/" + fxml + ".fxml"));
+        main.getChildren().set(1, loader.load());
+        return loader.getController();
+    }
 
-		// Used to establish connection to the DB.
-		try {
-			new DBM();
-			DBM.setupSchema();
-		}
-		catch (SQLException e) {
-			e.printStackTrace();
-		}
+    public static void previousPage() {
+        main.getChildren().set(1, pastPages.pop());
+    }
 
-		mainStage = primaryStage;
-		mainStage.setScene(LoginAndRegistration_GUI.welcomeScreen()); //default scene
-		mainStage.setResizable(false);
-		changeStyle("DefaultStyle");
-		mainStage.show();
-	}
 
-	//is used when swapping scenes inside classes. use the static classes that return scenes
-	public static void swapScene(Scene scene) {
-		mainStage.setScene(scene);
-		changeStyle(mainStyle);
-	}
+    public static void applyStyle(String style) {
+        mainStage.getScene().getStylesheets().add("File:src/main/resources/styles/" + style + ".css");
+    }
 
-	public static void changeStyle(String styleName) {
-		mainStyle = styleName;
-		mainStage.getScene().getStylesheets().add("File:src/main/resources/"+ mainStyle +".css");
-	}
+    //default window set up
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+
+        // Used to establish connection to the DB.
+        try {
+            new DBM();
+            DBM.setupSchema(); //comment out for testing of log in
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        
+
+        main = new VBox();
+
+        loader = new FXMLLoader(getClass().getResource("FXML/TopMenu.fxml"));
+
+
+        main.getChildren().addAll(loader.load(), new Pane());
+
+        menu = loader.getController();
+        menu.updateLoggedInStatus();
+
+        mainStage = primaryStage;
+        mainStage.setScene(new Scene(main));
+
+        swapScene("Welcome_Screen");
+        applyStyle("DefaultStyle");
+
+        mainStage.show();
+    }
 
 }

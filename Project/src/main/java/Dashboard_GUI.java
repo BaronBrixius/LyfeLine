@@ -1,59 +1,56 @@
+import javafx.fxml.FXML;
+import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.List;
-
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 public class Dashboard_GUI {
 
-	public static Scene DashboardScreen() {
+	@FXML private Button eventEditorButton;
+    @FXML private Button adminGUI;
+	@FXML private Button btnDelete;
+	@FXML private Button btnEdit;
+	@FXML private Button btnCreate;
+	@FXML private TextFlow displayInfo;
+	@FXML private ListView<Timeline> list;
+	@FXML private TextField searchInput;
+	@FXML private CheckBox cbOnlyViewPersonalLines;
+	@FXML private ComboBox<String> sortBy;
+	@FXML private GridPane gridButtons;
+	@FXML private Text titleText;
 
-		// main layout
-		GridPane pane = new GridPane();
-		pane.setVgap(5);
-		pane.setHgap(5);
-		pane.setPadding(new Insets(10, 10, 10, 10));
+	
+	private Timeline activeTimeline;
 
-		// holds timelines from DB
-		ObservableList<Timeline> timelines = FXCollections.observableArrayList();
-		List<Timeline> timelinesFromDB = null;
+	public void initialize() {
+	gridButtons.setVisible(GUIManager.loggedInUser.getAdmin());
+	gridButtons.setDisable(!GUIManager.loggedInUser.getAdmin());
 
+		// Fill ListView with the timelines
 		try {
 			PreparedStatement stmt = DBM.conn.prepareStatement("SELECT * FROM timelines");
-			timelinesFromDB = DBM.getFromDB(stmt, new Timeline());
-
+			list.setItems(FXCollections.observableArrayList(DBM.getFromDB(stmt, new Timeline())));
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.err.println("Could not get timelines from database.");
 		}
-
-		for (Timeline t : timelinesFromDB) {
-			timelines.add(t);
-		}
-
-		// default sort order
-		timelines.sort((t1, t2) -> (t1.getName().compareTo(t2.getName())));
-
-		// list display of timelines
-		ListView<Timeline> list = new ListView<Timeline>(timelines);
 
 		// approach adapted from https://stackoverflow.com/a/36657553
 		list.setCellFactory(param -> new ListCell<Timeline>() {
 			@Override
 			protected void updateItem(Timeline item, boolean empty) {
 				super.updateItem(item, empty);
-
 				if (empty || item == null || item.getName() == null) {
 					setText(null);
 				} else {
@@ -62,82 +59,173 @@ public class Dashboard_GUI {
 			}
 		});
 
-		list.setMinWidth(200);
-		list.getSelectionModel().select(0);
-		pane.add(list, 2, 0);
-
-		// layout of dashboard options / only for scene switch purposes for now
-		VBox dashboardOptions = new VBox();
-		dashboardOptions.setSpacing(10);
-		Button adminGUI = new Button("Admin Manager");
-		adminGUI.getStyleClass().add("smallButton");
-		adminGUI.setMinWidth(150);
-		dashboardOptions.getChildren().add(adminGUI);
-		adminGUI.setOnAction(event -> {
-			GUIManager.swapScene(AdminRoleManager_GUI.AdminRoleManager());
-			GUIManager.mainStage.setTitle("Admin Manager");
-
-		});
-		pane.add(dashboardOptions, 0, 0);
-
-		// layout of column to the left of the listview
-		VBox listOptions = new VBox();
-		listOptions.setSpacing(10);
-
-		// search field
-		TextField searchInput = new TextField("search here... not yet implemented");
-		searchInput.focusedProperty().addListener(ov -> {
-			if (searchInput.isFocused())
-				searchInput.setText("");
-		});
-		listOptions.getChildren().add(searchInput);
-
-		// sort order selection
-		ComboBox<String> sortBy = new ComboBox<String>();
-		sortBy.setValue("Sort By");
+		// Add sorting options
 		ObservableList<String> sortOptions = FXCollections.observableArrayList();
 		sortOptions.add("Alphabetically");
 		sortOptions.add("Reverse-Alphabetically");
 		sortOptions.add("Most Recent");
 		sortOptions.add("Oldest");
 		sortBy.setItems(sortOptions);
-		listOptions.getChildren().add(sortBy);
 
-		Button btnLogOut = new Button("Log Out");
-		btnLogOut.getStyleClass().add("smallButton");
-		btnLogOut.getStyleClass().add("logOutButton");
-		pane.add(btnLogOut, 2, 2);
-
-		btnLogOut.setOnAction(event -> {
-			GUIManager.swapScene(LoginAndRegistration_GUI.welcomeScreen());
-		});
-
-		pane.add(listOptions, 1, 0);
-
-		// sort order selection events
+		// Sort order selection events
 		sortBy.getSelectionModel().selectedIndexProperty().addListener(ov -> {
 			switch (sortBy.getSelectionModel().getSelectedIndex()) {
 			case 0:
-				timelines.sort((t1, t2) -> (t1.getName().compareTo(t2.getName())));
+				list.getItems().sort((t1, t2) -> (t1.getName().compareTo(t2.getName())));
 				break;
 			case 1:
-				timelines.sort((t1, t2) -> (t2.getName().compareTo(t1.getName())));
+				list.getItems().sort((t1, t2) -> (t2.getName().compareTo(t1.getName())));
 				break;
 			case 2:
-				timelines.sort((t1, t2) -> (t2.getDateCreated().compareTo(t1.getDateCreated())));
+				list.getItems().sort((t1, t2) -> (t2.getDateCreated().compareTo(t1.getDateCreated())));
 				break;
 			case 3:
-				timelines.sort((t1, t2) -> (t1.getDateCreated().compareTo(t2.getDateCreated())));
+				list.getItems().sort((t1, t2) -> (t1.getDateCreated().compareTo(t2.getDateCreated())));
 				break;
 			}
 		});
 
-		pane.setAlignment(Pos.CENTER);
+		// Initialised sorting
+		list.getItems().sort((t1, t2) -> (t1.getName().compareTo(t2.getName())));
 
-		// finalizes and returns scene
-		Scene scene = new Scene(pane, 600, 400);
-		return scene;
+		// Search field
+		searchInput.focusedProperty().addListener(ov -> {
+			if (searchInput.isFocused())
+				searchInput.setText("");
+		});
+
+		list.getSelectionModel().selectedIndexProperty().addListener(e -> {
+			activeTimeline = list.getSelectionModel().getSelectedItem();
+			updateDisplays();
+		});
+
+		titleText.setText("Select a Timeline.");
+	}
+
+	@FXML
+	public void adminScreen() throws IOException {
+		GUIManager.swapScene("AdminRoleManager");
+	}
+
+
+	@FXML
+	public void onlyUserTimelines() {
+
+		if (cbOnlyViewPersonalLines.isSelected()) {
+			try {
+				PreparedStatement stmt = DBM.conn.prepareStatement("SELECT * FROM timelines WHERE TimelineOwner = ?");
+				stmt.setInt(1, GUIManager.loggedInUser.getUserID()); // GUIManager.loggedInUser.getUserID() uncomment
+																		// this for real version
+				list.setItems(FXCollections.observableArrayList(DBM.getFromDB(stmt, new Timeline())));
+			} catch (SQLException e) {
+				System.err.println("Could not get timelines from database.");
+			}
+		} else {
+			try {
+				PreparedStatement stmt = DBM.conn.prepareStatement("SELECT * FROM timelines");
+				list.setItems(FXCollections.observableArrayList(DBM.getFromDB(stmt, new Timeline())));
+				sortBy.getSelectionModel().select(0);
+			} catch (SQLException e) {
+				System.err.println("Could not get timelines from database.");
+			}
+		}
 
 	}
 
+	@FXML
+	public void createTimeline(ActionEvent event) throws IOException {
+		GUIManager.swapScene("Timeline_Editor_Screen");
+
+	}
+
+	@FXML
+	public void editTimeline(ActionEvent event) throws IOException {
+		if (activeTimeline != null) {
+			TimelineEditor_GUI editor = GUIManager.swapScene("Timeline_Editor_Screen");
+			editor.setActiveTimeline(this.activeTimeline);
+			editor.populateDisplay();
+		}
+
+
+	}
+	
+	@FXML
+	public void openEventEditor(ActionEvent event) { // created by Jan for meeting with teacher Thursday
+		try {
+			GUIManager.swapScene("MockupTimeline");
+		} catch (IOException e) {
+			
+		}
+
+	}
+
+	// open DeletePopUp
+	@FXML
+	public void deleteConfirmation(ActionEvent event) throws IOException {
+
+		Stage delConfirm = new Stage();
+		delConfirm.setTitle("Confirm Deletion");
+		delConfirm.initOwner(GUIManager.mainStage);
+
+		delConfirm.initModality(Modality.WINDOW_MODAL);
+		delConfirm.setResizable(false);
+
+		FXMLLoader popupDeletion = new FXMLLoader(GUIManager.class.getResource("fxml/Popup.fxml"));
+		delConfirm.setScene(new Scene(popupDeletion.load()));
+
+		Popup deletionPopup = popupDeletion.getController();
+		deletionPopup.setMode(1);
+		if (list.getSelectionModel().getSelectedItem() != null && list.getSelectionModel().getSelectedItem().getTimelineOwnerID() == GUIManager.loggedInUser.getUserID()) {
+			titleText.setText("");
+			deletionPopup.setList(list);
+			deletionPopup.setDisplayTxt(
+					"Are you sure you want to delete " + list.getSelectionModel().getSelectedItem().getName() + "?");
+			delConfirm.show();
+
+		}
+		//} else if (list.getSelectionModel().getSelectedItem() == null) {
+		//	displayInfo.getChildren().clear();
+		//	Text error = new Text("No timeline selected.");
+		//	error.setFill(Color.RED);
+		//	displayInfo.getChildren().add(error);
+		//}
+		//else if (list.getSelectionModel().getSelectedItem().getTimelineOwnerID() != GUIManager.loggedInUser.getUserID()) {
+		//	displayInfo.getChildren().clear();
+		//	Text error = new Text("You are not the owner of this timeline.");
+		//	error.setFill(Color.RED);
+		//	displayInfo.getChildren().add(error);
+		//}
+	}
+
+	@FXML
+	private void updateDisplays() {
+		if (list.getSelectionModel().getSelectedItem() != null)
+		{
+			if (list.getSelectionModel().getSelectedItem().getTimelineOwnerID() == GUIManager.loggedInUser.getUserID())
+			{
+				btnDelete.setDisable(false);
+				btnEdit.setDisable(false);
+			}
+			else
+			{
+				btnDelete.setDisable(true);
+				btnEdit.setDisable(true);
+			}
+
+			int year = list.getSelectionModel().getSelectedItem().getDateCreated().getYear();
+			int month = list.getSelectionModel().getSelectedItem().getDateCreated().getMonth();
+			int day = list.getSelectionModel().getSelectedItem().getDateCreated().getDay();
+
+			titleText.setText("Title: " + list.getSelectionModel().getSelectedItem().getName()
+			+ "\nDescription: " + list.getSelectionModel().getSelectedItem().getTimelineDescription()
+			+ "\nDate Created: " + year + "/" + month + "/" + day);
+
+		}
+		else
+		{
+			btnDelete.setDisable(true);
+			btnEdit.setDisable(true);
+			titleText.setText("Select a Timeline.");
+		}
+	}
 }

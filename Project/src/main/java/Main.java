@@ -7,19 +7,11 @@ import java.util.List;
 class Main {
     public static void main(String[] args) {
         PreparedStatement stmt;
+        PreparedStatement stmt2;
         try {
             new DBM();
             DBM.setupSchema();       //destroys + remakes DB with default settings, can comment this out after first run if desired
 
-            Event now = new Event(1, 2020, 4, 9);
-            Event then = new Event(2, -44, 3, 15);
-            DBM.insertIntoDB(now, then);
-
-            try {                   //throws as a demonstration of anti-dupe
-                DBM.insertIntoDB(now);
-            } catch (SQLIntegrityConstraintViolationException e) {
-                System.err.println(e.getMessage() + " (This is just a demonstration exception. -Max)");
-            }
 
             //Makes a list of events from the DB and prints it
             stmt = DBM.conn.prepareStatement("SELECT * FROM events");
@@ -37,7 +29,8 @@ class Main {
 
             User professorChaos = new User("Seeqwul Encurshun', 'BigDoc@abuseme.biz', 'FunPass', 'TheSalt', '1'); -- ", "email@yo.mama", "Passw0rd!");    //SQL injection attempt
             DBM.insertIntoDB(professorChaos);
-
+            Date testing = new Date(1984,24,10,0,0,0,0);
+            System.out.println(testing.toString());
             User teacher = new User("Hans Ove", "Hans@math.biz", "Passw0rd!");
             if (User.validateUnique("Hans@math.biz"))
                 DBM.insertIntoDB(teacher);
@@ -47,13 +40,20 @@ class Main {
             //Example of Prepared Statement with field value
             stmt = DBM.conn.prepareStatement("SELECT * FROM users WHERE userEmail = ?");
             stmt.setString(1, teacher.getUserEmail());
+            
+            //PreparedStatement for printing out timelines
+            stmt2 = DBM.conn.prepareStatement("SELECT * FROM timelines");
+            List<Timeline> timelineList = DBM.getFromDB(stmt2, new Timeline());          
+            System.out.println("\nTimeline List:");
+            for (Timeline f : timelineList)
+                System.out.println(f);
 
             List<User> userList = DBM.getFromDB(stmt, new User());    //blank object so functional interface method can be accessed
             System.out.println("\nUser:");
             for (User e : userList)
                 System.out.println(e);
 
-        } catch (FileNotFoundException | SQLException | ClassNotFoundException e) {
+        } catch (SQLException | ClassNotFoundException | FileNotFoundException e) {
             e.printStackTrace();
         } finally {
             try {
