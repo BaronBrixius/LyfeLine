@@ -42,6 +42,7 @@ public class Popup {
         }
         list.getItems().remove(list.getSelectionModel().getSelectedIndex());
         list.getSelectionModel().select(null);
+        close();
 
     }
 

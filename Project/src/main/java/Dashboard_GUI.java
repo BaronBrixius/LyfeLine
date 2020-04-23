@@ -96,7 +96,10 @@ public class Dashboard_GUI {
 
 		list.getSelectionModel().selectedIndexProperty().addListener(e -> {
 			activeTimeline = list.getSelectionModel().getSelectedItem();
+			updateDisplays();
 		});
+
+		titleText.setText("Select a Timeline.");
 	}
 
 	@FXML
@@ -217,6 +220,12 @@ public class Dashboard_GUI {
 			+ "\nDescription: " + list.getSelectionModel().getSelectedItem().getTimelineDescription()
 			+ "\nDate Created: " + year + "/" + month + "/" + day);
 
+		}
+		else
+		{
+			btnDelete.setDisable(true);
+			btnEdit.setDisable(true);
+			titleText.setText("Select a Timeline.");
 		}
 	}
 }
