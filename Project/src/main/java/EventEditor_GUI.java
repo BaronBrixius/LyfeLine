@@ -1,13 +1,19 @@
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 
+import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public class EventEditor_GUI {
@@ -53,7 +59,8 @@ public class EventEditor_GUI {
     @FXML
     DatePicker endDate = new DatePicker();             //only a datepicker for skeleton, will figure best way to enter info later
     @FXML
-    ComboBox<String> imageInput = new ComboBox<>();
+    ComboBox<ImageView> imageInput = new ComboBox<>();
+    ImageView image;
 
     int startYear;
 
@@ -73,6 +80,36 @@ public class EventEditor_GUI {
             editButton.setDisable(true);
             deleteButton.setVisible(false);
             deleteButton.setDisable(true);
+        }
+
+        try {
+            List<String> images = DBM.getFromDB(DBM.conn.prepareStatement("SELECT * FROM Images"),
+                    rs -> rs.getString("ImageURL"));
+
+            List<ImageView> views = new ArrayList<>();
+            ImageView blank = new ImageView(new Image("file:src/main/resources/images/pleasedontnameanythingthis.png"));
+            blank.setFitHeight(40);
+            blank.setFitWidth(40);
+            views.add(blank);
+
+            ImageView currImage;
+            for (String s : images) {
+                currImage = new ImageView(new Image("file:src/main/resources/images/" + s));
+                currImage.setFitHeight(40);
+                currImage.setFitWidth(40);
+                views.add(currImage);
+            }
+
+            imageInput.setItems(FXCollections.observableArrayList(views));
+            imageInput.setCellFactory(param -> new ListCell<>() {
+                @Override
+                protected void updateItem(ImageView item, boolean empty) {
+                    super.updateItem(item, empty);
+                    setGraphic(item);
+                }
+            });
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
@@ -120,7 +157,6 @@ public class EventEditor_GUI {
             }
         }
 
-
         if (editable && hasChanges())   //if unsaved changes, try to save
             if (!saveConfirm())         //if save cancelled, don't change mode
                 return;
@@ -148,7 +184,7 @@ public class EventEditor_GUI {
         endTime2.setDisable(!editable);
         endTime3.setDisable(!editable);
 
-        imageInput.setEditable(editable);
+        imageInput.setDisable(!editable);
         uploadButton.setVisible(editable);
         uploadButton.setDisable(!editable);
 
@@ -180,7 +216,6 @@ public class EventEditor_GUI {
     }
 
     private boolean populateDisplay() {
-
         titleInput.setText(event.getEventName());
         descriptionInput.setText(event.getEventDescrition());
 
@@ -204,6 +239,8 @@ public class EventEditor_GUI {
             endTime3.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, event.getEndDate().getSeconds()));
         }
 
+        //if (event.getImageID() > 0)
+            imageInput.getSelectionModel().select(event.getImageID() + 1);
         return false;
     }
 
@@ -239,8 +276,8 @@ public class EventEditor_GUI {
         } else                //if it has no duration, end = start
             event.setEndDate(event.getStartDate());
 
-
-        //this.event.setImage(); later
+        if (imageInput.getSelectionModel().getSelectedIndex() > 0)
+            this.event.setImage(imageInput.getSelectionModel().getSelectedIndex() - 1);
     }
 
     private boolean saveEvent() {
@@ -299,7 +336,7 @@ public class EventEditor_GUI {
                         || !event.getEventDescrition().equals(descriptionInput.getText().replaceAll("([^\r])\n", "$1\r\n"))     //textArea tends to change the newline from \r\n to just \n which breaks some things
                         || event.getStartDate().compareTo(readStart) != 0
                         || event.getEndDate().compareTo(readEnd) != 0
-                //then something also for image later to see if changed
+                        || event.getImageID() != imageInput.getSelectionModel().getSelectedIndex() + 1
         );
     }
 

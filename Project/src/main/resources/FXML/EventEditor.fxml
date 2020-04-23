@@ -9,6 +9,7 @@
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
@@ -38,7 +39,7 @@
     <DatePicker fx:id="endDate" disable="true" GridPane.rowIndex="8" />
     <Label styleClass="smallText" text="Image" GridPane.columnSpan="2" GridPane.rowIndex="9" GridPane.valignment="BOTTOM" />
     <Button fx:id="uploadButton" alignment="CENTER" onAction="#uploadImage" styleClass="tinyButton" text="Upload img" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="10" />
-    <ComboBox fx:id="imageInput" prefWidth="175.0" GridPane.columnSpan="2" GridPane.rowIndex="10" />
+    <ComboBox fx:id="imageInput" prefHeight="40.0" prefWidth="175.0" GridPane.columnSpan="2" GridPane.rowIndex="10" GridPane.rowSpan="2" />
     <Region prefHeight="30" GridPane.rowIndex="11" />
     <Button fx:id="editButton" alignment="CENTER" maxHeight="30" onAction="#saveEditButton" styleClass="smallButton" text="Save" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="13" />
     <Button fx:id="deleteButton" alignment="CENTER" maxHeight="30" onAction="#deleteEvent" styleClass="smallButton" text="Delete" GridPane.halignment="CENTER" GridPane.rowIndex="14" />
@@ -54,6 +55,7 @@
         <Spinner fx:id="endTime3" />
     </HBox>
    <Text fx:id="errorMessage" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="smallText" GridPane.columnSpan="2" GridPane.rowIndex="12" />
+   <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" GridPane.halignment="CENTER" GridPane.rowIndex="11" />
    <rowConstraints>
       <RowConstraints />
       <RowConstraints />

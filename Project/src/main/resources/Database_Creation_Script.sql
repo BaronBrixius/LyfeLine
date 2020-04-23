@@ -109,6 +109,16 @@ CREATE TABLE `Images`
   COLLATE = utf8mb4_general_ci;
 
 
+INSERT INTO `Images`
+(`ImageID`,
+ `ImageURL`)
+VALUES (1, 'image1.png'),
+       (2, 'image2.jpg'),
+       (3, 'image3.png'),
+       (4, 'image4.png'),
+       (5, 'image5.png');
+
+
 CREATE TABLE `groups`
 (
     `GroupID`          int              NOT NULL AUTO_INCREMENT,

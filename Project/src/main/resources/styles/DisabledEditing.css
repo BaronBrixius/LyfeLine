@@ -31,6 +31,14 @@
     -fx-opacity: 1;
 }
 
+.combo-box:disabled, .combo-box:disabled > {
+    -fx-opacity: 1;
+}
+
+ImageView {
+    -fx-opacity: 1;
+}
+
 .spinner .increment-arrow-button .increment-arrow {
     -fx-padding: 0px;
 }
