@@ -28,10 +28,7 @@ class Event implements DBObject<Event> {
         this.eventName = title;
         this.eventDescription = description;
         this.imageID = imageID;
-
-
     }
-
 
 
     static List<Integer> getYears() throws SQLException {
@@ -57,9 +54,9 @@ class Event implements DBObject<Event> {
         if (eventID > 0)
             throw new SQLIntegrityConstraintViolationException("Event is already in DB.");
 
-        PreparedStatement out = DBM.conn.prepareStatement("INSERT INTO `events` (`EventType`, `EventName`, `EventDescription`,`StartYear`,`StartMonth`,`StartDay`,`StartHour`\"\n" +
-                "\t\t\t\t+ \",`StartMinute`,`StartSecond`,`StartMillisecond`,`EndYear`,`EndMonth`,`EndDay`,`EndHour`,`EndMinute`,`EndSecond`,\"\n" +
-                "\t\t\t\t+ \"`EndMillisecond`,`CreatedYear`,`CreatedMonth`,`CreatedDay`,`CreatedHour`,`CreatedMinute`,`CreatedSecond`,`CreatedMillisecond`,`EventOwner`,) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);", Statement.RETURN_GENERATED_KEYS);
+        PreparedStatement out = DBM.conn.prepareStatement("INSERT INTO `events` (`EventType`, `EventName`, `EventDescription`,`StartYear`,`StartMonth`,`StartDay`,`StartHour`, " +
+                "`StartMinute`,`StartSecond`,`StartMillisecond`,`EndYear`,`EndMonth`,`EndDay`,`EndHour`,`EndMinute`,`EndSecond`, " +
+                "`EndMillisecond`,`CreatedYear`,`CreatedMonth`,`CreatedDay`,`CreatedHour`,`CreatedMinute`,`CreatedSecond`,`CreatedMillisecond`,`EventOwner`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);", Statement.RETURN_GENERATED_KEYS);
         out.setInt(1, eventType);
         out.setString(2, eventName);
         out.setString(3, eventDescription);
@@ -77,15 +74,38 @@ class Event implements DBObject<Event> {
         out.setInt(15, endDate.getMinutes());
         out.setInt(16, endDate.getSeconds());
         out.setInt(17, endDate.getMilliseconds());
-        out.setInt(18, creationDate.getYear());
-        out.setInt(19, creationDate.getMonth());
-        out.setInt(20, creationDate.getDay());
-        out.setInt(21, creationDate.getHours());
-        out.setInt(22, creationDate.getMinutes());
-        out.setInt(23, creationDate.getSeconds());
-        out.setInt(24, creationDate.getMilliseconds());
+
+        if (creationDate == null) {       //if new event
+            out.setNull(18, Types.INTEGER);
+            out.setNull(19, Types.INTEGER);
+            out.setNull(20, Types.INTEGER);
+            out.setNull(21, Types.INTEGER);
+            out.setNull(22, Types.INTEGER);
+            out.setNull(23, Types.INTEGER);
+            out.setNull(24, Types.INTEGER);
+        } else {
+            out.setInt(18, creationDate.getYear());
+            out.setInt(19, creationDate.getMonth());
+            out.setInt(20, creationDate.getDay());
+            out.setInt(21, creationDate.getHours());
+            out.setInt(22, creationDate.getMinutes());
+            out.setInt(23, creationDate.getSeconds());
+            out.setInt(24, creationDate.getMilliseconds());
+        }
         out.setInt(25, userID);
         return out;
+    }
+
+    public void addToTimeline(int timelineID) throws SQLException {
+        PreparedStatement out = DBM.conn.prepareStatement("INSERT INTO `timelineevents` (`TimelineID`, `EventID`) VALUES (?, ?);");
+        out.setInt(1, timelineID);
+        out.setInt(2, this.eventID);
+        out.execute();
+
+    }
+    public void removeFromTimeline(int timelineID) throws SQLException {
+        PreparedStatement out = DBM.conn.prepareStatement("DELETE FROM `timelineevents` WHERE EventID = " + this.eventID + " AND TimelineID = " + timelineID+";");
+        out.execute();
     }
 
     @Override
@@ -117,7 +137,7 @@ class Event implements DBObject<Event> {
         int CreatedSecond = rs.getInt("CreatedSecond");
         int CreatedMillisecond = rs.getInt("CreatedMillisecond");
         Date start = new Date(StartYear, StartMonth, StartDay, StartHour, StartMinute, StartSecond, StartMillisecond);
-        Date end = new Date(EndYear, EndMonth, EndDay, EndHour, EndMinute , EndSecond, EndMillisecond);
+        Date end = new Date(EndYear, EndMonth, EndDay, EndHour, EndMinute, EndSecond, EndMillisecond);
         Date created = new Date(CreatedYear, CreatedMonth, CreatedDay, CreatedHour, CreatedMinute, CreatedSecond, CreatedMillisecond);
 
         return new Event(eventID, ownerID, start, end, created, eventName, eventDescription, imageID);

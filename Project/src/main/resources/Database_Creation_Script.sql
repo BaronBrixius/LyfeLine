@@ -50,6 +50,7 @@ BEGIN
     end if;
 END;
 
+
 CREATE TRIGGER EndDate
     BEFORE INSERT
     ON events
@@ -85,21 +86,22 @@ CREATE TABLE `scale_lookup`
 INSERT INTO `scale_lookup`
 (`ID`,
  `unit`)
-VALUES (01, 'Seconds'),
-       (02, 'Minutes'),
-       (03, 'Hours'),
-       (04, 'Days'),
-       (05, 'Weeks'),
-       (06, 'Months'),
-       (07, 'Years'),
-       (08, 'Decades');
+VALUES (1, 'Seconds'),
+       (2, 'Minutes'),
+       (3, 'Hours'),
+       (4, 'Days'),
+       (5, 'Weeks'),
+       (6, 'Months'),
+       (7, 'Years'),
+       (8, 'Decades');
+
 
 
 
 CREATE TABLE `Images`
 (
     `ImageID`  int NOT NULL AUTO_INCREMENT,
-    `ImageULR` character(255) DEFAULT NULL,
+    `ImageURL` varchar(255) DEFAULT NULL,
     PRIMARY KEY (`ImageID`),
     UNIQUE KEY `ImageID_UNIQUE` (`ImageID`)
 ) ENGINE = InnoDB
@@ -193,9 +195,7 @@ CREATE TABLE `timelines`
     `Private`             boolean           DEFAULT true,
     `TimelineOwner`       int,
     PRIMARY KEY (`TimelineID`),
-    UNIQUE KEY `TimelineID_UNIQUE` (`TimelineID`),
-    KEY `FK_Scale` (`Scale`),
-    CONSTRAINT `FK_Scale` FOREIGN KEY (`Scale`) REFERENCES `scale_lookup` (`ID`)
+    UNIQUE KEY `TimelineID_UNIQUE` (`TimelineID`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_general_ci;
@@ -288,7 +288,7 @@ INSERT INTO `timelines`
  `StartMinute`, `StartSecond`, `StartMillisecond`, `EndYear`, `EndMonth`, `EndDay`, `EndHour`, `EndMinute`, `EndSecond`,
  `EndMillisecond`, `CreatedYear`, `CreatedMonth`, `CreatedDay`, `CreatedHour`, `CreatedMinute`, `CreatedSecond`,
  `CreatedMillisecond`, `Private`, `TimelineOwner`)
-VALUES (01, 1, 'Fall of Rome', 'Out with a wimper, not a bang', 'dark', -350, 5, 20, 4, 43, 32, 213, 2001, 5, 20, 4,
+VALUES (01, 1, 'Fall of Rome', 'Out with a wimper, not a bang', 'dark', 350, 5, 20, 4, 43, 32, 213, 2001, 5, 20, 4,
         43, 32, 213, 2000, 5, 20, 4, 43,
         32, 213, default, 1),
        (02, 2, 'New Timeline', '', 'dark', 2020, 5, 20, 4, 43, 32, 213, 2005, 5, 20, 4, 43, 32, 213, 2003, 5, 20, 4,
@@ -325,20 +325,20 @@ VALUES ('1', '1', 'Crossing the Rubicon', 'Julius Caesar''s crossing the Rubicon
         In January of 49 BC, Caesar brought the 13th legion across the river, which the Roman government considered
         insurrection, treason, and a declaration of war on the Roman Senate. According to some authors, he is said to have
         uttered the phrase "alea iacta est"—the die is cast—as his army marched through the shallow river.'
-        , '-49', '1', '13', '17', '25', '40', '20', '-30', '10', '25', '22', '50', '45','40'),
+        , '49', '1', '13', '17', '25', '40', '20', '30', '10', '25', '22', '50', '45','40'),
         ('2', '1', 'Great Roman Civil War', 'The Great Roman Civil War (49–45 BC), also known as Caesar''s Civil War, was
         one of the last politico-military conflicts in the Roman Republic before the establishment of the Roman Empire.
         It began as a series of political and military confrontations, between Julius Caesar (100–44 BC), his political supporters
         (broadly known as Populares), and his legions, against the Optimates (or Boni), the politically conservative and socially
         traditionalist faction of the Roman Senate, who were supported by Pompey (106–48 BC) and his legions.[1]',
-        '-49', '5', '5', '5', '10', '10', '10', '-45', '10', '25', '22', '50', '45','40'),
+        '49', '5', '5', '5', '10', '10', '10', '45', '10', '25', '22', '50', '45','40'),
         ('1', '1', 'Marcus Tullius Cicero', 'Marcus Tullius Cicero[a] (/ˈsɪsəroʊ/ SISS-ə-roh, Latin:
         [ˈmaːrkʊs ˈtʊllɪ.ʊs ˈkɪkɛroː]; 3 January 106 BC – 7 December 43 BC) was a Roman statesman, lawyer and Academic
         Skeptic philosopher[3] who wrote extensively on rhetoric, orations, philosophy, and politics, and is considered one of
         Rome''s greatest orators and prose stylists.[4][5] A leading political figure in the final years of the Roman Republic,
         Cicero vainly tried to uphold the republican system''s integrity during the instability that led to the establishment of
         the Roman Empire.[6] He came from a wealthy municipal family of the Roman equestrian order, and served as consul in the
-        year 63 BC.', '-106', '8', '8', '9', '20', '20', '25', '-43', '10', '30', '22', '50', '45','40');
+        year 63 BC.', '106', '8', '8', '9', '20', '20', '25', '43', '10', '30', '22', '50', '45','40');
 
 
 INSERT INTO `timelineevents` (`TimelineID`, `EventID`)
