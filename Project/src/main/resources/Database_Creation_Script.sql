@@ -66,14 +66,14 @@ CREATE TABLE `scale_lookup` (
 INSERT INTO `scale_lookup`
 (`ID`,
  `unit`)
-VALUES (01, 'Seconds'),
-       (02, 'Minutes'),
-       (03, 'Hours'),
-       (04, 'Days'),
-       (05, 'Weeks'),
-       (06, 'Months'),
-       (07, 'Years'),
-       (08, 'Decades');
+VALUES (1, 'Seconds'),
+       (2, 'Minutes'),
+       (3, 'Hours'),
+       (4, 'Days'),
+       (5, 'Weeks'),
+       (6, 'Months'),
+       (7, 'Years'),
+       (8, 'Decades');
 
 
 
@@ -175,9 +175,7 @@ CREATE TABLE `timelines`
     `Private`             boolean           DEFAULT true,
     `TimelineOwner`       int,
     PRIMARY KEY (`TimelineID`),
-    UNIQUE KEY `TimelineID_UNIQUE` (`TimelineID`),
-    KEY `FK_Scale` (`Scale`),
-    CONSTRAINT `FK_Scale` FOREIGN KEY (`Scale`) REFERENCES `scale_lookup` (`ID`)
+    UNIQUE KEY `TimelineID_UNIQUE` (`TimelineID`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_general_ci;
