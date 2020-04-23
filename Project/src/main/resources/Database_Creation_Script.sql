@@ -50,6 +50,7 @@ BEGIN
     end if;
 END;
 
+
 CREATE TRIGGER EndDate
     BEFORE INSERT
     ON events
