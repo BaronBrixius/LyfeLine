@@ -1,17 +1,3 @@
-CREATE TABLE `images_lookup` (
-  `imageID` int NOT NULL AUTO_INCREMENT,
-  `imageURL` varchar(255) NOT NULL,
-  PRIMARY KEY (`imageID`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-INSERT INTO `project`.`images_lookup`
-(`imageID`,
-`imageURL`)
-VALUES
-       ('1', 'asdasd'),
-       ('2', 'asdasddsaasd1');
-
-
 CREATE TABLE `events` (
   `EventID` int NOT NULL AUTO_INCREMENT,
   `EventOwner` int NOT NULL,
@@ -40,9 +26,7 @@ CREATE TABLE `events` (
   `CreatedSecond` tinyint unsigned DEFAULT NULL,
   `CreatedMillisecond` smallint unsigned DEFAULT NULL,
   PRIMARY KEY (`EventID`),
-  UNIQUE KEY `EventID_UNIQUE` (`EventID`),
-  KEY `fk_Image_Lookup` (`EventOwner`),
-  CONSTRAINT `fk_Image_Lookup` FOREIGN KEY (`EventOwner`) REFERENCES `images_lookup` (`imageID`)
+  UNIQUE KEY `EventID_UNIQUE` (`EventID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
