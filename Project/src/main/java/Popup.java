@@ -45,8 +45,7 @@ public class Popup {
     }
 
     public void close() {
-        btnCancel .getScene().getWindow().hide();
-        System.out.println("here");
+        btnCancel.getScene().getWindow().hide();
     }
 
     public void setDisplayTxt(String displayTxt) {
