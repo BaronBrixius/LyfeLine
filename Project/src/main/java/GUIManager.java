@@ -51,6 +51,7 @@ public class GUIManager extends Application {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        
 
         main = new VBox();
 
