@@ -1,14 +1,20 @@
 /*This File holds all the CSS Style commands that are applied to all Nodes in a Scene*/
 
 /*.root applies to everything in a scene and overrides all other commands in this file. Use carefully.*/
-.root{
+.root{/*Use carefully.*/
     -fx-background-color: #f4f4f4;
 }
 
-/*Text applies to any free floating text, does not apply to text in Buttons, TextFields, etc.
+/*Text applies to any free floating text (inc. TextField), does not apply to text in Buttons, etc.
 "-fx-text-fill" does not work here, use "fx-fill" to color the text instead.*/
 Text{
     -fx-font-size: 1.75em;
+}
+
+.label{
+    -fx-padding: 5 0 0 0;
+    -fx-font-size: 1.5em;
+    -fx-font-weight: bold;
 }
 
 /*The following apply to any object of the corresponding name.*/
@@ -21,6 +27,8 @@ Text{
     -fx-background-color: #1aa9cd;
     -fx-background-radius: 222px;
 }
+
+
 /*This is what the button looks like when you hover over it*/
 .button:hover {
     -fx-background-color: #126c82;
@@ -31,13 +39,25 @@ Text{
     -fx-pref-height: 30px;
 }
 
+.text-area{
+    -fx-pref-height: 105px;
+    -fx-pref-width: 400px;
+    -fx-wrap-text: true;
+    -fx-font-size: 15px;
+}
+
+.smallTextArea{
+    -fx-pref-height: 40px;
+
+}
+
 .menu-item{
 
 }
 
 .menu-bar{
-    -fx-font-size: 1.1em;
-
+    -fx-font-size: .6em;
+    -fx-font-weight: lighter;
 }
 
 .combo-box{
@@ -55,7 +75,18 @@ for example:      buttonName.getStyleClass().add("smallButton");                
     -fx-font-size: 1.3em;
     -fx-font-weight: bold;
     -fx-pref-height: 50px;
-    -fx-pref-width: 175px;
+    -fx-pref-width: 150px;
+}
+
+.dashBoard{
+    -fx-pref-height: 75px;
+
+}
+
+.tinyButton{
+    -fx-pref-width: 90px;
+    -fx-pref-height: 25px;
+    -fx-font-size: 12;
 }
 
 .smallButton:hover {
@@ -69,9 +100,67 @@ for example:      buttonName.getStyleClass().add("smallButton");                
     -fx-scale-y: 1.1;
 }
 
+.headertext{
+    -fx-font-size: 24;
+}
+
 .smallText{
     -fx-font-size: 1em;
 }
+
+.popupButton{
+    -fx-font-size: 1.3em;
+    -fx-font-weight: bold;
+    -fx-pref-height: 35px;
+    -fx-pref-width: 90px;
+}
+
+.popupButton:hover {
+    -fx-background-color: #126c82;
+    -fx-scale-y: 1.1;
+}
+
+.hoverRed:hover {
+    -fx-background-color: #ff4251;
+    -fx-scale-y: 1.1;
+}
+
+.mediumText{
+	-fx-font-size: 1.5em;
+}
+.date-picker .label {
+    -fx-padding: 0 0 0 0;
+    -fx-pref-width: 5px;
+    -fx-pref-height: 15px;
+
+}
+
+/*.button settings was making Date picker weird, so these are the default settings for it, slightly tweaked for consistency.*/
+.date-picker-popup .button {
+    -fx-background-color: -fx-outer-border, -fx-inner-border, -fx-body-color;
+    -fx-background-insets: 0, 1, 2;
+    -fx-color: transparent;
+    -fx-background-radius: 222;
+    -fx-pref-width: 55px;
+    -fx-pref-height: 15px;
+}
+
+.date-picker-popup > * > .spinner > .button:focused {
+    -fx-background-insets: -0.2, 1, 2, -1.4, 2.6;
+}
+
+.date-picker-popup > * > .spinner > .button:hover {
+    -fx-color: -fx-hover-base;
+}
+
+.date-picker-popup > * > .spinner > .button:armed {
+    -fx-color: -fx-pressed-base;
+}
+
+
+
+
+
 
 /*Here is a list of useful CSS commands:
 -fx-text-fill: black; (sets text color)

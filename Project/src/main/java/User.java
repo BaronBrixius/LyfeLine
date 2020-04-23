@@ -153,6 +153,14 @@ public class User implements Users {
     public String toString() {
         return "User ID: " + userID + " Name: " + userName + " Email: " + userEmail;
     }
+    
+    //getters for pass and salt
+    public String getEncrypted(){
+        return this.encryptedPass;
+    }
+    public String getSalt(){
+        return this.salt;
+    }
 
     //Two methods for junit test only - if I set private, have to learn how to mock them if possible
     public String getEncryptedForTest(){ //This method only when I am testing the getInsertQuery() and getUpdateQuery()
@@ -162,4 +170,6 @@ public class User implements Users {
         return this.salt;
     }
 
+    
+    
 }

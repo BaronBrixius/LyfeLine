@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.RowConstraints?>
+
+<GridPane fx:id="selector" alignment="CENTER_RIGHT" hgap="5" onMouseDragOver="#populateEventList" prefHeight="572.0" prefWidth="325.0" vgap="5" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="EventSelector">
+    <columnConstraints>
+        <ColumnConstraints maxWidth="-Infinity" minWidth="-Infinity" prefWidth="150.0" />
+        <ColumnConstraints maxWidth="-Infinity" minWidth="-Infinity" prefWidth="150.0" />
+    </columnConstraints>
+    <padding>
+        <Insets bottom="10" left="10" right="10" top="10" />
+    </padding>
+    <ComboBox fx:id="timelineList" prefWidth="150.0" promptText="Timeline" />
+    <ComboBox fx:id="sortBy" prefWidth="150.0" promptText="Sort By" GridPane.rowIndex="1" />
+    <TextField fx:id="searchBar" onAction="#search" text="Search..." GridPane.rowIndex="2" />
+    <ListView fx:id="eventList" maxHeight="1.7976931348623157E308" prefHeight="300.0" prefWidth="200.0" GridPane.columnSpan="2" GridPane.rowIndex="3" GridPane.vgrow="SOMETIMES" />
+    <Button fx:id="newButton" alignment="CENTER" disable="true" maxHeight="30" onAction="#newEvent" styleClass="smallButton" text="New Event" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
+    <Button fx:id="viewButton" alignment="CENTER" disable="true" maxHeight="30" onAction="#openEvent" styleClass="smallButton" text="View Event" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
+    <Region prefHeight="30.0" prefWidth="200.0" GridPane.columnSpan="2" GridPane.rowIndex="4" />
+    <Button alignment="CENTER" maxHeight="30" onAction="#close" styleClass="smallButton" text="Close" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="6" />
+    <Button fx:id="deleteButton" alignment="CENTER" disable="true" maxHeight="30" onAction="#deleteEvent" styleClass="smallButton" text="Delete" GridPane.halignment="CENTER" GridPane.rowIndex="6" />
+   <rowConstraints>
+      <RowConstraints />
+      <RowConstraints />
+      <RowConstraints />
+      <RowConstraints maxHeight="1.7976931348623157E308" />
+      <RowConstraints />
+      <RowConstraints />
+      <RowConstraints />
+   </rowConstraints>
+</GridPane>
