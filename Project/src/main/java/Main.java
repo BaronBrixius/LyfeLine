@@ -29,9 +29,6 @@ class Main {
 
             User professorChaos = new User("Seeqwul Encurshun', 'BigDoc@abuseme.biz', 'FunPass', 'TheSalt', '1'); -- ", "email@yo.mama", "Passw0rd!");    //SQL injection attempt
             DBM.insertIntoDB(professorChaos);
-
-
-
             Date testing = new Date(1984,24,10,0,0,0,0);
             System.out.println(testing.toString());
             User teacher = new User("Hans Ove", "Hans@math.biz", "Passw0rd!");
@@ -44,7 +41,7 @@ class Main {
             stmt = DBM.conn.prepareStatement("SELECT * FROM users WHERE userEmail = ?");
             stmt.setString(1, teacher.getUserEmail());
             
-          //PreparedStatement for printing out timelines
+            //PreparedStatement for printing out timelines
             stmt2 = DBM.conn.prepareStatement("SELECT * FROM timelines");
             List<Timeline> timelineList = DBM.getFromDB(stmt2, new Timeline());          
             System.out.println("\nTimeline List:");

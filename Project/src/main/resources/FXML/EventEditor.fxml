@@ -6,6 +6,7 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -28,12 +29,12 @@
     <Label text="Description" GridPane.columnSpan="2" GridPane.rowIndex="3" GridPane.valignment="BOTTOM" />
     <TextArea fx:id="descriptionInput" GridPane.columnSpan="2" GridPane.rowIndex="4" />
     <Label text="Start" GridPane.columnSpan="2" GridPane.rowIndex="5" GridPane.valignment="BOTTOM" />
-    <DatePicker fx:id="startInput" GridPane.columnSpan="2" GridPane.rowIndex="6" />
+    <DatePicker fx:id="startDate" GridPane.rowIndex="6" />
     <HBox alignment="BOTTOM_LEFT" spacing="5.0" GridPane.rowIndex="7" GridPane.valignment="BOTTOM">
         <CheckBox fx:id="hasDuration" onAction="#toggleHasDuration" />
         <Label contentDisplay="RIGHT" text="End" />
     </HBox>
-    <DatePicker fx:id="endInput" disable="true" GridPane.columnSpan="2" GridPane.rowIndex="8" />
+    <DatePicker fx:id="endDate" disable="true" GridPane.rowIndex="8" />
     <Label text="Image" GridPane.columnSpan="2" GridPane.rowIndex="9" GridPane.valignment="BOTTOM" />
     <Button fx:id="uploadButton" alignment="CENTER" onAction="#uploadImage" styleClass="tinyButton" text="Upload img" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="10" />
     <ComboBox fx:id="imageInput" prefWidth="175.0" GridPane.columnSpan="2" GridPane.rowIndex="10" />
@@ -41,6 +42,8 @@
     <Button fx:id="editButton" alignment="CENTER" maxHeight="30" onAction="#toggleEditMode" styleClass="smallButton" text="Save" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="12" />
     <Button fx:id="deleteButton" alignment="CENTER" maxHeight="30" onAction="#deleteEvent" styleClass="smallButton" text="Delete" GridPane.halignment="CENTER" GridPane.rowIndex="13" />
     <Button alignment="CENTER" maxHeight="30" onAction="#close" styleClass="smallButton" text="Close" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="13" />
+   <Spinner fx:id="startTime" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+   <Spinner fx:id="endTime" disable="true" GridPane.columnIndex="1" GridPane.rowIndex="8" />
    <rowConstraints>
       <RowConstraints />
       <RowConstraints />

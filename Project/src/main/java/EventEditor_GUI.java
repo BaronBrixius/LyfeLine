@@ -1,9 +1,12 @@
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.util.converter.LocalTimeStringConverter;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.Optional;
 
 public class EventEditor_GUI {
@@ -15,15 +18,19 @@ public class EventEditor_GUI {
     @FXML
     public Button deleteButton;
     @FXML
+    public Spinner<LocalTime> startTime;
+    @FXML
+    public Spinner<LocalTime> endTime;
+    @FXML
     TextField titleInput = new TextField();
     @FXML
     TextArea descriptionInput = new TextArea();
     @FXML
-    DatePicker startInput = new DatePicker();
+    DatePicker startDate = new DatePicker();
     @FXML
     CheckBox hasDuration = new CheckBox();
     @FXML
-    DatePicker endInput = new DatePicker();             //only a datepicker for skeleton, will figure best way to enter info later
+    DatePicker endDate = new DatePicker();             //only a datepicker for skeleton, will figure best way to enter info later
     @FXML
     ComboBox<String> imageInput = new ComboBox<>();
     boolean editable = true;
@@ -40,19 +47,51 @@ public class EventEditor_GUI {
             deleteButton.setVisible(false);
             deleteButton.setDisable(true);
         }*/
+
+
+        startTime = new Spinner(new SpinnerValueFactory() {
+
+            {
+                setConverter(new LocalTimeStringConverter(FormatStyle.MEDIUM));
+            }
+
+            @Override
+            public void decrement(int steps) {
+                if (getValue() == null)
+                    setValue(LocalTime.now());
+                else {
+                    LocalTime time = (LocalTime) getValue();
+                    setValue(time.minusMinutes(steps));
+                }
+            }
+
+            @Override
+            public void increment(int steps) {
+                if (this.getValue() == null)
+                    setValue(LocalTime.now());
+                else {
+                    LocalTime time = (LocalTime) getValue();
+                    setValue(time.plusMinutes(steps));
+                }
+            }
+        });
+        startTime.setEditable(true);
     }
 
     @FXML
     private void toggleHasDuration() {
-        endInput.setDisable(!hasDuration.isSelected());
+        endDate.setDisable(!hasDuration.isSelected());
+        endTime.setDisable(!hasDuration.isSelected());
     }
 
     public void toggleEditMode() {       //I know this is ugly right now
         editable = !editable;
         titleInput.setEditable(editable);
         descriptionInput.setEditable(editable);
-        startInput.setEditable(editable);
-        endInput.setEditable(editable);
+        startDate.setEditable(editable);
+        startTime.setEditable(editable);
+        endDate.setEditable(editable);
+        endTime.setEditable(editable);
         imageInput.setEditable(editable);
         uploadButton.setVisible(editable);
         uploadButton.setDisable(!editable);
@@ -90,8 +129,8 @@ public class EventEditor_GUI {
         //setters to update each field of this.event, based on the current info in the text fields
         this.event.setTitle(titleInput.getText());
         this.event.setDescription(descriptionInput.getText());
-        this.event.setStartDate(startInput.getValue().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
-        this.event.setEndDate(endInput.getValue().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+        this.event.setStartDate(startDate.getValue().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+        this.event.setEndDate(endDate.getValue().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
         //this.event.setImage(); later
 
         try {
