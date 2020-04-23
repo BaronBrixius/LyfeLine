@@ -51,8 +51,7 @@ public class GUIManager extends Application {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-        loggedInUser = DBM.getFromDB(DBM.conn.prepareStatement("SELECT * FROM users"), new User()).get(0);
+        
 
         main = new VBox();
 
@@ -67,7 +66,7 @@ public class GUIManager extends Application {
         mainStage = primaryStage;
         mainStage.setScene(new Scene(main));
 
-        swapScene("EventSelector");
+        swapScene("Welcome_Screen");
         applyStyle("DefaultStyle");
 
         mainStage.show();
