@@ -310,14 +310,16 @@ VALUES (01, 1, 'Fall of Rome', 'Out with a wimper, not a bang', 'dark', 350, 5, 
         32, 213, default, 5),
        (08, 5, 'Decay of Ununoctium', 'Radioactive decay - a study', 'dark', 2020, 5, 20, 4, 43, 32, 213, 1555, 5, 20,
         4, 43, 32, 213, 1550, 5, 20, 4, 43,
-        32, 213, default, 6)
-;
+        32, 213, default, 6);
 
 
-INSERT INTO `events` (`EventOwner`, `EventType`, `EventName`, `EventDescription`, `StartYear`, `StartMonth`,
+
+
+
+INSERT INTO `events` (`EventID`,`EventOwner`, `EventType`, `EventName`, `EventDescription`, `StartYear`, `StartMonth`,
                       `StartDay`, `StartHour`, `StartMinute`, `StartSecond`, `StartMillisecond`, `EndYear`, `EndMonth`, `EndDay`,
                       `EndHour`, `EndMinute`, `EndSecond`, `EndMillisecond`)
-VALUES ('1', '1', 'Crossing the Rubicon', 'Julius Caesar''s crossing the Rubicon river in January 49 BC precipitated
+VALUES ('1','1', '1', 'Crossing the Rubicon', 'Julius Caesar''s crossing the Rubicon river in January 49 BC precipitated
         the Roman Civil War, which ultimately led to Caesar becoming dictator and the rise of the imperial era of Rome.
         Caesar had been appointed to a governorship over a region that ranged from southern Gaul to Illyricum (but not Italy).
         As his term of governorship ended, the Roman Senate ordered Caesar to disband his army and return to Rome. He was
@@ -325,14 +327,14 @@ VALUES ('1', '1', 'Crossing the Rubicon', 'Julius Caesar''s crossing the Rubicon
         In January of 49 BC, Caesar brought the 13th legion across the river, which the Roman government considered
         insurrection, treason, and a declaration of war on the Roman Senate. According to some authors, he is said to have
         uttered the phrase "alea iacta est"—the die is cast—as his army marched through the shallow river.'
-        , '49', '1', '13', '17', '25', '40', '20', '30', '10', '25', '22', '50', '45','40'),
-        ('2', '1', 'Great Roman Civil War', 'The Great Roman Civil War (49–45 BC), also known as Caesar''s Civil War, was
+        , '-49', '1', '13', '17', '25', '40', '20', '-30', '10', '25', '22', '50', '45','40'),
+        ('2','2', '1', 'Great Roman Civil War', 'The Great Roman Civil War (49–45 BC), also known as Caesar''s Civil War, was
         one of the last politico-military conflicts in the Roman Republic before the establishment of the Roman Empire.
         It began as a series of political and military confrontations, between Julius Caesar (100–44 BC), his political supporters
         (broadly known as Populares), and his legions, against the Optimates (or Boni), the politically conservative and socially
         traditionalist faction of the Roman Senate, who were supported by Pompey (106–48 BC) and his legions.[1]',
-        '49', '5', '5', '5', '10', '10', '10', '45', '10', '25', '22', '50', '45','40'),
-        ('1', '1', 'Marcus Tullius Cicero', 'Marcus Tullius Cicero[a] (/ˈsɪsəroʊ/ SISS-ə-roh, Latin:
+        '-49', '5', '5', '5', '10', '10', '10', '-45', '10', '25', '22', '50', '45','40'),
+        ('3','1', '1', 'Marcus Tullius Cicero', 'Marcus Tullius Cicero[a] (/ˈsɪsəroʊ/ SISS-ə-roh, Latin:
         [ˈmaːrkʊs ˈtʊllɪ.ʊs ˈkɪkɛroː]; 3 January 106 BC – 7 December 43 BC) was a Roman statesman, lawyer and Academic
         Skeptic philosopher[3] who wrote extensively on rhetoric, orations, philosophy, and politics, and is considered one of
         Rome''s greatest orators and prose stylists.[4][5] A leading political figure in the final years of the Roman Republic,
