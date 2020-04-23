@@ -124,14 +124,14 @@ public class LoginAndRegistration_GUI {
                         errorMessage.setText("Invalid password!");
                     } else { // log in!!!
                         GUIManager.loggedInUser = user;
-                        
+
                         //update menubar text for loggedin status and enable menu item
                         GUIManager.menu.updateLoggedInStatus();
-                        
+
                         //hide login window
                         ((Node) (event.getSource())).getScene().getWindow().hide();
                         GUIManager.swapScene("Dashboard");
-                        
+
                     }
                 }
             }
@@ -141,81 +141,3 @@ public class LoginAndRegistration_GUI {
     }
 
 }
-
-/*
-		Button register = new Button("Register");
-		register.getStyleClass().add("smallButton");
-		register.setOnAction(event -> {
-
-			// Reset the error message if the input fields match after getting the error
-			errorMessage.setText("");
-
-			try {
-
-				// Check if the email is valid (unique)
-				if (!User.validateUnique(emailInput.getText())) {
-					errorMessage.setText("Email already in use");
-
-					// If the passwordInput's text does not equal the confirmPasswordInput's text
-				} else if (!passwordInput.getText().equals(confirmPasswordInput.getText())) {
-					errorMessage.setText("Error: the inputted passwords do not match.");
-
-					// Check if the Username field is not empty
-				} else if (usernameInput.getText().equals("")) {
-					errorMessage.setText("Please enter a Username");
-
-					// If everything checks out, create a new user
-				} else {
-
-					DBM.insertIntoDB(new User(usernameInput.getText(), emailInput.getText(), passwordInput.getText()));
-					// close the window once successful, and switch do the dashboard
-					((Node) (event.getSource())).getScene().getWindow().hide();
-					GUIManager.swapScene(LoginAndRegistration_GUI.welcomeScreen());
-				}
-			} catch (IllegalArgumentException | SQLException e) {
-				errorMessage.setText(e.getMessage());
-			}
-
-
-
-		// log in button
-		Button login = new Button("Login");
-		login.setOnAction(event -> {
-
-			// Reset the error message if the input fields match after getting the error
-			errorMessage.setText("");
-
-			try {
-				if (usernameInput.getText().trim().equals("") || passwordInput.getText().trim().equals("")) { // invalid
-																												// inputs
-					errorMessage.setText("Username or password invalid!");
-				} else { // valid inputs
-					PreparedStatement stmt = DBM.conn.prepareStatement("SELECT * FROM users WHERE userEmail = ?");
-					stmt.setString(1, usernameInput.getText());
-					// list of users that match the input email (hopefully length 1)
-					List<User> dbResult = DBM.getFromDB(stmt, new User());
-					if (dbResult.size() > 1)
-						throw new SQLException(
-								"Multiple users found, something went horribly wrong, contact tech support!");
-					else if (dbResult.size() == 0) { // no user found
-						errorMessage.setText("Email not found in database!");
-					} else { // user found, time for password check
-						User user = dbResult.get(0);
-
-						boolean isValid = user.verifyPass(passwordInput.getText(), user.getEncrypted(), user.getSalt());
-
-						if (!isValid) {
-							errorMessage.setText("Invalid password!");
-						} else { // log in!!!
-							GUIManager.loggedInUser = user;
-							((Node) (event.getSource())).getScene().getWindow().hide();
-							GUIManager.swapScene(Dashboard_GUI.DashboardScreen());
-						}
-					}
-
-				}
-			} catch (SQLException e) {
-				errorMessage.setText(e.getMessage());
-			}
-		});
-*/

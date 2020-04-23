@@ -9,17 +9,17 @@ import java.sql.SQLException;
 
 public class Popup {
 
-    @FXML
-    private Text displayTxt;
-    @FXML
-    private Button btnCancel;
-    @FXML
-    private Button btnConfirm;
+
+    @FXML private Text timelineDeletionText;
+    @FXML private Text displayTxt;
+    @FXML private Button btnCancel;
+    @FXML private Button btnConfirm;
     private ListView<Timeline> list;
     private ListView<Event> events;
     private int mode;
 
     public void initialize() {
+
     }
 
     public void setMode(int mode) {
@@ -48,7 +48,7 @@ public class Popup {
     }
 
     public void setDisplayTxt(String displayTxt) {
-        this.displayTxt.setText(displayTxt);
+        this.timelineDeletionText.setText(displayTxt);
     }
 
     public void setList(ListView<Timeline> list) {
