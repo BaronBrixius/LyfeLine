@@ -29,29 +29,12 @@ public class Dashboard_GUI {
 	@FXML private ComboBox sortBy;
 	@FXML private GridPane gridButtons;
 
-	@FXML
-	private Button adminGUI;
-	@FXML
-	private Button btnDelete;
-	@FXML
-	private Button btnEdit;
-	@FXML
-	private Button btnCreate;
-	@FXML
-	private TextFlow displayInfo;
-	@FXML
-	private ListView<Timeline> list;
-	@FXML private TextField searchInput;
-	@FXML private CheckBox cbOnlyViewPersonalLines;
-	@FXML private ComboBox sortBy;
-	@FXML private GridPane gridButtons;
-	@FXML private Button eventEditorButton; // created by Jan for meeting with teacher Thursday
-
+	
 	private Timeline activeTimeline;
 
-
-		gridButtons.setVisible(GUIManager.loggedInUser.getAdmin());
-		gridButtons.setDisable(!GUIManager.loggedInUser.getAdmin());
+	public void initialize() {
+	gridButtons.setVisible(GUIManager.loggedInUser.getAdmin());
+	gridButtons.setDisable(!GUIManager.loggedInUser.getAdmin());
 
 		// Fill ListView with the timelines
 		try {
