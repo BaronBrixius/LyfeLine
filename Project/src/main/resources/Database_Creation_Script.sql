@@ -27,12 +27,14 @@ CREATE TABLE `events` (
   `CreatedMillisecond` smallint unsigned DEFAULT NULL,
   PRIMARY KEY (`EventID`),
   UNIQUE KEY `EventID_UNIQUE` (`EventID`)
+  CONSTRAINT `fk_images` FOREIGN KEY (`EventID`) REFERENCES `events` (`EventID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 
 
 CREATE TABLE `images` (
   `ImageID` int NOT NULL AUTO_INCREMENT,
-  `ImageULR` char(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `ImageURL` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
   PRIMARY KEY (`ImageID`),
   UNIQUE KEY `ImageID_UNIQUE` (`ImageID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
