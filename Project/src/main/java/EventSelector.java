@@ -110,9 +110,9 @@ public class EventSelector {
     }
 
     private void populateTimelineList() {
-        Timeline all = new Timeline();      //TODO fix this hacky implementation
+        /*Timeline all = new Timeline();
         all.setTimelineName("All");
-        timelineList.getItems().add(all);
+        timelineList.getItems().add(all);*/
         try {
             PreparedStatement stmt = DBM.conn.prepareStatement("SELECT * FROM timelines WHERE TimelineOwner = ?");
             stmt.setInt(1, GUIManager.loggedInUser.getUserID());      //uncomment this for real version

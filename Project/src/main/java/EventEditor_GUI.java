@@ -246,8 +246,10 @@ public class EventEditor_GUI {
     private boolean saveEvent() {
         updateEvent();
         try {
-            if (event.getEventID() == 0)
+            if (event.getEventID() == 0) {
                 DBM.insertIntoDB(event);
+                event.addToTimeline(prevScreen.timelineList.getSelectionModel().getSelectedItem().getTimelineID());
+            }
             else
                 DBM.updateInDB(event);
             return true;
