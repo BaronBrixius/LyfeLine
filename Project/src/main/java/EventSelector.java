@@ -66,6 +66,7 @@ public class EventSelector {
         });
 
         eventList.getSelectionModel().selectedIndexProperty().addListener(e -> {
+            newButton.setDisable(timelineList.getSelectionModel().selectedIndexProperty() == null);
             viewButton.setDisable(eventList.getSelectionModel().selectedIndexProperty() == null);
             deleteButton.setDisable(eventList.getSelectionModel().selectedIndexProperty() == null);
         });

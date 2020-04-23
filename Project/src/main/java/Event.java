@@ -119,7 +119,7 @@ class Event implements DBObject<Event> {
     @Override
     public Event createFromDB(ResultSet rs) throws SQLException {
         int eventID = rs.getInt("EventID");
-        int imageID = rs.getInt("EventType");
+        int imageID = rs.getInt("EventImage");
         int ownerID = rs.getInt("EventOwner");
         String eventName = rs.getString("EventName");
         String eventDescription = rs.getString("EventDescription");

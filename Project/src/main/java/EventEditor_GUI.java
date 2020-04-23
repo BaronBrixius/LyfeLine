@@ -7,7 +7,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 
-import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -239,8 +238,7 @@ public class EventEditor_GUI {
             endTime3.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, event.getEndDate().getSeconds()));
         }
 
-        //if (event.getImageID() > 0)
-            imageInput.getSelectionModel().select(event.getImageID() + 1);
+        imageInput.getSelectionModel().select(event.getImageID());
         return false;
     }
 
@@ -276,8 +274,7 @@ public class EventEditor_GUI {
         } else                //if it has no duration, end = start
             event.setEndDate(event.getStartDate());
 
-        if (imageInput.getSelectionModel().getSelectedIndex() > 0)
-            this.event.setImage(imageInput.getSelectionModel().getSelectedIndex() - 1);
+        this.event.setImage(imageInput.getSelectionModel().getSelectedIndex());
     }
 
     private boolean saveEvent() {
@@ -286,8 +283,8 @@ public class EventEditor_GUI {
             if (event.getEventID() == 0) {
                 DBM.insertIntoDB(event);
                 event.addToTimeline(prevScreen.timelineList.getSelectionModel().getSelectedItem().getTimelineID());
-            }
-            else
+                prevScreen.populateEventList();             //TODO delete this inelegant solution
+            } else
                 DBM.updateInDB(event);
             return true;
         } catch (SQLException e) {
@@ -336,7 +333,7 @@ public class EventEditor_GUI {
                         || !event.getEventDescrition().equals(descriptionInput.getText().replaceAll("([^\r])\n", "$1\r\n"))     //textArea tends to change the newline from \r\n to just \n which breaks some things
                         || event.getStartDate().compareTo(readStart) != 0
                         || event.getEndDate().compareTo(readEnd) != 0
-                        || event.getImageID() != imageInput.getSelectionModel().getSelectedIndex() + 1
+                        || event.getImageID() != imageInput.getSelectionModel().getSelectedIndex()
         );
     }
 
