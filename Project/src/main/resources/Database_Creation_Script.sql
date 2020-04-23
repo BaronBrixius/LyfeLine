@@ -1,36 +1,41 @@
-CREATE TABLE `events`
-(
-    `EventID`            int               NOT NULL AUTO_INCREMENT,
-    `EventOwner`         int               NOT NULL,
-    `EventType`          tinyint           NOT NULL,
-    `EventName`          nvarchar(100)     DEFAULT NULL,
-    `EventDescription`   nvarchar(5000)    DEFAULT NULL,
-    `StartYear`          bigint            NOT NULL,
-    `StartMonth`         tinyint unsigned  NOT NULL,
-    `StartDay`           tinyint unsigned  NOT NULL,
-    `StartHour`          tinyint unsigned  NULL,
-    `StartMinute`        tinyint unsigned  NULL,
-    `StartSecond`        tinyint unsigned  NULL,
-    `StartMillisecond`   smallint unsigned NULL,
-    `EndYear`            bigint            DEFAULT NULL,
-    `EndMonth`           tinyint unsigned  DEFAULT NULL,
-    `EndDay`             tinyint unsigned  DEFAULT NULL,
-    `EndHour`            tinyint unsigned  DEFAULT NULL,
-    `EndMinute`          tinyint unsigned  DEFAULT NULL,
-    `EndSecond`          tinyint unsigned  DEFAULT NULL,
-    `EndMillisecond`     smallint unsigned DEFAULT NULL,
-    `CreatedYear`        bigint            DEFAULT NULL,
-    `CreatedMonth`       tinyint unsigned  DEFAULT NULL,
-    `CreatedDay`         tinyint unsigned  DEFAULT NULL,
-    `CreatedHour`        tinyint unsigned  DEFAULT NULL,
-    `CreatedMinute`      tinyint unsigned  DEFAULT NULL,
-    `CreatedSecond`      tinyint unsigned  DEFAULT NULL,
-    `CreatedMillisecond` smallint unsigned DEFAULT NULL,
-    PRIMARY KEY (`EventID`),
-    UNIQUE KEY `EventID_UNIQUE` (`EventID`)
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8mb4
-  COLLATE = utf8mb4_general_ci;
+CREATE TABLE `events` (
+  `EventID` int NOT NULL AUTO_INCREMENT,
+  `EventOwner` int NOT NULL,
+  `EventType` tinyint NOT NULL,
+  `EventName` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `EventDescription` varchar(5000) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `StartYear` bigint NOT NULL,
+  `StartMonth` tinyint unsigned NOT NULL,
+  `StartDay` tinyint unsigned NOT NULL,
+  `StartHour` tinyint unsigned DEFAULT NULL,
+  `StartMinute` tinyint unsigned DEFAULT NULL,
+  `StartSecond` tinyint unsigned DEFAULT NULL,
+  `StartMillisecond` smallint unsigned DEFAULT NULL,
+  `EndYear` bigint DEFAULT NULL,
+  `EndMonth` tinyint unsigned DEFAULT NULL,
+  `EndDay` tinyint unsigned DEFAULT NULL,
+  `EndHour` tinyint unsigned DEFAULT NULL,
+  `EndMinute` tinyint unsigned DEFAULT NULL,
+  `EndSecond` tinyint unsigned DEFAULT NULL,
+  `EndMillisecond` smallint unsigned DEFAULT NULL,
+  `CreatedYear` bigint DEFAULT NULL,
+  `CreatedMonth` tinyint unsigned DEFAULT NULL,
+  `CreatedDay` tinyint unsigned DEFAULT NULL,
+  `CreatedHour` tinyint unsigned DEFAULT NULL,
+  `CreatedMinute` tinyint unsigned DEFAULT NULL,
+  `CreatedSecond` tinyint unsigned DEFAULT NULL,
+  `CreatedMillisecond` smallint unsigned DEFAULT NULL,
+  PRIMARY KEY (`EventID`),
+  UNIQUE KEY `EventID_UNIQUE` (`EventID`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+CREATE TABLE `images` (
+  `ImageID` int NOT NULL AUTO_INCREMENT,
+  `ImageULR` char(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  PRIMARY KEY (`ImageID`),
+  UNIQUE KEY `ImageID_UNIQUE` (`ImageID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
 CREATE TRIGGER CreatedDateTime2
@@ -77,15 +82,7 @@ VALUES (1, 'Seconds'),
 
 
 
-CREATE TABLE `Images`
-(
-    `ImageID`  int NOT NULL AUTO_INCREMENT,
-    `ImageULR` character(255) DEFAULT NULL,
-    PRIMARY KEY (`ImageID`),
-    UNIQUE KEY `ImageID_UNIQUE` (`ImageID`)
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8mb4
-  COLLATE = utf8mb4_general_ci;
+
 
 
 CREATE TABLE `groups`
@@ -294,14 +291,15 @@ VALUES (01, 1, 'Fall of Rome', 'Out with a wimper, not a bang', 'dark', -350, 5,
 ;
 
 
-INSERT INTO `events` (`EventOwner`, `EventType`, `EventName`, `EventDescription`, `StartYear`, `StartMonth`,
+INSERT INTO `events` (`EventID`,`EventOwner`, `EventType`, `EventName`, `EventDescription`, `StartYear`, `StartMonth`,
                       `StartDay`, `StartHour`, `StartMinute`, `StartSecond`, `StartMillisecond`)
-VALUES ('1', '1', 'Crossing the Rubicon', 'Long story', '0', '0', '0', '0', '0', '0', '0'),
-       ('2', '1', 'Crossing the Rubicon', 'Long story', '0', '0', '0', '0', '0', '0', '0');
+VALUES ('1', '1','1', 'Crossing the Rubicon', 'Long story', '1750', '0', '0', '0', '0', '0', '0'),
+       ('2', '1','1','Crossing the Rubicon', 'Long story', '1750', '0', '0', '0', '0', '0', '0');
+
 
 
 INSERT INTO `timelineevents` (`TimelineID`, `EventID`)
-VALUES ('1', '1'),
+ VALUES ('1', '1'),
        ('2', '1'),
-       ('2', '2'),
-       ('3', '2');
+       ('3', '2'),
+       ('4', '2');
