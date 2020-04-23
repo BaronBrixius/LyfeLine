@@ -12,13 +12,13 @@
       <Text fx:id="displayTxt" strokeType="OUTSIDE" strokeWidth="0.0" text="it didn't work"/>
       <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0" spacing="75.0">
          <children>
-            <Button fx:id="btnConfirm" mnemonicParsing="false" onAction="#deleteConfirm" text="Confirm">
+            <Button fx:id="btnConfirm" mnemonicParsing="false" onAction="#confirm" text="Confirm">
                <styleClass>
                   <String fx:value="popupButton" />
                   <String fx:value="hoverRed" />
                </styleClass>
             </Button>
-            <Button fx:id="btnCancel" mnemonicParsing="false" onAction="#deleteCancel" styleClass="popupButton" text="Cancel" />
+            <Button fx:id="btnCancel" mnemonicParsing="false" onAction="#close" styleClass="popupButton" text="Cancel" />
          </children>
       </HBox>
    </children>
@@ -33,6 +33,6 @@
             <String fx:value="hoverRed"/>
          </styleClass>
       </Button>
-      <Button mnemonicParsing="false" onAction="#deleteCancel" styleClass="popupButton" text="Cancel"/>
+      <Button mnemonicParsing="false" onAction="#close" styleClass="popupButton" text="Cancel"/>
    </HBox>
 </VBox>

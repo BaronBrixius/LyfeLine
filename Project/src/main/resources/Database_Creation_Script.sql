@@ -1,44 +1,40 @@
-CREATE TABLE `events` (
-  `EventID` int NOT NULL AUTO_INCREMENT,
-  `EventOwner` int NOT NULL,
-  `EventType` tinyint NOT NULL,
-  `EventName` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
-  `EventDescription` varchar(5000) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
-  `StartYear` bigint NOT NULL,
-  `StartMonth` tinyint unsigned NOT NULL,
-  `StartDay` tinyint unsigned NOT NULL,
-  `StartHour` tinyint unsigned DEFAULT NULL,
-  `StartMinute` tinyint unsigned DEFAULT NULL,
-  `StartSecond` tinyint unsigned DEFAULT NULL,
-  `StartMillisecond` smallint unsigned DEFAULT NULL,
-  `EndYear` bigint DEFAULT NULL,
-  `EndMonth` tinyint unsigned DEFAULT NULL,
-  `EndDay` tinyint unsigned DEFAULT NULL,
-  `EndHour` tinyint unsigned DEFAULT NULL,
-  `EndMinute` tinyint unsigned DEFAULT NULL,
-  `EndSecond` tinyint unsigned DEFAULT NULL,
-  `EndMillisecond` smallint unsigned DEFAULT NULL,
-  `CreatedYear` bigint DEFAULT NULL,
-  `CreatedMonth` tinyint unsigned DEFAULT NULL,
-  `CreatedDay` tinyint unsigned DEFAULT NULL,
-  `CreatedHour` tinyint unsigned DEFAULT NULL,
-  `CreatedMinute` tinyint unsigned DEFAULT NULL,
-  `CreatedSecond` tinyint unsigned DEFAULT NULL,
-  `CreatedMillisecond` smallint unsigned DEFAULT NULL,
-  PRIMARY KEY (`EventID`),
-  UNIQUE KEY `EventID_UNIQUE` (`EventID`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+CREATE TABLE `events`
+(
+    `EventID`            int               NOT NULL AUTO_INCREMENT,
+    `EventOwner`         int               NOT NULL,
+    `EventType`          tinyint           NOT NULL,
+    `EventImage`         tinyint           DEFAULT NULL,
+    `EventName`          nvarchar(100)     DEFAULT NULL,
+    `EventDescription`   nvarchar(5000)    DEFAULT NULL,
+    `StartYear`          bigint            NOT NULL,
+    `StartMonth`         tinyint unsigned  NOT NULL,
+    `StartDay`           tinyint unsigned  NOT NULL,
+    `StartHour`          tinyint unsigned  NOT NULL,
+    `StartMinute`        tinyint unsigned  NOT NULL,
+    `StartSecond`        tinyint unsigned  NOT NULL,
+    `StartMillisecond`   smallint unsigned NOT NULL,
+    `EndYear`            bigint            DEFAULT NULL,
+    `EndMonth`           tinyint unsigned  DEFAULT NULL,
+    `EndDay`             tinyint unsigned  DEFAULT NULL,
+    `EndHour`            tinyint unsigned  DEFAULT NULL,
+    `EndMinute`          tinyint unsigned  DEFAULT NULL,
+    `EndSecond`          tinyint unsigned  DEFAULT NULL,
+    `EndMillisecond`     smallint unsigned DEFAULT NULL,
+    `CreatedYear`        bigint            DEFAULT NULL,
+    `CreatedMonth`       tinyint unsigned  DEFAULT NULL,
+    `CreatedDay`         tinyint unsigned  DEFAULT NULL,
+    `CreatedHour`        tinyint unsigned  DEFAULT NULL,
+    `CreatedMinute`      tinyint unsigned  DEFAULT NULL,
+    `CreatedSecond`      tinyint unsigned  DEFAULT NULL,
+    `CreatedMillisecond` smallint unsigned DEFAULT NULL,
+    PRIMARY KEY (`EventID`),
+    UNIQUE KEY `EventID_UNIQUE` (`EventID`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_general_ci;
 
 
-CREATE TABLE `images` (
-  `ImageID` int NOT NULL AUTO_INCREMENT,
-  `ImageULR` char(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  PRIMARY KEY (`ImageID`),
-  UNIQUE KEY `ImageID_UNIQUE` (`ImageID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
-
-CREATE TRIGGER CreatedDateTime2
+CREATE TRIGGER CreatedDateTimeEvents
     BEFORE INSERT
     ON events
     FOR EACH ROW
@@ -55,17 +51,36 @@ BEGIN
 END;
 
 
+CREATE TRIGGER EndDate
+    BEFORE INSERT
+    ON events
+    FOR EACH ROW
+BEGIN
+    if (isnull(new.`EndYear`)) then
+        set new.`EndYear` = new.StartYear;
+        set new.`EndMonth` = new.StartMonth;
+        set new.`EndDay` = new.StartDay;
+        set new.`EndHour` = new.StartHour;
+        set new.`EndMinute` = new.StartMinute;
+        set new.`EndSecond` = new.StartSecond;
+        set new.`EndMillisecond` = new.StartMillisecond;
+    end if;
+END;
+
+
 -- Lookup table for the scale column of timeline table
 
 
-CREATE TABLE `scale_lookup` (
-    `ID`   int           NOT NULL AUTO_INCREMENT,
-    `unit` nvarchar(20)  NOT NULL,
-    PRIMARY KEY (`ID`))
-    ENGINE=InnoDB
-    AUTO_INCREMENT=9
-    DEFAULT CHARSET=utf8mb4
-    COLLATE=utf8mb4_general_ci;
+CREATE TABLE `scale_lookup`
+(
+    `ID`   int          NOT NULL AUTO_INCREMENT,
+    `unit` nvarchar(20) NOT NULL,
+    PRIMARY KEY (`ID`)
+)
+    ENGINE = InnoDB
+    AUTO_INCREMENT = 9
+    DEFAULT CHARSET = utf8mb4
+    COLLATE = utf8mb4_general_ci;
 
 
 INSERT INTO `scale_lookup`
@@ -83,6 +98,15 @@ VALUES (1, 'Seconds'),
 
 
 
+CREATE TABLE `Images`
+(
+    `ImageID`  int NOT NULL AUTO_INCREMENT,
+    `ImageURL` varchar(255) DEFAULT NULL,
+    PRIMARY KEY (`ImageID`),
+    UNIQUE KEY `ImageID_UNIQUE` (`ImageID`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_general_ci;
 
 
 CREATE TABLE `groups`
@@ -137,7 +161,6 @@ CREATE TABLE `users`
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_general_ci;
-
 
 
 -- Code for creating timelines
@@ -265,7 +288,7 @@ INSERT INTO `timelines`
  `StartMinute`, `StartSecond`, `StartMillisecond`, `EndYear`, `EndMonth`, `EndDay`, `EndHour`, `EndMinute`, `EndSecond`,
  `EndMillisecond`, `CreatedYear`, `CreatedMonth`, `CreatedDay`, `CreatedHour`, `CreatedMinute`, `CreatedSecond`,
  `CreatedMillisecond`, `Private`, `TimelineOwner`)
-VALUES (01, 1, 'Fall of Rome', 'Out with a wimper, not a bang', 'dark', -350, 5, 20, 4, 43, 32, 213, 2001, 5, 20, 4,
+VALUES (01, 1, 'Fall of Rome', 'Out with a wimper, not a bang', 'dark', 350, 5, 20, 4, 43, 32, 213, 2001, 5, 20, 4,
         43, 32, 213, 2000, 5, 20, 4, 43,
         32, 213, default, 1),
        (02, 2, 'New Timeline', '', 'dark', 2020, 5, 20, 4, 43, 32, 213, 2005, 5, 20, 4, 43, 32, 213, 2003, 5, 20, 4,
@@ -291,15 +314,42 @@ VALUES (01, 1, 'Fall of Rome', 'Out with a wimper, not a bang', 'dark', -350, 5,
 ;
 
 
-INSERT INTO `events` (`EventID`,`EventOwner`, `EventType`, `EventName`, `EventDescription`, `StartYear`, `StartMonth`,
-                      `StartDay`, `StartHour`, `StartMinute`, `StartSecond`, `StartMillisecond`)
-VALUES ('1', '1','1', 'Crossing the Rubicon', 'Long story', '1750', '0', '0', '0', '0', '0', '0'),
-       ('2', '1','1','Crossing the Rubicon', 'Long story', '1750', '0', '0', '0', '0', '0', '0');
-
+INSERT INTO `events` (`EventOwner`, `EventType`, `EventName`, `EventDescription`, `StartYear`, `StartMonth`,
+                      `StartDay`, `StartHour`, `StartMinute`, `StartSecond`, `StartMillisecond`, `EndYear`, `EndMonth`, `EndDay`,
+                      `EndHour`, `EndMinute`, `EndSecond`, `EndMillisecond`)
+VALUES ('1', '1', 'Crossing the Rubicon', 'Julius Caesar''s crossing the Rubicon river in January 49 BC precipitated
+        the Roman Civil War, which ultimately led to Caesar becoming dictator and the rise of the imperial era of Rome.
+        Caesar had been appointed to a governorship over a region that ranged from southern Gaul to Illyricum (but not Italy).
+        As his term of governorship ended, the Roman Senate ordered Caesar to disband his army and return to Rome. He was
+        explicitly ordered not to bring his army across the Rubicon river, which was at that time a northern boundary of Italy.
+        In January of 49 BC, Caesar brought the 13th legion across the river, which the Roman government considered
+        insurrection, treason, and a declaration of war on the Roman Senate. According to some authors, he is said to have
+        uttered the phrase "alea iacta est"—the die is cast—as his army marched through the shallow river.'
+        , '49', '1', '13', '17', '25', '40', '20', '30', '10', '25', '22', '50', '45','40'),
+        ('2', '1', 'Great Roman Civil War', 'The Great Roman Civil War (49–45 BC), also known as Caesar''s Civil War, was
+        one of the last politico-military conflicts in the Roman Republic before the establishment of the Roman Empire.
+        It began as a series of political and military confrontations, between Julius Caesar (100–44 BC), his political supporters
+        (broadly known as Populares), and his legions, against the Optimates (or Boni), the politically conservative and socially
+        traditionalist faction of the Roman Senate, who were supported by Pompey (106–48 BC) and his legions.[1]',
+        '49', '5', '5', '5', '10', '10', '10', '45', '10', '25', '22', '50', '45','40'),
+        ('1', '1', 'Marcus Tullius Cicero', 'Marcus Tullius Cicero[a] (/ˈsɪsəroʊ/ SISS-ə-roh, Latin:
+        [ˈmaːrkʊs ˈtʊllɪ.ʊs ˈkɪkɛroː]; 3 January 106 BC – 7 December 43 BC) was a Roman statesman, lawyer and Academic
+        Skeptic philosopher[3] who wrote extensively on rhetoric, orations, philosophy, and politics, and is considered one of
+        Rome''s greatest orators and prose stylists.[4][5] A leading political figure in the final years of the Roman Republic,
+        Cicero vainly tried to uphold the republican system''s integrity during the instability that led to the establishment of
+        the Roman Empire.[6] He came from a wealthy municipal family of the Roman equestrian order, and served as consul in the
+        year 63 BC.', '106', '8', '8', '9', '20', '20', '25', '43', '10', '30', '22', '50', '45','40');
 
 
 INSERT INTO `timelineevents` (`TimelineID`, `EventID`)
- VALUES ('1', '1'),
-       ('2', '1'),
+VALUES ('1', '1'),
+       ('1', '2'),
+       ('1', '3'),
+       ('2', '2'),
        ('3', '2'),
-       ('4', '2');
+       ('4', '1'),
+       ('5', '1'),
+       ('6', '1'),
+       ('7', '1'),
+       ('8', '1');
+

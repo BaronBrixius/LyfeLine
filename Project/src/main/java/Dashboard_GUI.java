@@ -163,12 +163,12 @@ public class Dashboard_GUI {
 		delConfirm.initModality(Modality.WINDOW_MODAL);
 		delConfirm.setResizable(false);
 
-		FXMLLoader popupDeletion = new FXMLLoader(GUIManager.class.getResource("fxml/DeletePopup.fxml"));
+		FXMLLoader popupDeletion = new FXMLLoader(GUIManager.class.getResource("fxml/Popup.fxml"));
 		delConfirm.setScene(new Scene(popupDeletion.load()));
 
 		Popup deletionPopup = popupDeletion.getController();
-		if (list.getSelectionModel().getSelectedItem() != null && list.getSelectionModel().getSelectedItem()
-				.getTimelineOwnerID() == GUIManager.loggedInUser.getUserID()) {
+		deletionPopup.setMode(1);
+		if (list.getSelectionModel().getSelectedItem() != null && list.getSelectionModel().getSelectedItem().getTimelineOwnerID() == GUIManager.loggedInUser.getUserID()) {
 			displayInfo.getChildren().clear();
 			deletionPopup.setDisplayTxt(
 					"Are you sure you want to delete " + list.getSelectionModel().getSelectedItem().getName() + "?");
