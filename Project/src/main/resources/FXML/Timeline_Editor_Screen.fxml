@@ -57,8 +57,5 @@
          </FXCollections>
       </items>
    </ComboBox>
-
-
-
 </VBox>
 </GridPane>

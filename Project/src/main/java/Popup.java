@@ -53,6 +53,7 @@ public class Popup {
 
     public void setList(ListView<Timeline> list) {
         this.list = list;
+
     }
 
     public void setEvents(ListView<Event> events) {

@@ -18,7 +18,8 @@ import javafx.stage.Stage;
 
 public class Dashboard_GUI {
 
-	@FXML private Button adminGUI;
+	@FXML private Button eventEditorButton;
+    @FXML private Button adminGUI;
 	@FXML private Button btnDelete;
 	@FXML private Button btnEdit;
 	@FXML private Button btnCreate;
