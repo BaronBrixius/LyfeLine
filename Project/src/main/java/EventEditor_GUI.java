@@ -191,9 +191,10 @@ public class EventEditor_GUI {
         startTime3.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, event.getStartDate().getSeconds()));
 
         if (event.getStartDate().compareTo(event.getEndDate()) == 0) {
-            endTime1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23));
-            endTime2.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59));
-            endTime3.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59));
+            endDate.setValue(LocalDate.of(event.getStartDate().getYear(), event.getStartDate().getMonth(), event.getStartDate().getDay()));
+            endTime1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23, event.getStartDate().getHours()));
+            endTime2.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, event.getStartDate().getMinutes()));
+            endTime3.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, event.getStartDate().getSeconds()));
         } else {
             hasDuration.setSelected(true);
             toggleHasDuration();
