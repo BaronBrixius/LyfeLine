@@ -1,3 +1,7 @@
+package controllers;
+
+import database.*;
+import utils.*;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
@@ -9,26 +13,20 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-public class TimelineEditor_GUI {
+public class TimelineEditor {
 
-	@FXML
-	private TextArea titleInput;
-	@FXML
-	private TextArea descriptionInput;
-	@FXML
-	private TextArea keywordsInput;
-	@FXML
-	private DatePicker startDateInput;
-	@FXML
-	private DatePicker endDateInput;
-	@FXML
-	private ComboBox<String> timeInput;
+	@FXML private TextArea titleInput;
+	@FXML private TextArea descriptionInput;
+	@FXML private TextArea keywordsInput;
+	@FXML private DatePicker startDateInput;
+	@FXML private DatePicker endDateInput;
+	@FXML private ComboBox<String> timeInput;
 
 	private Timeline activeTimeline;
 	PreparedStatement stmt;
 
 
-	public TimelineEditor_GUI() {
+	public TimelineEditor() {
 		GUIManager.mainStage.setTitle("Timeline Editor");
 	}
 

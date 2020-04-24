@@ -1,7 +1,10 @@
+package controllers;
+
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
+import database.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -11,7 +14,7 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.text.Text;
 
-public class AdminRoleManager_GUI{
+public class AdminRoleManager {
 
 	@FXML private Text userText;
 	@FXML private Text userSatus;
@@ -22,7 +25,7 @@ public class AdminRoleManager_GUI{
 	
 	final ObservableList<User> userList = FXCollections.observableArrayList();
 
-	public AdminRoleManager_GUI() {
+	public AdminRoleManager() {
 		GUIManager.mainStage.setTitle("Admin Role Manager");
 	}
 

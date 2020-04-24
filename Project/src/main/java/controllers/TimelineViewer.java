@@ -1,3 +1,5 @@
+package controllers;
+
 import java.io.IOException;
 
 import javafx.fxml.FXML;
@@ -6,19 +8,16 @@ import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
 
-public class TimelineViewer_GUI {
+public class TimelineViewer {
 
-	@FXML
-	private Button backButton;
-	
-	@FXML
-	private HBox everythingHBox;
+	@FXML private Button backButton;
+	@FXML private HBox everythingHBox;
 	
 	public void initialize() {
 		try {
-			everythingHBox.getChildren().add(FXMLLoader.load(GUIManager.class.getResource("FXML/EventSelector.fxml")));
+			everythingHBox.getChildren().add(FXMLLoader.load(GUIManager.class.getResource("../FXML/EventSelector.fxml")));
 		} catch (IOException e) {
-			
+			e.printStackTrace();
 		}
 	}
 	

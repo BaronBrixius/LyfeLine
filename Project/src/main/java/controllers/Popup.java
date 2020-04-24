@@ -1,3 +1,6 @@
+package controllers;
+
+import database.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
