@@ -28,6 +28,16 @@ public class Date implements Comparable<Date> {
 		this.milliseconds = milliseconds;
 	}
 
+	public int distanceTo(Date other, int scale){
+		int out = 0;
+
+		switch (scale) {			//years first
+			case 8: out = other.year - this.year;
+
+			case 11: out += (other.year - this.year) % 1000;
+
+		}
+	}
 
 
 	@Override
