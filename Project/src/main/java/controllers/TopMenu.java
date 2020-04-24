@@ -1,3 +1,5 @@
+package controllers;
+
 import java.io.IOException;
 
 import javafx.event.ActionEvent;
@@ -31,7 +33,7 @@ public class TopMenu {
     	GUIManager.loggedInUser=null;
     	updateLoggedInStatus();
     	try {
-			GUIManager.swapScene("Welcome_Screen");
+			GUIManager.swapScene("Welcome");
 		} catch (IOException e) {
 			
 		}

@@ -1,7 +1,11 @@
+package database;
+
+import utils.PasswordEncryption;
+
 import java.sql.*;
 import java.util.List;
 
-public class User implements Users {
+public class User implements DBObject<User> {
     private int userID = 0;
     private String userName;
     private String userEmail;
@@ -28,7 +32,7 @@ public class User implements Users {
         this.salt = salt;
     }
 
-    static boolean validateUnique(String email) throws SQLException {
+    public static boolean validateUnique(String email) throws SQLException {
         if (!(email.matches("\\p{all}+@[\\p{all}]+\\.\\p{all}+")))      //if not matches characters@characters.characters
             throw new IllegalArgumentException("Invalid email format");
         List<String> dbList = DBM.getFromDB(DBM.conn.prepareStatement("SELECT UserEmail FROM users"), rs -> rs.getString("UserEmail"));
@@ -54,28 +58,28 @@ public class User implements Users {
         return admin;
     }
 
-    @Override
+
     public void setUserEmail(String userEmail) throws IllegalArgumentException {
         if (!(userEmail.matches("\\p{all}+@[\\p{all}]+\\.\\p{all}+")))      //if not matches characters@characters.characters
             throw new IllegalArgumentException("Invalid email format");
         this.userEmail = userEmail;
     }
 
-    @Override
+
     public void setUserName(String userName) {
         this.userName = userName;
     }
 
-    @Override
+
     public void setAdmin(Boolean admin) {
         this.admin = admin;
     }
 
-    boolean getAdmin(){
+    public boolean getAdmin(){
         return this.admin;
     }
 
-    @Override
+
     public void setPassword(String pass) throws IllegalArgumentException {
         //We can split the regex down to be more specific in the error handling - no need for all possibilities, just one at a time.
         if (!(pass.matches("^(?=.*\\p{Digit})(?=.*\\p{Ll})(?=.*\\p{Lu})(?=.*\\p{Punct})(?=\\S+$).{8,}$")))//rules in order,at least: one digit, one lower case, one upper case,  one special character, no white space and min length 8
@@ -84,12 +88,12 @@ public class User implements Users {
         this.encryptedPass = PasswordEncryption.generateSecurePassword(pass, this.salt);
     }
 
-    @Override
+
     public String getUserName() { //Not sure about this one
         return  this.userName;
     }
 
-    @Override
+
     public Boolean verifyPass(String pass, String encrypted, String salt) {
         return PasswordEncryption.verifyUserPassword(pass, encrypted, salt);   //salt in DB associated with the encrypted password there and created with setPassword
     }
