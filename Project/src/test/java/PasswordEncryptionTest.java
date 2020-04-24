@@ -1,4 +1,5 @@
 import org.junit.jupiter.api.Test;
+import utils.PasswordEncryption;
 
 import java.util.HashSet;
 import java.util.Set;

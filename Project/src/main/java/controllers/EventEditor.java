@@ -1,3 +1,7 @@
+package controllers;
+
+import database.*;
+import utils.*;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -27,50 +31,29 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
-public class EventEditor_GUI {
+public class EventEditor {
 
-    @FXML
-    public GridPane editor;
-    @FXML
-    public Button editButton;
-    @FXML
-    public Button uploadButton;
-    @FXML
-    public Button deleteButton;
+    @FXML public GridPane editor;
+    @FXML public Button editButton;
+    @FXML public Button uploadButton;
+    @FXML public Button deleteButton;
 
-    @FXML
-    public HBox startTime;
-    @FXML
-    public HBox endTime;
-    @FXML
-    public Spinner<Integer> startTime1;
-    @FXML
-    public Spinner<Integer> startTime2;
-    @FXML
-    public Spinner<Integer> startTime3;
-    @FXML
-    public Spinner<Integer> endTime1;
-    @FXML
-    public Spinner<Integer> endTime2;
-    @FXML
-    public Spinner<Integer> endTime3;
+    @FXML public HBox startTime;
+    @FXML public HBox endTime;
+    @FXML public Spinner<Integer> startTime1;
+    @FXML public Spinner<Integer> startTime2;
+    @FXML public Spinner<Integer> startTime3;
+    @FXML public Spinner<Integer> endTime1;
+    @FXML public Spinner<Integer> endTime2;
+    @FXML public Spinner<Integer> endTime3;
 
-    @FXML
-    public Label headerText;
-    @FXML
-    public Text errorMessage;
-    @FXML
-    TextField titleInput = new TextField();
-    @FXML
-    TextArea descriptionInput = new TextArea();
-    @FXML
-    DatePicker startDate = new DatePicker();
-    @FXML
-    CheckBox hasDuration = new CheckBox();
-    @FXML
-    DatePicker endDate = new DatePicker();             //only a datepicker for skeleton, will figure best way to enter info later
-    @FXML
-    ComboBox<ImageView> imageInput = new ComboBox<>();
+    @FXML public Label headerText;
+    @FXML public Text errorMessage;
+    @FXML TextField titleInput = new TextField();
+    @FXML TextArea descriptionInput = new TextArea();
+    @FXML DatePicker startDate = new DatePicker();
+    @FXML CheckBox hasDuration = new CheckBox();@FXML DatePicker endDate = new DatePicker(); //only a datepicker for skeleton, will figure best way to enter info later
+    @FXML ComboBox<ImageView> imageInput = new ComboBox<>();
     ImageView image;
 
     int startYear;

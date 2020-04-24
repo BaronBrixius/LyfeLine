@@ -6,7 +6,7 @@
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.layout.HBox?>
 
-<HBox xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="TopMenu">
+<HBox xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.TopMenu">
     <MenuBar maxHeight="25.0">
         <Menu mnemonicParsing="false" text="File">
           <MenuItem fx:id="saveButton" mnemonicParsing="false" onAction="#saveFile" text="Save"/>

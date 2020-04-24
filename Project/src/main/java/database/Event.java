@@ -1,7 +1,11 @@
+package database;
+
+import utils.Date;
+
 import java.sql.*;
 import java.util.List;
 
-class Event implements DBObject<Event> {
+public class Event implements DBObject<Event> {
     private int eventID = 0;
     private int userID;
     private int eventType;
@@ -30,7 +34,7 @@ class Event implements DBObject<Event> {
         this.imageID = imageID;
     }
 
-    static List<Integer> getYears() throws SQLException {
+    public static List<Integer> getYears() throws SQLException {
         return DBM.getFromDB(DBM.conn.prepareStatement("SELECT StartYear FROM events"), rs -> rs.getInt("StartYear"));
     }
 

@@ -1,10 +1,12 @@
+import database.DBM;
+import database.Event;
+import database.User;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.sql.*;
 import java.util.List;
 

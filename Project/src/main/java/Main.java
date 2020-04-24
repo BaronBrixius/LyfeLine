@@ -1,7 +1,12 @@
+import database.DBM;
+import database.Timeline;
+import database.User;
+import utils.Date;
+import database.Event;
+
 import java.io.FileNotFoundException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
 class Main {
