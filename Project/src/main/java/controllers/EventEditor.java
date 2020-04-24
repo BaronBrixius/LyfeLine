@@ -218,7 +218,7 @@ public class EventEditor {
                 imageNumer++;
             }
             f = new File(outPath + imageName);  //output file path
-            ImageIO.write(image, "jpg", f);
+            ImageIO.write(image, "png", f);
             System.out.println("Writing complete.");
         }catch(IOException e){
             System.out.println("Error: "+e);
