@@ -17,6 +17,18 @@ class DateTest {
     }
 
     @Test
+    void distanceToMillennia() {
+        int expected = 9;
+
+        Date first = new Date(640,1,1);
+        Date second = new Date(10460, 7, 12);
+
+        int actual = first.distanceTo(second, 11);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
     void distanceToCenturies() {
         int expected = 20;
 
@@ -28,9 +40,21 @@ class DateTest {
         assertEquals(expected, actual);
     }
 
+    @Test
+    void distanceToDecades() {
+        int expected = 87;
+
+        Date first = new Date(173,1,1);
+        Date second = new Date(1046, 7, 12);
+
+        int actual = first.distanceTo(second, 9);
+
+        assertEquals(expected, actual);
+    }
+
         @Test
     void distanceToYears() {
-            int expected = 213;
+            int expected = 223;
 
             Date first = new Date(23,1,1);
             Date second = new Date(246, 7, 12);
@@ -42,36 +66,84 @@ class DateTest {
 
     @Test
     void distanceToMonths() {
-        int expected = 20;
+        int expected = 438;
 
         Date first = new Date(10,1,1);
         Date second = new Date(46, 7, 12);
 
-        int actual = first.distanceTo(second, 10);
+        int actual = first.distanceTo(second, 7);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void distanceToWeeks() {
+        int expected = 85;
+
+        Date first = new Date(1,7,11);
+        Date second = new Date(3, 3, 1);
+
+        int actual = first.distanceTo(second, 6);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void distanceToDaysLeapYear() {
+        int expected = 4019;
+
+        Date first = new Date(1999,1,30);
+        Date second = new Date(2005, 2, 1);
+
+        int actual = first.distanceTo(second, 5);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void distanceToHours() {
+        int expected = 56;
+
+        Date first = new Date(0,1,30,1,1,1,1);
+        Date second = new Date(0, 2, 1, 9, 12, 42, 66);
+
+        int actual = first.distanceTo(second, 4);
 
         assertEquals(expected, actual);
     }
 
     @Test
     void distanceToMinutes() {
-        int expected = 20;
+        int expected = 491;
 
         Date first = new Date(0,1,1,1,1,1,1);
         Date second = new Date(0, 1, 1, 9, 12, 42, 66);
 
-        int actual = first.distanceTo(second, 10);
+        int actual = first.distanceTo(second, 3);
 
         assertEquals(expected, actual);
     }
 
     @Test
-    void distanceToMilliseconds() {
-        int expected = 20;
+    void distanceToSeconds() {
+        int expected = 2682030;
 
-        Date first = new Date(0,1,1,1,1,1,321);
-        Date second = new Date(0,1,1,1,1,31,1);
+        Date first = new Date(0,1,1,1,1,1,0);
+        Date second = new Date(0,2,1,2,1,31,0);
 
-        int actual = first.distanceTo(second, 10);
+        int actual = first.distanceTo(second, 2);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void distanceToMilliSeconds() {
+        int expected = 781229680;
+
+        Date first = new Date(0,1,23,1,1,1,321);
+        Date second = new Date(0,2,1,2,1,31,1);
+
+        int actual = first.distanceTo(second, 1);
 
         assertEquals(expected, actual);
     }
