@@ -12,7 +12,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
-
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
@@ -191,6 +190,16 @@ public class EventEditor {
     private void uploadImage() throws IOException {    //Only working now for .jpg
         FileChooser chooser = new FileChooser(); //For the filedirectory
         chooser.setTitle("Open File");
+        //All the image formats supported by java.imageio https://docs.oracle.com/javase/7/docs/api/javax/imageio/package-summary.html
+        chooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter( "All Images", "*.jpg","*.jpeg","*.png","*.bmp","*.gif","*.wbmp" ),
+                new FileChooser.ExtensionFilter( "JPG", "*.jpg" ),
+                new FileChooser.ExtensionFilter( "JPEG", "*.jpeg" ),
+                new FileChooser.ExtensionFilter( "PNG", "*.png" ),
+                new FileChooser.ExtensionFilter( "BMP", "*.bmp" ),
+                new FileChooser.ExtensionFilter( "GIF", "*.gif" ),
+                new FileChooser.ExtensionFilter( "WBMP", "*.wbmp" )
+        );
         File f = chooser.showOpenDialog(new Stage()); //This is the stage that needs to be edited (ok,cancel button) for the filechooser... do in FXML ?
         String filename = f.getName(); //THis is to take the name of the image choosen to add it to the copied version
         System.out.println(getFormat(f));
@@ -198,6 +207,7 @@ public class EventEditor {
         System.out.println("Button pressed.");
     }
 
+     //Method that returns the image format as a string i.e sun.png == "png"
     private String getFormat(File f) throws IOException {
         ImageInputStream iis = ImageIO.createImageInputStream(f);
         Iterator<ImageReader> imageReaders = ImageIO.getImageReaders(iis);
