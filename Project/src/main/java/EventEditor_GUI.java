@@ -213,13 +213,14 @@ public class EventEditor_GUI {
          FileChooser chooser = new FileChooser();
         chooser.setTitle("Open File");
         File f = chooser.showOpenDialog(new Stage());
-        copyImage(f);
+        String filename = f.getName();
+        copyImage(f,filename);
 
 
         System.out.println("Button pressed.");
     }
 
-    public void copyImage(File f){
+    public void copyImage(File f, String filename){
         BufferedImage image = null;
         int width = 963;    //width of the image
         int height = 640;   //height of the image
@@ -235,10 +236,14 @@ public class EventEditor_GUI {
         //write image
         try{
             Random rnd = new Random();
-            String imageName = "image.jpg";
+            int imageNumer = 1;
+            String imageName = filename;
             String outPath = "src/main/resources/images/";
             while (folderHasImage(imageName)==true){
-            imageName = "image" + rnd.nextInt(5000) + ".jpg";}
+            int index = imageName.indexOf(".");            ;
+            imageName = imageName.substring(0, index)+ "("+ imageNumer+")" + ".jpg";
+            imageNumer++;
+             }
             f = new File(outPath + imageName);  //output file path
             ImageIO.write(image, "jpg", f);
             System.out.println("Writing complete.");
