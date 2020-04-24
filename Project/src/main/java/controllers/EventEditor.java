@@ -211,7 +211,7 @@ public class EventEditor {
         try{
             int imageNumer = 1; //For updating the number in the parenthesis based on how many with the same name in resources folder
             String imageName = filename;
-            String outPath = "src/main/resources/images/events"; //Path for saving, have special events folder now so if timeline guys are doing something they don't override copies
+            String outPath = "src/main/resources/images"; //Path for saving, have special events folder now so if timeline guys are doing something they don't override copies
             while (folderHasImage(imageName)==true){ //Check if our folder has the imagename already if so, add (int) untill no more true
                 int index = imageName.indexOf(".");            ;
                 imageName = imageName.substring(0, index)+ "("+ imageNumer+")" + ".jpg";
@@ -227,7 +227,7 @@ public class EventEditor {
     }
     //Method to check if the image folder has this name already to avoid if two are copied with same name the latter will just override the firs
     public boolean folderHasImage(String path){
-        File folder = new File("src/main/resources/images/events");
+        File folder = new File("src/main/resources/images");
         File[] listOfFiles = folder.listFiles();
         List<String> images = new ArrayList<>();
 
