@@ -203,7 +203,8 @@ public class EventEditor {
         File f = chooser.showOpenDialog(new Stage()); //This is the stage that needs to be edited (ok,cancel button) for the filechooser... do in FXML ?
         String filename = f.getName(); //THis is to take the name of the image choosen to add it to the copied version
         System.out.println(getFormat(f));
-        copyImage(f,filename); //Copy the choosen image with the original name and the type of the image for the ImageIO.write method
+        String type = getFormat(f);
+        copyImage(f,filename, type); //Copy the choosen image with the original name and the type of the image for the ImageIO.write method
         System.out.println("Button pressed.");
     }
 
@@ -219,7 +220,7 @@ public class EventEditor {
         return type;
     }
 
-    private void copyImage(File f, String filename)  { //Takes the file chosen and the name of it
+    private void copyImage(File f, String filename, String type)  { //Takes the file chosen and the name of it
         BufferedImage image = null;
         int width = 963;    //width of the image
         int height = 640;   //height of the image
@@ -243,7 +244,7 @@ public class EventEditor {
                 imageNumer++;
             }
             f = new File(outPath + imageName);  //output file path
-            ImageIO.write(image, getFormat(f), f);
+            ImageIO.write(image, type, f);
             System.out.println("Writing complete.");
         }catch(IOException e){
             System.out.println("Error: "+e);
