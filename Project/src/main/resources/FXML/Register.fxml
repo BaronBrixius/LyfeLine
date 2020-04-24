@@ -12,7 +12,7 @@
 
 <GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0"
           prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1"
-          xmlns="http://javafx.com/javafx/11.0.1" fx:controller="LoginAndRegistration_GUI">
+          xmlns="http://javafx.com/javafx/11.0.1" fx:controller="controllers.LoginAndRegistration">
     <columnConstraints>
         <ColumnConstraints hgrow="SOMETIMES" maxWidth="307.0" minWidth="6.0" prefWidth="230.0"/>
         <ColumnConstraints hgrow="SOMETIMES" maxWidth="574.0" minWidth="10.0" prefWidth="34.0"/>

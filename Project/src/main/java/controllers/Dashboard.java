@@ -1,3 +1,6 @@
+package controllers;
+
+import database.*;
 import javafx.fxml.FXML;
 import java.io.IOException;
 import java.sql.PreparedStatement;
@@ -8,15 +11,13 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-public class Dashboard_GUI {
+public class Dashboard {
 
 	@FXML private Button eventEditorButton;
     @FXML private Button adminGUI;
@@ -134,14 +135,14 @@ public class Dashboard_GUI {
 
 	@FXML
 	public void createTimeline(ActionEvent event) throws IOException {
-		GUIManager.swapScene("Timeline_Editor_Screen");
+		GUIManager.swapScene("TimelineEditor");
 
 	}
 
 	@FXML
 	public void editTimeline(ActionEvent event) throws IOException {
 		if (activeTimeline != null) {
-			TimelineEditor_GUI editor = GUIManager.swapScene("Timeline_Editor_Screen");
+			TimelineEditor editor = GUIManager.swapScene("TimelineEditor");
 			editor.setActiveTimeline(this.activeTimeline);
 			editor.populateDisplay();
 		}
@@ -154,7 +155,7 @@ public class Dashboard_GUI {
 		try {
 			GUIManager.swapScene("MockupTimeline");
 		} catch (IOException e) {
-			
+			e.printStackTrace();
 		}
 
 	}
@@ -170,7 +171,7 @@ public class Dashboard_GUI {
 		delConfirm.initModality(Modality.WINDOW_MODAL);
 		delConfirm.setResizable(false);
 
-		FXMLLoader popupDeletion = new FXMLLoader(GUIManager.class.getResource("fxml/Popup.fxml"));
+		FXMLLoader popupDeletion = new FXMLLoader(GUIManager.class.getResource("../FXML/Popup.fxml"));
 		delConfirm.setScene(new Scene(popupDeletion.load()));
 
 		Popup deletionPopup = popupDeletion.getController();
@@ -183,18 +184,6 @@ public class Dashboard_GUI {
 			delConfirm.show();
 
 		}
-		//} else if (list.getSelectionModel().getSelectedItem() == null) {
-		//	displayInfo.getChildren().clear();
-		//	Text error = new Text("No timeline selected.");
-		//	error.setFill(Color.RED);
-		//	displayInfo.getChildren().add(error);
-		//}
-		//else if (list.getSelectionModel().getSelectedItem().getTimelineOwnerID() != GUIManager.loggedInUser.getUserID()) {
-		//	displayInfo.getChildren().clear();
-		//	Text error = new Text("You are not the owner of this timeline.");
-		//	error.setFill(Color.RED);
-		//	displayInfo.getChildren().add(error);
-		//}
 	}
 
 	@FXML

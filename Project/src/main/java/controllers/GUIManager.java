@@ -1,3 +1,7 @@
+package controllers;
+
+import database.DBM;
+import database.User;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -26,7 +30,7 @@ public class GUIManager extends Application {
 
     public static <T> T swapScene(String fxml) throws IOException {
         pastPages.add(main.getChildren().get(1));
-        loader = new FXMLLoader(GUIManager.class.getResource("FXML/" + fxml + ".fxml"));
+        loader = new FXMLLoader(GUIManager.class.getResource("../FXML/" + fxml + ".fxml"));
         main.getChildren().set(1, loader.load());
         return loader.getController();
     }
@@ -55,7 +59,7 @@ public class GUIManager extends Application {
 
         main = new VBox();
 
-        loader = new FXMLLoader(getClass().getResource("FXML/TopMenu.fxml"));
+        loader = new FXMLLoader(getClass().getResource("../FXML/TopMenu.fxml"));
 
 
         main.getChildren().addAll(loader.load(), new Pane());
@@ -66,7 +70,7 @@ public class GUIManager extends Application {
         mainStage = primaryStage;
         mainStage.setScene(new Scene(main));
 
-        swapScene("Welcome_Screen");
+        swapScene("Welcome");
         applyStyle("DefaultStyle");
 
         mainStage.show();

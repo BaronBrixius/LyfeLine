@@ -16,7 +16,7 @@
 <?import javafx.scene.text.TextFlow?>
 
 <?import javafx.scene.text.Text?>
-<VBox stylesheets="@../styles/DefaultStyle.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Dashboard_GUI">
+<VBox stylesheets="@../styles/DefaultStyle.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.Dashboard">
     <GridPane alignment="CENTER" prefHeight="700.0" prefWidth="1280.0" stylesheets="@../styles/DefaultStyle.css">
         <columnConstraints>
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="914.6666870117188" minWidth="10.0" prefWidth="530.3333740234375" />

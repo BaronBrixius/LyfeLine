@@ -1,9 +1,12 @@
+package controllers;
+
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 
+import database.*;
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -11,20 +14,13 @@ import java.util.Comparator;
 import java.util.Optional;
 
 public class EventSelector {
-    @FXML
-    public ComboBox<Timeline> timelineList;
-    @FXML
-    public ListView<Event> eventList;
-    @FXML
-    public Button viewButton;
-    @FXML
-    public ComboBox<String> sortBy;
-    @FXML
-    public Button deleteButton;
-    @FXML
-    public TextField searchBar;
-    @FXML
-    public GridPane selector;
+    @FXML public ComboBox<Timeline> timelineList;
+    @FXML public ListView<Event> eventList;
+    @FXML public Button viewButton;
+    @FXML public ComboBox<String> sortBy;
+    @FXML public Button deleteButton;
+    @FXML public TextField searchBar;
+    @FXML public GridPane selector;
     public Button newButton;
 
     public void initialize() {
@@ -73,13 +69,13 @@ public class EventSelector {
     }
 
     public void newEvent(ActionEvent actionEvent) throws IOException {
-        EventEditor_GUI editor = GUIManager.swapScene("EventEditor");
+        EventEditor editor = GUIManager.swapScene("EventEditor");
         editor.setEvent(new Event(GUIManager.loggedInUser));                //associate
         editor.setPrevScreen(this);             //TODO delete this inelegant solution
     }
 
     public void openEvent(ActionEvent actionEvent) throws IOException {
-        EventEditor_GUI editor = GUIManager.swapScene("EventEditor");
+        EventEditor editor = GUIManager.swapScene("EventEditor");
         editor.setEvent(eventList.getSelectionModel().getSelectedItem());
         editor.toggleEditable(false);
         editor.setPrevScreen(this);             //TODO delete this inelegant solution

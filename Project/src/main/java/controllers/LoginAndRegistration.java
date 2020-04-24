@@ -1,3 +1,6 @@
+package controllers;
+
+import database.*;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -17,7 +20,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
-public class LoginAndRegistration_GUI {
+public class LoginAndRegistration {
 
     @FXML private TextField usernameInput;
     @FXML private PasswordField passwordInput;
@@ -26,7 +29,7 @@ public class LoginAndRegistration_GUI {
     @FXML public PasswordField confirmPasswordInput;
 
 
-    public LoginAndRegistration_GUI() {
+    public LoginAndRegistration() {
         GUIManager.mainStage.setTitle("Welcome Screen");
     }
 
@@ -38,7 +41,7 @@ public class LoginAndRegistration_GUI {
         loginStage.initOwner(GUIManager.mainStage);         //These two lines make sure you can't click back to the Start Window,
         loginStage.initModality(Modality.WINDOW_MODAL);     //so you can't have 10 Login Windows open at once.
 
-        Parent root = FXMLLoader.load(GUIManager.class.getResource("FXML/Login_Screen.fxml"));
+        Parent root = FXMLLoader.load(GUIManager.class.getResource("../FXML/Login.fxml"));
         loginStage.setScene(new Scene(root));
         loginStage.getScene().getStylesheets().add("File:src/main/resources/styles/DefaultStyle.css");
         loginStage.show();
@@ -52,7 +55,7 @@ public class LoginAndRegistration_GUI {
         registerStage.initOwner(GUIManager.mainStage);      //These are the same as before, prevents the window from losing focus until closed.
         registerStage.initModality(Modality.WINDOW_MODAL);  //I don't actually know what Modality is, Google just said this works and it does.
 
-        registerStage.setScene(new Scene(FXMLLoader.load(GUIManager.class.getResource("FXML/Register_Screen.fxml"))));
+        registerStage.setScene(new Scene(FXMLLoader.load(GUIManager.class.getResource("../FXML/Register.fxml"))));
         registerStage.getScene().getStylesheets().add("File:src/main/resources/styles/DefaultStyle.css");
         registerStage.show();
 
