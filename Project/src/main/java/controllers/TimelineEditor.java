@@ -15,16 +15,19 @@ import java.util.List;
 
 public class TimelineEditor {
 
-	@FXML private TextArea titleInput;
-	@FXML private TextArea descriptionInput;
-	@FXML private TextArea keywordsInput;
-	@FXML private DatePicker startDateInput;
-	@FXML private DatePicker endDateInput;
-	@FXML private ComboBox<String> timeInput;
+	@FXML
+	private TextArea titleInput;
+	@FXML
+	private TextArea descriptionInput;
+	@FXML
+	private DatePicker startDateInput;
+	@FXML
+	private DatePicker endDateInput;
+	@FXML
+	private ComboBox<String> timeInput;
 
 	private Timeline activeTimeline;
 	PreparedStatement stmt;
-
 
 	public TimelineEditor() {
 		GUIManager.mainStage.setTitle("Timeline Editor");
@@ -46,7 +49,6 @@ public class TimelineEditor {
 		 * keywordsList.append(timeline.getKeywords.get(i) + ", "); }
 		 * keywordsList.append(timeline.getKeywords.get(timeline.getKeywords.size - 1));
 		 */
-		keywordsInput.setText(keywordsList.toString());
 
 		// startDateInput.setValue(); //put timeline.getStartDate.toLocaleDate() as
 		// parameter
@@ -58,24 +60,9 @@ public class TimelineEditor {
 
 	@FXML
 	public void save(MouseEvent event) {
-		//System.out.println("The Save button has been pushed.");
-		//Creating a new timeline will run in here
-		//System.out.println("First printout" + activeTimeline);
-		if (activeTimeline == null) {
-			try {
-				Date dateCreated = new Date(LocalDate.now().getYear(), LocalDate.now().getMonthValue(), LocalDate.now().getDayOfMonth());
-				//create a new timeline object to work with.
-				activeTimeline = new Timeline(titleInput.getText(), descriptionInput.getText(), 1, null, dateCreated, dateCreated,
-						dateCreated, 0, false);
+		// This part is for editing an existing timeline
 
-				//Write new timeline into DB
-				DBM.insertIntoDB(activeTimeline);
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
-		//This part is for editing an existing timeline
-		else {
+		if (!titleInput.getText().trim().isBlank() && startDateInput.getValue() != null && endDateInput.getValue() != null) {
 			activeTimeline.setTimelineName(titleInput.getText());
 			activeTimeline.setTimelineDescription(descriptionInput.getText());
 			activeTimeline.setScale((timeInput.getSelectionModel().getSelectedIndex()) + 1);
@@ -83,16 +70,15 @@ public class TimelineEditor {
 			activeTimeline.setStartDate(new Date(start.getYear(), start.getMonthValue(), start.getDayOfMonth()));
 			LocalDate end = endDateInput.getValue();
 			activeTimeline.setEndDate(new Date(end.getYear(), end.getMonthValue(), end.getDayOfMonth()));
-			//Public/Private Selection - TBA
+
+			// update in db if required fields aren't empty/null
 			try {
 				DBM.updateInDB(activeTimeline);
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 		}
-		// Timeline.activeTimeline.getInsertQuery();
-		System.out.println(activeTimeline);
-
+		else System.out.println("bad boi");
 
 	}
 
@@ -108,13 +94,8 @@ public class TimelineEditor {
 
 	public void populateDisplay() {
 		if (activeTimeline == null) {
-			try {
-				activeTimeline = new Timeline(titleInput.getText(), descriptionInput.getText(), 1, null, null, null,
-						null, 0, false);
-			} catch (SQLException e) {
-
-			}
-
+			// create a new timeline object to work with.
+			activeTimeline = new Timeline("", "", 0, "", null, null, false);
 		} else {
 			// Get a timeline from DB. Such ineficient, much sad!
 			titleInput.setText(activeTimeline.getTimelineName());
@@ -124,8 +105,9 @@ public class TimelineEditor {
 			endDateInput.setValue(LocalDate.of(activeTimeline.getEndDate().getYear(),
 					activeTimeline.getEndDate().getMonth(), activeTimeline.getEndDate().getDay()));
 			timeInput.getSelectionModel().select(activeTimeline.getScale() - 1);
-			//activeTimeline.setScale((timeInput.getSelectionModel().getSelectedIndex()) + 1);
-			//System.out.println(activeTimeline.getScale());
+			// activeTimeline.setScale((timeInput.getSelectionModel().getSelectedIndex()) +
+			// 1);
+			// System.out.println(activeTimeline.getScale());
 		}
 	}
 

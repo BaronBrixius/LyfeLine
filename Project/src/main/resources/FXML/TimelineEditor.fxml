@@ -48,13 +48,13 @@
          <children>
             <TextField HBox.hgrow="ALWAYS" />
             <Region prefHeight="5.0" prefWidth="5.0" />
-            <Button mnemonicParsing="false" text="Add">
+            <Button maxWidth="47.0" mnemonicParsing="false" prefWidth="47.0" styleClass="tinyButton" stylesheets="@../styles/DefaultStyle.css" text="Add">
                <font>
                   <Font size="10.0" />
                </font>
             </Button>
             <Region prefHeight="5.0" prefWidth="5.0" />
-            <Button mnemonicParsing="false" text="Remove">
+            <Button maxWidth="67.0" mnemonicParsing="false" prefWidth="67.0" styleClass="tinyButton" stylesheets="@../styles/DefaultStyle.css" text="Remove">
                <font>
                   <Font size="10.0" />
                </font>

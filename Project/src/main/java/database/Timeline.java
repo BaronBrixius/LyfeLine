@@ -19,6 +19,7 @@ public class Timeline implements DBObject<Timeline> {
     private int timelineOwner;
     private boolean isPrivate = false;
     private List<Event> eventList;
+    private List<String> keywords;
 
     //Default timeline
     public Timeline() {
@@ -26,14 +27,13 @@ public class Timeline implements DBObject<Timeline> {
     }
 
     //Public method for creating the timeline
-    public Timeline(String TimelineName, String TimelineDescription, int Scale, String Theme, Date StartDate, Date Enddate, Date DateCreated, int TimelineOwner, boolean Private) throws SQLException {
+    public Timeline(String TimelineName, String TimelineDescription, int Scale, String Theme, Date StartDate, Date Enddate, boolean Private){
         this.timelineName = TimelineName;
         this.scale = Scale;
         this.timelineDescription = TimelineDescription;
         this.theme = Theme;
         this.startDate = StartDate;
         this.endDate = Enddate;
-        this.dateCreated = DateCreated;
         this.timelineOwner = GUIManager.loggedInUser.getUserID();
         this.isPrivate = Private;
     }
@@ -51,8 +51,6 @@ public class Timeline implements DBObject<Timeline> {
         this.dateCreated = DateCreated;
         this.timelineOwner = TimelineOwner;
         this.isPrivate = Private;
-        //timelineOwner = 007; //for testing with dummy timelines
-        //timelineOwner = GUIManager.loggedInUser.getUserID();
     }
 
     @Override
@@ -118,15 +116,8 @@ public class Timeline implements DBObject<Timeline> {
         out.setInt(16, endDate.getMinutes());
         out.setInt(17, endDate.getSeconds());
         out.setInt(18, endDate.getMilliseconds());
-        /*out.setInt(19, dateCreated.getYear());
-        out.setInt(20, dateCreated.getMonth());
-        out.setInt(21, dateCreated.getDay());
-        out.setInt(22, dateCreated.getHours());
-        out.setInt(23, dateCreated.getMinutes());
-        out.setInt(24, dateCreated.getSeconds());
-        out.setInt(25, dateCreated.getMilliseconds()); */
         out.setBoolean(19, isPrivate);
-        out.setInt(20, timelineOwner);
+        out.setInt(20, timelineID);
         return out;
     }
 
