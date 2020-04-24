@@ -1,6 +1,8 @@
 package controllers;
 
 import database.*;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import utils.*;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -11,11 +13,17 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -178,10 +186,76 @@ public class EventEditor {
         editButton.setText(editable ? "Save" : "Edit");
     }
 
+
     @FXML
-    private void uploadImage() {
-        //don't implement, not part of current sprint
+    private void uploadImage() throws IOException {    //Only working now for .jpg
+        FileChooser chooser = new FileChooser(); //For the filedirectory
+        chooser.setTitle("Open File");
+        File f = chooser.showOpenDialog(new Stage()); //This is the stage that needs to be edited (ok,cancel button) for the filechooser... do in FXML ?
+        String filename = f.getName(); //THis is to take the name of the image choosen to add it to the copied version
+        System.out.println(getFormat(f));
+        copyImage(f,filename); //Copy the choosen image with the original name and the type of the image for the ImageIO.write method
         System.out.println("Button pressed.");
+    }
+
+    private String getFormat(File f) throws IOException {
+        ImageInputStream iis = ImageIO.createImageInputStream(f);
+        Iterator<ImageReader> imageReaders = ImageIO.getImageReaders(iis);
+        String type = "png";
+        while (imageReaders.hasNext()) {
+            ImageReader reader = imageReaders.next();
+           type = reader.getFormatName();
+        }
+        return type;
+    }
+
+    private void copyImage(File f, String filename)  { //Takes the file chosen and the name of it
+        BufferedImage image = null;
+        int width = 963;    //width of the image
+        int height = 640;   //height of the image
+        //read image
+        try{
+            image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+            image = ImageIO.read(f);
+            System.out.println("Reading complete.");
+        }catch(IOException e){
+            System.out.println("Error: "+e);
+        }
+
+        //write image, here is the naming of the new image going, currently if same image often it is like image.jgp, image(1).jgp, image(1)(2).jpg......
+        try{
+            int imageNumer = 1; //For updating the number in the parenthesis based on how many with the same name in resources folder
+            String imageName = filename;
+            String outPath = "src/main/resources/images/"; //Path for saving, have special events folder now so if timeline guys are doing something they don't override copies
+            while (folderHasImage(imageName)==true){ //Check if our folder has the imagename already if so, add (int) untill no more true
+                int index = imageName.indexOf(".");            ;
+                imageName = imageName.substring(0, index)+ "("+ imageNumer+")" + ".jpg";
+                imageNumer++;
+            }
+            f = new File(outPath + imageName);  //output file path
+            ImageIO.write(image, getFormat(f), f);
+            System.out.println("Writing complete.");
+        }catch(IOException e){
+            System.out.println("Error: "+e);
+        }
+
+    }
+    //Method to check if the image folder has this name already to avoid if two are copied with same name the latter will just override the firs
+    private boolean folderHasImage(String path){
+        File folder = new File("src/main/resources/images/");
+        File[] listOfFiles = folder.listFiles();
+        List<String> images = new ArrayList<>();
+
+        for (int i = 0; i < listOfFiles.length; i++) {
+            if (listOfFiles[i].isFile()) {
+                images.add(listOfFiles[i].getName());
+            }
+        }
+        for(String s : images){
+            if (path.equalsIgnoreCase(s))
+                return true;
+        }
+        return false;
     }
 
     public boolean setEvent(int eventID) {       //is this even needed? don't implement yet
