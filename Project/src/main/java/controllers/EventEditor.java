@@ -114,7 +114,7 @@ public class EventEditor {
             //Convert the Date Picker to Date and see if problems happen
             start = startDate.getValue();
             readStart = new Date(start.getYear(), start.getMonth().getValue(), start.getDayOfMonth(),
-                    startTime1.getValue(), startTime2.getValue(), startTime3.getValue(), event.getStartDate().getMilliseconds());   //milliseconds not implemented yet, do we need to?
+                    startTime1.getValue(), startTime2.getValue(), startTime3.getValue(), event.getStartDate().getMillisecond());   //milliseconds not implemented yet, do we need to?
         } catch (NullPointerException e) {
             errorMessage.setText("Start date can't be empty.");
             return;
@@ -203,22 +203,22 @@ public class EventEditor {
 
         startDate.setValue(LocalDate.of(event.getStartDate().getYear(), event.getStartDate().getMonth(), event.getStartDate().getDay()));
 
-        startTime1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23, event.getStartDate().getHours()));
-        startTime2.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, event.getStartDate().getMinutes()));
-        startTime3.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, event.getStartDate().getSeconds()));
+        startTime1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23, event.getStartDate().getHour()));
+        startTime2.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, event.getStartDate().getMinute()));
+        startTime3.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, event.getStartDate().getSecond()));
 
         if (event.getStartDate().compareTo(event.getEndDate()) == 0) {
             endDate.setValue(LocalDate.of(event.getStartDate().getYear(), event.getStartDate().getMonth(), event.getStartDate().getDay()));
-            endTime1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23, event.getStartDate().getHours()));
-            endTime2.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, event.getStartDate().getMinutes()));
-            endTime3.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, event.getStartDate().getSeconds()));
+            endTime1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23, event.getStartDate().getHour()));
+            endTime2.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, event.getStartDate().getMinute()));
+            endTime3.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, event.getStartDate().getSecond()));
         } else {
             hasDuration.setSelected(true);
             toggleHasDuration();
             endDate.setValue(LocalDate.of(event.getEndDate().getYear(), event.getEndDate().getMonth(), event.getEndDate().getDay()));
-            endTime1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23, event.getEndDate().getHours()));
-            endTime2.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, event.getEndDate().getMinutes()));
-            endTime3.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, event.getEndDate().getSeconds()));
+            endTime1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23, event.getEndDate().getHour()));
+            endTime2.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, event.getEndDate().getMinute()));
+            endTime3.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, event.getEndDate().getSecond()));
         }
 
         imageInput.getSelectionModel().select(event.getImageID());
@@ -246,14 +246,14 @@ public class EventEditor {
 
         LocalDate start = startDate.getValue();
         event.setStartDate(new Date(start.getYear(), start.getMonth().getValue(), start.getDayOfMonth(),
-                startTime1.getValue(), startTime2.getValue(), startTime3.getValue(), event.getStartDate().getMilliseconds()));  //milliseconds not implemented yet, do we need to?
+                startTime1.getValue(), startTime2.getValue(), startTime3.getValue(), event.getStartDate().getMillisecond()));  //milliseconds not implemented yet, do we need to?
 
 
         LocalDate end;
         if (hasDuration.isSelected()) {
             end = endDate.getValue();
             event.setEndDate(new Date(end.getYear(), end.getMonth().getValue(), end.getDayOfMonth(),
-                    endTime1.getValue(), endTime2.getValue(), endTime3.getValue(), event.getEndDate().getMilliseconds()));      //milliseconds not implemented yet, do we need to?
+                    endTime1.getValue(), endTime2.getValue(), endTime3.getValue(), event.getEndDate().getMillisecond()));      //milliseconds not implemented yet, do we need to?
         } else                //if it has no duration, end = start
             event.setEndDate(event.getStartDate());
 
@@ -305,11 +305,11 @@ public class EventEditor {
     private boolean hasChanges() {
         LocalDate start = startDate.getValue();
         Date readStart = new Date(start.getYear(), start.getMonth().getValue(), start.getDayOfMonth(),
-                startTime1.getValue(), startTime2.getValue(), startTime3.getValue(), event.getStartDate().getMilliseconds());   //milliseconds not implemented yet, do we need to?
+                startTime1.getValue(), startTime2.getValue(), startTime3.getValue(), event.getStartDate().getMillisecond());   //milliseconds not implemented yet, do we need to?
 
         //If end is null, set end equal to start
         LocalDate end = endDate.getValue();
-        Date readEnd = new Date(end.getYear(), end.getMonth().getValue(), end.getDayOfMonth(), endTime1.getValue(), endTime2.getValue(), endTime3.getValue(), event.getEndDate().getMilliseconds());
+        Date readEnd = new Date(end.getYear(), end.getMonth().getValue(), end.getDayOfMonth(), endTime1.getValue(), endTime2.getValue(), endTime3.getValue(), event.getEndDate().getMillisecond());
 
         return (
                 !event.getEventName().equals(titleInput.getText())

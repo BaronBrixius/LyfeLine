@@ -70,17 +70,17 @@ public class Event implements DBObject<Event> {
         out.setInt(4, startDate.getYear());
         out.setInt(5, startDate.getMonth());
         out.setInt(6, startDate.getDay());
-        out.setInt(7, startDate.getHours());
-        out.setInt(8, startDate.getMinutes());
-        out.setInt(9, startDate.getSeconds());
-        out.setInt(10, startDate.getMilliseconds());
+        out.setInt(7, startDate.getHour());
+        out.setInt(8, startDate.getMinute());
+        out.setInt(9, startDate.getSecond());
+        out.setInt(10, startDate.getMillisecond());
         out.setInt(11, endDate.getYear());
         out.setInt(12, endDate.getMonth());
         out.setInt(13, endDate.getDay());
-        out.setInt(14, endDate.getHours());
-        out.setInt(15, endDate.getMinutes());
-        out.setInt(16, endDate.getSeconds());
-        out.setInt(17, endDate.getMilliseconds());
+        out.setInt(14, endDate.getHour());
+        out.setInt(15, endDate.getMinute());
+        out.setInt(16, endDate.getSecond());
+        out.setInt(17, endDate.getMillisecond());
 
         if (creationDate == null) {       //if new event
             out.setNull(18, Types.INTEGER);
@@ -94,10 +94,10 @@ public class Event implements DBObject<Event> {
             out.setInt(18, creationDate.getYear());
             out.setInt(19, creationDate.getMonth());
             out.setInt(20, creationDate.getDay());
-            out.setInt(21, creationDate.getHours());
-            out.setInt(22, creationDate.getMinutes());
-            out.setInt(23, creationDate.getSeconds());
-            out.setInt(24, creationDate.getMilliseconds());
+            out.setInt(21, creationDate.getHour());
+            out.setInt(22, creationDate.getMinute());
+            out.setInt(23, creationDate.getSecond());
+            out.setInt(24, creationDate.getMillisecond());
         }
         out.setInt(25, userID);
         if (imageID == 0)
@@ -230,17 +230,17 @@ public class Event implements DBObject<Event> {
         out.setInt(4, startDate.getYear());
         out.setInt(5, startDate.getMonth());
         out.setInt(6, startDate.getDay());
-        out.setInt(7, startDate.getHours());
-        out.setInt(8, startDate.getMinutes());
-        out.setInt(9, startDate.getSeconds());
-        out.setInt(10, startDate.getMilliseconds());
+        out.setInt(7, startDate.getHour());
+        out.setInt(8, startDate.getMinute());
+        out.setInt(9, startDate.getSecond());
+        out.setInt(10, startDate.getMillisecond());
         out.setInt(11, endDate.getYear());
         out.setInt(12, endDate.getMonth());
         out.setInt(13, endDate.getDay());
-        out.setInt(14, endDate.getHours());
-        out.setInt(15, endDate.getMinutes());
-        out.setInt(16, endDate.getSeconds());
-        out.setInt(17, endDate.getMilliseconds());
+        out.setInt(14, endDate.getHour());
+        out.setInt(15, endDate.getMinute());
+        out.setInt(16, endDate.getSecond());
+        out.setInt(17, endDate.getMillisecond());
         out.setInt(18, userID);
         out.setInt(19, eventID);
         return out;
