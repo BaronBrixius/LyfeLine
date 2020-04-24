@@ -16,7 +16,7 @@ public class TimelineViewer {
 
 	@FXML private Button backButton;
 	@FXML private HBox everythingHBox;
-	Timeline activeTimeline;
+	public Timeline activeTimeline;
 
 	
 	public void initialize() {
@@ -37,21 +37,18 @@ public class TimelineViewer {
 	}
 
 	//This method is probably not needed, but whatever
-	public void setActiveTimeline(int id) {
+	public boolean setActiveTimeline(int id) {
 		try {
 			PreparedStatement stmt = DBM.conn.prepareStatement("SELECT * FROM timelines WHERE TimelineID = ?");
 			stmt.setInt(1, id);
 			List<Timeline> list = DBM.getFromDB(stmt, new Timeline());
 
-			if (list.size() == 1)
-				this.activeTimeline = list.get(0);
-			//These are to see if I pulled incorrectly, actual error messages should be elsewhere
-			else if (list.size() > 1)
-				System.out.println("Prepared Statement pulled more than 1 timeline");
-			else
-				System.out.println("Prepared Statement pulled no timelines");
-		}
-		catch (SQLException e) {e.printStackTrace();}
-	}
+			this.activeTimeline = list.get(0);
 
+			//For testing
+			return list.size() == 1;
+		}
+		catch (SQLException e) {e.printStackTrace(); return false;}
+		catch (IndexOutOfBoundsException i) {System.out.println("Could not find that timeline."); return false;}
+	}
 }
