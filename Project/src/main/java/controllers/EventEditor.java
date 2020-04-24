@@ -14,6 +14,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 
 import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -21,6 +23,7 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -190,11 +193,23 @@ public class EventEditor {
         chooser.setTitle("Open File");
         File f = chooser.showOpenDialog(new Stage()); //This is the stage that needs to be edited (ok,cancel button) for the filechooser... do in FXML ?
         String filename = f.getName(); //THis is to take the name of the image choosen to add it to the copied version
-        copyImage(f,filename); //Copy the choosen image
+        System.out.println(getFormat(f));
+        copyImage(f,filename); //Copy the choosen image with the original name and the type of the image for the ImageIO.write method
         System.out.println("Button pressed.");
     }
 
-    public void copyImage(File f, String filename){ //Takes the file chosen and the name of it
+    private String getFormat(File f) throws IOException {
+        ImageInputStream iis = ImageIO.createImageInputStream(f);
+        Iterator<ImageReader> imageReaders = ImageIO.getImageReaders(iis);
+        String type = "png";
+        while (imageReaders.hasNext()) {
+            ImageReader reader = imageReaders.next();
+           type = reader.getFormatName();
+        }
+        return type;
+    }
+
+    private void copyImage(File f, String filename)  { //Takes the file chosen and the name of it
         BufferedImage image = null;
         int width = 963;    //width of the image
         int height = 640;   //height of the image
@@ -218,7 +233,7 @@ public class EventEditor {
                 imageNumer++;
             }
             f = new File(outPath + imageName);  //output file path
-            ImageIO.write(image, "png", f);
+            ImageIO.write(image, getFormat(f), f);
             System.out.println("Writing complete.");
         }catch(IOException e){
             System.out.println("Error: "+e);
@@ -226,7 +241,7 @@ public class EventEditor {
 
     }
     //Method to check if the image folder has this name already to avoid if two are copied with same name the latter will just override the firs
-    public boolean folderHasImage(String path){
+    private boolean folderHasImage(String path){
         File folder = new File("src/main/resources/images/");
         File[] listOfFiles = folder.listFiles();
         List<String> images = new ArrayList<>();
