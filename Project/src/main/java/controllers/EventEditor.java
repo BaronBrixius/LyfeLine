@@ -47,14 +47,16 @@ public class EventEditor {
     @FXML TextArea descriptionInput = new TextArea();
     @FXML DatePicker startDate = new DatePicker();
     @FXML CheckBox hasDuration = new CheckBox();@FXML DatePicker endDate = new DatePicker(); //only a datepicker for skeleton, will figure best way to enter info later
-    @FXML ComboBox<ImageView> imageInput = new ComboBox<>();
-    ImageView image;
+    @FXML ImageView image;
 
     int startYear;
 
     boolean editable = true;
     EventSelector prevScreen;
     private Event event;
+
+
+
 
     public void setPrevScreen(EventSelector prevScreen) {             //TODO delete this inelegant solution
         this.prevScreen = prevScreen;
@@ -69,36 +71,12 @@ public class EventEditor {
             deleteButton.setVisible(false);
             deleteButton.setDisable(true);
         }
+          image.setFitHeight(60);
+          image.setFitWidth(60);
+          image.preserveRatioProperty();
 
-        try {
-            List<String> images = DBM.getFromDB(DBM.conn.prepareStatement("SELECT * FROM Images"),
-                    rs -> rs.getString("ImageURL"));
 
-            List<ImageView> views = new ArrayList<>();
-            ImageView blank = new ImageView(new Image("file:src/main/resources/images/pleasedontnameanythingthis.png"));
-            blank.setFitHeight(40);
-            blank.setFitWidth(40);
-            views.add(blank);
 
-            ImageView currImage;
-            for (String s : images) {
-                currImage = new ImageView(new Image("file:src/main/resources/images/" + s));
-                currImage.setFitHeight(40);
-                currImage.setFitWidth(40);
-                views.add(currImage);
-            }
-
-            imageInput.setItems(FXCollections.observableArrayList(views));
-            imageInput.setCellFactory(param -> new ListCell<>() {
-                @Override
-                protected void updateItem(ImageView item, boolean empty) {
-                    super.updateItem(item, empty);
-                    setGraphic(item);
-                }
-            });
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
     }
 
     @FXML
@@ -172,7 +150,7 @@ public class EventEditor {
         endTime2.setDisable(!editable);
         endTime3.setDisable(!editable);
 
-        imageInput.setDisable(!editable);
+        image.setDisable(!editable);
         uploadButton.setVisible(editable);
         uploadButton.setDisable(!editable);
 
@@ -201,9 +179,10 @@ public class EventEditor {
         );
         File imageChosen = chooser.showOpenDialog(new Stage()); //This is the stage that needs to be edited (ok,cancel button) for the filechooser... do in FXML ?
         String filename = imageChosen.getName(); //THis is to take the name of the image choosen to add it to the copied version
-        System.out.println(getFormat(imageChosen));
-        String type = getFormat(imageChosen);
-        copyImage(imageChosen,filename, type); //Copy the choosen image with the original name and the type of the image for the ImageIO.write method
+        String fullOutPath = copyImage(imageChosen,filename); //Copy the choosen image with the original name and the type of the image for the ImageIO.write method
+
+        image.setImage(new Image("file:" + fullOutPath));
+
         System.out.println("Button pressed.");
     }
 
@@ -219,8 +198,9 @@ public class EventEditor {
         return type;
     }
 
-    private void copyImage(File image, String filename, String type) throws IOException { //Takes the file chosen and the name of it
+    private String copyImage(File image, String filename) throws IOException { //Takes the file chosen and the name of it
         String outPath = "src/main/resources/images/";
+        String imageName ="";
         try{
         InputStream is = null;
         OutputStream os = null;
@@ -228,7 +208,7 @@ public class EventEditor {
             is = new FileInputStream(image);
             System.out.println("reading complete.");
             int imageNumer = 1; //For updating the number in the parenthesis based on how many with the same name in resources folder
-            String imageName = filename;
+             imageName = filename;
             //Path for saving, have special events folder now so if timeline guys are doing something they don't override copies
             while (folderHasImage(imageName)==true){ //Check if our folder has the imagename already if so, add (int) untill no more true
                 int index = imageName.indexOf(".");            ;
@@ -241,6 +221,7 @@ public class EventEditor {
             while ((length = is.read(buffer)) > 0) {
                 os.write(buffer, 0, length);
             }
+
         } finally {
             is.close();
             os.close();
@@ -249,7 +230,7 @@ public class EventEditor {
         }catch(IOException e){
             System.out.println("Error: "+e);
         }
-
+        return outPath+imageName;
     }
     //Method to check if the image folder has this name already to avoid if two are copied with same name the latter will just override the firs
     private boolean folderHasImage(String path){
@@ -306,7 +287,7 @@ public class EventEditor {
             endTime3.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, event.getEndDate().getSeconds()));
         }
 
-        imageInput.getSelectionModel().select(event.getImageID());
+
         return false;
     }
 
@@ -342,7 +323,7 @@ public class EventEditor {
         } else                //if it has no duration, end = start
             event.setEndDate(event.getStartDate());
 
-        this.event.setImage(imageInput.getSelectionModel().getSelectedIndex());
+
     }
 
     private boolean saveEvent() {
@@ -401,7 +382,7 @@ public class EventEditor {
                         || !event.getEventDescrition().equals(descriptionInput.getText().replaceAll("([^\r])\n", "$1\r\n"))     //textArea tends to change the newline from \r\n to just \n which breaks some things
                         || event.getStartDate().compareTo(readStart) != 0
                         || event.getEndDate().compareTo(readEnd) != 0
-                        || event.getImageID() != imageInput.getSelectionModel().getSelectedIndex()
+
         );
     }
 
