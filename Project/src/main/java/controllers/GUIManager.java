@@ -55,6 +55,7 @@ public class GUIManager extends Application {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        loggedInUser = DBM.getFromDB(DBM.conn.prepareStatement("SELECT * FROM users"), new User()).get(0);  //delete when merging to dev
 
         main = new VBox();
         loader = new FXMLLoader(getClass().getResource("../FXML/TopMenu.fxml"));
@@ -65,8 +66,9 @@ public class GUIManager extends Application {
         mainStage.setScene(new Scene(main));
 
         //swapScene("Welcome_Screen");
-        TimelineView systemUnderDevelopment = swapScene("TimelineView");        //GUI currently being worked on, delete if I forgot to
+        TimelineView systemUnderDevelopment = swapScene("TimelineView");        //delete when merging to dev
         systemUnderDevelopment.setActiveTimeline(1);
+
 
         applyStyle("DefaultStyle");
         mainStage.show();

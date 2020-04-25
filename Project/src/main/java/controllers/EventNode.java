@@ -3,12 +3,9 @@ package controllers;
 import database.Event;
 import database.Timeline;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
-
-import java.io.IOException;
 
 public class EventNode {
 
@@ -61,19 +58,10 @@ public class EventNode {
     }
 
     @FXML
-    public void openEventViewer() {       //on click
-        try {
-            FXMLLoader editorLoader = new FXMLLoader(getClass().getResource("../FXML/EventEditor.fxml"));
-            parentController.rightSidebar.getChildren().add(editorLoader.load());
-
-            EventEditor editor = editorLoader.getController();
-            editor.setEvent(activeEvent);
-            editor.toggleEditable(false);
-            editor.setParentController(parentController);
-        } catch (IOException e) {
-            e.printStackTrace();        //TODO replace with better error message once dev is done
-        }
-
-
+    public void openEventViewer() {       //upon clicking a node
+        parentController.editorController.close();
+        parentController.editorController.setEvent(activeEvent);
+        parentController.editorController.toggleEditable(false);
+        parentController.rightSidebar.getChildren().add(parentController.editorController.editor);
     }
 }

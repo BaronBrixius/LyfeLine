@@ -48,10 +48,6 @@ public class EventEditor {
     TimelineView parentController;
     private Event event;
 
-    public void setParentController(TimelineView parentController) {             //TODO delete this inelegant solution
-        this.parentController = parentController;
-    }
-
     public void initialize() {
         if (
                 GUIManager.loggedInUser == null ||          //TODO delete this when hooked up to rest of program
@@ -91,6 +87,10 @@ public class EventEditor {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public void setParentController(TimelineView parentController) {             //TODO delete this inelegant solution
+        this.parentController = parentController;
     }
 
     @FXML
@@ -295,7 +295,7 @@ public class EventEditor {
             }
             //parentController.populateEventList();             //TODO fix updating the display on the event selector
             return true;
-        } catch (SQLException | IOException e) {
+        } catch (SQLException e) {
             return false;
         }
     }
@@ -319,10 +319,9 @@ public class EventEditor {
     }
 
     @FXML
-    private void close() throws IOException {
-        if (hasChanges())
-            saveConfirm();        //do you wanna save and exit or just save?
-        parentController.rightSidebar.getChildren().remove(editor);        //close editor, return to previous screen
+    void close() {
+        if (event != null && hasChanges())
+            saveConfirm();        //do you wanna save and exit or just exit?
+        parentController.rightSidebar.getChildren().remove(editor);
     }
-
 }
