@@ -130,5 +130,11 @@ public class TimelineView {
     public void openEventSelector() {
         rightSidebar.getChildren().remove(selectorController.selector);       //resets the event selector if it already exists
         rightSidebar.getChildren().add(selectorController.selector);
+        
+        for (int i = 0; i < selectorController.timelineList.getItems().size(); i++)	//sets the selected index, when opening the event selector, to the currently viewed timeline
+        	if (selectorController.timelineList.getSelectionModel().getSelectedItem() == activeTimeline) {
+        		selectorController.timelineList.getSelectionModel().select(i);
+        		break;
+        	}
     }
 }

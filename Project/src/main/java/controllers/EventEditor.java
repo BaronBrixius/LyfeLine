@@ -317,6 +317,14 @@ public class EventEditor {
                         || event.getImageID() != imageInput.getSelectionModel().getSelectedIndex()
         );
     }
+    
+    public void addToTimeline() {
+    	parentController.activeTimeline.getEventList().add(event);
+    	try { event.addToTimeline(parentController.activeTimeline.getTimelineID()); } catch (SQLException e) {
+			System.out.println("Timeline not found.");
+		}
+    	System.out.println(event.getEventName() + " event added to " + parentController.activeTimeline + " timeline."); // remove this later once more user feedback is implemented
+    }
 
     @FXML
     void close() {
