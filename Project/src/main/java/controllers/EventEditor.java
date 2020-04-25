@@ -16,8 +16,7 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
@@ -200,11 +199,11 @@ public class EventEditor {
                 new FileChooser.ExtensionFilter( "GIF", "*.gif" ),
                 new FileChooser.ExtensionFilter( "WBMP", "*.wbmp" )
         );
-        File f = chooser.showOpenDialog(new Stage()); //This is the stage that needs to be edited (ok,cancel button) for the filechooser... do in FXML ?
-        String filename = f.getName(); //THis is to take the name of the image choosen to add it to the copied version
-        System.out.println(getFormat(f));
-        String type = getFormat(f);
-        copyImage(f,filename, type); //Copy the choosen image with the original name and the type of the image for the ImageIO.write method
+        File imageChosen = chooser.showOpenDialog(new Stage()); //This is the stage that needs to be edited (ok,cancel button) for the filechooser... do in FXML ?
+        String filename = imageChosen.getName(); //THis is to take the name of the image choosen to add it to the copied version
+        System.out.println(getFormat(imageChosen));
+        String type = getFormat(imageChosen);
+        copyImage(imageChosen,filename, type); //Copy the choosen image with the original name and the type of the image for the ImageIO.write method
         System.out.println("Button pressed.");
     }
 
@@ -220,31 +219,32 @@ public class EventEditor {
         return type;
     }
 
-    private void copyImage(File f, String filename, String type)  { //Takes the file chosen and the name of it
-        BufferedImage image = null;
-        int width = 963;    //width of the image
-        int height = 640;   //height of the image
-        //read image
+    private void copyImage(File image, String filename, String type) throws IOException { //Takes the file chosen and the name of it
+        String outPath = "src/main/resources/images/";
         try{
-            image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-            image = ImageIO.read(f);
-            System.out.println("Reading complete.");
-        }catch(IOException e){
-            System.out.println("Error: "+e);
-        }
-
-        //write image, here is the naming of the new image going, currently if same image often it is like image.jgp, image(1).jgp, image(1)(2).jpg......
-        try{
+        InputStream is = null;
+        OutputStream os = null;
+        try {
+            is = new FileInputStream(image);
+            System.out.println("reading complete.");
             int imageNumer = 1; //For updating the number in the parenthesis based on how many with the same name in resources folder
             String imageName = filename;
-            String outPath = "src/main/resources/images/"; //Path for saving, have special events folder now so if timeline guys are doing something they don't override copies
+            //Path for saving, have special events folder now so if timeline guys are doing something they don't override copies
             while (folderHasImage(imageName)==true){ //Check if our folder has the imagename already if so, add (int) untill no more true
                 int index = imageName.indexOf(".");            ;
                 imageName = imageName.substring(0, index)+ "("+ imageNumer+")" + ".jpg";
                 imageNumer++;
             }
-            f = new File(outPath + imageName);  //output file path
-            ImageIO.write(image, type, f);
+            os = new FileOutputStream(new File(outPath + imageName));
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = is.read(buffer)) > 0) {
+                os.write(buffer, 0, length);
+            }
+        } finally {
+            is.close();
+            os.close();
+        }
             System.out.println("Writing complete.");
         }catch(IOException e){
             System.out.println("Error: "+e);
