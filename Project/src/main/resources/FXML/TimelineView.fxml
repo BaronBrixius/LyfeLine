@@ -15,7 +15,7 @@
 <?import javafx.scene.paint.Color?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="mainBorderPane" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.TimelineView">
+<BorderPane fx:id="mainBorderPane" prefHeight="800.0" prefWidth="1292.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.TimelineView">
    <bottom>
       <HBox id="HBox" alignment="CENTER_LEFT" spacing="5.0" BorderPane.alignment="CENTER">
          <children>
@@ -28,7 +28,7 @@
                </textFill>
             </Label>
             <Pane HBox.hgrow="ALWAYS" />
-            <Label font="$x3" text="Right status" textFill="$x4" HBox.hgrow="NEVER" />
+            <Button alignment="CENTER" mnemonicParsing="false" onAction="#openEventSelector" text="Events" />
          </children>
          <padding>
             <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
@@ -88,7 +88,6 @@
                            <Pane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="5" GridPane.rowIndex="3" /> -->
                      </children>
                   </GridPane>
-                  <Button layoutX="668.0" layoutY="506.0" mnemonicParsing="false" onAction="#openEventSelector" text="Events" />
                </children>
             </AnchorPane>
          </content>
