@@ -71,14 +71,14 @@ public class EventSelector {
     public void newEvent(ActionEvent actionEvent) throws IOException {
         EventEditor editor = GUIManager.swapScene("EventEditor");
         editor.setEvent(new Event(GUIManager.loggedInUser));                //associate
-        editor.setPrevScreen(this);             //TODO delete this inelegant solution
+        //editor.setParentController(this);             //TODO make this work with timelineview
     }
 
     public void openEvent(ActionEvent actionEvent) throws IOException {
         EventEditor editor = GUIManager.swapScene("EventEditor");
         editor.setEvent(eventList.getSelectionModel().getSelectedItem());
         editor.toggleEditable(false);
-        editor.setPrevScreen(this);             //TODO delete this inelegant solution
+        //editor.setParentController(this);             //TODO make this work with timelineview
     }
 
     public void close(ActionEvent actionEvent) {

@@ -1,8 +1,8 @@
 package database;
 
+import controllers.GUIManager;
 import utils.Date;
 
-import controllers.*;
 import java.sql.*;
 import java.util.List;
 
@@ -17,8 +17,11 @@ public class Timeline implements DBObject<Timeline> {
     private Date dateCreated;
     private String timelineDescription;
     private int timelineOwner;
-    private boolean isPrivate = false;
     private List<Event> eventList;
+
+    public List<Event> getEventList() {
+        return eventList;
+    }
 
     //Default timeline
     public Timeline() {
@@ -26,21 +29,11 @@ public class Timeline implements DBObject<Timeline> {
     }
 
     //Public method for creating the timeline
-    public Timeline(String TimelineName, String TimelineDescription, int Scale, String Theme, Date StartDate, Date Enddate, Date DateCreated, int TimelineOwner, boolean Private) throws SQLException {
-        this.timelineName = TimelineName;
-        this.scale = Scale;
-        this.timelineDescription = TimelineDescription;
-        this.theme = Theme;
-        this.startDate = StartDate;
-        this.endDate = Enddate;
-        this.dateCreated = DateCreated;
-        this.timelineOwner = GUIManager.loggedInUser.getUserID();
-        this.isPrivate = Private;
+    public Timeline(String TimelineName, String TimelineDescription, int Scale, String Theme, Date StartDate, Date Enddate) throws SQLException {
+        this(0, TimelineName, TimelineDescription, Scale, Theme, StartDate, Enddate, null, GUIManager.loggedInUser.getUserID());
     }
 
-
-    private Timeline(int TimeLineID, String TimelineName, String TimelineDescription, int Scale, String Theme, Date StartDate, Date Enddate, Date DateCreated, int TimelineOwner, boolean Private) throws SQLException {
-
+    private Timeline(int TimeLineID, String TimelineName, String TimelineDescription, int Scale, String Theme, Date StartDate, Date Enddate, Date DateCreated, int TimelineOwner) throws SQLException {
         this.timelineID = TimeLineID;
         this.timelineName = TimelineName;
         this.scale = Scale;
@@ -50,9 +43,15 @@ public class Timeline implements DBObject<Timeline> {
         this.endDate = Enddate;
         this.dateCreated = DateCreated;
         this.timelineOwner = TimelineOwner;
-        this.isPrivate = Private;
         //timelineOwner = 007; //for testing with dummy timelines
         //timelineOwner = GUIManager.loggedInUser.getUserID();
+
+        PreparedStatement eventStmt = DBM.conn.prepareStatement("SELECT * FROM events e " +
+                "INNER JOIN timelineevents te " +
+                "ON e.EventID = te.EventID " +
+                "WHERE te.TimelineID = ?");
+        eventStmt.setInt(1, this.timelineID);
+        eventList = DBM.getFromDB(eventStmt, new Event());
     }
 
     @Override
@@ -63,7 +62,7 @@ public class Timeline implements DBObject<Timeline> {
         PreparedStatement out = DBM.conn.prepareStatement("INSERT INTO `timelines` ( `Scale`,`TimelineName`, `TimelineDescription`, `Theme`,`StartYear`,`StartMonth`,`StartDay`,`StartHour`"
                 + ",`StartMinute`,`StartSecond`,`StartMillisecond`,`EndYear`,`EndMonth`,`EndDay`,`EndHour`,`EndMinute`,`EndSecond`,"
                 + "`EndMillisecond`,`CreatedYear`,`CreatedMonth`,`CreatedDay`,`CreatedHour`,`CreatedMinute`,`CreatedSecond`,`CreatedMillisecond`,"
-                + "`Private`,`TimelineOwner`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
+                + "`TimelineOwner`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
         out.setInt(1, scale);
         out.setString(2, timelineName);
         out.setString(3, timelineDescription);
@@ -89,17 +88,16 @@ public class Timeline implements DBObject<Timeline> {
         out.setInt(23, dateCreated.getMinute());
         out.setInt(24, dateCreated.getSecond());
         out.setInt(25, dateCreated.getMillisecond());
-        out.setBoolean(26, isPrivate);
-        out.setInt(27, timelineOwner);
+        out.setInt(26, timelineOwner);
         return out;
     }
 
     @Override
     public PreparedStatement getUpdateQuery() throws SQLException {
         PreparedStatement out = DBM.conn.prepareStatement("UPDATE `timelines` SET `Scale` = ?, `TimelineName` = ?, `TimelineDescription` = ?,  `Theme` = ?,   "
-        		+ "`StartYear` = ?,  `StartMonth` = ?,  `StartDay` = ?,  `StartHour` = ?,  `StartMinute` = ?,  `StartSecond` = ?,  "
-        		+ "`StartMillisecond` = ?,    `EndYear` = ?,  `EndMonth` = ?,  `EndDay` = ?,  `EndHour` = ?,  `EndMinute` = ?,  "
-        		+ "`EndSecond` = ?,  `EndMillisecond` = ?, `Private` = ? WHERE (`TimelineID` = ?)");
+                + "`StartYear` = ?,  `StartMonth` = ?,  `StartDay` = ?,  `StartHour` = ?,  `StartMinute` = ?,  `StartSecond` = ?,  "
+                + "`StartMillisecond` = ?,    `EndYear` = ?,  `EndMonth` = ?,  `EndDay` = ?,  `EndHour` = ?,  `EndMinute` = ?,  "
+                + "`EndSecond` = ?,  `EndMillisecond` = ? WHERE (`TimelineID` = ?)");
         out.setInt(1, scale);
         out.setString(2, timelineName);
         out.setString(3, timelineDescription);
@@ -118,15 +116,7 @@ public class Timeline implements DBObject<Timeline> {
         out.setInt(16, endDate.getMinute());
         out.setInt(17, endDate.getSecond());
         out.setInt(18, endDate.getMillisecond());
-        /*out.setInt(19, dateCreated.getYear());
-        out.setInt(20, dateCreated.getMonth());
-        out.setInt(21, dateCreated.getDay());
-        out.setInt(22, dateCreated.getHours());
-        out.setInt(23, dateCreated.getMinutes());
-        out.setInt(24, dateCreated.getSeconds());
-        out.setInt(25, dateCreated.getMilliseconds()); */
-        out.setBoolean(19, isPrivate);
-        out.setInt(20, timelineOwner);
+        out.setInt(19, timelineOwner);
         return out;
     }
 
@@ -134,8 +124,8 @@ public class Timeline implements DBObject<Timeline> {
     public PreparedStatement getDeleteQuery() throws SQLException {
         PreparedStatement out = DBM.conn.prepareStatement("DELETE t, e FROM `timelines` t " +
                 "LEFT JOIN timelineevents te " +
-                "ON t.TimelineID = te.TimelineID " +        	//destroys orphaned events (i.e. events where there are no
-                "LEFT JOIN events e " +                        	//junction table records for them with a different TimelineID
+                "ON t.TimelineID = te.TimelineID " +            //destroys orphaned events (i.e. events where there are no
+                "LEFT JOIN events e " +                            //junction table records for them with a different TimelineID
                 "ON te.EventID = e.EventID AND e.EventID NOT IN (SELECT EventID FROM timelineevents WHERE TimelineID != ?) " +
                 "WHERE t.TimelineID = ? ");
         out.setInt(1, timelineID);
@@ -172,13 +162,12 @@ public class Timeline implements DBObject<Timeline> {
         int CreatedSecond = rs.getInt("CreatedSecond");
         int CreatedMillisecond = rs.getInt("CreatedMillisecond");
         int TimelineOwner = rs.getInt("TimelineOwner");
-        boolean isPrivate = rs.getBoolean("Private");
 
         return new Timeline(TimelineID, TimelineName, TimelineDesription, Scale, Theme,
                 new Date(StartYear, StartMonth, StartDay, StartHour, StartMinute, StartSecond, StartMillisecond),
                 new Date(EndYear, EndMonth, EndDay, EndHour, EndMinute, EndSecond, EndMillisecond),
                 new Date(CreatedYear, CreatedMonth, CreatedDay, CreatedHour, CreatedMinute, CreatedSecond, CreatedMillisecond),
-                TimelineOwner, isPrivate);
+                TimelineOwner);
     }
 
     @Override
@@ -276,14 +265,6 @@ public class Timeline implements DBObject<Timeline> {
 
     public void setTimelineOwner(int TimelineOwner) {
         this.timelineOwner = TimelineOwner;
-    }
-
-    public boolean getPrivate() {
-        return this.isPrivate;
-    }
-
-    public void setPrivate(boolean isPrivate) {
-        this.isPrivate = isPrivate;
     }
 
     //Setters

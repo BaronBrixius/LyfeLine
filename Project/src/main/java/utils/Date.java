@@ -15,9 +15,7 @@ public class Date implements Comparable<Date> {
     }
 
     public Date(int year, int month, int day) {
-        this.year = year;
-        this.month = month;
-        this.day = day;
+        this(year, month, day, 0, 0, 0, 0);
     }
 
     public Date(int year, int month, int day, int hour, int minute, int second, int millisecond) {
@@ -32,9 +30,9 @@ public class Date implements Comparable<Date> {
 
     //maybe this could have been done with an imported library, but I made leap years work for fun/practice in spare time so might as well leave it in
     public int distanceTo(Date other, int scale) {
-
+        //outputs that don't need much calculation first
         int out = other.year - this.year;
-        switch (scale) {                            //year multiples first since it's held in one variable but has multiple scales, and needs no further calculation
+        switch (scale) {
             case 11:        //millennia
                 return out / 1000;
             case 10:        //centuries
@@ -47,12 +45,11 @@ public class Date implements Comparable<Date> {
                 return out * 12 + (other.month - this.month);
         }
 
-        //calculating days
-
-        //calculate absolute difference in days by month
+        //days calc
+        //calculate absolute difference in days, month by month
         int startMonth = Math.min(other.month, this.month);
         int endMonth = Math.max(other.month, this.month);
-        boolean secondMonthIsLater = (other.month - this.month) > 0;        //keep track of which came after, to either add/subtract later
+        boolean secondMonthIsLater = (other.month - this.month) > 0;        //track which month comes later in the year, to either add/subtract the difference from the total later
         int diffByMonth = 0;
 
         for (int i = startMonth; i < endMonth; i++) {
@@ -66,8 +63,8 @@ public class Date implements Comparable<Date> {
                 case 12:
                     diffByMonth += 31;
                     break;
-                case 2:              //handling leap years below
-                    diffByMonth += 28;
+                case 2:
+                    diffByMonth += 28;          //handling leap years below
                     break;
                 case 4:
                 case 6:
@@ -77,27 +74,20 @@ public class Date implements Comparable<Date> {
                     break;
             }
         }
-        if (!secondMonthIsLater)    //difference is negative if second month isn't later than first
+        if (!secondMonthIsLater)    //difference is negative if the end month isn't later in the year than the first
             diffByMonth *= -1;
 
         //leap year calc
         int leapYearsStart = this.year / 4 - this.year / 100 + this.year / 400;
         int leapYearsEnd = other.year / 4 - other.year / 100 + other.year / 400;
-
-        int leapDays = leapYearsEnd - leapYearsStart;                  //total leap years as of last year divisible by 4
+        int leapDays = leapYearsEnd - leapYearsStart;                  //total leap years that occur between the dates' years
 
         boolean startIsLeapYear = (this.year % 4 == 0 && this.year % 100 != 0) || this.year % 400 == 0;
         boolean endIsLeapYear = (other.year % 4 == 0 && other.year % 100 != 0) || other.year % 400 == 0;
-
-        if (startIsLeapYear && this.month < 3) {     //if start and end happen within a leap year, but are opposite sides of feb 29, add the cancelled leap day in manually
-            if (endIsLeapYear && (other.month > 2))
-                leapDays++;
-        }
-
-        if (endIsLeapYear && other.month < 3) {     //if end is leap year but happens before the leap day, remove it
-            if (!startIsLeapYear || (this.month > 2))
-                leapDays--;
-        }
+        if ((startIsLeapYear && this.month < 3) && (endIsLeapYear && (other.month > 2)))    //if start and end happen within a leap year, and are opposite sides of feb 29, add the cancelled leap day in manually
+            leapDays++;
+        if ((endIsLeapYear && other.month < 3) && (!startIsLeapYear || (this.month > 2)))   //if end is leap year but happens before the leap day, remove it
+            leapDays--;
 
         //convert until appropriate-to-scale output achieved, then return
         out = out * 365 + other.day - this.day + diffByMonth + leapDays;       //days

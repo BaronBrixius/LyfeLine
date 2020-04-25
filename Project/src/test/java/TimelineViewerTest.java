@@ -1,4 +1,4 @@
-import controllers.TimelineViewer;
+import controllers.TimelineView;
 import database.*;
 import org.junit.jupiter.api.*;
 
@@ -17,7 +17,7 @@ public class TimelineViewerTest {
     static private PreparedStatement stmt;
     static private ResultSet rs;
 
-    TimelineViewer sut = new TimelineViewer();
+    TimelineView sut = new TimelineView();
 
 
     @BeforeAll
