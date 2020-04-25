@@ -1,7 +1,12 @@
 /*This File holds all the CSS Style commands that are applied to all Nodes in a Scene*/
 
 /*.root applies to everything in a scene and overrides all other commands in this file. Use carefully.*/
-.root{/*Use carefully.*/
+.root{
+    -fx-background-color: #f4f4f4;
+}
+
+/* .root was applying "weakly", causing gridpanes to be semi-transparent*/
+GridPane{
     -fx-background-color: #f4f4f4;
 }
 

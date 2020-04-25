@@ -43,16 +43,10 @@ public class EventEditor {
     @FXML CheckBox hasDuration = new CheckBox();@FXML DatePicker endDate = new DatePicker(); //only a datepicker for skeleton, will figure best way to enter info later
     @FXML ComboBox<ImageView> imageInput = new ComboBox<>();
     ImageView image;
-
     int startYear;
-
     boolean editable = true;
-    EventSelector prevScreen;
+    TimelineView parentController;
     private Event event;
-
-    public void setPrevScreen(EventSelector prevScreen) {             //TODO delete this inelegant solution
-        this.prevScreen = prevScreen;
-    }
 
     public void initialize() {
         if (
@@ -93,6 +87,10 @@ public class EventEditor {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public void setParentController(TimelineView parentController) {             //TODO delete this inelegant solution
+        this.parentController = parentController;
     }
 
     @FXML
@@ -265,8 +263,8 @@ public class EventEditor {
         try {
             if (event.getEventID() == 0) {
                 DBM.insertIntoDB(event);
-                event.addToTimeline(prevScreen.timelineList.getSelectionModel().getSelectedItem().getTimelineID());
-                prevScreen.populateEventList();             //TODO delete this inelegant solution
+                //event.addToTimeline(parentController.timelineList.getSelectionModel().getSelectedItem().getTimelineID());
+                //parentController.populateEventList();             //TODO fix updating the display on the event selector
             } else
                 DBM.updateInDB(event);
             return true;
@@ -295,9 +293,9 @@ public class EventEditor {
                 DBM.deleteFromDB(event);
                 close();
             }
-            prevScreen.populateEventList();             //TODO delete this inelegant solution
+            //parentController.populateEventList();             //TODO fix updating the display on the event selector
             return true;
-        } catch (SQLException | IOException e) {
+        } catch (SQLException e) {
             return false;
         }
     }
@@ -321,10 +319,9 @@ public class EventEditor {
     }
 
     @FXML
-    private void close() throws IOException {
-        if (hasChanges())
-            saveConfirm();        //do you wanna save and exit or just save?
-        GUIManager.previousPage();        //close editor, return to previous screen
+    void close() {
+        if (event != null && hasChanges())
+            saveConfirm();        //do you wanna save and exit or just exit?
+        parentController.rightSidebar.getChildren().remove(editor);
     }
-
 }
