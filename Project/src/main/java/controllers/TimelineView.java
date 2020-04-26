@@ -3,7 +3,6 @@ package controllers;
 import database.DBM;
 import database.Event;
 import database.Timeline;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
@@ -11,8 +10,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 
 import java.io.IOException;
 import java.sql.PreparedStatement;
@@ -33,10 +30,6 @@ public class TimelineView {
     @FXML
     private HBox everythingHBox;
     private List<EventNode> eventList = new ArrayList<>();
-
-    public List<EventNode> getEventList() {
-        return eventList;
-    }
 
     public void initialize() {
         /*try {
@@ -62,6 +55,10 @@ public class TimelineView {
         } catch (IOException e) {
             e.printStackTrace();        //TODO replace with better error message once dev is done
         }
+    }
+
+    public List<EventNode> getEventList() {
+        return eventList;
     }
 
     public void goBackButton() {

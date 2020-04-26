@@ -49,9 +49,7 @@ public class EventEditor {
     private Event event;
 
     public void initialize() {
-        if (
-                GUIManager.loggedInUser == null ||          //TODO delete this when hooked up to rest of program
-                        !GUIManager.loggedInUser.getAdmin()) {
+        if (!GUIManager.loggedInUser.getAdmin()) {
             editButton.setVisible(false);
             editButton.setDisable(true);
             deleteButton.setVisible(false);
