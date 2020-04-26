@@ -32,26 +32,21 @@ public class TimelineView {
     private List<EventNode> eventList = new ArrayList<>();
 
     public void initialize() {
-        /*try {
-            everythingHBox.getChildren().add(FXMLLoader.load(GUIManager.class.getResource("../FXML/EventSelector.fxml")));
+        try {
+            FXMLLoader selectorLoader = new FXMLLoader(getClass().getResource("../FXML/EventSelector.fxml"));
+            selectorLoader.load();
+            selectorController = selectorLoader.getController();
+            selectorController.setParentController(this);
+            selectorController.setTimelineSelected(activeTimeline);  //sets the selected index to the currently viewed timeline
         } catch (IOException e) {
-            e.printStackTrace();
-        }*/
+            e.printStackTrace();        //TODO replace with better error message once dev is done
+        }
 
         try {
             FXMLLoader editorLoader = new FXMLLoader(getClass().getResource("../FXML/EventEditor.fxml"));
             editorLoader.load();
             editorController = editorLoader.getController();
             editorController.setParentController(this);
-        } catch (IOException e) {
-            e.printStackTrace();        //TODO replace with better error message once dev is done
-        }
-
-        try {
-            FXMLLoader selectorLoader = new FXMLLoader(getClass().getResource("../FXML/EventSelector.fxml"));
-            selectorLoader.load();
-            selectorController = selectorLoader.getController();
-            selectorController.setParentController(this);
         } catch (IOException e) {
             e.printStackTrace();        //TODO replace with better error message once dev is done
         }
@@ -127,7 +122,5 @@ public class TimelineView {
     public void openEventSelector() {
         rightSidebar.getChildren().remove(selectorController.selector);       //resets the event selector if it already exists
         rightSidebar.getChildren().add(selectorController.selector);
-        
-        selectorController.timelineList.getSelectionModel().select(activeTimeline); //sets the selected index, when opening the event selector, to the currently viewed timeline
     }
 }

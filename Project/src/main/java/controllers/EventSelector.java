@@ -105,6 +105,15 @@ public class EventSelector {
         }
     }
 
+    void setTimelineSelected(Timeline timelineToSelect){
+        for (Timeline t : timelineList.getItems()) {
+            if (timelineToSelect.equals(t)) {
+                timelineList.getSelectionModel().select(t);
+                break;
+            }
+        }
+    }
+
     private void populateTimelineList() {
         /*Timeline all = new Timeline();
         all.setTimelineName("All");

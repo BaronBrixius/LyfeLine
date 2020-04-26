@@ -1,3 +1,5 @@
+package controllers;
+
 import controllers.TimelineView;
 import database.*;
 import org.junit.jupiter.api.*;

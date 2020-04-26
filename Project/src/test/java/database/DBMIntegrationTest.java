@@ -1,3 +1,5 @@
+package database;
+
 import database.DBM;
 import database.Event;
 import database.User;

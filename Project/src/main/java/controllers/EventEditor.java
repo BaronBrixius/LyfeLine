@@ -1,7 +1,7 @@
 package controllers;
 
-import database.*;
-import utils.*;
+import database.DBM;
+import database.Event;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -10,8 +10,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
+import utils.Date;
 
-import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
@@ -21,27 +21,48 @@ import java.util.Optional;
 
 public class EventEditor {
 
-    @FXML public GridPane editor;
-    @FXML public Button editButton;
-    @FXML public Button uploadButton;
-    @FXML public Button deleteButton;
+    @FXML
+    public GridPane editor;
+    @FXML
+    public Button editButton;
+    @FXML
+    public Button uploadButton;
+    @FXML
+    public Button deleteButton;
 
-    @FXML public HBox startTime;
-    @FXML public HBox endTime;
-    @FXML public Spinner<Integer> startTime1;
-    @FXML public Spinner<Integer> startTime2;
-    @FXML public Spinner<Integer> startTime3;
-    @FXML public Spinner<Integer> endTime1;
-    @FXML public Spinner<Integer> endTime2;
-    @FXML public Spinner<Integer> endTime3;
+    @FXML
+    public HBox startTime;
+    @FXML
+    public HBox endTime;
+    @FXML
+    public Spinner<Integer> startTime1;
+    @FXML
+    public Spinner<Integer> startTime2;
+    @FXML
+    public Spinner<Integer> startTime3;
+    @FXML
+    public Spinner<Integer> endTime1;
+    @FXML
+    public Spinner<Integer> endTime2;
+    @FXML
+    public Spinner<Integer> endTime3;
 
-    @FXML public Label headerText;
-    @FXML public Text errorMessage;
-    @FXML TextField titleInput = new TextField();
-    @FXML TextArea descriptionInput = new TextArea();
-    @FXML DatePicker startDate = new DatePicker();
-    @FXML CheckBox hasDuration = new CheckBox();@FXML DatePicker endDate = new DatePicker(); //only a datepicker for skeleton, will figure best way to enter info later
-    @FXML ComboBox<ImageView> imageInput = new ComboBox<>();
+    @FXML
+    public Label headerText;
+    @FXML
+    public Text errorMessage;
+    @FXML
+    TextField titleInput = new TextField();
+    @FXML
+    TextArea descriptionInput = new TextArea();
+    @FXML
+    DatePicker startDate = new DatePicker();
+    @FXML
+    CheckBox hasDuration = new CheckBox();
+    @FXML
+    DatePicker endDate = new DatePicker(); //only a datepicker for skeleton, will figure best way to enter info later
+    @FXML
+    ComboBox<ImageView> imageInput = new ComboBox<>();
     ImageView image;
     int startYear;
     boolean editable = true;
@@ -315,13 +336,17 @@ public class EventEditor {
                         || event.getImageID() != imageInput.getSelectionModel().getSelectedIndex()
         );
     }
-    
+
     public void addToTimeline() {
-    	parentController.activeTimeline.getEventList().add(event);
-    	try { event.addToTimeline(parentController.activeTimeline.getTimelineID()); } catch (SQLException e) {
-			System.out.println("Timeline not found.");
-		}
-    	System.out.println(event.getEventName() + " event added to " + parentController.activeTimeline + " timeline."); // remove this later once more user feedback is implemented
+        parentController.activeTimeline.getEventList().add(event);
+        try {
+            if (event.addToTimeline(parentController.activeTimeline.getTimelineID()))
+                System.out.println(event.getEventName() + " event added to " + parentController.activeTimeline + " timeline."); // remove this later once more user feedback is implemented
+            else
+                System.out.println(event.getEventName() + " is already on " + parentController.activeTimeline + " timeline.");
+        } catch (SQLException e) {
+            System.out.println("Timeline not found.");
+        }
     }
 
     @FXML
