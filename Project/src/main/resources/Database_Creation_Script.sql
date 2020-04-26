@@ -2,7 +2,7 @@ CREATE TABLE `events`
 (
     `EventID`            int               NOT NULL AUTO_INCREMENT,
     `EventOwner`         int               NOT NULL,
-    `EventType`          tinyint           NOT NULL,
+    `EventType`          nvarchar(100)    DEFAULT NULL,
     `EventImage`         tinyint           DEFAULT NULL,
     `EventName`          nvarchar(100)     DEFAULT NULL,
     `EventDescription`   nvarchar(5000)    DEFAULT NULL,

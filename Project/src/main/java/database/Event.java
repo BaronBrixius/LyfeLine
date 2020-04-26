@@ -8,7 +8,7 @@ import java.util.List;
 public class Event implements DBObject<Event> {
     private int eventID = 0;
     private int userID;
-    private int eventType;
+    private String eventType;
     private String eventName = "";
     private String eventDescription = "";
     private int imageID;//For now, not sure how we handle this later on
@@ -64,7 +64,7 @@ public class Event implements DBObject<Event> {
         PreparedStatement out = DBM.conn.prepareStatement("INSERT INTO `events` (`EventType`, `EventName`, `EventDescription`,`StartYear`,`StartMonth`,`StartDay`,`StartHour`, " +
                 "`StartMinute`,`StartSecond`,`StartMillisecond`,`EndYear`,`EndMonth`,`EndDay`,`EndHour`,`EndMinute`,`EndSecond`, " +
                 "`EndMillisecond`,`CreatedYear`,`CreatedMonth`,`CreatedDay`,`CreatedHour`,`CreatedMinute`,`CreatedSecond`,`CreatedMillisecond`,`EventOwner`, `EventImage`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);", Statement.RETURN_GENERATED_KEYS);
-        out.setInt(1, eventType);
+        out.setString(1, eventType);
         out.setString(2, eventName);
         out.setString(3, eventDescription);
         out.setInt(4, startDate.getYear());
