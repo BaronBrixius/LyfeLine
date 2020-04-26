@@ -39,7 +39,6 @@ public class GUIManager extends Application {
         main.getChildren().set(1, pastPages.pop());
     }
 
-
     public static void applyStyle(String style) {
         mainStage.getScene().getStylesheets().add("File:src/main/resources/styles/" + style + ".css");
     }
@@ -68,10 +67,16 @@ public class GUIManager extends Application {
         //swapScene("Welcome_Screen");
         TimelineView systemUnderDevelopment = swapScene("TimelineView");        //delete when merging to dev
         systemUnderDevelopment.setActiveTimeline(1);
-
-
         applyStyle("DefaultStyle");
         mainStage.show();
     }
 
+    @Override
+    public void stop() {
+        try {
+            DBM.close();        //closes the database connection when mainStage is closed
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }

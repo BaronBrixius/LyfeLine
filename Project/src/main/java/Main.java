@@ -17,7 +17,6 @@ class Main {
             new DBM();
             DBM.setupSchema();       //destroys + remakes DB with default settings, can comment this out after first run if desired
 
-
             //Makes a list of events from the DB and prints it
             stmt = DBM.conn.prepareStatement("SELECT * FROM events");
             List<Event> eventList = DBM.getFromDB(stmt, new Event());           //blank object so functional interface method can be accessed

@@ -1,54 +1,64 @@
 package controllers;
 
-import database.*;
-import utils.*;
+import database.DBM;
+import database.Event;
 import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import utils.Date;
 
-import java.io.IOException;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 public class EventEditor {
 
-    @FXML public GridPane editor;
-    @FXML public Button editButton;
-    @FXML public Button uploadButton;
-    @FXML public Button deleteButton;
-
-    @FXML public HBox startTime;
-    @FXML public HBox endTime;
-    @FXML public Spinner<Integer> startTime1;
-    @FXML public Spinner<Integer> startTime2;
-    @FXML public Spinner<Integer> startTime3;
-    @FXML public Spinner<Integer> endTime1;
-    @FXML public Spinner<Integer> endTime2;
-    @FXML public Spinner<Integer> endTime3;
-
-    @FXML public Label headerText;
-    @FXML public Text errorMessage;
-    @FXML TextField titleInput = new TextField();
-    @FXML TextArea descriptionInput = new TextArea();
-    @FXML DatePicker startDate = new DatePicker();
-    @FXML CheckBox hasDuration = new CheckBox();@FXML DatePicker endDate = new DatePicker(); //only a datepicker for skeleton, will figure best way to enter info later
-    @FXML ComboBox<ImageView> imageInput = new ComboBox<>();
+    private final List<VBox> startBoxes = new ArrayList<>();
+    private final List<Spinner<Integer>> startInputs = new ArrayList<>();
+    private final List<VBox> endBoxes = new ArrayList<>();
+    private final List<Spinner<Integer>> endInputs = new ArrayList<>();
+    @FXML
+    public GridPane editor;
+    @FXML
+    public Button editButton;
+    @FXML
+    public Button uploadButton;
+    @FXML
+    public Button deleteButton;
+    @FXML
+    public Label headerText;
+    @FXML
+    public Text errorMessage;
+    @FXML
+    public FlowPane startPane;
+    @FXML
+    public FlowPane endPane;
+    @FXML
+    TextField titleInput = new TextField();
+    @FXML
+    TextArea descriptionInput = new TextArea();
+    @FXML
+    CheckBox hasDuration = new CheckBox();
+    @FXML
+    ComboBox<ImageView> imageInput = new ComboBox<>();
     ImageView image;
-    int startYear;
     boolean editable = true;
     TimelineView parentController;
+    private boolean startExpanded;
+    private boolean endExpanded;
     private Event event;
 
     public void initialize() {
+        //Check if Admin
         if (!GUIManager.loggedInUser.getAdmin()) {
             editButton.setVisible(false);
             editButton.setDisable(true);
@@ -56,10 +66,67 @@ public class EventEditor {
             deleteButton.setDisable(true);
         }
 
-        try {
-            List<String> images = DBM.getFromDB(DBM.conn.prepareStatement("SELECT * FROM Images"),
+        //Set Up the Spinners for Start/End Inputs, would have bloated the .fxml and variable list a ton if these were in fxml
+        String timeSpinnerLabel = null;
+        int maxValue = 0;
+        for (int i = 0; i < 7; i++) {
+            switch (i) {                //labels
+                case 0:
+                    timeSpinnerLabel = "Year";
+                    break;
+                case 1:
+                    timeSpinnerLabel = "Month";
+                    break;
+                case 2:
+                    timeSpinnerLabel = "Day";
+                    break;
+                case 3:
+                    timeSpinnerLabel = "Hour";
+                    break;
+                case 4:
+                    timeSpinnerLabel = "Minute";
+                    break;
+                case 5:
+                    timeSpinnerLabel = "Second";
+                    break;
+                case 6:
+                    timeSpinnerLabel = "Millisecond";
+                    break;
+            }
+
+            switch (i) {            //max values
+                case 1:
+                    maxValue = 12;
+                    break;
+                case 2:
+                    maxValue = 31;
+                    break;
+                case 3:
+                    maxValue = 23;
+                    break;
+                case 4:
+                case 5:
+                    maxValue = 59;
+                    break;
+                case 6:
+                    maxValue = 999;
+                    break;
+            }
+
+            setupTimeInputBoxes(timeSpinnerLabel, maxValue, i, startInputs, startBoxes);
+            setupTimeInputBoxes(timeSpinnerLabel, maxValue, i, endInputs, endBoxes);
+        }
+        //fix ranges for years since they're a little different
+        startInputs.get(0).setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(Integer.MIN_VALUE, Integer.MAX_VALUE, 0));
+        endInputs.get(0).setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(Integer.MIN_VALUE, Integer.MAX_VALUE, 0));
+
+        //Get Images
+        try (PreparedStatement stmt = DBM.conn.prepareStatement("SELECT * FROM Images")) {
+            List<String> images = DBM.getFromDB(stmt,
                     rs -> rs.getString("ImageURL"));
 
+
+            //TODO delete the below if you're not using it, I put it in so I could get a blank and I was super rushed cuz it was thursday at like 2pm -Max
             List<ImageView> views = new ArrayList<>();
             ImageView blank = new ImageView(new Image("file:src/main/resources/images/pleasedontnameanythingthis.png"));
             blank.setFitHeight(40);
@@ -87,58 +154,31 @@ public class EventEditor {
         }
     }
 
+    private void setupTimeInputBoxes(String timeSpinnerLabel, int maxValue, int i, List<Spinner<Integer>> startTimes, List<VBox> startBoxes) {
+        startTimes.add(i, new Spinner<>(0, maxValue, 0));
+        startBoxes.add(i, new VBox(new Label(timeSpinnerLabel), startTimes.get(i)));
+        startBoxes.get(i).setPrefWidth(70);
+        startBoxes.get(i).getChildren().get(0).getStyleClass().add("smallText");
+    }
+
     public void setParentController(TimelineView parentController) {             //TODO delete this inelegant solution
         this.parentController = parentController;
     }
 
     @FXML
     private void toggleHasDuration() {
-        endDate.setDisable(!hasDuration.isSelected());
-        endTime.setDisable(!hasDuration.isSelected());
+        endPane.setDisable(!hasDuration.isSelected());
+        setExpansion(false, hasDuration.isSelected() && endExpanded);   //compresses if disabled, if enabled leave it as user wanted
+        if (hasDuration.isSelected())
+            endPane.getStyleClass().remove("DisabledAnyways");
+        else
+            endPane.getStyleClass().add("DisabledAnyways");
     }
 
-    public void saveEditButton() {      //I know this is ugly right now
-        LocalDate start;
-        LocalDate end;
-        Date readStart = new Date();
-        Date readEnd = new Date();
-
-
-        try {
-            //Date Picker is literally bugged, this line works around it.
-            startDate.setValue(startDate.getConverter().fromString(startDate.getEditor().getText()));
-            //Convert the Date Picker to Date and see if problems happen
-            start = startDate.getValue();
-            readStart = new Date(start.getYear(), start.getMonth().getValue(), start.getDayOfMonth(),
-                    startTime1.getValue(), startTime2.getValue(), startTime3.getValue(), event.getStartDate().getMillisecond());   //milliseconds not implemented yet, do we need to?
-        } catch (NullPointerException e) {
-            errorMessage.setText("Start date can't be empty.");
-            return;
-        } catch (DateTimeParseException d) {
-            errorMessage.setText("Start date's format is improper.");
-            return;
-        }
-
-        //If the End Date is selected, check it for problems too.
-        if (hasDuration.isSelected()) {
-            try {
-                endDate.setValue(endDate.getConverter().fromString(endDate.getEditor().getText()));
-                end = endDate.getValue();
-                readEnd = new Date(end.getYear(), end.getMonth().getValue(), end.getDayOfMonth(), endTime1.getValue(), endTime2.getValue(), endTime3.getValue(), 0);
-
-            } catch (NullPointerException e) {
-                errorMessage.setText("End date can't be empty if selected.");
-                return;
-            } catch (DateTimeParseException d) {
-                errorMessage.setText("End date's format is improper.");
-                return;
-            }
-        }
-
+    public void saveEditButton() {
         if (editable && hasChanges())   //if unsaved changes, try to save
             if (!saveConfirm())         //if save cancelled, don't change mode
                 return;
-
         toggleEditable(!editable);
     }
 
@@ -148,28 +188,18 @@ public class EventEditor {
         titleInput.setEditable(editable);
         descriptionInput.setEditable(editable);
         hasDuration.setDisable(!editable);
-
-        startDate.setDisable(!editable);
-        startTime1.setDisable(!editable);
-        startTime2.setDisable(!editable);
-        startTime3.setDisable(!editable);
-
-        endDate.setEditable(editable);
-        endTime1.setEditable(editable);
-        endTime2.setEditable(editable);
-        endTime3.setEditable(editable);
-        endTime1.setDisable(!editable);
-        endTime2.setDisable(!editable);
-        endTime3.setDisable(!editable);
-
+        for (VBox box : startBoxes)
+            box.getChildren().get(1).setDisable(!editable);
+        for (VBox box : endBoxes)
+            box.getChildren().get(1).setDisable(!editable);
         imageInput.setDisable(!editable);
         uploadButton.setVisible(editable);
         uploadButton.setDisable(!editable);
 
         if (editable)
-            editor.getStylesheets().removeAll("styles/DisabledEditing.css");
+            editor.getStylesheets().remove("styles/DisabledViewable.css");
         else
-            editor.getStylesheets().add("styles/DisabledEditing.css");
+            editor.getStylesheets().add("styles/DisabledViewable.css");
 
         editButton.setText(editable ? "Save" : "Edit");
     }
@@ -197,25 +227,28 @@ public class EventEditor {
         titleInput.setText(event.getEventName());
         descriptionInput.setText(event.getEventDescrition());
 
-        startDate.setValue(LocalDate.of(event.getStartDate().getYear(), event.getStartDate().getMonth(), event.getStartDate().getDay()));
+        startInputs.get(0).getValueFactory().setValue(event.getStartDate().getYear());
+        startInputs.get(1).getValueFactory().setValue(event.getStartDate().getMonth());
+        startInputs.get(2).getValueFactory().setValue(event.getStartDate().getDay());
+        startInputs.get(3).getValueFactory().setValue(event.getStartDate().getHour());
+        startInputs.get(4).getValueFactory().setValue(event.getStartDate().getMinute());
+        startInputs.get(5).getValueFactory().setValue(event.getStartDate().getSecond());
+        startInputs.get(6).getValueFactory().setValue(event.getStartDate().getMillisecond());
 
-        startTime1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23, event.getStartDate().getHour()));
-        startTime2.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, event.getStartDate().getMinute()));
-        startTime3.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, event.getStartDate().getSecond()));
-
-        if (event.getStartDate().compareTo(event.getEndDate()) == 0) {
-            endDate.setValue(LocalDate.of(event.getStartDate().getYear(), event.getStartDate().getMonth(), event.getStartDate().getDay()));
-            endTime1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23, event.getStartDate().getHour()));
-            endTime2.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, event.getStartDate().getMinute()));
-            endTime3.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, event.getStartDate().getSecond()));
-        } else {
+        if (event.getStartDate().compareTo(event.getEndDate()) != 0) {
             hasDuration.setSelected(true);
             toggleHasDuration();
-            endDate.setValue(LocalDate.of(event.getEndDate().getYear(), event.getEndDate().getMonth(), event.getEndDate().getDay()));
-            endTime1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23, event.getEndDate().getHour()));
-            endTime2.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, event.getEndDate().getMinute()));
-            endTime3.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, event.getEndDate().getSecond()));
         }
+        endInputs.get(0).getValueFactory().setValue(event.getEndDate().getYear());
+        endInputs.get(1).getValueFactory().setValue(event.getEndDate().getMonth());
+        endInputs.get(2).getValueFactory().setValue(event.getEndDate().getDay());
+        endInputs.get(3).getValueFactory().setValue(event.getEndDate().getHour());
+        endInputs.get(4).getValueFactory().setValue(event.getEndDate().getMinute());
+        endInputs.get(5).getValueFactory().setValue(event.getEndDate().getSecond());
+        endInputs.get(6).getValueFactory().setValue(event.getEndDate().getMillisecond());
+
+        setExpansion(true, false);
+        setExpansion(false, false);
 
         imageInput.getSelectionModel().select(event.getImageID());
         return false;
@@ -240,16 +273,11 @@ public class EventEditor {
         event.setTitle(titleInput.getText());
         event.setDescription(descriptionInput.getText().replaceAll("([^\r])\n", "$1\r\n"));
 
-        LocalDate start = startDate.getValue();
-        event.setStartDate(new Date(start.getYear(), start.getMonth().getValue(), start.getDayOfMonth(),
-                startTime1.getValue(), startTime2.getValue(), startTime3.getValue(), event.getStartDate().getMillisecond()));  //milliseconds not implemented yet, do we need to?
-
-
-        LocalDate end;
+        event.setStartDate(new Date(startInputs.get(0).getValue(), startInputs.get(1).getValue(), startInputs.get(2).getValue(),
+                startInputs.get(3).getValue(), startInputs.get(4).getValue(), startInputs.get(5).getValue(), startInputs.get(6).getValue()));
         if (hasDuration.isSelected()) {
-            end = endDate.getValue();
-            event.setEndDate(new Date(end.getYear(), end.getMonth().getValue(), end.getDayOfMonth(),
-                    endTime1.getValue(), endTime2.getValue(), endTime3.getValue(), event.getEndDate().getMillisecond()));      //milliseconds not implemented yet, do we need to?
+            event.setEndDate(new Date(endInputs.get(0).getValue(), endInputs.get(1).getValue(), endInputs.get(2).getValue(),
+                    endInputs.get(3).getValue(), endInputs.get(4).getValue(), endInputs.get(5).getValue(), endInputs.get(6).getValue()));
         } else                //if it has no duration, end = start
             event.setEndDate(event.getStartDate());
 
@@ -298,14 +326,62 @@ public class EventEditor {
         }
     }
 
-    private boolean hasChanges() {
-        LocalDate start = startDate.getValue();
-        Date readStart = new Date(start.getYear(), start.getMonth().getValue(), start.getDayOfMonth(),
-                startTime1.getValue(), startTime2.getValue(), startTime3.getValue(), event.getStartDate().getMillisecond());   //milliseconds not implemented yet, do we need to?
+    public void addToTimeline() {
+        parentController.activeTimeline.getEventList().add(event);
+        try {
+            if (event.addToTimeline(parentController.activeTimeline.getTimelineID()))
+                System.out.println(event.getEventName() + " event added to " + parentController.activeTimeline + " timeline."); // remove this later once more user feedback is implemented
+            else
+                System.out.println(event.getEventName() + " is already on " + parentController.activeTimeline + " timeline.");
+        } catch (SQLException e) {
+            System.out.println("Timeline not found.");
+        }
+    }
 
-        //If end is null, set end equal to start
-        LocalDate end = endDate.getValue();
-        Date readEnd = new Date(end.getYear(), end.getMonth().getValue(), end.getDayOfMonth(), endTime1.getValue(), endTime2.getValue(), endTime3.getValue(), event.getEndDate().getMillisecond());
+    public void toggleStartExpanded(ActionEvent actionEvent) {
+        startExpanded = !startExpanded;
+        setExpansion(true, startExpanded);
+    }
+
+    public void toggleEndExpanded(ActionEvent actionEvent) {
+        endExpanded = !endExpanded;
+        setExpansion(false, endExpanded);
+    }
+
+    private int setExpansion(boolean start, boolean expanding) {
+        FlowPane expandPane = start ? startPane : endPane;
+        List<VBox> boxesToAddFrom = start ? startBoxes : endBoxes;
+        expandPane.getChildren().removeAll(boxesToAddFrom);         //clear out the current contents except the expansion button
+        int scale = parentController.activeTimeline.getScale();
+
+        if (expanding) {                //if expanding, add everything in
+            expandPane.getChildren().addAll(0, boxesToAddFrom);
+
+        } else {                        //if contracting, add based on scale
+            if (scale == 1)             //don't try to convert to switch statement unless you're a genius, the overlaps made it ugly when I tried
+                expandPane.getChildren().add(0, boxesToAddFrom.get(6)); //milliseconds
+            if (scale <= 3)
+                expandPane.getChildren().add(0, boxesToAddFrom.get(5)); //seconds
+            if (scale >= 3 && scale <= 5)
+                expandPane.getChildren().add(0, boxesToAddFrom.get(4)); //minutes
+            if (scale >= 4 && scale <= 6)
+                expandPane.getChildren().add(0, boxesToAddFrom.get(3)); //hours
+            if (scale >= 5 && scale <= 8)
+                expandPane.getChildren().add(0, boxesToAddFrom.get(2)); //days
+            if (scale >= 7)
+                expandPane.getChildren().add(0, boxesToAddFrom.get(1)); //months
+            if (scale >= 8)
+                expandPane.getChildren().add(0, boxesToAddFrom.get(0)); //years
+        }
+        return expandPane.getChildren().size();
+    }
+
+    private boolean hasChanges() {
+        Date readStart = new Date(startInputs.get(0).getValue(), startInputs.get(1).getValue(), startInputs.get(2).getValue(),
+                startInputs.get(3).getValue(), startInputs.get(4).getValue(), startInputs.get(5).getValue(), startInputs.get(6).getValue());   //milliseconds not implemented yet, do we need to?
+
+        Date readEnd = new Date(endInputs.get(0).getValue(), endInputs.get(1).getValue(), endInputs.get(2).getValue(),
+                endInputs.get(3).getValue(), endInputs.get(4).getValue(), endInputs.get(5).getValue(), endInputs.get(6).getValue());
 
         return (
                 !event.getEventName().equals(titleInput.getText())
@@ -315,14 +391,6 @@ public class EventEditor {
                         || event.getImageID() != imageInput.getSelectionModel().getSelectedIndex()
         );
     }
-    
-    public void addToTimeline() {
-    	parentController.activeTimeline.getEventList().add(event);
-    	try { event.addToTimeline(parentController.activeTimeline.getTimelineID()); } catch (SQLException e) {
-			System.out.println("Timeline not found.");
-		}
-    	System.out.println(event.getEventName() + " event added to " + parentController.activeTimeline + " timeline."); // remove this later once more user feedback is implemented
-    }
 
     @FXML
     void close() {
@@ -330,4 +398,6 @@ public class EventEditor {
             saveConfirm();        //do you wanna save and exit or just exit?
         parentController.rightSidebar.getChildren().remove(editor);
     }
+
+
 }

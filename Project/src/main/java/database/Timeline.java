@@ -276,4 +276,10 @@ public class Timeline implements DBObject<Timeline> {
     public int getTimelineOwnerID() {
         return timelineOwner;
     }
+
+    public boolean equals(Timeline other){
+        if (this.timelineID == 0)
+            return false;
+        return this.timelineID == other.timelineID;
+    }
 }
