@@ -71,10 +71,16 @@ public class EventEditor {
             deleteButton.setVisible(false);
             deleteButton.setDisable(true);
         }
-          image.setFitHeight(60);
-          image.setFitWidth(60);
-          image.preserveRatioProperty();
-
+            image.setOnMouseEntered(e -> {
+                image.setScaleX(8);
+                image.setScaleY(8);
+                image.setScaleZ(8);
+            });
+            image.setOnMouseExited(e -> {
+                image.setScaleX(1);
+                image.setScaleY(1);
+                image.setScaleZ(1);
+            });
 
 
     }

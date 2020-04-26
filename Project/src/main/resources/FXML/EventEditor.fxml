@@ -44,7 +44,7 @@
         <Spinner fx:id="endTime3" />
     </HBox>
    <Text fx:id="errorMessage" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="smallText" GridPane.columnSpan="2" GridPane.rowIndex="12" />
-   <ImageView id="image" fx:id="image" fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true" GridPane.halignment="CENTER" GridPane.rowIndex="11" />
+   <ImageView fx:id="image" fitHeight="60.0" fitWidth="60.0" preserveRatio="true" GridPane.halignment="CENTER" GridPane.rowIndex="11" />
    <rowConstraints>
       <RowConstraints />
       <RowConstraints />
