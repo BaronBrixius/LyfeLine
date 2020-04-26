@@ -105,17 +105,17 @@ public class Event implements DBObject<Event> {
         return out;
     }
 
-    public void addToTimeline(int timelineID) throws SQLException {
+    public boolean addToTimeline(int timelineID) throws SQLException {
         PreparedStatement out = DBM.conn.prepareStatement("INSERT IGNORE INTO `timelineevents` (`TimelineID`, `EventID`) VALUES (?, ?);");
         out.setInt(1, timelineID);
         out.setInt(2, this.eventID);
-        out.execute();
+        return out.executeUpdate() > 0;
 
     }
 
-    public void removeFromTimeline(int timelineID) throws SQLException {
+    public boolean removeFromTimeline(int timelineID) throws SQLException {
         PreparedStatement out = DBM.conn.prepareStatement("DELETE FROM `timelineevents` WHERE EventID = " + this.eventID + " AND TimelineID = " + timelineID + ";");
-        out.execute();
+        return out.executeUpdate() > 0;
     }
 
     @Override

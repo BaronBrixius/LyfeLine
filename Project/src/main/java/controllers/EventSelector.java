@@ -1,12 +1,14 @@
 package controllers;
 
+import database.DBM;
+import database.Event;
+import database.Timeline;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 
-import database.*;
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -14,13 +16,20 @@ import java.util.Comparator;
 import java.util.Optional;
 
 public class EventSelector {
-    @FXML public GridPane selector;
-    @FXML public ComboBox<Timeline> timelineList;
-    @FXML public ListView<EventNode> eventList;
-    @FXML public Button viewButton;
-    @FXML public ComboBox<String> sortBy;
-    @FXML public Button deleteButton;
-    @FXML public TextField searchBar;
+    @FXML
+    public GridPane selector;
+    @FXML
+    public ComboBox<Timeline> timelineList;
+    @FXML
+    public ListView<Event> eventList;
+    @FXML
+    public Button viewButton;
+    @FXML
+    public ComboBox<String> sortBy;
+    @FXML
+    public Button deleteButton;
+    @FXML
+    public TextField searchBar;
     public Button newButton;
     private TimelineView parentController;
 
@@ -28,12 +37,11 @@ public class EventSelector {
         populateTimelineList();
 
         sortBy.getItems().addAll("Alphabetic", "Reverse Alphabetic", "Creation Date", "Reverse Creation Date");
-
         sortBy.getSelectionModel().selectedIndexProperty().addListener(ov -> {
             sortEvents(sortBy.getSelectionModel().getSelectedIndex());
         });
 
-        timelineList.setCellFactory(param -> new ListCell<>() {         //changes how Timelines are displayed (name only)
+        timelineList.setCellFactory(param -> new ListCell<>() {       //changes how Timelines are displayed (name only)
             @Override
             protected void updateItem(Timeline item, boolean empty) {
                 super.updateItem(item, empty);
@@ -47,12 +55,12 @@ public class EventSelector {
 
         eventList.setCellFactory(param -> new ListCell<>() {         //changes how Events are displayed (name only)
             @Override
-            protected void updateItem(EventNode item, boolean empty) {
+            protected void updateItem(Event item, boolean empty) {
                 super.updateItem(item, empty);
-                if (empty || item == null || item.getActiveEvent().getEventName() == null) {
+                if (empty || item == null || item.getEventName() == null) {
                     setText(null);
                 } else {
-                    setText(item.getActiveEvent().getEventName());
+                    setText(item.getEventName());
                 }
             }
         });
@@ -63,9 +71,11 @@ public class EventSelector {
         });
 
         eventList.getSelectionModel().selectedIndexProperty().addListener(e -> {
-            newButton.setDisable(timelineList.getSelectionModel().selectedIndexProperty() == null);
             viewButton.setDisable(eventList.getSelectionModel().selectedIndexProperty() == null);
-            deleteButton.setDisable(eventList.getSelectionModel().selectedIndexProperty() == null);
+            if (GUIManager.loggedInUser.getUserID() == timelineList.getSelectionModel().getSelectedItem().getTimelineOwnerID()) {
+                newButton.setDisable(timelineList.getSelectionModel().selectedIndexProperty() == null);     //only owner can edit
+                deleteButton.setDisable(eventList.getSelectionModel().selectedIndexProperty() == null);
+            }
         });
     }
 
@@ -75,11 +85,11 @@ public class EventSelector {
 
     public void newEvent() throws IOException {
         parentController.addEvent(new Event());
-        eventList.getSelectionModel().getSelectedItem().openEventViewer();
+        eventList.getSelectionModel().getSelectedItem();
     }
-
+    //TODO hook these back up to the event editor
     public void openEvent() throws IOException {
-        eventList.getSelectionModel().getSelectedItem().openEventViewer();
+        eventList.getSelectionModel().getSelectedItem();
     }
 
     public boolean deleteEvent() {
@@ -94,14 +104,23 @@ public class EventSelector {
             return false;
 
         try {
-            if (eventList.getSelectionModel().getSelectedItem().getActiveEvent().getEventID() == 0)
+            if (eventList.getSelectionModel().getSelectedItem().getEventID() == 0)
                 throw new IllegalArgumentException("event not in database");
 
-            DBM.deleteFromDB(eventList.getSelectionModel().getSelectedItem().getActiveEvent());
+            DBM.deleteFromDB(eventList.getSelectionModel().getSelectedItem());
             populateEventList();
             return true;
         } catch (SQLException e) {
             return false;
+        }
+    }
+
+    void setTimelineSelected(Timeline timelineToSelect) {
+        for (Timeline t : timelineList.getItems()) {
+            if (timelineToSelect.equals(t)) {
+                timelineList.getSelectionModel().select(t);
+                break;
+            }
         }
     }
 
@@ -110,8 +129,7 @@ public class EventSelector {
         all.setTimelineName("All");
         timelineList.getItems().add(all);*/
         try {
-            PreparedStatement stmt = DBM.conn.prepareStatement("SELECT * FROM timelines WHERE TimelineOwner = ?");
-            stmt.setInt(1, GUIManager.loggedInUser.getUserID());      //uncomment this for real version
+            PreparedStatement stmt = DBM.conn.prepareStatement("SELECT * FROM timelines");
             timelineList.getItems().addAll(FXCollections.observableArrayList(DBM.getFromDB(stmt, new Timeline())));
             timelineList.getSelectionModel().select(1);
         } catch (SQLException e) {
@@ -121,7 +139,7 @@ public class EventSelector {
 
     @FXML
     void populateEventList() {
-        eventList.setItems(FXCollections.observableArrayList(parentController.getEventList()));
+        eventList.setItems(FXCollections.observableArrayList(timelineList.getSelectionModel().getSelectedItem().getEventList()));
         eventList.getSelectionModel().clearSelection();
         newButton.setDisable(true);
         viewButton.setDisable(true);
@@ -131,16 +149,16 @@ public class EventSelector {
     public void sortEvents(int selection) {
         switch (selection) {
             case 0:
-                eventList.getItems().sort(Comparator.comparing(t -> t.getActiveEvent().getEventName()));
+                eventList.getItems().sort(Comparator.comparing(Event::getEventName));
                 break;
             case 1:
-                eventList.getItems().sort((t1, t2) -> (t2.getActiveEvent().getEventName().compareTo(t1.getActiveEvent().getEventName())));
+                eventList.getItems().sort((t1, t2) -> (t2.getEventName().compareTo(t1.getEventName())));
                 break;
             case 2:
-                eventList.getItems().sort((t1, t2) -> (t2.getActiveEvent().getCreationDate().compareTo(t1.getActiveEvent().getCreationDate())));
+                eventList.getItems().sort((t1, t2) -> (t2.getCreationDate().compareTo(t1.getCreationDate())));
                 break;
             case 3:
-                eventList.getItems().sort(Comparator.comparing(t -> t.getActiveEvent().getCreationDate()));
+                eventList.getItems().sort(Comparator.comparing(Event::getCreationDate));
                 break;
         }
     }
@@ -151,5 +169,9 @@ public class EventSelector {
 
     public void close(ActionEvent actionEvent) {
         parentController.rightSidebar.getChildren().remove(selector);
+    }
+
+    public void setActiveTimeline(ActionEvent actionEvent) {
+        parentController.setActiveTimeline(timelineList.getSelectionModel().getSelectedItem());
     }
 }
