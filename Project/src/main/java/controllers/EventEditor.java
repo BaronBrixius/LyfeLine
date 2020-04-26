@@ -7,11 +7,13 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import utils.Date;
 
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
@@ -31,22 +33,9 @@ public class EventEditor {
     public Button deleteButton;
 
     @FXML
-    public HBox startTime;
+    public FlowPane startTime;
     @FXML
-    public HBox endTime;
-    @FXML
-    public Spinner<Integer> startTime1;
-    @FXML
-    public Spinner<Integer> startTime2;
-    @FXML
-    public Spinner<Integer> startTime3;
-    @FXML
-    public Spinner<Integer> endTime1;
-    @FXML
-    public Spinner<Integer> endTime2;
-    @FXML
-    public Spinner<Integer> endTime3;
-
+    public FlowPane endTime;
     @FXML
     public Label headerText;
     @FXML
@@ -56,20 +45,21 @@ public class EventEditor {
     @FXML
     TextArea descriptionInput = new TextArea();
     @FXML
-    DatePicker startDate = new DatePicker();
-    @FXML
     CheckBox hasDuration = new CheckBox();
-    @FXML
-    DatePicker endDate = new DatePicker(); //only a datepicker for skeleton, will figure best way to enter info later
     @FXML
     ComboBox<ImageView> imageInput = new ComboBox<>();
     ImageView image;
     int startYear;
     boolean editable = true;
     TimelineView parentController;
+    private List<VBox> startBoxes = new ArrayList<>();
+    private List<Spinner<Integer>> startTimes = new ArrayList<>();
+    private List<VBox> endBoxes = new ArrayList<>();
+    private List<Spinner<Integer>> endTimes = new ArrayList<>();
     private Event event;
 
     public void initialize() {
+        //Check if Admin
         if (!GUIManager.loggedInUser.getAdmin()) {
             editButton.setVisible(false);
             editButton.setDisable(true);
@@ -77,8 +67,42 @@ public class EventEditor {
             deleteButton.setDisable(true);
         }
 
-        try {
-            List<String> images = DBM.getFromDB(DBM.conn.prepareStatement("SELECT * FROM Images"),
+        //Set Up the (many) Spinners for Start/End Inputs
+        Label temp = null;
+        for (int i = 0; i < 7; i++) {
+            switch (i) {
+                case 0:
+                    temp = new Label("Year");
+                    break;
+                case 1:
+                    temp = new Label("Month");
+                    break;
+                case 2:
+                    temp = new Label("Day");
+                    break;
+                case 3:
+                    temp = new Label("Hour");
+                    break;
+                case 4:
+                    temp = new Label("Minute");
+                    break;
+                case 5:
+                    temp = new Label("Second");
+                    break;
+                case 6:
+                    temp = new Label("Millisecond");
+                    break;
+            }
+
+            startTimes.add(new Spinner<>());
+            startBoxes.add(new VBox(temp, startTimes.get(i)));
+            endTimes.add(new Spinner<>());
+            endBoxes.add(new VBox(temp, endTimes.get(i)));
+        }
+
+        //Get Images
+        try (PreparedStatement stmt = DBM.conn.prepareStatement("SELECT * FROM Images")) {
+            List<String> images = DBM.getFromDB(stmt,
                     rs -> rs.getString("ImageURL"));
 
             List<ImageView> views = new ArrayList<>();
@@ -114,7 +138,6 @@ public class EventEditor {
 
     @FXML
     private void toggleHasDuration() {
-        endDate.setDisable(!hasDuration.isSelected());
         endTime.setDisable(!hasDuration.isSelected());
     }
 

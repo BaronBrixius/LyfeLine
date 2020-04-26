@@ -21,7 +21,6 @@ public class TimelineViewerTest {
 
     TimelineView sut = new TimelineView();
 
-
     @BeforeAll
     static void begin() throws SQLException, ClassNotFoundException {
         new DBM(SCHEMA);
@@ -31,7 +30,7 @@ public class TimelineViewerTest {
     @AfterAll
     static void end() throws SQLException {
         DBM.conn.createStatement().execute("DROP DATABASE IF EXISTS test");
-        DBM.conn.close();
+        DBM.close();
     }
 
     @BeforeEach
@@ -39,13 +38,10 @@ public class TimelineViewerTest {
         try {
             DBM.setupSchema();
         } catch (SQLException | FileNotFoundException e) {e.printStackTrace();}
-        System.out.println("Test " + ++testCount + " Beginning\n");
+        System.out.println("Test " + ++testCount);
     }
 
     @AfterEach
-    void tearDown() {
-        System.out.println("\nTest " + testCount + " Ending");
-    }
 
     @Test
     void setActiveTimelineIDTest() throws SQLException {
