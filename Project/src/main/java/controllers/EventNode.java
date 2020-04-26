@@ -4,6 +4,7 @@ import database.Event;
 import database.Timeline;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 
@@ -17,13 +18,14 @@ public class EventNode {
     private int startColumn;
     private int columnSpan;
     private TimelineView parentController;
+    @FXML
+    private Tooltip hoverFlag;
 
     public Pane getDisplayPane() {
         return displayPane;
     }
 
     public void initialize() {
-
     }
 
     public Event getActiveEvent() {
@@ -47,14 +49,14 @@ public class EventNode {
         return columnSpan;
     }
 
-
     @FXML
     public void openDetails(MouseEvent mouseEvent) {
+    	hoverFlag.setText(activeEvent.getEventName() + "\n" + activeEvent.getEventDescrition());
     }
 
     @FXML
     public void closeDetails(MouseEvent mouseEvent) {
-        //close stuff
+    	
     }
 
     @FXML

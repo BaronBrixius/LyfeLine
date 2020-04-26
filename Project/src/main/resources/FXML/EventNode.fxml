@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.Pane?>
-<Pane fx:id="displayPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-      onMouseClicked="#openEventViewer" onMouseEntered="#openDetails" onMouseExited="#closeDetails"
-      xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.EventNode">
-    <Label fx:id="eventNameDisplay" text="Label"/>
+
+<Pane fx:id="displayPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseClicked="#openEventViewer" onMouseEntered="#openDetails" onMouseExited="#closeDetails" styleClass="eventNode" stylesheets="@../styles/DefaultStyle.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.EventNode">
+    <Label fx:id="eventNameDisplay" alignment="CENTER" styleClass="eventNode" text="Label" textFill="WHITE">
+      <tooltip>
+         <Tooltip fx:id="hoverFlag" style="-fx-background-color: #FFA76D;" text="Tooltip" />
+      </tooltip></Label>
 </Pane>
