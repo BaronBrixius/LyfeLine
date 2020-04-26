@@ -87,7 +87,7 @@ public class EventSelector {
         parentController.addEvent(new Event());
         eventList.getSelectionModel().getSelectedItem();
     }
-
+    //TODO hook these back up to the event editor
     public void openEvent() throws IOException {
         eventList.getSelectionModel().getSelectedItem();
     }
