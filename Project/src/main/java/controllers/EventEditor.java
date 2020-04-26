@@ -98,8 +98,8 @@ public class EventEditor {
         LocalDate end;
         Date readStart = new Date();
         Date readEnd = new Date();
-        this.fullOutPath = copyImage(imageChosen,filename); //Save button clicked, the image chosen is saved and the String field is set as the path to the image in the resource folder
-
+        if(image.isDisable()==false)
+        this.fullOutPath = copyImage(imageChosen,filename);
         try {
             //Date Picker is literally bugged, this line works around it.
             startDate.setValue(startDate.getConverter().fromString(startDate.getEditor().getText()));
@@ -312,8 +312,9 @@ public class EventEditor {
         return saveEvent();
     }
 
-    void updateEvent() {
+    void updateEvent() throws IOException {
         //setters to update each field of this.event, based on the current info in the text fields
+
         event.setTitle(titleInput.getText());
         event.setDescription(descriptionInput.getText().replaceAll("([^\r])\n", "$1\r\n"));
 
@@ -337,10 +338,12 @@ public class EventEditor {
         updateEvent();
         try {
             if (event.getEventID() == 0) {
+                //Save button clicked, the image chosen is saved and the String field is set as the path to the image in the resource folder
                 DBM.insertIntoDB(event);
                 event.addToTimeline(prevScreen.timelineList.getSelectionModel().getSelectedItem().getTimelineID());
                 prevScreen.populateEventList();             //TODO delete this inelegant solution
             } else
+                 //Save button clicked, the image chosen is saved and the String field is set as the path to the image in the resource folder
                 DBM.updateInDB(event);
             return true;
         } catch (SQLException e) {
