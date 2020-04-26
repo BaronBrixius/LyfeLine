@@ -54,7 +54,9 @@ public class EventEditor {
     boolean editable = true;
     EventSelector prevScreen;
     private Event event;
-
+    private File imageChosen; //The current image chosen by FileChooser
+    String filename ; //THis is to take the name of the image choosen to add it to the copied version
+    String fullOutPath; //When event is saved the path to the image in resource folder is sent here (the one we can use to send to DB)
 
 
 
@@ -91,12 +93,12 @@ public class EventEditor {
         endTime.setDisable(!hasDuration.isSelected());
     }
 
-    public void saveEditButton() {      //I know this is ugly right now
+    public void saveEditButton() throws IOException {      //I know this is ugly right now
         LocalDate start;
         LocalDate end;
         Date readStart = new Date();
         Date readEnd = new Date();
-
+        this.fullOutPath = copyImage(imageChosen,filename); //Save button clicked, the image chosen is saved and the String field is set as the path to the image in the resource folder
 
         try {
             //Date Picker is literally bugged, this line works around it.
@@ -183,11 +185,10 @@ public class EventEditor {
                 new FileChooser.ExtensionFilter( "GIF", "*.gif" ),
                 new FileChooser.ExtensionFilter( "WBMP", "*.wbmp" )
         );
-        File imageChosen = chooser.showOpenDialog(new Stage()); //This is the stage that needs to be edited (ok,cancel button) for the filechooser... do in FXML ?
-        String filename = imageChosen.getName(); //THis is to take the name of the image choosen to add it to the copied version
-        String fullOutPath = copyImage(imageChosen,filename); //Copy the choosen image with the original name and the type of the image for the ImageIO.write method
-
-        image.setImage(new Image("file:" + fullOutPath));
+        this.imageChosen = chooser.showOpenDialog(new Stage()); //This is the stage that needs to be edited (ok,cancel button) for the filechooser... do in FXML ?
+        this.filename = imageChosen.getName(); //THis is to take the name of the image choosen to add it to the copied version
+        System.out.println(this.imageChosen.getAbsolutePath());
+        image.setImage(new Image("File:" + this.imageChosen.getAbsolutePath()));
 
         System.out.println("Button pressed.");
     }
@@ -298,7 +299,7 @@ public class EventEditor {
     }
 
     @FXML
-    private boolean saveConfirm() {
+    private boolean saveConfirm() throws IOException {
         Alert confirmsave = new Alert(Alert.AlertType.CONFIRMATION);
         confirmsave.setTitle("Confirm Save");
         confirmsave.setHeaderText("Saving changes to this event will alter it for all other timelines as well.");
@@ -332,7 +333,7 @@ public class EventEditor {
 
     }
 
-    private boolean saveEvent() {
+    private boolean saveEvent() throws IOException {
         updateEvent();
         try {
             if (event.getEventID() == 0) {
