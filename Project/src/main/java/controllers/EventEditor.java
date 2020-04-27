@@ -1,9 +1,6 @@
 package controllers;
-import database.*;
-import javafx.stage.FileChooser;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import utils.*;
+import database.DBM;
+import database.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -11,6 +8,9 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
+import utils.Date;
+
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
@@ -219,14 +219,23 @@ public class EventEditor {
         try {
             is = new FileInputStream(image);
             System.out.println("reading complete.");
-            int imageNumer = 1; //For updating the number in the parenthesis based on how many with the same name in resources folder
              imageName = filename;
+
             //Path for saving, have special events folder now so if timeline guys are doing something they don't override copies
-            while (folderHasImage(imageName)==true){ //Check if our folder has the imagename already if so, add (int) untill no more true
-                int index = imageName.indexOf(".");            ;
-                imageName = imageName.substring(0, index)+ "("+ imageNumer+")" + ".jpg";
-                imageNumer++;
+            int duplicateDigit = 2;
+
+            while(folderHasImage(imageName)) {
+                int indexOfDot = filename.lastIndexOf(".");
+                if(imageName.matches(".*\\s\\(\\d\\)\\..*")) {
+                    int indexOfBrackets = imageName.lastIndexOf("(");
+                    imageName = imageName.substring(0, indexOfBrackets + 1) +  duplicateDigit + ")" + "." + getFormat(image);
+
+                } else {
+                    imageName = imageName.substring(0, indexOfDot) + " (" + duplicateDigit + ")" + "." + getFormat(image);
+                }
+                duplicateDigit++;
             }
+
             os = new FileOutputStream(new File(outPath + imageName));
             byte[] buffer = new byte[1024];
             int length;
