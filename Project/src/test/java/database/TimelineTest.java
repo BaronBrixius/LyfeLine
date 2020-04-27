@@ -1,3 +1,5 @@
+package database;
+
 import database.DBM;
 import database.Timeline;
 import org.junit.jupiter.api.AfterAll;

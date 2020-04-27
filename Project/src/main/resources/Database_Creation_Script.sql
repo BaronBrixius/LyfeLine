@@ -2,7 +2,6 @@ CREATE TABLE `events`
 (
     `EventID`            int               NOT NULL AUTO_INCREMENT,
     `EventOwner`         int               NOT NULL,
-    `EventType`          tinyint           NOT NULL,
     `EventImage`         tinyint           DEFAULT NULL,
     `EventName`          nvarchar(100)     DEFAULT NULL,
     `EventDescription`   nvarchar(5000)    DEFAULT NULL,
@@ -86,15 +85,18 @@ CREATE TABLE `scale_lookup`
 INSERT INTO `scale_lookup`
 (`ID`,
  `unit`)
-VALUES (1, 'Seconds'),
-       (2, 'Minutes'),
-       (3, 'Hours'),
-       (4, 'Days'),
-       (5, 'Weeks'),
-       (6, 'Months'),
-       (7, 'Years'),
-       (8, 'Decades');
-
+VALUES (1, 'Milliseconds'),
+       (2, 'Seconds'),
+       (3, 'Minutes'),
+       (4, 'Hours'),
+       (5, 'Days'),
+       (6, 'Weeks'),
+       (7, 'Months'),
+       (8, 'Years'),
+       (9, 'Decades'),
+       (10, 'Centuries'),
+       (11, 'Millennia')
+;
 
 
 
@@ -288,9 +290,7 @@ VALUES ('1', 'Ben', 'Ben@gmail.com',
         'CEc1AAkRdz7BguqKQL4e4wrw7A3j6L', '0'),
        ('13', 'Hans Ove', 'Hans@math.biz',
         'tPmbHxe4qtzP8AaCpQJs/Hjr8RW3xDUGx+kk75AENDVY7Kkz85jJ/H1KICOH9TOsZPg4e/4ldTM9WzajCOJQiw==',
-        '8IzHZXvKP9hwwIr5EflEvhLYdo2AVY', '0')
-;
-
+        '8IzHZXvKP9hwwIr5EflEvhLYdo2AVY', '0');
 
 
 INSERT INTO `timelines`
@@ -325,10 +325,11 @@ VALUES (01, 1, 'Fall of Rome', 'Out with a wimper, not a bang', 'dark', 350, 5, 
 ;
 
 
-INSERT INTO `events` (`EventOwner`, `EventType`, `EventName`, `EventDescription`, `StartYear`, `StartMonth`,
-                      `StartDay`, `StartHour`, `StartMinute`, `StartSecond`, `StartMillisecond`, `EndYear`, `EndMonth`, `EndDay`,
+INSERT INTO `events` (`EventOwner`, `EventName`, `EventDescription`, `StartYear`, `StartMonth`,
+                      `StartDay`, `StartHour`, `StartMinute`, `StartSecond`, `StartMillisecond`, `EndYear`, `EndMonth`,
+                      `EndDay`,
                       `EndHour`, `EndMinute`, `EndSecond`, `EndMillisecond`)
-VALUES ('1', '1', 'Crossing the Rubicon', 'Julius Caesar''s crossing the Rubicon river in January 49 BC precipitated
+VALUES ( '1', 'Crossing the Rubicon', 'Julius Caesar''s crossing the Rubicon river in January 49 BC precipitated
         the Roman Civil War, which ultimately led to Caesar becoming dictator and the rise of the imperial era of Rome.
         Caesar had been appointed to a governorship over a region that ranged from southern Gaul to Illyricum (but not Italy).
         As his term of governorship ended, the Roman Senate ordered Caesar to disband his army and return to Rome. He was
@@ -336,20 +337,20 @@ VALUES ('1', '1', 'Crossing the Rubicon', 'Julius Caesar''s crossing the Rubicon
         In January of 49 BC, Caesar brought the 13th legion across the river, which the Roman government considered
         insurrection, treason, and a declaration of war on the Roman Senate. According to some authors, he is said to have
         uttered the phrase "alea iacta est"—the die is cast—as his army marched through the shallow river.'
-        , '49', '1', '13', '17', '25', '40', '20', '30', '10', '25', '22', '50', '45','40'),
-        ('1', '1', 'Great Roman Civil War', 'The Great Roman Civil War (49–45 BC), also known as Caesar''s Civil War, was
+       , '49', '1', '13', '17', '25', '40', '20', '52', '10', '25', '22', '50', '45', '40'),
+       ('1', 'Great Roman Civil War', 'The Great Roman Civil War (49–45 BC), also known as Caesar''s Civil War, was
         one of the last politico-military conflicts in the Roman Republic before the establishment of the Roman Empire.
         It began as a series of political and military confrontations, between Julius Caesar (100–44 BC), his political supporters
         (broadly known as Populares), and his legions, against the Optimates (or Boni), the politically conservative and socially
         traditionalist faction of the Roman Senate, who were supported by Pompey (106–48 BC) and his legions.[1]',
-        '49', '5', '5', '5', '10', '10', '10', '45', '10', '25', '22', '50', '45','40'),
-        ('1', '1', 'Marcus Tullius Cicero', 'Marcus Tullius Cicero[a] (/ˈsɪsəroʊ/ SISS-ə-roh, Latin:
+        '49', '5', '5', '5', '10', '10', '10', '51', '10', '25', '22', '50', '45', '40'),
+       ('1', 'Marcus Tullius Cicero', 'Marcus Tullius Cicero[a] (/ˈsɪsəroʊ/ SISS-ə-roh, Latin:
         [ˈmaːrkʊs ˈtʊllɪ.ʊs ˈkɪkɛroː]; 3 January 106 BC – 7 December 43 BC) was a Roman statesman, lawyer and Academic
         Skeptic philosopher[3] who wrote extensively on rhetoric, orations, philosophy, and politics, and is considered one of
         Rome''s greatest orators and prose stylists.[4][5] A leading political figure in the final years of the Roman Republic,
         Cicero vainly tried to uphold the republican system''s integrity during the instability that led to the establishment of
         the Roman Empire.[6] He came from a wealthy municipal family of the Roman equestrian order, and served as consul in the
-        year 63 BC.', '106', '8', '8', '9', '20', '20', '25', '43', '10', '30', '22', '50', '45','40');
+        year 63 BC.', '106', '8', '8', '9', '20', '20', '25', '108', '10', '30', '22', '50', '45', '40');
 
 
 INSERT INTO `timelineevents` (`TimelineID`, `EventID`)

@@ -1,8 +1,8 @@
 package database;
 
+import controllers.GUIManager;
 import utils.Date;
 
-import controllers.*;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;

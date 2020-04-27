@@ -1,3 +1,5 @@
+package database;
+
 import database.DBM;
 import database.Event;
 import database.User;
@@ -24,16 +26,6 @@ public class DBMIntegrationTest {
         new DBM(SCHEMA);
     }
 
-    static void resetTable(String table) throws SQLException {
-        try {
-            Statement executer = DBM.conn.createStatement();
-            executer.execute("DELETE FROM " + table);
-            DBM.runScript("src/test/resources/" + table + ".sql");
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
-
     @AfterAll
     static void finish() throws SQLException {
         DBM.conn.createStatement().execute("DROP DATABASE IF EXISTS test");
@@ -54,7 +46,6 @@ public class DBMIntegrationTest {
 
     @Test
     void insertMultiple() throws SQLException {
-        resetTable("events");
         int expected = 8;
 
         Event event1 = new Event();
@@ -72,7 +63,6 @@ public class DBMIntegrationTest {
 
     @Test
     void insertList() throws SQLException {
-        resetTable("events");
         int expected = 9;
 
         Event[] events = new Event[4];
@@ -91,7 +81,6 @@ public class DBMIntegrationTest {
 
     @Test
     void insertNulls() throws SQLException {
-        resetTable("events");
         int expected = 6;
 
         Event[] events = new Event[3];
@@ -116,7 +105,6 @@ public class DBMIntegrationTest {
 
     @Test
     void updatebyArray() throws SQLException {
-        resetTable("users");
         String expected;
 
         List<User> userList = DBM.getFromDB(DBM.conn.prepareStatement("SELECT * FROM users"), new User());
@@ -136,14 +124,12 @@ public class DBMIntegrationTest {
 
     @Test
     void updateNulls() throws SQLException {
-        resetTable("users");
         User[] users = new User[3];
         DBM.updateInDB(users);
     }
 
     @Test
     void deleteByList() throws SQLException {
-        resetTable("events");
         int expected = 2;
 
         List<Event> eventList = DBM.getFromDB(DBM.conn.prepareStatement("SELECT * FROM events"), new Event());
@@ -158,7 +144,6 @@ public class DBMIntegrationTest {
 
     @Test
     void sanitizeSQLInjection() throws SQLException {
-        resetTable("users");
         User injection = new User("TestName', 'TestEmail', 'TestPass', 'TestSalt', '1'); -- ", "email@domain.com", "Passw0rd!");    //1 in last slot would ordinarily mean user is admin
         DBM.insertIntoDB(injection);
 
