@@ -166,7 +166,9 @@ for example:      buttonName.getStyleClass().add("smallButton");                
     -fx-font-size: 1em;
     -fx-font-weight: bold;
     -fx-text-fill: white;
-    -fx-background-color: #1aa9cd;
+    -fx-pref-width: 150px;
+    -fx-pref-height: 60px;
+    -fx-background-color: #1BA03E;
 }
 
 .eventNode:hover {
