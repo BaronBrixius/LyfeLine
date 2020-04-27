@@ -8,7 +8,6 @@ import java.util.List;
 public class Event implements DBObject<Event> {
     private int eventID = 0;
     private int userID;
-    private int eventType;
     private String eventName = "";
     private String eventDescription = "";
     private String imagePath = null;
@@ -64,63 +63,62 @@ public class Event implements DBObject<Event> {
         if (eventID > 0)
             throw new SQLIntegrityConstraintViolationException("Event is already in DB.");
 
-        PreparedStatement out = DBM.conn.prepareStatement("INSERT INTO `events` (`EventType`, `EventName`, `EventDescription`,`StartYear`,`StartMonth`,`StartDay`,`StartHour`, " +
+        PreparedStatement out = DBM.conn.prepareStatement("INSERT INTO `events` (`EventName`, `EventDescription`,`StartYear`,`StartMonth`,`StartDay`,`StartHour`, " +
                 "`StartMinute`,`StartSecond`,`StartMillisecond`,`EndYear`,`EndMonth`,`EndDay`,`EndHour`,`EndMinute`,`EndSecond`, " +
-                "`EndMillisecond`,`CreatedYear`,`CreatedMonth`,`CreatedDay`,`CreatedHour`,`CreatedMinute`,`CreatedSecond`,`CreatedMillisecond`,`EventOwner`, `EventImage`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);", Statement.RETURN_GENERATED_KEYS);
-        out.setInt(1, eventType);
-        out.setString(2, eventName);
-        out.setString(3, eventDescription);
-        out.setInt(4, startDate.getYear());
-        out.setInt(5, startDate.getMonth());
-        out.setInt(6, startDate.getDay());
-        out.setInt(7, startDate.getHours());
-        out.setInt(8, startDate.getMinutes());
-        out.setInt(9, startDate.getSeconds());
-        out.setInt(10, startDate.getMilliseconds());
-        out.setInt(11, endDate.getYear());
-        out.setInt(12, endDate.getMonth());
-        out.setInt(13, endDate.getDay());
-        out.setInt(14, endDate.getHours());
-        out.setInt(15, endDate.getMinutes());
-        out.setInt(16, endDate.getSeconds());
-        out.setInt(17, endDate.getMilliseconds());
+                "`EndMillisecond`,`CreatedYear`,`CreatedMonth`,`CreatedDay`,`CreatedHour`,`CreatedMinute`,`CreatedSecond`,`CreatedMillisecond`,`EventOwner`, `EventImage`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);", Statement.RETURN_GENERATED_KEYS);
+        out.setString(1, eventName);
+        out.setString(2, eventDescription);
+        out.setInt(3, startDate.getYear());
+        out.setInt(4, startDate.getMonth());
+        out.setInt(5, startDate.getDay());
+        out.setInt(6, startDate.getHour());
+        out.setInt(7, startDate.getMinute());
+        out.setInt(8, startDate.getSecond());
+        out.setInt(9, startDate.getMillisecond());
+        out.setInt(10, endDate.getYear());
+        out.setInt(11, endDate.getMonth());
+        out.setInt(12, endDate.getDay());
+        out.setInt(13, endDate.getHour());
+        out.setInt(14, endDate.getMinute());
+        out.setInt(15, endDate.getSecond());
+        out.setInt(16, endDate.getMillisecond());
 
         if (creationDate == null) {       //if new event
+            out.setNull(17, Types.INTEGER);
             out.setNull(18, Types.INTEGER);
             out.setNull(19, Types.INTEGER);
             out.setNull(20, Types.INTEGER);
             out.setNull(21, Types.INTEGER);
             out.setNull(22, Types.INTEGER);
             out.setNull(23, Types.INTEGER);
-            out.setNull(24, Types.INTEGER);
         } else {
-            out.setInt(18, creationDate.getYear());
-            out.setInt(19, creationDate.getMonth());
-            out.setInt(20, creationDate.getDay());
-            out.setInt(21, creationDate.getHours());
-            out.setInt(22, creationDate.getMinutes());
-            out.setInt(23, creationDate.getSeconds());
-            out.setInt(24, creationDate.getMilliseconds());
+            out.setInt(17, creationDate.getYear());
+            out.setInt(18, creationDate.getMonth());
+            out.setInt(19, creationDate.getDay());
+            out.setInt(20, creationDate.getHour());
+            out.setInt(21, creationDate.getMinute());
+            out.setInt(22, creationDate.getSecond());
+            out.setInt(23, creationDate.getMillisecond());
         }
-        out.setInt(25, userID);
+        out.setInt(24, userID);
         if (imageID == 0)
-            out.setNull(26, Types.INTEGER);
+            out.setNull(25, Types.INTEGER);
         else
-            out.setInt(26, imageID);
+            out.setInt(25, imageID);
         return out;
     }
 
-    public void addToTimeline(int timelineID) throws SQLException {
+    public boolean addToTimeline(int timelineID) throws SQLException {
         PreparedStatement out = DBM.conn.prepareStatement("INSERT IGNORE INTO `timelineevents` (`TimelineID`, `EventID`) VALUES (?, ?);");
         out.setInt(1, timelineID);
         out.setInt(2, this.eventID);
-        out.execute();
+        return out.executeUpdate() > 0;
 
     }
 
-    public void removeFromTimeline(int timelineID) throws SQLException {
+    public boolean removeFromTimeline(int timelineID) throws SQLException {
         PreparedStatement out = DBM.conn.prepareStatement("DELETE FROM `timelineevents` WHERE EventID = " + this.eventID + " AND TimelineID = " + timelineID + ";");
-        out.execute();
+        return out.executeUpdate() > 0;
     }
 
     @Override
@@ -171,6 +169,7 @@ public class Event implements DBObject<Event> {
     public void setDescription(String description) {
         this.eventDescription = description;
     }
+
     /*public void setStartDate(String startDate) {
        String string = startDate;
        String[] parts = string.split("-");
@@ -233,17 +232,17 @@ public class Event implements DBObject<Event> {
         out.setInt(4, startDate.getYear());
         out.setInt(5, startDate.getMonth());
         out.setInt(6, startDate.getDay());
-        out.setInt(7, startDate.getHours());
-        out.setInt(8, startDate.getMinutes());
-        out.setInt(9, startDate.getSeconds());
-        out.setInt(10, startDate.getMilliseconds());
+        out.setInt(7, startDate.getHour());
+        out.setInt(8, startDate.getMinute());
+        out.setInt(9, startDate.getSecond());
+        out.setInt(10, startDate.getMillisecond());
         out.setInt(11, endDate.getYear());
         out.setInt(12, endDate.getMonth());
         out.setInt(13, endDate.getDay());
-        out.setInt(14, endDate.getHours());
-        out.setInt(15, endDate.getMinutes());
-        out.setInt(16, endDate.getSeconds());
-        out.setInt(17, endDate.getMilliseconds());
+        out.setInt(14, endDate.getHour());
+        out.setInt(15, endDate.getMinute());
+        out.setInt(16, endDate.getSecond());
+        out.setInt(17, endDate.getMillisecond());
         out.setInt(18, userID);
         out.setInt(19, eventID);
         return out;
@@ -258,7 +257,7 @@ public class Event implements DBObject<Event> {
 
     @Override
     public String toString() {
-        return "EventID: " + eventID + " EventType: " + eventType + " EventName " + eventName + " EventDescription " + eventDescription + " Start Date: " + startDate + " End Date: " + endDate + " Created: " + creationDate;
+        return "EventID: " + eventID + " EventName " + eventName + " EventDescription " + eventDescription + " Start Date: " + startDate + " End Date: " + endDate + " Created: " + creationDate;
     }
 
 }
