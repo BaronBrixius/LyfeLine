@@ -6,16 +6,21 @@ import database.Timeline;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
-import javafx.scene.layout.*;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class TimelineView {
 
+    private final List<EventNode> eventList = new ArrayList<>();
     public GridPane timelineGrid;
     public Timeline activeTimeline;
     public BorderPane mainBorderPane;
@@ -24,9 +29,6 @@ public class TimelineView {
     EventEditor editorController;
     @FXML
     private Button backButton;
-    @FXML
-    private HBox everythingHBox;
-    private List<EventNode> eventList = new ArrayList<>();
 
     public void initialize() {
         try {
@@ -94,11 +96,15 @@ public class TimelineView {
         //TODO set grid column count to actual timeline length, make the above look better (possibly with its own fxml?)
 
         EventNode newNode;
+
+        eventList.clear();
         for (Event e : activeTimeline.getEventList()) {
             newNode = addEvent(e);
             eventList.add(newNode);
-            placeEvent(newNode);
         }
+        Collections.sort(eventList);        //sort so that earlier events are placed first (longer first in case of tie)
+        for (int i = 0; i < eventList.size(); i++)
+            placeEvent(eventList.get(i), i);
     }
 
     EventNode addEvent(Event event) {
@@ -114,7 +120,7 @@ public class TimelineView {
         }
     }
 
-    void placeEvent(EventNode newNode) {
+    void placeEvent(EventNode newNode, int eventsPlacedCount) {
         int startColumn = newNode.getStartColumn();
         int columnSpan = newNode.getColumnSpan();
         if (startColumn < 0) {          //if node starts before the timeline begins, cut the beginning
@@ -126,7 +132,13 @@ public class TimelineView {
         if (columnSpan < 1)         //if, after cutting, nothing remains, don't display it at all
             return;
 
-        int row = 2;    //TODO calculate which row it needs to go in based on availability
+        int row = 1;
+        for (int i = 0; i < eventsPlacedCount; i++) {      //check previous nodes to see if they occupy desired columns
+            if (eventList.get(i).getStartColumn() <= newNode.getStartColumn() + newNode.getColumnSpan()             //if a previous node starts before the new one would end
+            && eventList.get(i).getStartColumn() + eventList.get(i).getColumnSpan() >= newNode.getStartColumn())    //and it ends after the new one starts
+                row++;                                                                                              //try next row
+        }                                                                                                           //shouldn't need to check for if the reverse is the case (e.g. if previous node ends before
+
         timelineGrid.add(newNode.getDisplayPane(), startColumn, row, columnSpan, 1);
     }
 

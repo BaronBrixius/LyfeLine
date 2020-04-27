@@ -165,11 +165,8 @@ for example:      buttonName.getStyleClass().add("smallButton");                
 .eventNode {
     -fx-font-size: 1em;
     -fx-font-weight: bold;
-    -fx-pref-width: 150px;
-    -fx-pref-height: 60px;
     -fx-text-fill: white;
     -fx-background-color: #1aa9cd;
-    -fx-background-radius: 120px;
 }
 
 .eventNode:hover {

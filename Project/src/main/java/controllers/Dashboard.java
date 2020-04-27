@@ -5,6 +5,8 @@ import javafx.fxml.FXML;
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.Comparator;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -12,6 +14,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Modality;
@@ -72,7 +75,7 @@ public class Dashboard {
 		sortBy.getSelectionModel().selectedIndexProperty().addListener(ov -> {
 			switch (sortBy.getSelectionModel().getSelectedIndex()) {
 			case 0:
-				list.getItems().sort((t1, t2) -> (t1.getName().compareTo(t2.getName())));
+				list.getItems().sort(Comparator.comparing(Timeline::getName));
 				break;
 			case 1:
 				list.getItems().sort((t1, t2) -> (t2.getName().compareTo(t1.getName())));
@@ -81,13 +84,13 @@ public class Dashboard {
 				list.getItems().sort((t1, t2) -> (t2.getDateCreated().compareTo(t1.getDateCreated())));
 				break;
 			case 3:
-				list.getItems().sort((t1, t2) -> (t1.getDateCreated().compareTo(t2.getDateCreated())));
+				list.getItems().sort(Comparator.comparing(Timeline::getDateCreated));
 				break;
 			}
 		});
 
 		// Initialised sorting
-		list.getItems().sort((t1, t2) -> (t1.getName().compareTo(t2.getName())));
+		sortBy.getSelectionModel().select(0);
 
 		// Search field
 		searchInput.focusedProperty().addListener(ov -> {
@@ -147,8 +150,6 @@ public class Dashboard {
 			editor.setActiveTimeline(this.activeTimeline);
 			editor.populateDisplay();
 		}
-
-
 	}
 	
 	@FXML
@@ -173,7 +174,9 @@ public class Dashboard {
 		delConfirm.setResizable(false);
 
 		FXMLLoader popupDeletion = new FXMLLoader(GUIManager.class.getResource("../FXML/Popup.fxml"));
-		delConfirm.setScene(new Scene(popupDeletion.load()));
+		VBox popup = popupDeletion.load();
+		popup.getStylesheets().add("styles/DefaultStyle.css");
+		delConfirm.setScene(new Scene(popup));
 
 		Popup deletionPopup = popupDeletion.getController();
 		deletionPopup.setMode(1);
