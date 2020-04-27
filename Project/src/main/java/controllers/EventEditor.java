@@ -17,6 +17,7 @@ import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
@@ -93,13 +94,19 @@ public class EventEditor {
         endTime.setDisable(!hasDuration.isSelected());
     }
 
-    public void saveEditButton() throws IOException {      //I know this is ugly right now
+    public void saveEditButton() throws IOException, SQLException {      //I know this is ugly right now
         LocalDate start;
         LocalDate end;
         Date readStart = new Date();
         Date readEnd = new Date();
         if(image.isDisable()==false)
         this.fullOutPath = copyImage(imageChosen,filename);
+        // ADD to DB
+        String path=this.fullOutPath;
+        PreparedStatement saveToDB = DBM.conn.prepareStatement("INSERT INTO `images`(`ImageURL`) VALUES (?)");
+        saveToDB.setString(1,path);
+        saveToDB.execute();
+
         try {
             //Date Picker is literally bugged, this line works around it.
             startDate.setValue(startDate.getConverter().fromString(startDate.getEditor().getText()));
