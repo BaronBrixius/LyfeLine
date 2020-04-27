@@ -98,8 +98,15 @@ public class EventEditor {
         LocalDate end;
         Date readStart = new Date();
         Date readEnd = new Date();
-        if(image.isDisable()==false)
-        this.fullOutPath = copyImage(imageChosen,filename);
+
+        if(image.isDisable()==false){//So we do not copy when edit is pressed/only save is pressed
+            if(this.filename !=null) {//Only keep on with copy if there has been a chosen image
+                if(this.event.getEventID() == 0) //if a new image all good copy
+                    this.fullOutPath = copyImage(imageChosen,filename);
+                else if (!this.event.getImagePath().equalsIgnoreCase(this.fullOutPath))
+                    this.fullOutPath = copyImage(imageChosen,filename);}}
+
+
         try {
             //Date Picker is literally bugged, this line works around it.
             startDate.setValue(startDate.getConverter().fromString(startDate.getEditor().getText()));
