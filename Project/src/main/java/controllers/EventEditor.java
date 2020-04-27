@@ -14,10 +14,13 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+import utils.Date;
+
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
-import java.awt.image.BufferedImage;
 import java.io.*;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -196,7 +199,10 @@ public class EventEditor {
     @FXML
     private void uploadImage() throws IOException {    //Only working now for .jpg
         FileChooser chooser = new FileChooser(); //For the filedirectory
-        chooser.setTitle("Upload image");
+        if (event.getImagePath() == null)
+        	chooser.setTitle("Upload image");
+        else
+        	chooser.setTitle("Change image");
         //All the image formats supported by java.imageio https://docs.oracle.com/javase/7/docs/api/javax/imageio/package-summary.html
         chooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter( "All Images", "*.jpg","*.jpeg","*.png","*.bmp","*.gif","*.wbmp" ),
@@ -232,6 +238,21 @@ public class EventEditor {
         else
         	return true;
     }
+    
+    @FXML
+    private boolean ImageSaveConfirm() throws IOException {
+        Alert confirmsaveimage = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmsaveimage.setTitle("Confirm Change");
+        confirmsaveimage.setHeaderText("Replacing or removing an image will permanently delete it from the system.");
+        confirmsaveimage.setContentText("Would you like to make the change?");
+
+        Optional<ButtonType> result = confirmsaveimage.showAndWait();
+
+        if (result.get() == ButtonType.CANCEL)
+            return false;
+        else
+        	return true;
+    }
      //Method that returns the image format as a string i.e sun.png == "png"
     private String getFormat(File f) throws IOException {
         ImageInputStream iis = ImageIO.createImageInputStream(f);
@@ -245,6 +266,7 @@ public class EventEditor {
     }
 
     private String copyImage(File image, String filename) throws IOException { //Takes the file chosen and the name of it
+
         String outPath = "src/main/resources/images/";
         String imageName ="";
         try{
@@ -253,14 +275,26 @@ public class EventEditor {
         try {
             is = new FileInputStream(image);
             System.out.println("reading complete.");
-            int imageNumer = 1; //For updating the number in the parenthesis based on how many with the same name in resources folder
-             imageName = filename;
+
+            imageName = filename;
             //Path for saving, have special events folder now so if timeline guys are doing something they don't override copies
-            while (folderHasImage(imageName)==true){ //Check if our folder has the imagename already if so, add (int) untill no more true
-                int index = imageName.indexOf(".");            ;
-                imageName = imageName.substring(0, index)+ "("+ imageNumer+")" + ".jpg";
-                imageNumer++;
+
+
+            int duplicateDigit = 2;
+
+            while(folderHasImage(imageName)) {
+                int indexOfDot = filename.lastIndexOf(".");
+                if(imageName.matches(".*\\s\\(\\d\\)\\..*")) {
+                    int indexOfBrackets = imageName.lastIndexOf("(");
+                    imageName = imageName.substring(0, indexOfBrackets + 1) +  duplicateDigit + ")" + "." + getFormat(image);
+
+                } else {
+                    imageName = imageName.substring(0, indexOfDot) + " (" + duplicateDigit + ")" + "." + getFormat(image);
+                }
+                duplicateDigit++;
             }
+
+
             os = new FileOutputStream(new File(outPath + imageName));
             byte[] buffer = new byte[1024];
             int length;
@@ -278,6 +312,9 @@ public class EventEditor {
         }
         return outPath+imageName;
     }
+
+
+
     //Method to check if the image folder has this name already to avoid if two are copied with same name the latter will just override the firs
     private boolean folderHasImage(String path){
         File folder = new File("src/main/resources/images/");
@@ -315,7 +352,7 @@ public class EventEditor {
         }
         return populateDisplay();
     }
-
+    //take all information from DB and pull to GUI
     private boolean populateDisplay() {
         titleInput.setText(event.getEventName());
         descriptionInput.setText(event.getEventDescrition());
@@ -410,6 +447,7 @@ public class EventEditor {
                 throw new IllegalArgumentException("event not in database");
             else {
                 DBM.deleteFromDB(event);
+                // delete the image as well
                 close();
             }
             //parentController.populateEventList();             //TODO fix updating the display on the event selector
