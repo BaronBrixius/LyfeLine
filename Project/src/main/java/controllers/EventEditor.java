@@ -182,8 +182,10 @@ public class EventEditor {
     @FXML
     private void uploadImage() throws IOException {    //Only working now for .jpg
         FileChooser chooser = new FileChooser(); //For the filedirectory
-
-        chooser.setTitle("Upload image");
+        if (event.getImagePath() == null)
+        	chooser.setTitle("Upload image");
+        else
+        	chooser.setTitle("Update image");
         //All the image formats supported by java.imageio https://docs.oracle.com/javase/7/docs/api/javax/imageio/package-summary.html
         chooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter( "All Images", "*.jpg","*.jpeg","*.png","*.bmp","*.gif","*.wbmp" ),
@@ -195,12 +197,19 @@ public class EventEditor {
                 new FileChooser.ExtensionFilter( "WBMP", "*.wbmp" )
         );
         this.imageChosen = chooser.showOpenDialog(GUIManager.mainStage); //This is the stage that needs to be edited (ok,cancel button) for the filechooser... do in FXML ?
-        if (ImageSaveConfirm()) {
+        if (event.getImagePath() == null){
         	this.filename = imageChosen.getName(); //THis is to take the name of the image choosen to add it to the copied version
             System.out.println(this.imageChosen.getAbsolutePath());
             image.setImage(new Image("File:" + this.imageChosen.getAbsolutePath()));
-
+            System.out.println("img W/o previous");
         }
+        else if (ImageSaveConfirm() || event.getImagePath() != null) {
+        	this.filename = imageChosen.getName(); //THis is to take the name of the image choosen to add it to the copied version
+            System.out.println(this.imageChosen.getAbsolutePath());
+            image.setImage(new Image("File:" + this.imageChosen.getAbsolutePath()));
+            System.out.println("img is in db");
+        }
+        
         else
         System.out.println("Cancel Button pressed.");
     }
@@ -309,7 +318,7 @@ public class EventEditor {
     private boolean populateDisplay() {
         titleInput.setText(event.getEventName());
         descriptionInput.setText(event.getEventDescrition());
-        fullOutPath=event.getImagePath();
+        //fullOutPath=event.getImagePath();
         startDate.setValue(LocalDate.of(event.getStartDate().getYear(), event.getStartDate().getMonth(), event.getStartDate().getDay()));
 
         startTime1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23, event.getStartDate().getHours()));
