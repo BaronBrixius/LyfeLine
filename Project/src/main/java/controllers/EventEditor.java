@@ -1,10 +1,9 @@
 package controllers;
-
 import database.*;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import utils.*;
-import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -15,7 +14,6 @@ import javafx.scene.text.Text;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
-import java.awt.image.BufferedImage;
 import java.io.*;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -55,8 +53,10 @@ public class EventEditor {
     EventSelector prevScreen;
     private Event event;
     private File imageChosen; //The current image chosen by FileChooser
-    String filename ; //THis is to take the name of the image choosen to add it to the copied version
-    String fullOutPath; //When event is saved the path to the image in resource folder is sent here (the one we can use to send to DB)
+    private String filename ; //THis is to take the name of the image choosen to add it to the copied version
+    private  String fullOutPath; //When event is saved the path to the image in resource folder is sent here (the one we can use to send to DB)
+
+
 
 
 
@@ -83,8 +83,6 @@ public class EventEditor {
                 image.setScaleY(1);
                 image.setScaleZ(1);
             });
-
-
     }
 
     @FXML
@@ -181,6 +179,7 @@ public class EventEditor {
     @FXML
     private void uploadImage() throws IOException {    //Only working now for .jpg
         FileChooser chooser = new FileChooser(); //For the filedirectory
+
         chooser.setTitle("Upload image");
         //All the image formats supported by java.imageio https://docs.oracle.com/javase/7/docs/api/javax/imageio/package-summary.html
         chooser.getExtensionFilters().addAll(
@@ -192,11 +191,10 @@ public class EventEditor {
                 new FileChooser.ExtensionFilter( "GIF", "*.gif" ),
                 new FileChooser.ExtensionFilter( "WBMP", "*.wbmp" )
         );
-        this.imageChosen = chooser.showOpenDialog(new Stage()); //This is the stage that needs to be edited (ok,cancel button) for the filechooser... do in FXML ?
+        this.imageChosen = chooser.showOpenDialog(GUIManager.mainStage); //This is the stage that needs to be edited (ok,cancel button) for the filechooser... do in FXML ?
         this.filename = imageChosen.getName(); //THis is to take the name of the image choosen to add it to the copied version
         System.out.println(this.imageChosen.getAbsolutePath());
         image.setImage(new Image("File:" + this.imageChosen.getAbsolutePath()));
-
         System.out.println("Button pressed.");
     }
 
