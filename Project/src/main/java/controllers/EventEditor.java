@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class EventEditor {
-
+/*
     private final List<VBox> startBoxes = new ArrayList<>();
     private final List<Spinner<Integer>> startInputs = new ArrayList<>();
     private final List<VBox> endBoxes = new ArrayList<>();
@@ -305,7 +305,7 @@ public class EventEditor {
         /*Event newEvent = logic to find Event in database and get its info
         if (newEvent != null)
             return changeEvent(newEvent);*/
-
+/*
         return false;
     }
 
@@ -493,5 +493,5 @@ public class EventEditor {
         parentController.rightSidebar.getChildren().remove(editor);
     }
 
-
+*/
 }
