@@ -318,7 +318,7 @@ public class EventEditor {
         this.event = event;
         return populateDisplay();
     }
-
+    //take all information from DB and pull to GUI
     private boolean populateDisplay() {
         titleInput.setText(event.getEventName());
         descriptionInput.setText(event.getEventDescrition());
