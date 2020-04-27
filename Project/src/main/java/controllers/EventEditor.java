@@ -17,6 +17,7 @@ import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
@@ -93,7 +94,7 @@ public class EventEditor {
         endTime.setDisable(!hasDuration.isSelected());
     }
 
-    public void saveEditButton() throws IOException {      //I know this is ugly right now
+    public void saveEditButton() throws IOException, SQLException {      //I know this is ugly right now
         LocalDate start;
         LocalDate end;
         Date readStart = new Date();
