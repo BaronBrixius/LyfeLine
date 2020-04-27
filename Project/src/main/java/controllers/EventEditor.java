@@ -191,11 +191,29 @@ public class EventEditor {
                 new FileChooser.ExtensionFilter( "GIF", "*.gif" ),
                 new FileChooser.ExtensionFilter( "WBMP", "*.wbmp" )
         );
-        this.imageChosen = chooser.showOpenDialog(GUIManager.mainStage); //This is the stage that needs to be edited (ok,cancel button) for the filechooser... do in FXML ?
-        this.filename = imageChosen.getName(); //THis is to take the name of the image choosen to add it to the copied version
-        System.out.println(this.imageChosen.getAbsolutePath());
-        image.setImage(new Image("File:" + this.imageChosen.getAbsolutePath()));
-        System.out.println("Button pressed.");
+        if (ImageSaveConfirm()) {
+        	this.filename = imageChosen.getName(); //THis is to take the name of the image choosen to add it to the copied version
+            System.out.println(this.imageChosen.getAbsolutePath());
+            image.setImage(new Image("File:" + this.imageChosen.getAbsolutePath()));
+
+        }
+        else
+        System.out.println("Cancel Button pressed.");
+    }
+    
+    @FXML
+    private boolean ImageSaveConfirm() throws IOException {
+        Alert confirmsaveimage = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmsaveimage.setTitle("Confirm Change");
+        confirmsaveimage.setHeaderText("Replacing or removing an image will permanently delete it from the system.");
+        confirmsaveimage.setContentText("Would you like to make the change?");
+
+        Optional<ButtonType> result = confirmsaveimage.showAndWait();
+
+        if (result.get() == ButtonType.CANCEL)
+            return false;
+        else
+        	return true;
     }
 
      //Method that returns the image format as a string i.e sun.png == "png"
