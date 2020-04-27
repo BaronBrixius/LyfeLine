@@ -103,7 +103,7 @@ public class EventEditor {
         this.fullOutPath = copyImage(imageChosen,filename);
         // ADD to DB
         String path=this.fullOutPath;
-        PreparedStatement saveToDB = DBM.conn.prepareStatement("INSERT INTO `images`(`ImageURL`) VALUES (?)");
+        PreparedStatement saveToDB = DBM.conn.prepareStatement("INSERT INTO `events`(`EventImage`) VALUES (?)");
         saveToDB.setString(1,path);
         saveToDB.execute();
 
@@ -276,7 +276,7 @@ public class EventEditor {
         this.event = event;
         return populateDisplay();
     }
-
+    //take all information from DB and pull to GUI
     private boolean populateDisplay() {
         titleInput.setText(event.getEventName());
         descriptionInput.setText(event.getEventDescrition());
