@@ -166,7 +166,9 @@ for example:      buttonName.getStyleClass().add("smallButton");                
     -fx-font-size: 1em;
     -fx-font-weight: bold;
     -fx-text-fill: white;
-    -fx-background-color: #1aa9cd;
+    -fx-pref-width: 150px;
+    -fx-pref-height: 60px;
+    -fx-background-color: #1AA9CD;
 }
 
 .eventNode:hover {
@@ -184,7 +186,73 @@ for example:      buttonName.getStyleClass().add("smallButton");                
     -fx-background-radius: 222px;
 }
 
+.scroll-bar:horizontal.track,
+.scroll-bar:vertical.track{
+    -fx-background-color: white;
+    -fx-border-color: grey;
+    -fx-background-radius: 1.0em;
+    -fx-border-radius: 1.5em;
+}
 
+
+.scroll-bar:horizontal .increment-button ,
+.scroll-bar:horizontal .decrement-button {
+	-fx-background-color: #1AA9CD;
+    -fx-pref-width: 18px;
+    -fx-pref-height: 18px;
+    -fx-background-radius: 10px;
+}
+
+.scroll-bar:vertical .increment-button ,
+.scroll-bar:vertical .decrement-button {
+	-fx-background-color: #1AA9CD;
+    -fx-pref-width: 15px;
+    -fx-pref-height: 15px;
+}
+
+.scroll-bar:horizontal .increment-button:hover ,
+.scroll-bar:horizontal .decrement-button:hover {
+	-fx-background-color: #126C82;
+}
+
+.scroll-bar:vertical .increment-button:hover ,
+.scroll-bar:vertical .decrement-button:hover {
+	-fx-background-color: #126C82;
+}
+
+.scroll-bar:horizontal .increment-button:pressed ,
+.scroll-bar:horizontal .decrement-button:pressed {
+	-fx-background-color: #1795b5;
+}
+
+.scroll-bar:vertical .increment-button:pressed ,
+.scroll-bar:vertical .decrement-button:pressed {
+	-fx-background-color: #1795b5;
+}
+
+ .scroll-bar .increment-arrow,
+ .scroll-bar .decrement-arrow{
+ 	-fx-background-color: white;
+}
+
+ .scroll-bar:vertical .increment-arrow,
+ .scroll-bar:vertical .decrement-arrow{
+ 	-fx-background-color: white;
+}
+
+.scroll-bar:horizontal .thumb,
+.scroll-bar:vertical .thumb {
+    -fx-background-color: #1AA9CD;
+    -fx-background-insets: 2.0, 0.0, 0.0;
+    -fx-background-radius: 2.0em;
+}
+
+.scroll-bar:horizontal .thumb:hover,
+.scroll-bar:vertical .thumb:hover {
+    -fx-background-color: #126C82;
+    -fx-background-insets: 2.0, 0.0, 0.0;
+    -fx-background-radius: 2.0em;
+}
 
 
 /*Here is a list of useful CSS commands:

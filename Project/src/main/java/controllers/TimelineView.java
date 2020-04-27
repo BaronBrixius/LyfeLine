@@ -5,6 +5,7 @@ import database.Event;
 import database.Timeline;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
@@ -91,10 +92,11 @@ public class TimelineView {
         timelineGrid.getChildren().clear();
 
         Pane mainLine = new Pane();
-        mainLine.setStyle("-fx-background-color: #ff4251;");
+        mainLine.setStyle("-fx-background-color: #6C54F2;");
         timelineGrid.add(mainLine, 0, 0, GridPane.REMAINING, 1);
         //TODO set grid column count to actual timeline length, make the above look better (possibly with its own fxml?)
-
+        GridPane.setMargin(mainLine, new Insets(25, 0, -25, 0));
+        
         EventNode newNode;
 
         eventList.clear();
