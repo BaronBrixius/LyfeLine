@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
+<?import javafx.collections.FXCollections?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -12,12 +16,13 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.paint.Color?>
 <?import javafx.scene.text.Font?>
 
 <BorderPane fx:id="mainBorderPane" prefHeight="800.0" prefWidth="1292.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.TimelineView">
    <bottom>
-      <HBox id="HBox" alignment="CENTER_LEFT" spacing="5.0" BorderPane.alignment="CENTER">
+      <HBox id="HBox" alignment="CENTER_LEFT" prefWidth="1069.0" spacing="5.0" BorderPane.alignment="CENTER">
          <children>
             <Label maxHeight="1.7976931348623157E308" text="Left status" HBox.hgrow="ALWAYS">
                <font>
@@ -38,14 +43,35 @@
    <left>
       <AnchorPane prefWidth="200.0" BorderPane.alignment="CENTER">
          <children>
-            <Label alignment="CENTER" layoutX="14.0" layoutY="14.0" minWidth="60.0" style="&#10;" text="Master" textAlignment="CENTER">
-               <font>
-                  <Font size="18.0" fx:id="x1" />
-               </font>
-               <textFill>
-                  <Color blue="0.624" green="0.624" red="0.624" fx:id="x2" />
-               </textFill>
-            </Label>
+            <VBox prefHeight="770.0" prefWidth="201.0" spacing="10.0">
+               <padding>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </padding>
+               <children>
+                  <Label text="Title" />
+                  <TextArea fx:id="title" editable="false" prefHeight="51.0" prefWidth="195.0" wrapText="true" />
+                  <Label layoutX="10.0" layoutY="10.0" text="Description" />
+                  <TextArea fx:id="description" editable="false" layoutX="10.0" layoutY="27.0" prefHeight="51.0" prefWidth="195.0" wrapText="true" VBox.vgrow="SOMETIMES" />
+                  <Label layoutX="10.0" layoutY="78.0" text="KeyWords" />
+                  <TextArea fx:id="keywords" editable="false" layoutX="10.0" layoutY="95.0" prefHeight="51.0" prefWidth="195.0" wrapText="true" />
+                  <Label layoutX="10.0" layoutY="146.0" text="Start Date" />
+                  <TextArea fx:id="startDate" editable="false" prefHeight="0.0" prefWidth="181.0" wrapText="true" />
+                  <Label layoutX="10.0" layoutY="214.0" text="End Date" />
+                  <TextArea fx:id="endDate" editable="false" prefHeight="0.0" prefWidth="181.0" wrapText="true" />
+                  <Label layoutX="10.0" layoutY="282.0" text="Time Units" />
+                  <ComboBox fx:id="timeInput" prefWidth="150.0">
+                     <items>
+                        <FXCollections fx:factory="observableArrayList">
+                           <String fx:value="Seconds" />
+                           <String fx:value="Minutes" />
+                           <String fx:value="Hours" />
+                           <String fx:value="Days" />
+                           <String fx:value="Years" />
+                        </FXCollections>
+                     </items>
+                  </ComboBox>
+               </children>
+            </VBox>
          </children>
       </AnchorPane>
    </left>
@@ -90,7 +116,7 @@
                         <RowConstraints minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <Pane prefHeight="200.0" styleClass="timeline" stylesheets="@../styles/DefaultStyle.css" GridPane.columnSpan="2147483647" />
+                        <Pane prefHeight="200.0" styleClass="timeline" stylesheets="@../styles/DefaultStyle.css" GridPane.columnSpan="2147483647" GridPane.vgrow="ALWAYS" />
                         <!--   <Pane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.columnSpan="5" GridPane.rowIndex="2" />
                            <Pane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="3" />
                            <Pane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="5" GridPane.rowIndex="3" /> -->

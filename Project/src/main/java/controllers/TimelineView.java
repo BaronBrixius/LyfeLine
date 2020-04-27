@@ -6,11 +6,16 @@ import database.Timeline;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.TextArea;
 import javafx.scene.layout.*;
+import utils.Date;
 
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,10 +31,17 @@ public class TimelineView {
     private Button backButton;
     @FXML
     private HBox everythingHBox;
+    @FXML
+    private TextArea title, description, keywords, startDate, endDate;
+    @FXML
+    private ComboBox<String> timeUnits;
+  
     private List<EventNode> eventList = new ArrayList<>();
 
     public void initialize() {
-        try {
+    	
+    	
+    	try {
             FXMLLoader selectorLoader = new FXMLLoader(getClass().getResource("../FXML/EventSelector.fxml"));
             selectorLoader.load();
             selectorController = selectorLoader.getController();
@@ -46,6 +58,7 @@ public class TimelineView {
         } catch (IOException e) {
             e.printStackTrace();        //TODO replace with better error message once dev is done
         }
+       
     }
 
     public List<EventNode> getEventList() {
@@ -58,6 +71,7 @@ public class TimelineView {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        
     }
 
     //Call this method when swapping scenes
@@ -87,9 +101,12 @@ public class TimelineView {
 
     void populateDisplay() {
         timelineGrid.getChildren().clear();
-
+        int length;
+        length = activeTimeline.getStartDate().distanceTo(activeTimeline.getEndDate(), activeTimeline.getScale());
+        
         Pane mainLine = new Pane();
         mainLine.setStyle("-fx-background-color: #ff4251;");
+        GridPane.setColumnSpan(mainLine, length);
         timelineGrid.add(mainLine, 0, 0, GridPane.REMAINING, 1);
         //TODO set grid column count to actual timeline length, make the above look better (possibly with its own fxml?)
 
@@ -99,6 +116,15 @@ public class TimelineView {
             eventList.add(newNode);
             placeEvent(newNode);
         }
+    }
+    
+    void populateTimelineInfo() {
+    	 title.setText(activeTimeline.getTimelineName());
+         description.setText(activeTimeline.getTimelineDescription());
+         //keywords.setText(activeTimeline.KEYWORDS?);
+         timeUnits.getSelectionModel().select(activeTimeline.getScale() - 1);
+         startDate.setText(activeTimeline.getStartDate().toString());
+         endDate.setText(activeTimeline.getEndDate().toString());
     }
 
     EventNode addEvent(Event event) {
