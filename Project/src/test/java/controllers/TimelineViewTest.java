@@ -1,18 +1,19 @@
 package controllers;
 
-import controllers.TimelineView;
-import database.*;
+import database.DBM;
+import database.Timeline;
 import org.junit.jupiter.api.*;
 
 import java.io.FileNotFoundException;
-import java.sql.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
-
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class TimelineViewerTest {
+public class TimelineViewTest {
 
     static final private String SCHEMA = "test";
     static private int testCount;

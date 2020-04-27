@@ -8,7 +8,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 
-public class EventNode {
+public class EventNode implements Comparable<EventNode> {
 
     @FXML
     public Pane displayPane;
@@ -51,12 +51,12 @@ public class EventNode {
 
     @FXML
     public void openDetails(MouseEvent mouseEvent) {
-    	hoverFlag.setText(activeEvent.getEventName() + "\n" + activeEvent.getEventDescrition());
+        hoverFlag.setText(activeEvent.getEventName() + "\n" + activeEvent.getEventDescrition());
     }
 
     @FXML
     public void closeDetails(MouseEvent mouseEvent) {
-    	
+
     }
 
     @FXML
@@ -65,5 +65,12 @@ public class EventNode {
         parentController.editorController.setEvent(activeEvent);
         parentController.editorController.toggleEditable(false);
         parentController.rightSidebar.getChildren().add(parentController.editorController.editor);
+    }
+
+    @Override
+    public int compareTo(EventNode o) {     //sorts by earlier start, then by longest span as tiebreaker
+        if (this.startColumn != o.startColumn)
+            return this.startColumn - o.startColumn;
+        return this.columnSpan - o.columnSpan;
     }
 }

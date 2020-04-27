@@ -67,15 +67,7 @@ public class EventEditor {
     String filename ; //THis is to take the name of the image choosen to add it to the copied version
     String fullOutPath; //When event is saved the path to the image in resource folder is sent here (the one we can use to send to DB)
 
-
     public void initialize() {
-        //Check if Admin
-        if (!GUIManager.loggedInUser.getAdmin()) {
-            editButton.setVisible(false);
-            editButton.setDisable(true);
-            deleteButton.setVisible(false);
-            deleteButton.setDisable(true);
-        }
             image.setOnMouseEntered(e -> {
                 image.setScaleX(8);
                 image.setScaleY(8);
@@ -297,6 +289,13 @@ public class EventEditor {
 
     public boolean setEvent(Event event) {
         this.event = event;
+        //Check if Admin
+        if (GUIManager.loggedInUser.getUserID() != event.getUserID()) {
+            editButton.setVisible(false);
+            editButton.setDisable(true);
+            deleteButton.setVisible(false);
+            deleteButton.setDisable(true);
+        }
         return populateDisplay();
     }
 
