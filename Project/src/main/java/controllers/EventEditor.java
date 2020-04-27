@@ -96,17 +96,22 @@ public class EventEditor {
         LocalDate end;
         Date readStart = new Date();
         Date readEnd = new Date();
+        if(uploadButton.isVisible()){//So we do not copy when edit is pressed/only save is pressed
+            if(this.imageChosen !=null) {//Only keep on with copy if there has been a chosen image
+                if(this.event.getEventID()==0){
+                    if(this.event.getImagePath()== null)
+                        this.fullOutPath = copyImage(imageChosen,filename);
+                    else if (!this.event.getImagePath().equalsIgnoreCase(this.fullOutPath))
+                        this.fullOutPath = copyImage(imageChosen,filename);}
+                if(this.event.getEventID()>0){
+                    if(this.event.getImagePath()== null)
+                        this.fullOutPath = copyImage(imageChosen,filename);
+                     else if (!this.event.getImagePath().equalsIgnoreCase(this.fullOutPath))
+                              this.fullOutPath = copyImage(imageChosen,filename);}}}
 
-        if(image.isDisable()==false){//So we do not copy when edit is pressed/only save is pressed
-            if(this.filename !=null) {//Only keep on with copy if there has been a chosen image
-                if(this.event.getEventID() == 0) //if a new image all good copy
-                    this.fullOutPath = copyImage(imageChosen,filename);
-                else if (!this.event.getImagePath().equalsIgnoreCase(this.fullOutPath))
-                    this.fullOutPath = copyImage(imageChosen,filename);}}
 
         //To save to DB
         this.event.setImage(this.fullOutPath);
-        System.out.println(this.fullOutPath);
 
         try {
             //Date Picker is literally bugged, this line works around it.
@@ -166,7 +171,7 @@ public class EventEditor {
         endTime2.setDisable(!editable);
         endTime3.setDisable(!editable);
 
-        image.setDisable(!editable);
+
         uploadButton.setVisible(editable);
         uploadButton.setDisable(!editable);
 
@@ -197,18 +202,17 @@ public class EventEditor {
                 new FileChooser.ExtensionFilter( "WBMP", "*.wbmp" )
         );
         this.imageChosen = chooser.showOpenDialog(GUIManager.mainStage); //This is the stage that needs to be edited (ok,cancel button) for the filechooser... do in FXML ?
+        if(this.imageChosen!= null){
         if (event.getImagePath() == null){
         	this.filename = imageChosen.getName(); //THis is to take the name of the image choosen to add it to the copied version
-            System.out.println(this.imageChosen.getAbsolutePath());
             image.setImage(new Image("File:" + this.imageChosen.getAbsolutePath()));
             System.out.println("img W/o previous");
         }
         else if (ImageSaveConfirm() || event.getImagePath() != null) {
         	this.filename = imageChosen.getName(); //THis is to take the name of the image choosen to add it to the copied version
-            System.out.println(this.imageChosen.getAbsolutePath());
             image.setImage(new Image("File:" + this.imageChosen.getAbsolutePath()));
             System.out.println("img is in db");
-        }
+        }}
         
         else
         System.out.println("Cancel Button pressed.");
@@ -359,7 +363,7 @@ public class EventEditor {
 
     void updateEvent() throws IOException {
         //setters to update each field of this.event, based on the current info in the text fields
-
+        this.event.setImage(this.fullOutPath);
         event.setTitle(titleInput.getText());
         event.setDescription(descriptionInput.getText().replaceAll("([^\r])\n", "$1\r\n"));
 
