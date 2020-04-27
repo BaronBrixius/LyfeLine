@@ -1,3 +1,4 @@
+
 .text-field{
     -fx-text-box-border: transparent;
     -fx-focus-color: transparent;
@@ -8,31 +9,16 @@
     -fx-focus-color: transparent;
 }
 
-.date-picker > .text-field {
-    -fx-text-box-border: transparent;
-    -fx-focus-color: transparent;
-}
-
-.date-picker > .arrow-button {
-    -fx-padding: 0px;
-}
-
-.date-picker > .arrow-button > .arrow {
-    -fx-padding: 0px;
-}
-
-.date-picker:disabled, .date-picker:disabled > * {
-    -fx-opacity: 1;
-    -fx-text-box-border: transparent;
-    -fx-focus-color: transparent;
-}
-
 .spinner:disabled, .spinner:disabled > * {
     -fx-opacity: 1;
 }
 
-.combo-box:disabled, .combo-box:disabled > {
+.combo-box:disabled, .combo-box:disabled > * {
     -fx-opacity: 1;
+}
+
+.DisabledAnyways, .DisabledAnyways > * {
+    -fx-opacity: .4 !important;
 }
 
 ImageView {

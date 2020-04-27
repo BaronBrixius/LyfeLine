@@ -1,7 +1,12 @@
 /*This File holds all the CSS Style commands that are applied to all Nodes in a Scene*/
 
 /*.root applies to everything in a scene and overrides all other commands in this file. Use carefully.*/
-.root{/*Use carefully.*/
+.root{
+    -fx-background-color: #f4f4f4;
+}
+
+/* .root was applying "weakly", causing gridpanes to be semi-transparent*/
+GridPane{
     -fx-background-color: #f4f4f4;
 }
 
@@ -157,7 +162,30 @@ for example:      buttonName.getStyleClass().add("smallButton");                
     -fx-color: -fx-pressed-base;
 }
 
+.eventNode {
+    -fx-font-size: 1em;
+    -fx-font-weight: bold;
+    -fx-pref-width: 150px;
+    -fx-pref-height: 60px;
+    -fx-text-fill: white;
+    -fx-background-color: #1aa9cd;
+    -fx-background-radius: 120px;
+}
 
+.eventNode:hover {
+	-fx-background-color: #1484a0;
+}
+
+.eventNode:pressed {
+	-fx-background-color: #1795b5;
+}
+
+.timeline {
+    -fx-pref-width: 250px;
+    -fx-pref-height: 100px;
+    -fx-background-color: #ff8d3d;
+    -fx-background-radius: 222px;
+}
 
 
 
