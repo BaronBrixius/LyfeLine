@@ -28,6 +28,8 @@ public class TimelineEditor {
     private final List<Spinner<Integer>> endInputs = new ArrayList<>();
     @FXML public GridPane editor;
     @FXML public Button editButton;
+    @FXML public Button moreStart;
+    @FXML public Button moreEnd;
     @FXML public Button deleteButton;
     @FXML public Label headerText;
     @FXML public Text errorMessage;
@@ -202,7 +204,7 @@ public class TimelineEditor {
     private boolean saveConfirm() {
         Alert confirmsave = new Alert(Alert.AlertType.CONFIRMATION);
         confirmsave.setTitle("Confirm Save");
-        confirmsave.setHeaderText("Die (change later)"); //TODO change text
+        confirmsave.setHeaderText("This will make permanent changes to your timeline!"); //TODO change text
         confirmsave.setContentText("Would you like to save?");
 
         Optional<ButtonType> result = confirmsave.showAndWait();
@@ -249,7 +251,7 @@ public class TimelineEditor {
     private boolean deleteEvent() {
         Alert confirmDelete = new Alert(Alert.AlertType.CONFIRMATION);
         confirmDelete.setTitle("Confirm Delete");
-        confirmDelete.setHeaderText("Die (change later)"); //TODO change text
+        confirmDelete.setHeaderText("This will delete your timeline permanently!"); //TODO change text
         confirmDelete.setContentText("Are you ok with this?");
 
         Optional<ButtonType> result = confirmDelete.showAndWait();
@@ -276,11 +278,13 @@ public class TimelineEditor {
     public void toggleStartExpanded(ActionEvent actionEvent) {
         startExpanded = !startExpanded;
         setExpansion(true, startExpanded);
+        moreStart.setText(startExpanded ? "Less..." : "More...");
     }
 
     public void toggleEndExpanded(ActionEvent actionEvent) {
         endExpanded = !endExpanded;
         setExpansion(false, endExpanded);
+        moreEnd.setText(endExpanded ? "Less..." : "More...");
     }
 
     private int setExpansion(boolean start, boolean expanding) {

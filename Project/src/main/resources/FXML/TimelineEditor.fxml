@@ -31,7 +31,7 @@
     <TextArea fx:id="descriptionInput" maxHeight="1.7976931348623157E308" prefHeight="300.0" prefWidth="305.0" styleClass="smallText" wrapText="true" GridPane.columnSpan="2" GridPane.rowIndex="4" GridPane.vgrow="SOMETIMES" />
     <Label styleClass="smallText" text="Start:" GridPane.columnSpan="2" GridPane.rowIndex="8" GridPane.valignment="BOTTOM" />
     <FlowPane fx:id="startPane" alignment="CENTER_LEFT" hgap="5.0" GridPane.columnSpan="2" GridPane.rowIndex="9">
-        <Button alignment="CENTER" ellipsisString="" maxWidth="50.0" minWidth="60.0" mnemonicParsing="false" onAction="#toggleStartExpanded" styleClass="tinyButton" text="more..." textAlignment="CENTER">
+        <Button fx:id="moreStart" alignment="CENTER" ellipsisString="" maxWidth="50.0" minWidth="60.0" mnemonicParsing="false" onAction="#toggleStartExpanded" styleClass="tinyButton" text="more..." textAlignment="CENTER">
             <FlowPane.margin>
                 <Insets left="7.0" top="18.0" />
             </FlowPane.margin>
@@ -41,7 +41,7 @@
         <Label contentDisplay="RIGHT" styleClass="smallText" text="End" />
     </HBox>
     <FlowPane fx:id="endPane" alignment="CENTER_LEFT" hgap="5.0" GridPane.columnSpan="2" GridPane.rowIndex="11">
-        <Button alignment="CENTER" ellipsisString="" maxWidth="50.0" minWidth="60.0" mnemonicParsing="false" onAction="#toggleEndExpanded" styleClass="tinyButton" text="more..." textAlignment="CENTER">
+        <Button fx:id="moreEnd" alignment="CENTER" ellipsisString="" maxWidth="50.0" minWidth="60.0" mnemonicParsing="false" onAction="#toggleEndExpanded" styleClass="tinyButton" text="more..." textAlignment="CENTER">
             <FlowPane.margin>
                 <Insets left="7.0" top="18.0" />
             </FlowPane.margin>
@@ -52,7 +52,7 @@
     <Button fx:id="deleteButton" alignment="CENTER" maxHeight="30" onAction="#deleteEvent" styleClass="smallButton" text="Delete" GridPane.halignment="CENTER" GridPane.rowIndex="17" />
     <Text fx:id="errorMessage" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="smallText" GridPane.columnSpan="2" GridPane.rowIndex="15" />
    <Label text="Key Words" GridPane.rowIndex="5" />
-    <HBox GridPane.columnSpan="2" GridPane.rowIndex="6" fx:id="keyWordBox">
+    <HBox fx:id="keyWordBox" GridPane.columnSpan="2" GridPane.rowIndex="6">
         <TextField fx:id="keywordInput" HBox.hgrow="ALWAYS" />
         <Region prefHeight="5.0" prefWidth="5.0" />
         <Button fx:id="addKeyWord" maxWidth="47.0" mnemonicParsing="false" onAction="#addKeyword" prefWidth="47.0" styleClass="tinyButton" stylesheets="@../styles/DefaultStyle.css" text="Add">
@@ -68,9 +68,10 @@
         </Button>
     </HBox>
    <ListView fx:id="listView" prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="2" GridPane.rowIndex="7" GridPane.vgrow="SOMETIMES" />
-   <Text fx:id="feedbackText" strokeType="OUTSIDE" strokeWidth="0.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+   <Text fx:id="feedbackText" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="smallText" GridPane.columnIndex="1" GridPane.rowIndex="5" />
     <stylesheets>
         <URL value="@../styles/Sidebar.css" />
+      <URL value="@../styles/DefaultStyle.css" />
     </stylesheets>
    <rowConstraints>
       <RowConstraints />

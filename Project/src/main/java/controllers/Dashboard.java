@@ -153,13 +153,14 @@ public class Dashboard {
 	}
 	
 	@FXML
-	public void openEventEditor(ActionEvent event) { // created by Jan for meeting with teacher Thursday
-		try {
-			GUIManager.swapScene("TimelineView");
-		} catch (IOException e) {
-			e.printStackTrace();
+	public void openTimeline(ActionEvent event) { 
+		if(list.getSelectionModel().getSelectedItem()!=null) {
+			try {
+				TimelineView timelineView = GUIManager.swapScene("TimelineView");  
+				timelineView.setActiveTimeline(list.getSelectionModel().getSelectedItem().getTimelineID());
+			} catch (IOException e) {
+			}
 		}
-
 	}
 
 	// open DeletePopUp

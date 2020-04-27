@@ -164,4 +164,12 @@ public class TimelineView {
         rightSidebar.getChildren().remove(selectorController.selector);       //resets the event selector if it already exists
         rightSidebar.getChildren().add(selectorController.selector);
     }
+    
+    public void returnToDashboard() {
+    	try {
+			GUIManager.swapScene("Dashboard");
+		} catch (IOException e) {
+			
+		}
+    }
 }
