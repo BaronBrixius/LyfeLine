@@ -321,42 +321,6 @@ public class EventEditor {
         return outPath+imageName;
     }
 
-//    private String copyImage(File image, String filename) {
-//
-////        String outPath = "src/main/resources/images/";
-//        try {
-//            InputStream is = new FileInputStream(image);
-//
-////            OutputStream os = null;
-//
-//
-//            while(folderHasImage(filename)) {
-//                int indexOfDot = filename.lastIndexOf(".");
-//
-//                if(filename.contains("\\(\\d\\)")) {
-//                    int indexOfBrackets = filename.lastIndexOf("(");
-//                    int duplicateDigit = filename.charAt(filename.lastIndexOf("(") + 1);
-//                    filename = filename.substring(0, indexOfBrackets + 1) +  duplicateDigit + 1 + ")" + "." + getFormat(image);
-//                    break;
-//                }
-//
-//                filename = filename.substring(0, indexOfDot) + "(" + 2 + ")" + "." + getFormat(image);
-//            }
-//
-//            // find the last "(" and work from there.
-//            // potential problems with names containing "("s
-//
-//
-//
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//
-//
-//        return null;
-//    }
 
 
     //Method to check if the image folder has this name already to avoid if two are copied with same name the latter will just override the firs
