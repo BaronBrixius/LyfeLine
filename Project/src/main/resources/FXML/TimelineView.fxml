@@ -7,6 +7,7 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
@@ -55,18 +56,24 @@
                   <Label layoutX="10.0" layoutY="78.0" text="KeyWords" />
                   <TextArea fx:id="keywords" editable="false" layoutX="10.0" layoutY="95.0" prefHeight="51.0" prefWidth="195.0" wrapText="true" />
                   <Label layoutX="10.0" layoutY="146.0" text="Start Date" />
-                  <TextArea fx:id="startDate" editable="false" prefHeight="0.0" prefWidth="181.0" wrapText="true" />
+                  <Spinner />
                   <Label layoutX="10.0" layoutY="214.0" text="End Date" />
-                  <TextArea fx:id="endDate" editable="false" prefHeight="0.0" prefWidth="181.0" wrapText="true" />
+                  <Spinner />
                   <Label layoutX="10.0" layoutY="282.0" text="Time Units" />
-                  <ComboBox fx:id="timeInput" prefWidth="150.0">
+                  <ComboBox fx:id="timeUnits" disable="true" prefWidth="150.0" stylesheets="@../styles/DisabledViewable.css">
                      <items>
                         <FXCollections fx:factory="observableArrayList">
+                           <String fx:value="Milliseconds" />
                            <String fx:value="Seconds" />
                            <String fx:value="Minutes" />
                            <String fx:value="Hours" />
                            <String fx:value="Days" />
+                           <String fx:value="Weeks" />
+                           <String fx:value="Months" />
                            <String fx:value="Years" />
+                           <String fx:value="Decades" />
+                           <String fx:value="Centuries" />
+                           <String fx:value="Millennia" />
                         </FXCollections>
                      </items>
                   </ComboBox>

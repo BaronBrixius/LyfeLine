@@ -112,7 +112,7 @@ public class Date implements Comparable<Date> {
 
     @Override
     public String toString() {
-        return "" + year + "-" + month + day + hour + minute + second + millisecond;
+        return "" + year + "-" + month + "-" + day +" Time: "+ hour +":"+ minute;
     }
 
     @Override

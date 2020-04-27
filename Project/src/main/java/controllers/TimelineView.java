@@ -39,8 +39,8 @@ public class TimelineView {
     private List<EventNode> eventList = new ArrayList<>();
 
     public void initialize() {
-    	
-    	
+    	setActiveTimeline(1);
+    
     	try {
             FXMLLoader selectorLoader = new FXMLLoader(getClass().getResource("../FXML/EventSelector.fxml"));
             selectorLoader.load();
@@ -58,7 +58,8 @@ public class TimelineView {
         } catch (IOException e) {
             e.printStackTrace();        //TODO replace with better error message once dev is done
         }
-       
+        
+        populateTimelineInfo();
     }
 
     public List<EventNode> getEventList() {
@@ -88,7 +89,8 @@ public class TimelineView {
             stmt.setInt(1, id);
             List<Timeline> list = DBM.getFromDB(stmt, new Timeline());
 
-            setActiveTimeline(list.get(0));
+            //setActiveTimeline(list.get(0));
+            this.activeTimeline = list.get(0);
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -104,12 +106,14 @@ public class TimelineView {
         int length;
         length = activeTimeline.getStartDate().distanceTo(activeTimeline.getEndDate(), activeTimeline.getScale());
         
+        
         Pane mainLine = new Pane();
         mainLine.setStyle("-fx-background-color: #ff4251;");
-        GridPane.setColumnSpan(mainLine, length);
+        
         timelineGrid.add(mainLine, 0, 0, GridPane.REMAINING, 1);
         //TODO set grid column count to actual timeline length, make the above look better (possibly with its own fxml?)
 
+     
         EventNode newNode;
         for (Event e : activeTimeline.getEventList()) {
             newNode = addEvent(e);
