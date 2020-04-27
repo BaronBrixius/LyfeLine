@@ -25,12 +25,23 @@ public class TimelineView {
     public Timeline activeTimeline;
     public BorderPane mainBorderPane;
     public StackPane rightSidebar;
+    public StackPane leftSidebar;
+    TimelineEditor timelineController;
     EventSelector selectorController;
     EventEditor editorController;
     @FXML
     private Button backButton;
 
     public void initialize() {
+        try {
+            FXMLLoader TimelineLoader = new FXMLLoader(getClass().getResource("../FXML/TimelineEditor.fxml"));
+            TimelineLoader.load();
+            timelineController = TimelineLoader.getController();
+            timelineController.setParentController(this);
+        } catch (IOException e) {
+            e.printStackTrace();        //TODO replace with better error message once dev is done
+        }
+
         try {
             FXMLLoader selectorLoader = new FXMLLoader(getClass().getResource("../FXML/EventSelector.fxml"));
             selectorLoader.load();
@@ -48,6 +59,12 @@ public class TimelineView {
         } catch (IOException e) {
             e.printStackTrace();        //TODO replace with better error message once dev is done
         }
+
+
+        //leftSidebar.getChildren().remove(timelineController.editor);
+
+        leftSidebar.getChildren().add(timelineController.editor);
+
     }
 
     public List<EventNode> getEventList() {
@@ -77,6 +94,7 @@ public class TimelineView {
             List<Timeline> list = DBM.getFromDB(stmt, new Timeline());
 
             setActiveTimeline(list.get(0));
+            timelineController.setTimeline(activeTimeline);
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
