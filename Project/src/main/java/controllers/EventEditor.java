@@ -181,7 +181,10 @@ public class EventEditor {
     @FXML
     private void uploadImage() throws IOException {    //Only working now for .jpg
         FileChooser chooser = new FileChooser(); //For the filedirectory
-        chooser.setTitle("Upload image");
+        if (event.getImagePath() == null)
+        	chooser.setTitle("Upload image");
+        else
+        	chooser.setTitle("Change image");
         //All the image formats supported by java.imageio https://docs.oracle.com/javase/7/docs/api/javax/imageio/package-summary.html
         chooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter( "All Images", "*.jpg","*.jpeg","*.png","*.bmp","*.gif","*.wbmp" ),
@@ -193,11 +196,29 @@ public class EventEditor {
                 new FileChooser.ExtensionFilter( "WBMP", "*.wbmp" )
         );
         this.imageChosen = chooser.showOpenDialog(new Stage()); //This is the stage that needs to be edited (ok,cancel button) for the filechooser... do in FXML ?
-        this.filename = imageChosen.getName(); //THis is to take the name of the image choosen to add it to the copied version
-        System.out.println(this.imageChosen.getAbsolutePath());
-        image.setImage(new Image("File:" + this.imageChosen.getAbsolutePath()));
+        if (ImageSaveConfirm()) {
+        	this.filename = imageChosen.getName(); //THis is to take the name of the image choosen to add it to the copied version
+            System.out.println(this.imageChosen.getAbsolutePath());
+            image.setImage(new Image("File:" + this.imageChosen.getAbsolutePath()));
 
-        System.out.println("Button pressed.");
+        }
+        else
+        System.out.println("Cancel Button pressed.");
+    }
+    
+    @FXML
+    private boolean ImageSaveConfirm() throws IOException {
+        Alert confirmsaveimage = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmsaveimage.setTitle("Confirm Change");
+        confirmsaveimage.setHeaderText("Replacing or removing an image will permanently delete it from the system.");
+        confirmsaveimage.setContentText("Would you like to make the change?");
+
+        Optional<ButtonType> result = confirmsaveimage.showAndWait();
+
+        if (result.get() == ButtonType.CANCEL)
+            return false;
+        else
+        	return true;
     }
 
      //Method that returns the image format as a string i.e sun.png == "png"
@@ -279,8 +300,6 @@ public class EventEditor {
 
     private boolean populateDisplay() {
         titleInput.setText(event.getEventName());
-        descriptionInput.setText(event.getEventDescrition());
-
         startDate.setValue(LocalDate.of(event.getStartDate().getYear(), event.getStartDate().getMonth(), event.getStartDate().getDay()));
 
         startTime1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23, event.getStartDate().getHours()));

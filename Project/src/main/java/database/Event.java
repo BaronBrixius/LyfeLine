@@ -11,7 +11,7 @@ public class Event implements DBObject<Event> {
     private int eventType;
     private String eventName = "";
     private String eventDescription = "";
-    private String imagePath = null;
+    private String imagePath;
     private int imageID;//For now, not sure how we handle this later on
     private Date startDate = new Date();
     private Date endDate = new Date();
