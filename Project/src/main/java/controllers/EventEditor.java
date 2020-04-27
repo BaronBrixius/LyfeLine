@@ -104,6 +104,9 @@ public class EventEditor {
                 else if (!this.event.getImagePath().equalsIgnoreCase(this.fullOutPath))
                     this.fullOutPath = copyImage(imageChosen,filename);}}
 
+        //To save to DB
+        this.event.setImage(this.fullOutPath);
+        System.out.println(this.fullOutPath);
 
         try {
             //Date Picker is literally bugged, this line works around it.
@@ -306,7 +309,7 @@ public class EventEditor {
     private boolean populateDisplay() {
         titleInput.setText(event.getEventName());
         descriptionInput.setText(event.getEventDescrition());
-
+        fullOutPath=event.getImagePath();
         startDate.setValue(LocalDate.of(event.getStartDate().getYear(), event.getStartDate().getMonth(), event.getStartDate().getDay()));
 
         startTime1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23, event.getStartDate().getHours()));
