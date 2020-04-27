@@ -191,6 +191,7 @@ public class EventEditor {
                 new FileChooser.ExtensionFilter( "GIF", "*.gif" ),
                 new FileChooser.ExtensionFilter( "WBMP", "*.wbmp" )
         );
+        this.imageChosen = chooser.showOpenDialog(GUIManager.mainStage); //This is the stage that needs to be edited (ok,cancel button) for the filechooser... do in FXML ?
         if (ImageSaveConfirm()) {
         	this.filename = imageChosen.getName(); //THis is to take the name of the image choosen to add it to the copied version
             System.out.println(this.imageChosen.getAbsolutePath());
