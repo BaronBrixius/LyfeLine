@@ -1,23 +1,22 @@
 package controllers;
 
-import database.*;
-import javafx.stage.FileChooser;
-import javafx.stage.Stage;
-import utils.*;
-import javafx.collections.FXCollections;
+import database.DBM;
+import database.Event;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+import utils.Date;
+
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
-import java.awt.image.BufferedImage;
 import java.io.*;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -32,8 +31,7 @@ public class EventEditor {
     private final List<Spinner<Integer>> startInputs = new ArrayList<>();
     private final List<VBox> endBoxes = new ArrayList<>();
     private final List<Spinner<Integer>> endInputs = new ArrayList<>();
-    @FXML
-    public GridPane editor;
+    public ScrollPane editor;
     @FXML
     public Button editButton;
     @FXML
@@ -60,24 +58,24 @@ public class EventEditor {
     ImageView image;
     boolean editable = true;
     TimelineView parentController;
+    String filename; //THis is to take the name of the image choosen to add it to the copied version
+    String fullOutPath; //When event is saved the path to the image in resource folder is sent here (the one we can use to send to DB)
     private boolean startExpanded;
     private boolean endExpanded;
     private Event event;
     private File imageChosen; //The current image chosen by FileChooser
-    String filename ; //THis is to take the name of the image choosen to add it to the copied version
-    String fullOutPath; //When event is saved the path to the image in resource folder is sent here (the one we can use to send to DB)
 
     public void initialize() {
-            image.setOnMouseEntered(e -> {
-                image.setScaleX(8);
-                image.setScaleY(8);
-                image.setScaleZ(8);
-            });
-            image.setOnMouseExited(e -> {
-                image.setScaleX(1);
-                image.setScaleY(1);
-                image.setScaleZ(1);
-            });
+        image.setOnMouseEntered(e -> {
+            image.setScaleX(8);
+            image.setScaleY(8);
+            image.setScaleZ(8);
+        });
+        image.setOnMouseExited(e -> {
+            image.setScaleX(1);
+            image.setScaleY(1);
+            image.setScaleZ(1);
+        });
 
         //Set Up the Spinners for Start/End Inputs, would have bloated the .fxml and variable list a ton if these were in fxml
         String timeSpinnerLabel = null;
@@ -117,7 +115,7 @@ public class EventEditor {
                 case 3:
                     maxValue = 23;
                     break;
-                case 4:
+                case 4:             //intentional fallthrough
                 case 5:
                     maxValue = 59;
                     break;
@@ -156,7 +154,7 @@ public class EventEditor {
     @FXML
     private void toggleHasDuration() {
         endPane.setDisable(!hasDuration.isSelected());
-        setExpansion(false, hasDuration.isSelected() && endExpanded);   //compresses if disabled, if enabled leave it as user wanted
+        setExpansion(endPane, endBoxes, hasDuration.isSelected() && endExpanded);   //compresses if disabled, if enabled leave it as user wanted
         if (hasDuration.isSelected())
             endPane.getStyleClass().remove("DisabledAnyways");
         else
@@ -199,13 +197,13 @@ public class EventEditor {
         chooser.setTitle("Upload image");
         //All the image formats supported by java.imageio https://docs.oracle.com/javase/7/docs/api/javax/imageio/package-summary.html
         chooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter( "All Images", "*.jpg","*.jpeg","*.png","*.bmp","*.gif","*.wbmp" ),
-                new FileChooser.ExtensionFilter( "JPG", "*.jpg" ),
-                new FileChooser.ExtensionFilter( "JPEG", "*.jpeg" ),
-                new FileChooser.ExtensionFilter( "PNG", "*.png" ),
-                new FileChooser.ExtensionFilter( "BMP", "*.bmp" ),
-                new FileChooser.ExtensionFilter( "GIF", "*.gif" ),
-                new FileChooser.ExtensionFilter( "WBMP", "*.wbmp" )
+                new FileChooser.ExtensionFilter("All Images", "*.jpg", "*.jpeg", "*.png", "*.bmp", "*.gif", "*.wbmp"),
+                new FileChooser.ExtensionFilter("JPG", "*.jpg"),
+                new FileChooser.ExtensionFilter("JPEG", "*.jpeg"),
+                new FileChooser.ExtensionFilter("PNG", "*.png"),
+                new FileChooser.ExtensionFilter("BMP", "*.bmp"),
+                new FileChooser.ExtensionFilter("GIF", "*.gif"),
+                new FileChooser.ExtensionFilter("WBMP", "*.wbmp")
         );
         this.imageChosen = chooser.showOpenDialog(new Stage()); //This is the stage that needs to be edited (ok,cancel button) for the filechooser... do in FXML ?
         this.filename = imageChosen.getName(); //THis is to take the name of the image choosen to add it to the copied version
@@ -215,54 +213,56 @@ public class EventEditor {
         System.out.println("Button pressed.");
     }
 
-     //Method that returns the image format as a string i.e sun.png == "png"
+    //Method that returns the image format as a string i.e sun.png == "png"
     private String getFormat(File f) throws IOException {
         ImageInputStream iis = ImageIO.createImageInputStream(f);
         Iterator<ImageReader> imageReaders = ImageIO.getImageReaders(iis);
         String type = "png";
         while (imageReaders.hasNext()) {
             ImageReader reader = imageReaders.next();
-           type = reader.getFormatName();
+            type = reader.getFormatName();
         }
         return type;
     }
 
     private String copyImage(File image, String filename) throws IOException { //Takes the file chosen and the name of it
         String outPath = "src/main/resources/images/";
-        String imageName ="";
-        try{
-        InputStream is = null;
-        OutputStream os = null;
+        String imageName = "";
         try {
-            is = new FileInputStream(image);
-            System.out.println("reading complete.");
-            int imageNumer = 1; //For updating the number in the parenthesis based on how many with the same name in resources folder
-             imageName = filename;
-            //Path for saving, have special events folder now so if timeline guys are doing something they don't override copies
-            while (folderHasImage(imageName)==true){ //Check if our folder has the imagename already if so, add (int) untill no more true
-                int index = imageName.indexOf(".");            ;
-                imageName = imageName.substring(0, index)+ "("+ imageNumer+")" + ".jpg";
-                imageNumer++;
-            }
-            os = new FileOutputStream(new File(outPath + imageName));
-            byte[] buffer = new byte[1024];
-            int length;
-            while ((length = is.read(buffer)) > 0) {
-                os.write(buffer, 0, length);
-            }
+            InputStream is = null;
+            OutputStream os = null;
+            try {
+                is = new FileInputStream(image);
+                System.out.println("reading complete.");
+                int imageNumer = 1; //For updating the number in the parenthesis based on how many with the same name in resources folder
+                imageName = filename;
+                //Path for saving, have special events folder now so if timeline guys are doing something they don't override copies
+                while (folderHasImage(imageName) == true) { //Check if our folder has the imagename already if so, add (int) untill no more true
+                    int index = imageName.indexOf(".");
+                    ;
+                    imageName = imageName.substring(0, index) + "(" + imageNumer + ")" + ".jpg";
+                    imageNumer++;
+                }
+                os = new FileOutputStream(new File(outPath + imageName));
+                byte[] buffer = new byte[1024];
+                int length;
+                while ((length = is.read(buffer)) > 0) {
+                    os.write(buffer, 0, length);
+                }
 
-        } finally {
-            is.close();
-            os.close();
-        }
+            } finally {
+                is.close();
+                os.close();
+            }
             System.out.println("Writing complete.");
-        }catch(IOException e){
-            System.out.println("Error: "+e);
+        } catch (IOException e) {
+            System.out.println("Error: " + e);
         }
-        return outPath+imageName;
+        return outPath + imageName;
     }
+
     //Method to check if the image folder has this name already to avoid if two are copied with same name the latter will just override the firs
-    private boolean folderHasImage(String path){
+    private boolean folderHasImage(String path) {
         File folder = new File("src/main/resources/images/");
         File[] listOfFiles = folder.listFiles();
         List<String> images = new ArrayList<>();
@@ -272,7 +272,7 @@ public class EventEditor {
                 images.add(listOfFiles[i].getName());
             }
         }
-        for(String s : images){
+        for (String s : images) {
             if (path.equalsIgnoreCase(s))
                 return true;
         }
@@ -288,6 +288,7 @@ public class EventEditor {
     }
 
     public boolean setEvent(Event event) {
+        parentController.editorController.close();
         this.event = event;
         //Check if Admin
         if (GUIManager.loggedInUser.getUserID() != event.getUserID()) {
@@ -323,11 +324,9 @@ public class EventEditor {
         endInputs.get(5).getValueFactory().setValue(event.getEndDate().getSecond());
         endInputs.get(6).getValueFactory().setValue(event.getEndDate().getMillisecond());
 
-        setExpansion(true, false);
-        setExpansion(false, false);
-
-
-        return false;
+        setExpansion(startPane, startBoxes, false);
+        setExpansion(endPane, endBoxes, false);
+        return true;
     }
 
     @FXML
@@ -338,7 +337,6 @@ public class EventEditor {
         confirmsave.setContentText("Would you like to save?");
 
         Optional<ButtonType> result = confirmsave.showAndWait();
-
         if (result.get() == ButtonType.CANCEL)
             return false;
         return saveEvent();
@@ -364,10 +362,10 @@ public class EventEditor {
             if (event.getEventID() == 0) {
                 //Save button clicked, the image chosen is saved and the String field is set as the path to the image in the resource folder
                 DBM.insertIntoDB(event);
-                //event.addToTimeline(parentController.timelineList.getSelectionModel().getSelectedItem().getTimelineID());
-                //parentController.populateEventList();             //TODO fix updating the display on the event selector
+
+                parentController.selectorController.populateEventList();             //TODO fix updating the display on the event selector
             } else
-                 //Save button clicked, the image chosen is saved and the String field is set as the path to the image in the resource folder
+                //Save button clicked, the image chosen is saved and the String field is set as the path to the image in the resource folder
                 DBM.updateInDB(event);
             return true;
         } catch (SQLException e) {
@@ -378,28 +376,8 @@ public class EventEditor {
 
     @FXML
     private boolean deleteEvent() {
-        Alert confirmDelete = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmDelete.setTitle("Confirm Delete");
-        confirmDelete.setHeaderText("Deleting this event will remove it from all other timelines as well.");
-        confirmDelete.setContentText("Are you ok with this?");
-
-        Optional<ButtonType> result = confirmDelete.showAndWait();
-
-        if (result.get() == ButtonType.CANCEL)
-            return false;
-
-        try {
-            if (this.event.getEventID() == 0)
-                throw new IllegalArgumentException("event not in database");
-            else {
-                DBM.deleteFromDB(event);
-                close();
-            }
-            //parentController.populateEventList();             //TODO fix updating the display on the event selector
-            return true;
-        } catch (SQLException e) {
-            return false;
-        }
+        parentController.selectorController.deleteEvent(event);
+        return close();
     }
 
     public void addToTimeline() {
@@ -416,17 +394,15 @@ public class EventEditor {
 
     public void toggleStartExpanded(ActionEvent actionEvent) {
         startExpanded = !startExpanded;
-        setExpansion(true, startExpanded);
+        setExpansion(startPane, startBoxes, startExpanded);
     }
 
     public void toggleEndExpanded(ActionEvent actionEvent) {
         endExpanded = !endExpanded;
-        setExpansion(false, endExpanded);
+        setExpansion(endPane, endBoxes, endExpanded);
     }
 
-    private int setExpansion(boolean start, boolean expanding) {
-        FlowPane expandPane = start ? startPane : endPane;
-        List<VBox> boxesToAddFrom = start ? startBoxes : endBoxes;
+    private int setExpansion(FlowPane expandPane, List<VBox> boxesToAddFrom, boolean expanding) {
         expandPane.getChildren().removeAll(boxesToAddFrom);         //clear out the current contents except the expansion button
         int scale = parentController.activeTimeline.getScale();
 
@@ -469,10 +445,13 @@ public class EventEditor {
     }
 
     @FXML
-    void close() {
-        if (event != null && hasChanges())
-            saveConfirm();        //do you wanna save and exit or just exit?
+    boolean close() {
         parentController.rightSidebar.getChildren().remove(editor);
+        parentController.rightSidebar.getChildren().add(editor);
+        if (event != null && hasChanges() && !saveConfirm())          //do you wanna save and exit or just exit?
+            return false;
+        parentController.rightSidebar.getChildren().remove(editor);
+        return true;
     }
 
 

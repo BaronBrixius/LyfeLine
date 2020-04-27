@@ -137,8 +137,7 @@ public class TimelineView {
             if (eventList.get(i).getStartColumn() <= newNode.getStartColumn() + newNode.getColumnSpan()             //if a previous node starts before the new one would end
             && eventList.get(i).getStartColumn() + eventList.get(i).getColumnSpan() >= newNode.getStartColumn())    //and it ends after the new one starts
                 row++;                                                                                              //try next row
-        }                                                                                                           //shouldn't need to check for if the reverse is the case (e.g. if previous node ends before
-
+        }
         timelineGrid.add(newNode.getDisplayPane(), startColumn, row, columnSpan, 1);
     }
 

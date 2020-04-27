@@ -9,7 +9,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 
-import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Comparator;
@@ -79,23 +78,34 @@ public class EventSelector {
         });
     }
 
-    public void setParentController(TimelineView parentController) {             //TODO delete this inelegant solution
+    void setParentController(TimelineView parentController) {             //TODO delete this inelegant solution
         this.parentController = parentController;
     }
 
-    public void newEvent() throws IOException {
-        parentController.addEvent(new Event());
-        eventList.getSelectionModel().getSelectedItem();
-    }
-    //TODO hook these back up to the event editor
-    public void openEvent() throws IOException {
-        eventList.getSelectionModel().getSelectedItem();
+    @FXML
+    void newEvent() {
+        openEditor(new Event(), true);
     }
 
-    public boolean deleteEvent() {
+    @FXML
+    void openEvent() {
+        openEditor(eventList.getSelectionModel().getSelectedItem(), false);
+    }
+
+    private void openEditor(Event eventToOpen, boolean editable) {
+        parentController.editorController.setEvent(eventToOpen);
+        parentController.editorController.toggleEditable(editable);
+        parentController.rightSidebar.getChildren().add(parentController.editorController.editor);
+    }
+
+    public boolean deleteButton() {
+        return deleteEvent(eventList.getSelectionModel().getSelectedItem());
+    }
+
+    boolean deleteEvent(Event eventToDelete) {
         Alert confirmDelete = new Alert(Alert.AlertType.CONFIRMATION);
         confirmDelete.setTitle("Confirm Delete");
-        confirmDelete.setHeaderText("Deleting this event will remove it from all other timelines as well.");
+        confirmDelete.setHeaderText("Deleting " + eventToDelete.getEventName() + " will remove it from all other timelines as well.");
         confirmDelete.setContentText("Are you ok with this?");
 
         Optional<ButtonType> result = confirmDelete.showAndWait();
@@ -104,10 +114,10 @@ public class EventSelector {
             return false;
 
         try {
-            if (eventList.getSelectionModel().getSelectedItem().getEventID() == 0)
+            if (eventToDelete.getEventID() == 0)
                 throw new IllegalArgumentException("event not in database");
 
-            DBM.deleteFromDB(eventList.getSelectionModel().getSelectedItem());
+            DBM.deleteFromDB(eventToDelete);
             populateEventList();
             return true;
         } catch (SQLException e) {
