@@ -12,6 +12,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
 import utils.Date;
 
 import javax.imageio.ImageIO;
@@ -46,6 +47,7 @@ public class EventEditor {
     public FlowPane startPane;
     @FXML
     public FlowPane endPane;
+    public Button clearButton;
     @FXML
     TextField titleInput = new TextField();
     @FXML
@@ -140,11 +142,38 @@ public class EventEditor {
         }
     }
 
-    private void setupTimeInputBoxes(String timeSpinnerLabel, int maxValue, int i, List<Spinner<Integer>> startTimes, List<VBox> startBoxes) {
-        startTimes.add(i, new Spinner<>(0, maxValue, 0));
-        startBoxes.add(i, new VBox(new Label(timeSpinnerLabel), startTimes.get(i)));
-        startBoxes.get(i).setPrefWidth(70);
-        startBoxes.get(i).getChildren().get(0).getStyleClass().add("smallText");
+    private void setupTimeInputBoxes(String timeSpinnerLabel, int maxValue, int i, List<Spinner<Integer>> spinnerList, List<VBox> boxList) {
+        SpinnerValueFactory.IntegerSpinnerValueFactory valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, maxValue, 0);
+        valueFactory.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(Integer value) {
+                if (value == null)
+                    return "0";
+                return value.toString();
+            }
+
+            @Override
+            public Integer fromString(String string) {
+                try {
+                    // If the specified value is null or zero-length, return null
+                    if (string == null)
+                        return 0;
+                    string = string.trim();
+                    if (string.length() < 1)
+                        return null;
+                    return Integer.parseInt(string);
+
+                } catch (NumberFormatException ex) {
+                    return 0;
+                }
+            }
+        });
+        spinnerList.add(i, new Spinner<>(valueFactory));
+        spinnerList.get(i).setEditable(true);
+
+        boxList.add(i, new VBox(new Label(timeSpinnerLabel), spinnerList.get(i)));
+        boxList.get(i).setPrefWidth(70);
+        boxList.get(i).getChildren().get(0).getStyleClass().add("smallText");
     }
 
     public void setParentController(TimelineView parentController) {             //TODO delete this inelegant solution
@@ -228,35 +257,35 @@ public class EventEditor {
     private String copyImage(File image, String filename) throws IOException { //Takes the file chosen and the name of it
         String outPath = "src/main/resources/images/";
         String imageName = "";
+        InputStream is = null;
+        OutputStream os = null;
         try {
-            InputStream is = null;
-            OutputStream os = null;
-            try {
-                is = new FileInputStream(image);
-                System.out.println("reading complete.");
-                int imageNumer = 1; //For updating the number in the parenthesis based on how many with the same name in resources folder
-                imageName = filename;
-                //Path for saving, have special events folder now so if timeline guys are doing something they don't override copies
-                while (folderHasImage(imageName) == true) { //Check if our folder has the imagename already if so, add (int) untill no more true
-                    int index = imageName.indexOf(".");
-                    ;
-                    imageName = imageName.substring(0, index) + "(" + imageNumer + ")" + ".jpg";
-                    imageNumer++;
-                }
-                os = new FileOutputStream(new File(outPath + imageName));
-                byte[] buffer = new byte[1024];
-                int length;
-                while ((length = is.read(buffer)) > 0) {
-                    os.write(buffer, 0, length);
-                }
-
-            } finally {
-                is.close();
-                os.close();
+            is = new FileInputStream(image);
+            System.out.println("reading complete.");
+            int imageNumer = 1; //For updating the number in the parenthesis based on how many with the same name in resources folder
+            imageName = filename;
+            //Path for saving, have special events folder now so if timeline guys are doing something they don't override copies
+            while (folderHasImage(imageName)) { //Check if our folder has the imagename already if so, add (int) untill no more true
+                int index = imageName.indexOf(".");
+                imageName = imageName.substring(0, index) + "(" + imageNumer + ")" + ".jpg";
+                imageNumer++;
             }
+            os = new FileOutputStream(new File(outPath + imageName));
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = is.read(buffer)) > 0) {
+                os.write(buffer, 0, length);
+            }
+
             System.out.println("Writing complete.");
         } catch (IOException e) {
             System.out.println("Error: " + e);
+
+        } finally {
+            if (is != null)
+                is.close();
+            if (os != null)
+                os.close();
         }
         return outPath + imageName;
     }
@@ -359,14 +388,12 @@ public class EventEditor {
     private boolean saveEvent() {
         updateEvent();
         try {
-            if (event.getEventID() == 0) {
-                //Save button clicked, the image chosen is saved and the String field is set as the path to the image in the resource folder
-                DBM.insertIntoDB(event);
+            if (event.getEventID() == 0)
+                DBM.insertIntoDB(event);//Save button clicked, the image chosen is saved and the String field is set as the path to the image in the resource folder
+            else
+                DBM.updateInDB(event);//Save button clicked, the image chosen is saved and the String field is set as the path to the image in the resource folder
 
-                parentController.selectorController.populateEventList();             //TODO fix updating the display on the event selector
-            } else
-                //Save button clicked, the image chosen is saved and the String field is set as the path to the image in the resource folder
-                DBM.updateInDB(event);
+            parentController.selectorController.populateEventList();
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -440,7 +467,6 @@ public class EventEditor {
                         || !event.getEventDescrition().equals(descriptionInput.getText().replaceAll("([^\r])\n", "$1\r\n"))     //textArea tends to change the newline from \r\n to just \n which breaks some things
                         || event.getStartDate().compareTo(readStart) != 0
                         || event.getEndDate().compareTo(readEnd) != 0
-
         );
     }
 
@@ -455,4 +481,6 @@ public class EventEditor {
     }
 
 
+    public void clearImage(ActionEvent actionEvent) {
+    }
 }
