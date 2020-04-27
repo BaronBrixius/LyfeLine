@@ -180,8 +180,13 @@ public class EventEditor {
 
     @FXML
     private void uploadImage() throws IOException {    //Only working now for .jpg
-        FileChooser chooser = new FileChooser(); //For the filedirectory
-        chooser.setTitle("Upload image");
+        FileChooser chooser = new FileChooser(); //For the file directory
+        //Check to see if there is an image for the event and change button accordingly.
+        if (image == null)
+        	chooser.setTitle("Upload image");
+        else
+        	chooser.setTitle("Replace image");
+        
         //All the image formats supported by java.imageio https://docs.oracle.com/javase/7/docs/api/javax/imageio/package-summary.html
         chooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter( "All Images", "*.jpg","*.jpeg","*.png","*.bmp","*.gif","*.wbmp" ),
