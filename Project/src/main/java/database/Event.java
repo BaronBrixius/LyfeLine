@@ -10,6 +10,7 @@ public class Event implements DBObject<Event> {
     private int userID;
     private String eventName = "";
     private String eventDescription = "";
+    private String imagePath = null;
     private int imageID;//For now, not sure how we handle this later on
     private Date startDate = new Date();
     private Date endDate = new Date();
@@ -54,6 +55,8 @@ public class Event implements DBObject<Event> {
     public int getUserID() {
         return userID;
     }
+
+    public String getImagePath(){return this.imagePath;}
 
     @Override
     public PreparedStatement getInsertQuery() throws SQLException, RuntimeException {

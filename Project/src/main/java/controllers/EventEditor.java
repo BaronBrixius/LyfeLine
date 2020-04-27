@@ -1,7 +1,9 @@
 package controllers;
 
-import database.DBM;
-import database.Event;
+import database.*;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+import utils.*;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -12,11 +14,15 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import utils.Date;
-
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
+import java.awt.image.BufferedImage;
+import java.io.*;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,12 +56,17 @@ public class EventEditor {
     CheckBox hasDuration = new CheckBox();
     @FXML
     ComboBox<ImageView> imageInput = new ComboBox<>();
+    @FXML
     ImageView image;
     boolean editable = true;
     TimelineView parentController;
     private boolean startExpanded;
     private boolean endExpanded;
     private Event event;
+    private File imageChosen; //The current image chosen by FileChooser
+    String filename ; //THis is to take the name of the image choosen to add it to the copied version
+    String fullOutPath; //When event is saved the path to the image in resource folder is sent here (the one we can use to send to DB)
+
 
     public void initialize() {
         //Check if Admin
@@ -65,6 +76,16 @@ public class EventEditor {
             deleteButton.setVisible(false);
             deleteButton.setDisable(true);
         }
+            image.setOnMouseEntered(e -> {
+                image.setScaleX(8);
+                image.setScaleY(8);
+                image.setScaleZ(8);
+            });
+            image.setOnMouseExited(e -> {
+                image.setScaleX(1);
+                image.setScaleY(1);
+                image.setScaleZ(1);
+            });
 
         //Set Up the Spinners for Start/End Inputs, would have bloated the .fxml and variable list a ton if these were in fxml
         String timeSpinnerLabel = null;
@@ -124,33 +145,8 @@ public class EventEditor {
         try (PreparedStatement stmt = DBM.conn.prepareStatement("SELECT * FROM Images")) {
             List<String> images = DBM.getFromDB(stmt,
                     rs -> rs.getString("ImageURL"));
-
-
-            //TODO delete the below if you're not using it, I put it in so I could get a blank and I was super rushed cuz it was thursday at like 2pm -Max
-            List<ImageView> views = new ArrayList<>();
-            ImageView blank = new ImageView(new Image("file:src/main/resources/images/pleasedontnameanythingthis.png"));
-            blank.setFitHeight(40);
-            blank.setFitWidth(40);
-            views.add(blank);
-
-            ImageView currImage;
-            for (String s : images) {
-                currImage = new ImageView(new Image("file:src/main/resources/images/" + s));
-                currImage.setFitHeight(40);
-                currImage.setFitWidth(40);
-                views.add(currImage);
-            }
-
-            imageInput.setItems(FXCollections.observableArrayList(views));
-            imageInput.setCellFactory(param -> new ListCell<>() {
-                @Override
-                protected void updateItem(ImageView item, boolean empty) {
-                    super.updateItem(item, empty);
-                    setGraphic(item);
-                }
-            });
         } catch (SQLException e) {
-            e.printStackTrace();
+            errorMessage.setText("Images could not be loaded");
         }
     }
 
@@ -204,10 +200,91 @@ public class EventEditor {
         editButton.setText(editable ? "Save" : "Edit");
     }
 
+
     @FXML
-    private void uploadImage() {
-        //don't implement, not part of current sprint
+    private void uploadImage() throws IOException {    //Only working now for .jpg
+        FileChooser chooser = new FileChooser(); //For the filedirectory
+        chooser.setTitle("Upload image");
+        //All the image formats supported by java.imageio https://docs.oracle.com/javase/7/docs/api/javax/imageio/package-summary.html
+        chooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter( "All Images", "*.jpg","*.jpeg","*.png","*.bmp","*.gif","*.wbmp" ),
+                new FileChooser.ExtensionFilter( "JPG", "*.jpg" ),
+                new FileChooser.ExtensionFilter( "JPEG", "*.jpeg" ),
+                new FileChooser.ExtensionFilter( "PNG", "*.png" ),
+                new FileChooser.ExtensionFilter( "BMP", "*.bmp" ),
+                new FileChooser.ExtensionFilter( "GIF", "*.gif" ),
+                new FileChooser.ExtensionFilter( "WBMP", "*.wbmp" )
+        );
+        this.imageChosen = chooser.showOpenDialog(new Stage()); //This is the stage that needs to be edited (ok,cancel button) for the filechooser... do in FXML ?
+        this.filename = imageChosen.getName(); //THis is to take the name of the image choosen to add it to the copied version
+        System.out.println(this.imageChosen.getAbsolutePath());
+        image.setImage(new Image("File:" + this.imageChosen.getAbsolutePath()));
+
         System.out.println("Button pressed.");
+    }
+
+     //Method that returns the image format as a string i.e sun.png == "png"
+    private String getFormat(File f) throws IOException {
+        ImageInputStream iis = ImageIO.createImageInputStream(f);
+        Iterator<ImageReader> imageReaders = ImageIO.getImageReaders(iis);
+        String type = "png";
+        while (imageReaders.hasNext()) {
+            ImageReader reader = imageReaders.next();
+           type = reader.getFormatName();
+        }
+        return type;
+    }
+
+    private String copyImage(File image, String filename) throws IOException { //Takes the file chosen and the name of it
+        String outPath = "src/main/resources/images/";
+        String imageName ="";
+        try{
+        InputStream is = null;
+        OutputStream os = null;
+        try {
+            is = new FileInputStream(image);
+            System.out.println("reading complete.");
+            int imageNumer = 1; //For updating the number in the parenthesis based on how many with the same name in resources folder
+             imageName = filename;
+            //Path for saving, have special events folder now so if timeline guys are doing something they don't override copies
+            while (folderHasImage(imageName)==true){ //Check if our folder has the imagename already if so, add (int) untill no more true
+                int index = imageName.indexOf(".");            ;
+                imageName = imageName.substring(0, index)+ "("+ imageNumer+")" + ".jpg";
+                imageNumer++;
+            }
+            os = new FileOutputStream(new File(outPath + imageName));
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = is.read(buffer)) > 0) {
+                os.write(buffer, 0, length);
+            }
+
+        } finally {
+            is.close();
+            os.close();
+        }
+            System.out.println("Writing complete.");
+        }catch(IOException e){
+            System.out.println("Error: "+e);
+        }
+        return outPath+imageName;
+    }
+    //Method to check if the image folder has this name already to avoid if two are copied with same name the latter will just override the firs
+    private boolean folderHasImage(String path){
+        File folder = new File("src/main/resources/images/");
+        File[] listOfFiles = folder.listFiles();
+        List<String> images = new ArrayList<>();
+
+        for (int i = 0; i < listOfFiles.length; i++) {
+            if (listOfFiles[i].isFile()) {
+                images.add(listOfFiles[i].getName());
+            }
+        }
+        for(String s : images){
+            if (path.equalsIgnoreCase(s))
+                return true;
+        }
+        return false;
     }
 
     public boolean setEvent(int eventID) {       //is this even needed? don't implement yet
@@ -250,7 +327,7 @@ public class EventEditor {
         setExpansion(true, false);
         setExpansion(false, false);
 
-        imageInput.getSelectionModel().select(event.getImageID());
+
         return false;
     }
 
@@ -280,18 +357,18 @@ public class EventEditor {
                     endInputs.get(3).getValue(), endInputs.get(4).getValue(), endInputs.get(5).getValue(), endInputs.get(6).getValue()));
         } else                //if it has no duration, end = start
             event.setEndDate(event.getStartDate());
-
-        this.event.setImage(imageInput.getSelectionModel().getSelectedIndex());
     }
 
     private boolean saveEvent() {
         updateEvent();
         try {
             if (event.getEventID() == 0) {
+                //Save button clicked, the image chosen is saved and the String field is set as the path to the image in the resource folder
                 DBM.insertIntoDB(event);
                 //event.addToTimeline(parentController.timelineList.getSelectionModel().getSelectedItem().getTimelineID());
                 //parentController.populateEventList();             //TODO fix updating the display on the event selector
             } else
+                 //Save button clicked, the image chosen is saved and the String field is set as the path to the image in the resource folder
                 DBM.updateInDB(event);
             return true;
         } catch (SQLException e) {
@@ -388,7 +465,7 @@ public class EventEditor {
                         || !event.getEventDescrition().equals(descriptionInput.getText().replaceAll("([^\r])\n", "$1\r\n"))     //textArea tends to change the newline from \r\n to just \n which breaks some things
                         || event.getStartDate().compareTo(readStart) != 0
                         || event.getEndDate().compareTo(readEnd) != 0
-                        || event.getImageID() != imageInput.getSelectionModel().getSelectedIndex()
+
         );
     }
 
