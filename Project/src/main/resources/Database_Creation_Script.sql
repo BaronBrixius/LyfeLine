@@ -204,7 +204,9 @@ CREATE TABLE `timelines`
     `CreatedMinute`       tinyint unsigned  DEFAULT NULL,
     `CreatedSecond`       tinyint unsigned  DEFAULT NULL,
     `CreatedMillisecond`  smallint unsigned DEFAULT NULL,
-    `TimelineOwner`       int,
+    `Private`             boolean           DEFAULT true,
+    `TimelineOwner`       int 				NOT NULL,
+    `Keywords`				varchar(1000)   DEFAULT NULL,
     PRIMARY KEY (`TimelineID`),
     UNIQUE KEY `TimelineID_UNIQUE` (`TimelineID`)
 ) ENGINE = InnoDB
@@ -296,30 +298,30 @@ INSERT INTO `timelines`
  `Scale`, `TimelineName`, `TimelineDescription`, `Theme`, `StartYear`, `StartMonth`, `StartDay`, `StartHour`,
  `StartMinute`, `StartSecond`, `StartMillisecond`, `EndYear`, `EndMonth`, `EndDay`, `EndHour`, `EndMinute`, `EndSecond`,
  `EndMillisecond`, `CreatedYear`, `CreatedMonth`, `CreatedDay`, `CreatedHour`, `CreatedMinute`, `CreatedSecond`,
- `CreatedMillisecond`, `TimelineOwner`)
-VALUES (01, 8, 'Fall of Rome', 'Out with a whimper, not a bang', 'dark', 45, 5, 20, 4, 43, 32, 213, 201, 5, 20, 4,
-        43, 32, 213, 200, 5, 20, 4, 43,
-        32, 213, 1),
-       (02, 2, 'New Timeline', '', 'dark', 2000, 5, 20, 4, 43, 32, 213, 2005, 5, 20, 4, 43, 32, 213, 2003, 5, 20, 4,
-        43, 32, 213, 1),
+ `CreatedMillisecond`, `Private`, `TimelineOwner`, `Keywords`)
+VALUES (01, 1, 'Fall of Rome', 'Out with a wimper, not a bang', 'dark', 350, 5, 20, 4, 43, 32, 213, 2001, 5, 20, 4,
+        43, 32, 213, 2000, 5, 20, 4, 43,
+        32, 213, default, 1, 'Caesar,Rome,'),
+       (02, 2, 'New Timeline', '', 'dark', 2020, 5, 20, 4, 43, 32, 213, 2005, 5, 20, 4, 43, 32, 213, 2003, 5, 20, 4,
+        43, 32, 213, default, 1, 'stuff,things,test,test1,test3,test4,test5,test6,'),
        (03, 4, 'Hound of Baskervilles', 'Investigation of an attempted murder', 'light', 1902, 5, 20, 4, 43, 32, 213,
         2006, 5, 20, 4, 43, 32, 213, 2003, 5, 20, 3,
-        43, 32, 213, 2),
+        43, 32, 213, default, 2, 'murder,death,'),
        (04, 5, 'Dr. Strangelove', 'A dark comedy on nuclear war', 'dark', 1987, 5, 20, 4, 43, 32, 213, 2008, 5, 20, 4,
         43, 32, 213, 2007, 5, 20, 4, 43,
-        32, 213, 2),
+        32, 213, default, 2, 'war,nuclear,'),
        (05, 6, 'Incredibly, Wastefully Long Timeline Name', '', 'light', 2020, 5, 20, 4, 43, 32, 213, 2009, 5, 20, 4,
         43, 32, 213, 2008, 5, 20, 4,
-        43, 32, 213, 3),
+        43, 32, 213, default, 3, 'testing,123,'),
        (06, 7, 'Bronze Age Collapse', 'When civilization reset', 'light', -13000, 5, 20, 4, 43, 32, 213, 2010, 5, 20, 4,
         43, 32, 213, 2009, 5, 20, 4,
-        43, 32, 213, 4),
+        43, 32, 213, default, 4, 'bronze,collapse,'),
        (07, 8, 'Life of Bacillus', 'Life and times of a bacterium', 'mad', 2020, 5, 20, 4, 43, 32, 213, 1505, 5, 20, 4,
         43, 32, 213, 2000, 5, 20, 4, 46,
-        32, 213, 5),
+        32, 213, default, 5, 'basillus,life,'),
        (08, 5, 'Decay of Ununoctium', 'Radioactive decay - a study', 'dark', 2020, 5, 20, 4, 43, 32, 213, 1555, 5, 20,
         4, 43, 32, 213, 1550, 5, 20, 4, 43,
-        32, 213, 6)
+        32, 213, default, 6, 'decay,long,')
 ;
 
 
