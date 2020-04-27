@@ -39,7 +39,6 @@ public class GUIManager extends Application {
         main.getChildren().set(1, pastPages.pop());
     }
 
-
     public static void applyStyle(String style) {
         mainStage.getScene().getStylesheets().add("File:src/main/resources/styles/" + style + ".css");
     }
@@ -51,29 +50,33 @@ public class GUIManager extends Application {
         // Used to establish connection to the DB.
         try {
             new DBM();
-            DBM.setupSchema(); //comment out for testing of log in
+            DBM.setupSchema();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        
+        loggedInUser = DBM.getFromDB(DBM.conn.prepareStatement("SELECT * FROM users"), new User()).get(0);  //delete when merging to dev
 
         main = new VBox();
-
         loader = new FXMLLoader(getClass().getResource("../FXML/TopMenu.fxml"));
-
-
         main.getChildren().addAll(loader.load(), new Pane());
-
         menu = loader.getController();
-        menu.updateLoggedInStatus();
 
         mainStage = primaryStage;
         mainStage.setScene(new Scene(main));
 
-        swapScene("Welcome");
+        //swapScene("Welcome_Screen");
+        TimelineView systemUnderDevelopment = swapScene("TimelineView");        //delete when merging to dev
+        systemUnderDevelopment.setActiveTimeline(1);
         applyStyle("DefaultStyle");
-
         mainStage.show();
     }
 
+    @Override
+    public void stop() {
+        try {
+            DBM.close();        //closes the database connection when mainStage is closed
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }

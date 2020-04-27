@@ -135,7 +135,8 @@ public class Dashboard {
 
 	@FXML
 	public void createTimeline(ActionEvent event) throws IOException {
-		GUIManager.swapScene("TimelineEditor");
+		TimelineEditor editor = GUIManager.swapScene("TimelineEditor");
+		editor.populateDisplay();
 
 	}
 
@@ -153,7 +154,7 @@ public class Dashboard {
 	@FXML
 	public void openEventEditor(ActionEvent event) { // created by Jan for meeting with teacher Thursday
 		try {
-			GUIManager.swapScene("MockupTimeline");
+			GUIManager.swapScene("TimelineView");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

@@ -1,65 +1,72 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
-
-<GridPane fx:id="editor" alignment="CENTER_RIGHT" hgap="5" maxHeight="1.7976931348623157E308" prefHeight="700.0" prefWidth="325.0" stylesheets="@../styles/Sidebar.css" vgap="5" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.EventEditor">
+<?import javafx.scene.text.Text?>
+<?import java.net.URL?>
+<GridPane fx:id="editor" alignment="CENTER_RIGHT" hgap="5" maxHeight="1.7976931348623157E308" prefWidth="325.0" vgap="5"
+          xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
+          fx:controller="controllers.EventEditor">
     <columnConstraints>
-        <ColumnConstraints maxWidth="-Infinity" minWidth="-Infinity" prefWidth="150" />
-        <ColumnConstraints maxWidth="-Infinity" minWidth="-Infinity" prefWidth="150" />
+        <ColumnConstraints prefWidth="150"/>
+        <ColumnConstraints prefWidth="150"/>
     </columnConstraints>
     <padding>
-        <Insets bottom="10" left="10" right="10" top="10" />
+        <Insets bottom="10" left="10" right="10" top="10"/>
     </padding>
-    <Label fx:id="headerText" styleClass="headertext" GridPane.columnSpan="2" />
-    <Label styleClass="smallText" text="Title" GridPane.columnSpan="2" GridPane.rowIndex="1" GridPane.valignment="BOTTOM" />
-    <TextField fx:id="titleInput" GridPane.columnSpan="2" GridPane.rowIndex="2" />
-    <Label styleClass="smallText" text="Description" GridPane.columnSpan="2" GridPane.rowIndex="3" GridPane.valignment="BOTTOM" />
-    <TextArea fx:id="descriptionInput" maxHeight="1.7976931348623157E308" prefHeight="300.0" prefWidth="305.0" styleClass="smallText" wrapText="true" GridPane.columnSpan="2" GridPane.rowIndex="4" GridPane.vgrow="ALWAYS" />
-    <Label styleClass="smallText" text="Start" GridPane.columnSpan="2" GridPane.rowIndex="5" GridPane.valignment="BOTTOM" />
-    <DatePicker fx:id="startDate" GridPane.rowIndex="6" />
+    <Label fx:id="headerText" styleClass="headertext" GridPane.columnSpan="2"/>
+    <Label styleClass="smallText" text="Title" GridPane.columnSpan="2" GridPane.rowIndex="1"
+           GridPane.valignment="BOTTOM"/>
+    <TextField fx:id="titleInput" GridPane.columnSpan="2" GridPane.rowIndex="2"/>
+    <Label styleClass="smallText" text="Description" GridPane.columnSpan="2" GridPane.rowIndex="3"
+           GridPane.valignment="BOTTOM"/>
+    <TextArea fx:id="descriptionInput" maxHeight="1.7976931348623157E308" prefHeight="300.0" styleClass="smallText"
+              wrapText="true" GridPane.columnSpan="2" GridPane.rowIndex="4" GridPane.vgrow="ALWAYS"/>
+    <Label styleClass="smallText" text="Start:" GridPane.columnSpan="2" GridPane.rowIndex="5"
+           GridPane.valignment="BOTTOM"/>
+    <FlowPane fx:id="startPane" alignment="CENTER_LEFT" hgap="5.0" GridPane.columnSpan="2" GridPane.rowIndex="6">
+        <Button alignment="CENTER" ellipsisString="" maxWidth="50.0" minWidth="60.0" mnemonicParsing="false"
+                onAction="#toggleStartExpanded" styleClass="tinyButton" text="more..." textAlignment="CENTER">
+            <FlowPane.margin>
+                <Insets left="7.0" top="18.0"/>
+            </FlowPane.margin>
+        </Button>
+    </FlowPane>
     <HBox alignment="BOTTOM_LEFT" spacing="5.0" GridPane.rowIndex="7" GridPane.valignment="BOTTOM">
-        <CheckBox fx:id="hasDuration" onAction="#toggleHasDuration" />
-        <Label contentDisplay="RIGHT" styleClass="smallText" text="End" />
+        <CheckBox fx:id="hasDuration" onAction="#toggleHasDuration"/>
+        <Label contentDisplay="RIGHT" styleClass="smallText" text="End"/>
     </HBox>
-    <DatePicker disable="true" GridPane.rowIndex="8" />
-    <Label styleClass="smallText" text="Image" GridPane.columnSpan="2" GridPane.rowIndex="9" GridPane.valignment="BOTTOM" />
-    <Button fx:id="uploadButton" alignment="CENTER" onAction="#uploadImage" styleClass="tinyButton" text="Upload img" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="10" />
-
-    <Region prefHeight="30" GridPane.rowIndex="11" />
-    <Button fx:id="editButton" alignment="CENTER" maxHeight="30" onAction="#saveEditButton" styleClass="smallButton" text="Save" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="13" />
-    <Button fx:id="deleteButton" alignment="CENTER" maxHeight="30" onAction="#deleteEvent" styleClass="smallButton" text="Delete" GridPane.halignment="CENTER" GridPane.rowIndex="14" />
-    <Button alignment="CENTER" maxHeight="30" onAction="#close" styleClass="smallButton" text="Close" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="14" />
-    <HBox fx:id="startTime" GridPane.columnIndex="1" GridPane.rowIndex="6">
-        <Spinner fx:id="startTime1" />
-        <Spinner fx:id="startTime2" />
-        <Spinner fx:id="startTime3" />
-    </HBox>
-    <HBox fx:id="endTime" disable="true" GridPane.columnIndex="1" GridPane.rowIndex="8">
-        <Spinner fx:id="endTime1" />
-        <Spinner fx:id="endTime2" />
-        <Spinner fx:id="endTime3" />
-    </HBox>
-   <Text fx:id="errorMessage" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="smallText" GridPane.columnSpan="2" GridPane.rowIndex="12" />
-   <ImageView fx:id="image" fitHeight="60.0" fitWidth="60.0" preserveRatio="true" GridPane.halignment="CENTER" GridPane.rowIndex="11" />
-   <rowConstraints>
-      <RowConstraints />
-      <RowConstraints />
-      <RowConstraints />
-      <RowConstraints />
-      <RowConstraints maxHeight="1.7976931348623157E308" prefHeight="500.0" vgrow="SOMETIMES" />
-      <RowConstraints />
-      <RowConstraints />
-      <RowConstraints />
-      <RowConstraints />
-      <RowConstraints />
-      <RowConstraints />
-      <RowConstraints />
-      <RowConstraints minHeight="10.0" prefHeight="30.0" />
-      <RowConstraints />
-      <RowConstraints />
-   </rowConstraints>
+    <FlowPane fx:id="endPane" alignment="CENTER_LEFT" disable="true" hgap="5.0" GridPane.columnSpan="2"
+              GridPane.rowIndex="8">
+        <Button alignment="CENTER" ellipsisString="" maxWidth="50.0" minWidth="60.0" mnemonicParsing="false"
+                onAction="#toggleEndExpanded" styleClass="tinyButton" text="more..." textAlignment="CENTER">
+            <FlowPane.margin>
+                <Insets left="7.0" top="18.0"/>
+            </FlowPane.margin>
+        </Button>
+    </FlowPane>
+    <Label styleClass="smallText" text="Image" GridPane.columnSpan="2" GridPane.rowIndex="9"
+           GridPane.valignment="BOTTOM"/>
+    <Button fx:id="uploadButton" alignment="CENTER" onAction="#uploadImage" styleClass="tinyButton" text="Upload img"
+            GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="10"/>
+    <ComboBox fx:id="imageInput" prefHeight="40.0" prefWidth="175.0" GridPane.columnSpan="2" GridPane.rowIndex="10"
+              GridPane.rowSpan="2"/>
+    <Region prefHeight="30" GridPane.rowIndex="11"/>
+    <Button fx:id="editButton" alignment="CENTER" maxHeight="30" onAction="#saveEditButton" styleClass="smallButton"
+            text="Save" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="13"/>
+    <Button fx:id="deleteButton" alignment="CENTER" maxHeight="30" onAction="#deleteEvent" styleClass="smallButton"
+            text="Delete" GridPane.halignment="CENTER" GridPane.rowIndex="14"/>
+    <Button alignment="CENTER" maxHeight="30" onAction="#close" styleClass="smallButton" text="Close"
+            GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="14"/>
+    <Text fx:id="errorMessage" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="smallText" GridPane.columnSpan="2"
+          GridPane.rowIndex="12"/>
+    <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" GridPane.halignment="CENTER"
+               GridPane.rowIndex="11"/>
+    <Button alignment="CENTER" maxHeight="30" onAction="#addToTimeline" styleClass="smallButton" text="Add to Timeline"
+            GridPane.halignment="CENTER" GridPane.rowIndex="13"/>
+    <stylesheets>
+        <URL value="@../styles/Sidebar.css"/>
+    </stylesheets>
 </GridPane>
