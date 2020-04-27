@@ -58,12 +58,12 @@ public class EventNode {
     public void closeDetails(MouseEvent mouseEvent) {
     	
     }
-
+/*
     @FXML
     public void openEventViewer() {       //upon clicking a node
         parentController.editorController.close();
         parentController.editorController.setEvent(activeEvent);
         parentController.editorController.toggleEditable(false);
         parentController.rightSidebar.getChildren().add(parentController.editorController.editor);
-    }
+    }*/
 }
