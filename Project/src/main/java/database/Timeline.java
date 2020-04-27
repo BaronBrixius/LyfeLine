@@ -189,10 +189,11 @@ public class Timeline implements DBObject<Timeline> {
             keywords.add(s);
         }
         List<Event> eventList;
-        try (PreparedStatement stmt = DBM.conn.prepareStatement("SELECT * FROM events e " +
+        try (PreparedStatement stmt = DBM.conn.prepareStatement("SELECT e.* FROM events e " +
                 "INNER JOIN timelineevents t " +
                 "ON e.EventID = t.EventID " +
-                "WHERE TimelineID = ?")) {
+                "WHERE t.TimelineID = ?")) {
+            stmt.setInt(1, TimelineID);
             eventList = DBM.getFromDB(stmt, new Event());
         }
         return new Timeline(TimelineID, TimelineName, TimelineDesription, Scale, Theme,
@@ -331,5 +332,12 @@ public class Timeline implements DBObject<Timeline> {
 
     public List<Event> getEventList() {
         return eventList;
+    }
+
+    public boolean equals(Timeline other) {
+        if (this.timelineID == 0)
+            return false;
+        return this.timelineID == other.timelineID;
+
     }
 }

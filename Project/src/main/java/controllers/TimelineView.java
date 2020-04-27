@@ -42,7 +42,7 @@ public class TimelineView {
             FXMLLoader editorLoader = new FXMLLoader(getClass().getResource("../FXML/EventEditor.fxml"));
             editorLoader.load();
             editorController = editorLoader.getController();
-            //editorController.setParentController(this);
+            editorController.setParentController(this);
         } catch (IOException e) {
             e.printStackTrace();        //TODO replace with better error message once dev is done
         }

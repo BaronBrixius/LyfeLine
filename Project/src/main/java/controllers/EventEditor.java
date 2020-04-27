@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class EventEditor {
-/*
+
     private final List<VBox> startBoxes = new ArrayList<>();
     private final List<Spinner<Integer>> startInputs = new ArrayList<>();
     private final List<VBox> endBoxes = new ArrayList<>();
@@ -56,6 +56,7 @@ public class EventEditor {
     CheckBox hasDuration = new CheckBox();
     @FXML
     ComboBox<ImageView> imageInput = new ComboBox<>();
+    @FXML
     ImageView image;
     boolean editable = true;
     TimelineView parentController;
@@ -65,7 +66,6 @@ public class EventEditor {
     private File imageChosen; //The current image chosen by FileChooser
     String filename ; //THis is to take the name of the image choosen to add it to the copied version
     String fullOutPath; //When event is saved the path to the image in resource folder is sent here (the one we can use to send to DB)
-
 
 
     public void initialize() {
@@ -145,23 +145,9 @@ public class EventEditor {
         try (PreparedStatement stmt = DBM.conn.prepareStatement("SELECT * FROM Images")) {
             List<String> images = DBM.getFromDB(stmt,
                     rs -> rs.getString("ImageURL"));
-
-
-            //TODO delete the below if you're not using it, I put it in so I could get a blank and I was super rushed cuz it was thursday at like 2pm -Max
-            List<ImageView> views = new ArrayList<>();
-            ImageView blank = new ImageView(new Image("file:src/main/resources/images/pleasedontnameanythingthis.png"));
-            blank.setFitHeight(40);
-            blank.setFitWidth(40);
-            views.add(blank);
-
-            ImageView currImage;
-            for (String s : images) {
-                currImage = new ImageView(new Image("file:src/main/resources/images/" + s));
-                currImage.setFitHeight(40);
-                currImage.setFitWidth(40);
-                views.add(currImage);
-            }
-
+        } catch (SQLException e) {
+            errorMessage.setText("Images could not be loaded");
+        }
     }
 
     private void setupTimeInputBoxes(String timeSpinnerLabel, int maxValue, int i, List<Spinner<Integer>> startTimes, List<VBox> startBoxes) {
@@ -305,7 +291,7 @@ public class EventEditor {
         /*Event newEvent = logic to find Event in database and get its info
         if (newEvent != null)
             return changeEvent(newEvent);*/
-/*
+
         return false;
     }
 
@@ -346,7 +332,7 @@ public class EventEditor {
     }
 
     @FXML
-    private boolean saveConfirm() throws IOException {
+    private boolean saveConfirm() {
         Alert confirmsave = new Alert(Alert.AlertType.CONFIRMATION);
         confirmsave.setTitle("Confirm Save");
         confirmsave.setHeaderText("Saving changes to this event will alter it for all other timelines as well.");
@@ -359,9 +345,8 @@ public class EventEditor {
         return saveEvent();
     }
 
-    void updateEvent() throws IOException {
+    void updateEvent() {
         //setters to update each field of this.event, based on the current info in the text fields
-
         event.setTitle(titleInput.getText());
         event.setDescription(descriptionInput.getText().replaceAll("([^\r])\n", "$1\r\n"));
 
@@ -372,11 +357,9 @@ public class EventEditor {
                     endInputs.get(3).getValue(), endInputs.get(4).getValue(), endInputs.get(5).getValue(), endInputs.get(6).getValue()));
         } else                //if it has no duration, end = start
             event.setEndDate(event.getStartDate());
-
-
     }
 
-    private boolean saveEvent() throws IOException {
+    private boolean saveEvent() {
         updateEvent();
         try {
             if (event.getEventID() == 0) {
@@ -493,5 +476,5 @@ public class EventEditor {
         parentController.rightSidebar.getChildren().remove(editor);
     }
 
-*/
+
 }
