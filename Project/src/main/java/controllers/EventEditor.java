@@ -1,10 +1,7 @@
 package controllers;
 
-import database.*;
-import javafx.stage.FileChooser;
-import javafx.stage.Stage;
-import utils.*;
-import javafx.collections.FXCollections;
+import database.DBM;
+import database.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -12,10 +9,13 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+import utils.Date;
+
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
-import java.awt.image.BufferedImage;
 import java.io.*;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -213,6 +213,7 @@ public class EventEditor {
     }
 
     private String copyImage(File image, String filename) throws IOException { //Takes the file chosen and the name of it
+
         String outPath = "src/main/resources/images/";
         String imageName ="";
         try{
@@ -221,14 +222,26 @@ public class EventEditor {
         try {
             is = new FileInputStream(image);
             System.out.println("reading complete.");
-            int imageNumer = 1; //For updating the number in the parenthesis based on how many with the same name in resources folder
-             imageName = filename;
+
+            imageName = filename;
             //Path for saving, have special events folder now so if timeline guys are doing something they don't override copies
-            while (folderHasImage(imageName)==true){ //Check if our folder has the imagename already if so, add (int) untill no more true
-                int index = imageName.indexOf(".");            ;
-                imageName = imageName.substring(0, index)+ "("+ imageNumer+")" + ".jpg";
-                imageNumer++;
+
+
+            int duplicateDigit = 2;
+
+            while(folderHasImage(imageName)) {
+                int indexOfDot = filename.lastIndexOf(".");
+                if(imageName.matches(".*\\s\\(\\d\\)\\..*")) {
+                    int indexOfBrackets = imageName.lastIndexOf("(");
+                    imageName = imageName.substring(0, indexOfBrackets + 1) +  duplicateDigit + ")" + "." + getFormat(image);
+
+                } else {
+                    imageName = imageName.substring(0, indexOfDot) + " (" + duplicateDigit + ")" + "." + getFormat(image);
+                }
+                duplicateDigit++;
             }
+
+
             os = new FileOutputStream(new File(outPath + imageName));
             byte[] buffer = new byte[1024];
             int length;
@@ -246,6 +259,45 @@ public class EventEditor {
         }
         return outPath+imageName;
     }
+
+//    private String copyImage(File image, String filename) {
+//
+////        String outPath = "src/main/resources/images/";
+//        try {
+//            InputStream is = new FileInputStream(image);
+//
+////            OutputStream os = null;
+//
+//
+//            while(folderHasImage(filename)) {
+//                int indexOfDot = filename.lastIndexOf(".");
+//
+//                if(filename.contains("\\(\\d\\)")) {
+//                    int indexOfBrackets = filename.lastIndexOf("(");
+//                    int duplicateDigit = filename.charAt(filename.lastIndexOf("(") + 1);
+//                    filename = filename.substring(0, indexOfBrackets + 1) +  duplicateDigit + 1 + ")" + "." + getFormat(image);
+//                    break;
+//                }
+//
+//                filename = filename.substring(0, indexOfDot) + "(" + 2 + ")" + "." + getFormat(image);
+//            }
+//
+//            // find the last "(" and work from there.
+//            // potential problems with names containing "("s
+//
+//
+//
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//
+//        return null;
+//    }
+
+
     //Method to check if the image folder has this name already to avoid if two are copied with same name the latter will just override the firs
     private boolean folderHasImage(String path){
         File folder = new File("src/main/resources/images/");
@@ -376,6 +428,7 @@ public class EventEditor {
                 throw new IllegalArgumentException("event not in database");
             else {
                 DBM.deleteFromDB(event);
+                // delete the image as well
                 close();
             }
             prevScreen.populateEventList();             //TODO delete this inelegant solution
