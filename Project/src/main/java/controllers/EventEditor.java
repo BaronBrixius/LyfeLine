@@ -324,8 +324,9 @@ public class EventEditor {
         descriptionInput.setText(event.getEventDescrition());
         System.out.println(event.getImagePath());
         System.out.println(event.getEventID());
-        if(event.getImagePath() != null)
+        if(event.getImagePath() != null){
         image.setImage(new Image("File:" + event.getImagePath()));
+        this.fullOutPath = event.getImagePath();}
         startDate.setValue(LocalDate.of(event.getStartDate().getYear(), event.getStartDate().getMonth(), event.getStartDate().getDay()));
 
         startTime1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23, event.getStartDate().getHours()));
@@ -366,9 +367,10 @@ public class EventEditor {
 
     void updateEvent() throws IOException {
         //setters to update each field of this.event, based on the current info in the text fields
-        this.event.setImage(this.fullOutPath);
+
         event.setTitle(titleInput.getText());
         event.setDescription(descriptionInput.getText().replaceAll("([^\r])\n", "$1\r\n"));
+        event.setImage(this.fullOutPath);
 
         LocalDate start = startDate.getValue();
         event.setStartDate(new Date(start.getYear(), start.getMonth().getValue(), start.getDayOfMonth(),
