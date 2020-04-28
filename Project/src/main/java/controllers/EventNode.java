@@ -74,6 +74,6 @@ public class EventNode implements Comparable<EventNode> {
     public int compareTo(EventNode o) {     //sorts by earlier start, then by longest span as tiebreaker
         if (this.startColumn != o.startColumn)
             return this.startColumn - o.startColumn;
-        return this.columnSpan - o.columnSpan;
+        return o.columnSpan - this.columnSpan;
     }
 }
