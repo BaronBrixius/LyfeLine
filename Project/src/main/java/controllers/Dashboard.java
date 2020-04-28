@@ -5,7 +5,9 @@ import javafx.fxml.FXML;
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -19,6 +21,7 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import utils.Date;
 
 public class Dashboard {
 
@@ -138,17 +141,19 @@ public class Dashboard {
 
 	@FXML
 	public void createTimeline(ActionEvent event) throws IOException {
-		OldTimelineEditor editor = GUIManager.swapScene("TimelineEditor");
-		editor.populateDisplay();
-
+		TimelineView view = GUIManager.swapScene("TimelineView");
+		Timeline t = new Timeline();
+		t.setTimelineOwner(GUIManager.loggedInUser.getUserID());
+		view.setActiveTimeline(t);
+		//public Timeline(String TimelineName, String TimelineDescription, int Scale, String Theme, Date StartDate,
+		//                    Date Enddate, boolean Private, List<String> keywords)
 	}
 
 	@FXML
 	public void editTimeline(ActionEvent event) throws IOException {
 		if (activeTimeline != null) {
-			OldTimelineEditor editor = GUIManager.swapScene("TimelineEditor");
-			editor.setActiveTimeline(this.activeTimeline);
-			editor.populateDisplay();
+			TimelineView view = GUIManager.swapScene("TimelineView");
+			view.setActiveTimeline(this.activeTimeline);
 		}
 	}
 	
@@ -206,13 +211,21 @@ public class Dashboard {
 				btnEdit.setDisable(true);
 			}
 
-			int year = list.getSelectionModel().getSelectedItem().getDateCreated().getYear();
-			int month = list.getSelectionModel().getSelectedItem().getDateCreated().getMonth();
-			int day = list.getSelectionModel().getSelectedItem().getDateCreated().getDay();
+			Timeline timeline = list.getSelectionModel().getSelectedItem();
 
-			titleText.setText("Title: " + list.getSelectionModel().getSelectedItem().getName()
-			+ "\nDescription: " + list.getSelectionModel().getSelectedItem().getTimelineDescription()
-			+ "\nDate Created: " + year + "/" + month + "/" + day);
+			int year = timeline.getDateCreated().getYear();
+			int month = timeline.getDateCreated().getMonth();
+			int day = timeline.getDateCreated().getDay();
+
+			StringBuilder keyWords = new StringBuilder();
+			for (String s: timeline.getKeywords())
+				keyWords.append(s + ", ");
+			keyWords.delete(keyWords.length() - 2, keyWords.length());
+
+			titleText.setText("Title: " + timeline.getName()
+			+ "\nDescription: " + timeline.getTimelineDescription()
+			+ "\nDate Created: " + year + "/" + month + "/" + day
+			+ "\nKeywords: " + keyWords);
 
 		}
 		else

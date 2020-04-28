@@ -1,7 +1,5 @@
 package controllers;
 
-import java.time.Duration;
-
 import database.Event;
 import database.Timeline;
 import javafx.fxml.FXML;
@@ -59,7 +57,6 @@ public class EventNode implements Comparable<EventNode> {
 
     @FXML
     public void closeDetails(MouseEvent mouseEvent) {
-
     }
 
     @FXML
@@ -67,6 +64,7 @@ public class EventNode implements Comparable<EventNode> {
         parentController.editorController.close();
         parentController.editorController.setEvent(activeEvent);
         parentController.editorController.toggleEditable(false);
+        parentController.rightSidebar.getChildren().clear();
         parentController.rightSidebar.getChildren().add(parentController.editorController.editor);
     }
 
