@@ -40,7 +40,8 @@ public class GUIManager extends Application {
     }
 
     public static void applyStyle(String style) {
-        mainStage.getScene().getStylesheets().add("File:src/main/resources/styles/" + style + ".css");
+    	mainStage.getScene().getStylesheets().remove(0);
+    	mainStage.getScene().getStylesheets().add("File:src/main/resources/styles/" + style + ".css");
     }
 
     //default window set up
@@ -64,10 +65,10 @@ public class GUIManager extends Application {
         mainStage = primaryStage;
         mainStage.setScene(new Scene(main));
 
-        swapScene("Welcome");
-        //TimelineView systemUnderDevelopment = swapScene("TimelineView");        //delete when merging to dev
-        //systemUnderDevelopment.setActiveTimeline(1);
-        applyStyle("DefaultStyle");
+        //swapScene("Welcome_Screen");
+        TimelineView systemUnderDevelopment = swapScene("TimelineView");        //delete when merging to dev
+        systemUnderDevelopment.setActiveTimeline(1);
+        mainStage.getScene().getStylesheets().add("File:src/main/resources/styles/DefaultStyle.css");
         mainStage.show();
     }
 

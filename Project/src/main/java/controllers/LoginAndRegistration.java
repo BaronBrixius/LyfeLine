@@ -43,7 +43,7 @@ public class LoginAndRegistration {
 
         Parent root = FXMLLoader.load(GUIManager.class.getResource("../FXML/Login.fxml"));
         loginStage.setScene(new Scene(root));
-        loginStage.getScene().getStylesheets().add("File:src/main/resources/styles/DefaultStyle.css");
+        loginStage.getScene().getStylesheets().add(GUIManager.mainStage.getScene().getStylesheets().get(0));
         loginStage.show();
     }
 
@@ -56,7 +56,7 @@ public class LoginAndRegistration {
         registerStage.initModality(Modality.WINDOW_MODAL);  //I don't actually know what Modality is, Google just said this works and it does.
 
         registerStage.setScene(new Scene(FXMLLoader.load(GUIManager.class.getResource("../FXML/Register.fxml"))));
-        registerStage.getScene().getStylesheets().add("File:src/main/resources/styles/DefaultStyle.css");
+        registerStage.getScene().getStylesheets().add(GUIManager.mainStage.getScene().getStylesheets().get(0));
         registerStage.show();
 
     }
