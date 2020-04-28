@@ -1,44 +1,39 @@
-CREATE TABLE `events` (
-  `EventID` int NOT NULL AUTO_INCREMENT,
-  `EventOwner` int NOT NULL,
-  `EventType` tinyint NOT NULL,
-  `EventName` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
-  `EventDescription` varchar(5000) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
-  `StartYear` bigint NOT NULL,
-  `StartMonth` tinyint unsigned NOT NULL,
-  `StartDay` tinyint unsigned NOT NULL,
-  `StartHour` tinyint unsigned DEFAULT NULL,
-  `StartMinute` tinyint unsigned DEFAULT NULL,
-  `StartSecond` tinyint unsigned DEFAULT NULL,
-  `StartMillisecond` smallint unsigned DEFAULT NULL,
-  `EndYear` bigint DEFAULT NULL,
-  `EndMonth` tinyint unsigned DEFAULT NULL,
-  `EndDay` tinyint unsigned DEFAULT NULL,
-  `EndHour` tinyint unsigned DEFAULT NULL,
-  `EndMinute` tinyint unsigned DEFAULT NULL,
-  `EndSecond` tinyint unsigned DEFAULT NULL,
-  `EndMillisecond` smallint unsigned DEFAULT NULL,
-  `CreatedYear` bigint DEFAULT NULL,
-  `CreatedMonth` tinyint unsigned DEFAULT NULL,
-  `CreatedDay` tinyint unsigned DEFAULT NULL,
-  `CreatedHour` tinyint unsigned DEFAULT NULL,
-  `CreatedMinute` tinyint unsigned DEFAULT NULL,
-  `CreatedSecond` tinyint unsigned DEFAULT NULL,
-  `CreatedMillisecond` smallint unsigned DEFAULT NULL,
-  PRIMARY KEY (`EventID`),
-  UNIQUE KEY `EventID_UNIQUE` (`EventID`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+CREATE TABLE `events`
+(
+    `EventID`            int               NOT NULL AUTO_INCREMENT,
+    `EventOwner`         int               NOT NULL,
+    `ImagePath`          nvarchar(5000)    DEFAULT NULL,
+    `EventName`          nvarchar(100)     DEFAULT NULL,
+    `EventDescription`   nvarchar(5000)    DEFAULT NULL,
+    `StartYear`          bigint            NOT NULL,
+    `StartMonth`         tinyint unsigned  NOT NULL,
+    `StartDay`           tinyint unsigned  NOT NULL,
+    `StartHour`          tinyint unsigned  NOT NULL,
+    `StartMinute`        tinyint unsigned  NOT NULL,
+    `StartSecond`        tinyint unsigned  NOT NULL,
+    `StartMillisecond`   smallint unsigned NOT NULL,
+    `EndYear`            bigint            DEFAULT NULL,
+    `EndMonth`           tinyint unsigned  DEFAULT NULL,
+    `EndDay`             tinyint unsigned  DEFAULT NULL,
+    `EndHour`            tinyint unsigned  DEFAULT NULL,
+    `EndMinute`          tinyint unsigned  DEFAULT NULL,
+    `EndSecond`          tinyint unsigned  DEFAULT NULL,
+    `EndMillisecond`     smallint unsigned DEFAULT NULL,
+    `CreatedYear`        bigint            DEFAULT NULL,
+    `CreatedMonth`       tinyint unsigned  DEFAULT NULL,
+    `CreatedDay`         tinyint unsigned  DEFAULT NULL,
+    `CreatedHour`        tinyint unsigned  DEFAULT NULL,
+    `CreatedMinute`      tinyint unsigned  DEFAULT NULL,
+    `CreatedSecond`      tinyint unsigned  DEFAULT NULL,
+    `CreatedMillisecond` smallint unsigned DEFAULT NULL,
+    PRIMARY KEY (`EventID`),
+    UNIQUE KEY `EventID_UNIQUE` (`EventID`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_general_ci;
 
 
-CREATE TABLE `images` (
-  `ImageID` int NOT NULL AUTO_INCREMENT,
-  `ImageULR` char(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  PRIMARY KEY (`ImageID`),
-  UNIQUE KEY `ImageID_UNIQUE` (`ImageID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
-
-CREATE TRIGGER CreatedDateTime2
+CREATE TRIGGER CreatedDateTimeEvents
     BEFORE INSERT
     ON events
     FOR EACH ROW
@@ -55,34 +50,75 @@ BEGIN
 END;
 
 
+CREATE TRIGGER EndDate
+    BEFORE INSERT
+    ON events
+    FOR EACH ROW
+BEGIN
+    if (isnull(new.`EndYear`)) then
+        set new.`EndYear` = new.StartYear;
+        set new.`EndMonth` = new.StartMonth;
+        set new.`EndDay` = new.StartDay;
+        set new.`EndHour` = new.StartHour;
+        set new.`EndMinute` = new.StartMinute;
+        set new.`EndSecond` = new.StartSecond;
+        set new.`EndMillisecond` = new.StartMillisecond;
+    end if;
+END;
+
+
 -- Lookup table for the scale column of timeline table
 
 
-CREATE TABLE `scale_lookup` (
-    `ID`   int           NOT NULL AUTO_INCREMENT,
-    `unit` nvarchar(20)  NOT NULL,
-    PRIMARY KEY (`ID`))
-    ENGINE=InnoDB
-    AUTO_INCREMENT=9
-    DEFAULT CHARSET=utf8mb4
-    COLLATE=utf8mb4_general_ci;
+CREATE TABLE `scale_lookup`
+(
+    `ID`   int          NOT NULL AUTO_INCREMENT,
+    `unit` nvarchar(20) NOT NULL,
+    PRIMARY KEY (`ID`)
+)
+    ENGINE = InnoDB
+    AUTO_INCREMENT = 9
+    DEFAULT CHARSET = utf8mb4
+    COLLATE = utf8mb4_general_ci;
 
 
 INSERT INTO `scale_lookup`
 (`ID`,
  `unit`)
-VALUES (1, 'Seconds'),
-       (2, 'Minutes'),
-       (3, 'Hours'),
-       (4, 'Days'),
-       (5, 'Weeks'),
-       (6, 'Months'),
-       (7, 'Years'),
-       (8, 'Decades');
+VALUES (1, 'Milliseconds'),
+       (2, 'Seconds'),
+       (3, 'Minutes'),
+       (4, 'Hours'),
+       (5, 'Days'),
+       (6, 'Weeks'),
+       (7, 'Months'),
+       (8, 'Years'),
+       (9, 'Decades'),
+       (10, 'Centuries'),
+       (11, 'Millennia')
+;
 
 
 
+CREATE TABLE `Images`
+(
+    `ImageID`  int NOT NULL AUTO_INCREMENT,
+    `ImageURL` varchar(255) DEFAULT NULL,
+    PRIMARY KEY (`ImageID`),
+    UNIQUE KEY `ImageID_UNIQUE` (`ImageID`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_general_ci;
 
+
+INSERT INTO `Images`
+(`ImageID`,
+ `ImageURL`)
+VALUES (1, 'image1.png'),
+       (2, 'image2.jpg'),
+       (3, 'image3.png'),
+       (4, 'image4.png'),
+       (5, 'image5.png');
 
 
 CREATE TABLE `groups`
@@ -139,7 +175,6 @@ CREATE TABLE `users`
   COLLATE = utf8mb4_general_ci;
 
 
-
 -- Code for creating timelines
 CREATE TABLE `timelines`
 (
@@ -170,7 +205,8 @@ CREATE TABLE `timelines`
     `CreatedSecond`       tinyint unsigned  DEFAULT NULL,
     `CreatedMillisecond`  smallint unsigned DEFAULT NULL,
     `Private`             boolean           DEFAULT true,
-    `TimelineOwner`       int,
+    `TimelineOwner`       int               NOT NULL,
+    `Keywords`            varchar(1000)     DEFAULT NULL,
     PRIMARY KEY (`TimelineID`),
     UNIQUE KEY `TimelineID_UNIQUE` (`TimelineID`)
 ) ENGINE = InnoDB
@@ -248,15 +284,13 @@ VALUES ('1', 'Ben', 'Ben@gmail.com',
         'n15sLcjfgleZFTvBQDvi1MhFDJ3R7u', '0'),
        ('11', 'Chris', 'Chris@gmail.com',
         'ErFKIFDX5jx7+rFJDpMUpZOTHgCJVUZl6fPsdRZt4m96HpMZknbot/1pr1ns/xChn0V0wrXFbvcs7vTHNZxu+A==',
-        '1cQoymwLl05zLbl2q36uWviIB8ffcS', '0'),
+        '1cQoymwLl05zLbl2q36uWviIB8ffcS', '1'),
        ('12', 'Jan', 'Jan@gmail.com',
         'J4zKZyfXIRQinm4jw/i1+3WXaVrTX9Wl0YhJNUHprUBE0ogUfEojn3gfOo2jBxqb9gtUxEhnhIGxpOfwerI+fQ==',
         'CEc1AAkRdz7BguqKQL4e4wrw7A3j6L', '0'),
        ('13', 'Hans Ove', 'Hans@math.biz',
         'tPmbHxe4qtzP8AaCpQJs/Hjr8RW3xDUGx+kk75AENDVY7Kkz85jJ/H1KICOH9TOsZPg4e/4ldTM9WzajCOJQiw==',
-        '8IzHZXvKP9hwwIr5EflEvhLYdo2AVY', '0')
-;
-
+        '8IzHZXvKP9hwwIr5EflEvhLYdo2AVY', '0');
 
 
 INSERT INTO `timelines`
@@ -264,39 +298,38 @@ INSERT INTO `timelines`
  `Scale`, `TimelineName`, `TimelineDescription`, `Theme`, `StartYear`, `StartMonth`, `StartDay`, `StartHour`,
  `StartMinute`, `StartSecond`, `StartMillisecond`, `EndYear`, `EndMonth`, `EndDay`, `EndHour`, `EndMinute`, `EndSecond`,
  `EndMillisecond`, `CreatedYear`, `CreatedMonth`, `CreatedDay`, `CreatedHour`, `CreatedMinute`, `CreatedSecond`,
- `CreatedMillisecond`, `Private`, `TimelineOwner`)
-VALUES (01, 1, 'Fall of Rome', 'Out with a wimper, not a bang', 'dark', -350, 5, 20, 4, 43, 32, 213, 2001, 5, 20, 4,
+ `CreatedMillisecond`, `Private`, `TimelineOwner`, `Keywords`)
+VALUES (01, 8, 'Fall of Rome', 'Out with a wimper, not a bang', 'dark', 45, 5, 20, 4, 43, 32, 213, 2001, 5, 20, 4,
         43, 32, 213, 2000, 5, 20, 4, 43,
-        32, 213, default, 1),
-       (02, 2, 'New Timeline', '', 'dark', 2020, 5, 20, 4, 43, 32, 213, 2005, 5, 20, 4, 43, 32, 213, 2003, 5, 20, 4,
-        43, 32, 213, default, 1),
-       (03, 4, 'Hound of Baskervilles', 'Investigation of an attempted murder', 'light', 1902, 5, 20, 4, 43, 32, 213,
+        32, 213, default, 1, 'Caesar,Rome,'),
+       (02, 2, 'New Timeline', '', 'dark', 2000, 5, 20, 4, 43, 20, 213, 2000, 5, 20, 4, 43, 32, 213, 2003, 5, 20, 4,
+        43, 32, 213, default, 1, 'stuff,things,test,test1,test3,test4,test5,test6,'),
+       (03, 4, 'Hound of Baskervilles', 'Investigation of an attempted murder', 'light', 2006, 5, 19, 4, 43, 32, 213,
         2006, 5, 20, 4, 43, 32, 213, 2003, 5, 20, 3,
-        43, 32, 213, default, 2),
-       (04, 5, 'Dr. Strangelove', 'A dark comedy on nuclear war', 'dark', 1987, 5, 20, 4, 43, 32, 213, 2008, 5, 20, 4,
+        43, 32, 213, default, 2, 'murder,death,'),
+       (04, 5, 'Dr. Strangelove', 'A dark comedy on nuclear war', 'dark', 2007, 5, 18, 4, 43, 32, 213, 2007, 5, 20, 4,
         43, 32, 213, 2007, 5, 20, 4, 43,
-        32, 213, default, 2),
-       (05, 6, 'Incredibly, Wastefully Long Timeline Name', '', 'light', 2020, 5, 20, 4, 43, 32, 213, 2009, 5, 20, 4,
+        32, 213, default, 2, 'war,nuclear,'),
+       (05, 6, 'Incredibly, Wastefully Long Timeline Name', '', 'light', 2009, 2, 20, 4, 43, 32, 213, 2009, 5, 20, 4,
         43, 32, 213, 2008, 5, 20, 4,
-        43, 32, 213, default, 3),
-       (06, 7, 'Bronze Age Collapse', 'When civilization reset', 'light', -13000, 5, 20, 4, 43, 32, 213, 2010, 5, 20, 4,
+        43, 32, 213, default, 3, 'testing,123,'),
+       (06, 11, 'Bronze Age Collapse', 'When civilization reset', 'light', -13000, 5, 20, 4, 43, 32, 213, 2020, 5, 20, 4,
         43, 32, 213, 2009, 5, 20, 4,
-        43, 32, 213, default, 4),
-       (07, 8, 'Life of Bacillus', 'Life and times of a bacterium', 'mad', 2020, 5, 20, 4, 43, 32, 213, 1505, 5, 20, 4,
+        43, 32, 213, default, 4, 'bronze,collapse,'),
+       (07, 8, 'Life of Bacillus', 'Life and times of a bacterium', 'mad', 1450, 5, 20, 4, 43, 32, 213, 1505, 5, 20, 4,
         43, 32, 213, 2000, 5, 20, 4, 46,
-        32, 213, default, 5),
-       (08, 5, 'Decay of Ununoctium', 'Radioactive decay - a study', 'dark', 2020, 5, 20, 4, 43, 32, 213, 1555, 5, 20,
+        32, 213, default, 5, 'basillus,life,'),
+       (08, 5, 'Decay of Ununoctium', 'Radioactive decay - a study', 'dark', 2000, 4, 20, 4, 43, 32, 213, 2000, 5, 20,
         4, 43, 32, 213, 1550, 5, 20, 4, 43,
-        32, 213, default, 6);
+        32, 213, default, 6, 'decay,long,')
+;
 
 
-
-
-
-INSERT INTO `events` (`EventID`,`EventOwner`, `EventType`, `EventName`, `EventDescription`, `StartYear`, `StartMonth`,
-                      `StartDay`, `StartHour`, `StartMinute`, `StartSecond`, `StartMillisecond`, `EndYear`, `EndMonth`, `EndDay`,
+INSERT INTO `events` (`EventOwner`, `EventName`, `EventDescription`, `StartYear`, `StartMonth`,
+                      `StartDay`, `StartHour`, `StartMinute`, `StartSecond`, `StartMillisecond`, `EndYear`, `EndMonth`,
+                      `EndDay`,
                       `EndHour`, `EndMinute`, `EndSecond`, `EndMillisecond`)
-VALUES ('1','1', '1', 'Crossing the Rubicon', 'Julius Caesar''s crossing the Rubicon river in January 49 BC precipitated
+VALUES ( '1', 'Crossing the Rubicon', 'Julius Caesar''s crossing the Rubicon river in January 49 BC precipitated
         the Roman Civil War, which ultimately led to Caesar becoming dictator and the rise of the imperial era of Rome.
         Caesar had been appointed to a governorship over a region that ranged from southern Gaul to Illyricum (but not Italy).
         As his term of governorship ended, the Roman Senate ordered Caesar to disband his army and return to Rome. He was
@@ -304,26 +337,29 @@ VALUES ('1','1', '1', 'Crossing the Rubicon', 'Julius Caesar''s crossing the Rub
         In January of 49 BC, Caesar brought the 13th legion across the river, which the Roman government considered
         insurrection, treason, and a declaration of war on the Roman Senate. According to some authors, he is said to have
         uttered the phrase "alea iacta est"—the die is cast—as his army marched through the shallow river.'
-        , '-49', '1', '13', '17', '25', '40', '20', '-30', '10', '25', '22', '50', '45','40'),
-        ('2','2', '1', 'Great Roman Civil War', 'The Great Roman Civil War (49–45 BC), also known as Caesar''s Civil War, was
+       , '49', '1', '13', '17', '25', '40', '20', '52', '10', '25', '22', '50', '45', '40'),
+       ( '1', 'New Event', '.'
+       , '49', '1', '13', '17', '25', '40', '20', '56', '10', '25', '22', '50', '45', '40'),
+       ('1', 'Great Roman Civil War', 'The Great Roman Civil War (49–45 BC), also known as Caesar''s Civil War, was
         one of the last politico-military conflicts in the Roman Republic before the establishment of the Roman Empire.
         It began as a series of political and military confrontations, between Julius Caesar (100–44 BC), his political supporters
         (broadly known as Populares), and his legions, against the Optimates (or Boni), the politically conservative and socially
         traditionalist faction of the Roman Senate, who were supported by Pompey (106–48 BC) and his legions.[1]',
-        '-49', '5', '5', '5', '10', '10', '10', '-45', '10', '25', '22', '50', '45','40'),
-        ('3','1', '1', 'Marcus Tullius Cicero', 'Marcus Tullius Cicero[a] (/ˈsɪsəroʊ/ SISS-ə-roh, Latin:
+        '48', '5', '5', '5', '10', '10', '10', '51', '10', '25', '22', '50', '45', '40'),
+       ('1', 'Marcus Tullius Cicero', 'Marcus Tullius Cicero[a] (/ˈsɪsəroʊ/ SISS-ə-roh, Latin:
         [ˈmaːrkʊs ˈtʊllɪ.ʊs ˈkɪkɛroː]; 3 January 106 BC – 7 December 43 BC) was a Roman statesman, lawyer and Academic
         Skeptic philosopher[3] who wrote extensively on rhetoric, orations, philosophy, and politics, and is considered one of
         Rome''s greatest orators and prose stylists.[4][5] A leading political figure in the final years of the Roman Republic,
         Cicero vainly tried to uphold the republican system''s integrity during the instability that led to the establishment of
         the Roman Empire.[6] He came from a wealthy municipal family of the Roman equestrian order, and served as consul in the
-        year 63 BC.', '-106', '8', '8', '9', '20', '20', '25', '-43', '10', '30', '22', '50', '45','40');
+        year 63 BC.', '56', '8', '8', '9', '20', '20', '25', '59', '10', '30', '22', '50', '45', '40');
 
 
 INSERT INTO `timelineevents` (`TimelineID`, `EventID`)
 VALUES ('1', '1'),
        ('1', '2'),
        ('1', '3'),
+       ('1', '4'),
        ('2', '2'),
        ('3', '2'),
        ('4', '1'),

@@ -16,7 +16,7 @@
 
 <GridPane alignment="CENTER" prefHeight="452.0" prefWidth="670.0" stylesheets="@../styles/DefaultStyle.css"
           xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
-          fx:controller="AdminRoleManager_GUI">
+          fx:controller="controllers.AdminRoleManager">
     <columnConstraints>
         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>

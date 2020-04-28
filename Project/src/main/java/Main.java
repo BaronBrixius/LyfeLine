@@ -1,7 +1,12 @@
+import database.DBM;
+import database.Timeline;
+import database.User;
+import utils.Date;
+import database.Event;
+
 import java.io.FileNotFoundException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
 class Main {
@@ -11,7 +16,6 @@ class Main {
         try {
             new DBM();
             DBM.setupSchema();       //destroys + remakes DB with default settings, can comment this out after first run if desired
-
 
             //Makes a list of events from the DB and prints it
             stmt = DBM.conn.prepareStatement("SELECT * FROM events");
