@@ -116,7 +116,7 @@ public class TimelineView {
 		timelineGrid.getColumnConstraints().clear();
 
 		Pane mainLine = new Pane();
-		mainLine.setStyle("-fx-background-color: #6C54F2;");
+		mainLine.getStyleClass().add("timeline");
 		int numberOfCol = activeTimeline.getStartDate().distanceTo(activeTimeline.getEndDate(),
 				activeTimeline.getScale());
 		int counter, start = 0, frequency=1;
