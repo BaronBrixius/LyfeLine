@@ -8,6 +8,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 
 public class EventNode implements Comparable<EventNode> {
@@ -59,7 +61,6 @@ public class EventNode implements Comparable<EventNode> {
 
     @FXML
     public void closeDetails(MouseEvent mouseEvent) {
-
     }
 
     @FXML
@@ -67,6 +68,7 @@ public class EventNode implements Comparable<EventNode> {
         parentController.editorController.close();
         parentController.editorController.setEvent(activeEvent);
         parentController.editorController.toggleEditable(false);
+        parentController.rightSidebar.getChildren().clear();
         parentController.rightSidebar.getChildren().add(parentController.editorController.editor);
     }
 
