@@ -282,6 +282,8 @@ public class EventEditor {
                     e.printStackTrace();
                 }
             	tempLocation = null;
+            	this.filename = imageChosen.getName(); //THis is to take the name of the image choosen to add it to the copied version
+                image.setImage(new Image("File:" + this.imageChosen.getAbsolutePath()));
             }
         	else if (event.getImagePath() == null && !placeholder){
             	this.filename = imageChosen.getName(); //THis is to take the name of the image choosen to add it to the copied version
