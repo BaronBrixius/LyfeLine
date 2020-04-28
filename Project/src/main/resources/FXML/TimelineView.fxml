@@ -17,7 +17,7 @@
 
 <BorderPane fx:id="mainBorderPane" prefHeight="800.0" prefWidth="1292.0" stylesheets="@../styles/DefaultStyle.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.TimelineView">
    <bottom>
-      <HBox id="HBox" alignment="CENTER_LEFT" spacing="5.0" BorderPane.alignment="CENTER">
+      <HBox id="HBox" alignment="CENTER_LEFT" fillHeight="false" maxHeight="50.0" spacing="5.0" BorderPane.alignment="CENTER">
          <children>
             <Button fx:id="backButton" alignment="CENTER" mnemonicParsing="false" onAction="#returnToDashboard" styleClass="smallButton" text="Back" />
             <Pane maxHeight="-Infinity" HBox.hgrow="ALWAYS" />
@@ -32,7 +32,7 @@
       <StackPane fx:id="leftSidebar" BorderPane.alignment="CENTER" />
    </left>
    <center>
-      <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="scroll-bar" stylesheets="@../styles/DefaultStyle.css" BorderPane.alignment="CENTER">
+      <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" styleClass="scroll-bar" stylesheets="@../styles/DefaultStyle.css" BorderPane.alignment="CENTER">
          <content>
             <AnchorPane id="Content" maxHeight="1.7976931348623157E308" prefHeight="545.0" prefWidth="430.0">
                <children>
