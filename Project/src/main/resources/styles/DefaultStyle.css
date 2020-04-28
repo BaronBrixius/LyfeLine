@@ -23,7 +23,7 @@ Text{
 }
 
 /*The following apply to any object of the corresponding name.*/
-.button{
+.button, .toggle-button{
     -fx-font-size: 2em;
     -fx-font-weight: bold;
     -fx-pref-width: 250px;
@@ -35,7 +35,7 @@ Text{
 
 
 /*This is what the button looks like when you hover over it*/
-.button:hover {
+.button:hover, .toggle-button:hover, .toggle-button:selected{
     -fx-background-color: #126c82;
     -fx-scale-y: 1.1;
 }

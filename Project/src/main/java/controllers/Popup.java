@@ -1,9 +1,10 @@
 package controllers;
 
-import database.*;
+import database.DBM;
+import database.Event;
+import database.Timeline;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.text.Text;
@@ -35,6 +36,7 @@ public class Popup {
         try {
             switch (mode) {
                 case 1:
+                    list.getSelectionModel().getSelectedItem().deleteOrphans();
                     DBM.deleteFromDB(list.getSelectionModel().getSelectedItem());
                     break;
                 case 2:

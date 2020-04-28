@@ -36,8 +36,6 @@ public class EventEditor {
     @FXML
     public Button editButton;
     @FXML
-    public Button uploadButton;
-    @FXML
     public Button deleteButton;
     @FXML
     public Label headerText;
@@ -47,7 +45,9 @@ public class EventEditor {
     public FlowPane startPane;
     @FXML
     public FlowPane endPane;
-    public Button clearButton;
+    public Button deleteImageButton;
+    @FXML
+    Button uploadImageButton;
     @FXML
     TextField titleInput = new TextField();
     @FXML
@@ -190,11 +190,33 @@ public class EventEditor {
             endPane.getStyleClass().add("DisabledAnyways");
     }
 
-    public void saveEditButton() {
+    public void saveEditButton() throws IOException {
+        if (uploadImageButton.isVisible()) {//So we do not copy when edit is pressed/only save is pressed
+            if (this.imageChosen != null) {//Only keep on with copy if there has been a chosen image
+                if (this.event.getEventID() == 0) {
+                    if (this.event.getImagePath() == null)
+                        this.fullOutPath = copyImage(imageChosen, filename);
+                    else if (!this.event.getImagePath().equalsIgnoreCase(this.fullOutPath))
+                        this.fullOutPath = copyImage(imageChosen, filename);
+                }
+                if (this.event.getEventID() > 0) {
+                    if (this.event.getImagePath() == null)
+                        this.fullOutPath = copyImage(imageChosen, filename);
+                    else if (!this.event.getImagePath().equalsIgnoreCase(this.fullOutPath))
+                        this.fullOutPath = copyImage(imageChosen, filename);
+                }
+            }
+        }
+
+        //To save to DB
+        this.event.setImage(this.fullOutPath);
+
         if (editable && hasChanges())   //if unsaved changes, try to save
             if (!saveConfirm())         //if save cancelled, don't change mode
                 return;
         toggleEditable(!editable);
+        fullOutPath = null;
+        imageChosen = null;
     }
 
     void toggleEditable(boolean editable) {
@@ -208,8 +230,10 @@ public class EventEditor {
         for (VBox box : endBoxes)
             box.getChildren().get(1).setDisable(!editable);
         imageInput.setDisable(!editable);
-        uploadButton.setVisible(editable);
-        uploadButton.setDisable(!editable);
+        uploadImageButton.setVisible(editable);
+        uploadImageButton.setDisable(!editable);
+        deleteImageButton.setVisible(editable);
+        deleteImageButton.setDisable(!editable);
 
         if (editable)
             editor.getStylesheets().remove("styles/DisabledViewable.css");
@@ -234,13 +258,36 @@ public class EventEditor {
                 new FileChooser.ExtensionFilter("GIF", "*.gif"),
                 new FileChooser.ExtensionFilter("WBMP", "*.wbmp")
         );
-        this.imageChosen = chooser.showOpenDialog(new Stage()); //This is the stage that needs to be edited (ok,cancel button) for the filechooser... do in FXML ?
-        this.filename = imageChosen.getName(); //THis is to take the name of the image choosen to add it to the copied version
-        System.out.println(this.imageChosen.getAbsolutePath());
-        image.setImage(new Image("File:" + this.imageChosen.getAbsolutePath()));
-
-        System.out.println("Button pressed.");
+        this.imageChosen = chooser.showOpenDialog(GUIManager.mainStage); //This is the stage that needs to be edited (ok,cancel button) for the filechooser... do in FXML ?
+        if(this.imageChosen!= null){
+            if (event.getImagePath() == null){
+            	this.filename = imageChosen.getName(); //THis is to take the name of the image choosen to add it to the copied version
+                image.setImage(new Image("File:" + this.imageChosen.getAbsolutePath()));
+                System.out.println("img W/o previous");
+            } else if (ImageSaveConfirm() || event.getImagePath() != null) {
+                this.filename = imageChosen.getName(); //THis is to take the name of the image choosen to add it to the copied version
+                image.setImage(new Image("File:" + this.imageChosen.getAbsolutePath()));
+                System.out.println("img is in db");
+            }
+        } else
+            System.out.println("Cancel Button pressed.");
     }
+
+    @FXML
+    private boolean ImageSaveConfirm() {
+        Alert confirmsaveimage = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmsaveimage.setTitle("Confirm Change");
+        confirmsaveimage.setHeaderText("Replacing or removing an image will permanently delete it from the system.");
+        confirmsaveimage.setContentText("Would you like to make the change?");
+
+        Optional<ButtonType> result = confirmsaveimage.showAndWait();
+
+        if (result.get() == ButtonType.CANCEL)
+            return false;
+        else
+            return true;
+    }
+
 
     //Method that returns the image format as a string i.e sun.png == "png"
     private String getFormat(File f) throws IOException {
@@ -256,20 +303,28 @@ public class EventEditor {
 
     private String copyImage(File image, String filename) throws IOException { //Takes the file chosen and the name of it
         String outPath = "src/main/resources/images/";
-        String imageName = "";
+        String imageName = filename;
         InputStream is = null;
         OutputStream os = null;
         try {
             is = new FileInputStream(image);
             System.out.println("reading complete.");
-            int imageNumer = 1; //For updating the number in the parenthesis based on how many with the same name in resources folder
-            imageName = filename;
             //Path for saving, have special events folder now so if timeline guys are doing something they don't override copies
-            while (folderHasImage(imageName)) { //Check if our folder has the imagename already if so, add (int) untill no more true
-                int index = imageName.indexOf(".");
-                imageName = imageName.substring(0, index) + "(" + imageNumer + ")" + ".jpg";
-                imageNumer++;
+            int duplicateDigit = 2;
+
+            while (folderHasImage(imageName)) {
+                int indexOfDot = filename.lastIndexOf(".");
+                if (imageName.matches(".*\\s\\(\\d\\)\\..*")) {
+                    int indexOfBrackets = imageName.lastIndexOf("(");
+                    imageName = imageName.substring(0, indexOfBrackets + 1) + duplicateDigit + ")" + "." + getFormat(image);
+
+                } else {
+                    imageName = imageName.substring(0, indexOfDot) + " (" + duplicateDigit + ")" + "." + getFormat(image);
+                }
+                duplicateDigit++;
             }
+
+
             os = new FileOutputStream(new File(outPath + imageName));
             byte[] buffer = new byte[1024];
             int length;
@@ -312,26 +367,34 @@ public class EventEditor {
         /*Event newEvent = logic to find Event in database and get its info
         if (newEvent != null)
             return changeEvent(newEvent);*/
-
         return false;
     }
 
     public boolean setEvent(Event event) {
         parentController.editorController.close();
         this.event = event;
-        //Check if Admin
-        if (GUIManager.loggedInUser.getUserID() != event.getUserID()) {
-            editButton.setVisible(false);
-            editButton.setDisable(true);
-            deleteButton.setVisible(false);
-            deleteButton.setDisable(true);
-        }
+        if (this.event.getEventID() == 0)       //if new event, set current user as owner
+            this.event.setUserID(GUIManager.loggedInUser.getUserID());
+        //Check if Owner
+        boolean owner = GUIManager.loggedInUser.getUserID() == this.event.getUserID();
+        editButton.setDisable(!owner);
+        editButton.setVisible(owner);
+        deleteButton.setDisable(!owner);
+        deleteButton.setVisible(owner);
+
         return populateDisplay();
     }
 
     private boolean populateDisplay() {
         titleInput.setText(event.getEventName());
         descriptionInput.setText(event.getEventDescrition());
+
+        System.out.println(event.getImagePath());
+        System.out.println(event.getEventID());
+        if (event.getImagePath() != null) {
+            image.setImage(new Image("File:" + event.getImagePath()));
+            this.fullOutPath = event.getImagePath();
+        }
 
         startInputs.get(0).getValueFactory().setValue(event.getStartDate().getYear());
         startInputs.get(1).getValueFactory().setValue(event.getStartDate().getMonth());
@@ -382,17 +445,29 @@ public class EventEditor {
             event.setEndDate(new Date(endInputs.get(0).getValue(), endInputs.get(1).getValue(), endInputs.get(2).getValue(),
                     endInputs.get(3).getValue(), endInputs.get(4).getValue(), endInputs.get(5).getValue(), endInputs.get(6).getValue()));
         } else                //if it has no duration, end = start
-            event.setEndDate(event.getStartDate());
+            setEndEqualsStart();
+    }
+
+    private void setEndEqualsStart() {
+        event.setEndDate(event.getStartDate());
+        endInputs.get(0).getValueFactory().setValue(event.getEndDate().getYear());
+        endInputs.get(1).getValueFactory().setValue(event.getEndDate().getMonth());
+        endInputs.get(2).getValueFactory().setValue(event.getEndDate().getDay());
+        endInputs.get(3).getValueFactory().setValue(event.getEndDate().getHour());
+        endInputs.get(4).getValueFactory().setValue(event.getEndDate().getMinute());
+        endInputs.get(5).getValueFactory().setValue(event.getEndDate().getSecond());
+        endInputs.get(6).getValueFactory().setValue(event.getEndDate().getMillisecond());
     }
 
     private boolean saveEvent() {
         updateEvent();
         try {
-            if (event.getEventID() == 0)
+            if (event.getEventID() == 0) {
                 DBM.insertIntoDB(event);//Save button clicked, the image chosen is saved and the String field is set as the path to the image in the resource folder
-            else
+                addToTimeline();        //new event is automatically added to active timeline when saved
+            } else
                 DBM.updateInDB(event);//Save button clicked, the image chosen is saved and the String field is set as the path to the image in the resource folder
-
+            parentController.selectorController.populateTimelineList();
             parentController.selectorController.populateEventList();
             return true;
         } catch (SQLException e) {
@@ -401,22 +476,22 @@ public class EventEditor {
         return true;
     }
 
+    private void addToTimeline() {
+        parentController.activeTimeline.getEventList().add(event);
+        try {
+            if (event.addToTimeline(parentController.activeTimeline.getTimelineID()))
+                System.out.println("Event added to " + parentController.activeTimeline + " timeline."); // remove this later once more user feedback is implemented
+            else
+                System.out.println("Event is already on " + parentController.activeTimeline + " timeline.");
+        } catch (SQLException e) {
+            System.out.println("Timeline not found.");
+        }
+    }
+
     @FXML
     private boolean deleteEvent() {
         parentController.selectorController.deleteEvent(event);
         return close();
-    }
-
-    public void addToTimeline() {
-        parentController.activeTimeline.getEventList().add(event);
-        try {
-            if (event.addToTimeline(parentController.activeTimeline.getTimelineID()))
-                System.out.println(event.getEventName() + " event added to " + parentController.activeTimeline + " timeline."); // remove this later once more user feedback is implemented
-            else
-                System.out.println(event.getEventName() + " is already on " + parentController.activeTimeline + " timeline.");
-        } catch (SQLException e) {
-            System.out.println("Timeline not found.");
-        }
     }
 
     public void toggleStartExpanded(ActionEvent actionEvent) {
@@ -456,6 +531,10 @@ public class EventEditor {
     }
 
     private boolean hasChanges() {
+        if (!event.getEventName().equals(titleInput.getText())
+                || !event.getEventDescrition().equals(descriptionInput.getText().replaceAll("([^\r])\n", "$1\r\n")))     //textArea tends to change the newline from \r\n to just \n which breaks some things)
+            return true;
+
         Date readStart = new Date(startInputs.get(0).getValue(), startInputs.get(1).getValue(), startInputs.get(2).getValue(),
                 startInputs.get(3).getValue(), startInputs.get(4).getValue(), startInputs.get(5).getValue(), startInputs.get(6).getValue());   //milliseconds not implemented yet, do we need to?
 
@@ -463,9 +542,7 @@ public class EventEditor {
                 endInputs.get(3).getValue(), endInputs.get(4).getValue(), endInputs.get(5).getValue(), endInputs.get(6).getValue());
 
         return (
-                !event.getEventName().equals(titleInput.getText())
-                        || !event.getEventDescrition().equals(descriptionInput.getText().replaceAll("([^\r])\n", "$1\r\n"))     //textArea tends to change the newline from \r\n to just \n which breaks some things
-                        || event.getStartDate().compareTo(readStart) != 0
+                event.getStartDate().compareTo(readStart) != 0
                         || event.getEndDate().compareTo(readEnd) != 0
         );
     }

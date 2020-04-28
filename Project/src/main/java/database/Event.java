@@ -2,6 +2,9 @@ package database;
 
 import utils.Date;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.*;
 import java.util.List;
 
@@ -11,7 +14,6 @@ public class Event implements DBObject<Event> {
     private String eventName = "";
     private String eventDescription = "";
     private String imagePath = null;
-    private int imageID;//For now, not sure how we handle this later on
     private Date startDate = new Date();
     private Date endDate = new Date();
     private Date creationDate;
@@ -23,7 +25,7 @@ public class Event implements DBObject<Event> {
         this.userID = user.getUserID();
     }
 
-    private Event(int eventID, int userID, Date startDate, Date endDate, Date creationDate, String title, String description, int imageID) {      //for reading from database
+    private Event(int eventID, int userID, Date startDate, Date endDate, Date creationDate, String title, String description, String imagePath) {      //for reading from database
         this.eventID = eventID;
         this.userID = userID;
         this.startDate = startDate;
@@ -31,17 +33,17 @@ public class Event implements DBObject<Event> {
         this.creationDate = creationDate;
         this.eventName = title;
         this.eventDescription = description;
-        this.imageID = imageID;
+        this.imagePath = imagePath;
     }
+
 
     public static List<Integer> getYears() throws SQLException {
         return DBM.getFromDB(DBM.conn.prepareStatement("SELECT StartYear FROM events"), rs -> rs.getInt("StartYear"));
     }
 
-    public int getImageID() {
-        return imageID;
+    public String  imagePath() {
+        return imagePath;
     }
-
 
     //Some examples of working with the database
     /*static List<Event> getAll() throws SQLException {
@@ -65,7 +67,7 @@ public class Event implements DBObject<Event> {
 
         PreparedStatement out = DBM.conn.prepareStatement("INSERT INTO `events` (`EventName`, `EventDescription`,`StartYear`,`StartMonth`,`StartDay`,`StartHour`, " +
                 "`StartMinute`,`StartSecond`,`StartMillisecond`,`EndYear`,`EndMonth`,`EndDay`,`EndHour`,`EndMinute`,`EndSecond`, " +
-                "`EndMillisecond`,`CreatedYear`,`CreatedMonth`,`CreatedDay`,`CreatedHour`,`CreatedMinute`,`CreatedSecond`,`CreatedMillisecond`,`EventOwner`, `EventImage`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);", Statement.RETURN_GENERATED_KEYS);
+                "`EndMillisecond`,`CreatedYear`,`CreatedMonth`,`CreatedDay`,`CreatedHour`,`CreatedMinute`,`CreatedSecond`,`CreatedMillisecond`,`EventOwner`, `ImagePath`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);", Statement.RETURN_GENERATED_KEYS);
         out.setString(1, eventName);
         out.setString(2, eventDescription);
         out.setInt(3, startDate.getYear());
@@ -101,10 +103,11 @@ public class Event implements DBObject<Event> {
             out.setInt(23, creationDate.getMillisecond());
         }
         out.setInt(24, userID);
-        if (imageID == 0)
+        if (imagePath == null)
             out.setNull(25, Types.INTEGER);
         else
-            out.setInt(25, imageID);
+            out.setString(25, imagePath);
+
         return out;
     }
 
@@ -124,7 +127,7 @@ public class Event implements DBObject<Event> {
     @Override
     public Event createFromDB(ResultSet rs) throws SQLException {
         int eventID = rs.getInt("EventID");
-        int imageID = rs.getInt("EventImage");
+        String imagePath = rs.getString("ImagePath");
         int ownerID = rs.getInt("EventOwner");
         String eventName = rs.getString("EventName");
         String eventDescription = rs.getString("EventDescription");
@@ -153,7 +156,7 @@ public class Event implements DBObject<Event> {
         Date end = new Date(EndYear, EndMonth, EndDay, EndHour, EndMinute, EndSecond, EndMillisecond);
         Date created = new Date(CreatedYear, CreatedMonth, CreatedDay, CreatedHour, CreatedMinute, CreatedSecond, CreatedMillisecond);
 
-        return new Event(eventID, ownerID, start, end, created, eventName, eventDescription, imageID);
+        return new Event(eventID, ownerID, start, end, created, eventName, eventDescription, imagePath);
     }
 
     @Override
@@ -187,9 +190,10 @@ public class Event implements DBObject<Event> {
         this.endDate = new Date(year,month,date,0,0,0,0);
     }*/
 
-    public void setImage(int image) {
-        this.imageID = image;
+    public void setImage(String image) {
+        this.imagePath = image;
     }
+
 
     //Getters for Event fields
     public int getEventID() {
@@ -224,11 +228,11 @@ public class Event implements DBObject<Event> {
     public PreparedStatement getUpdateQuery() throws SQLException {
         if (eventID == 0)
             throw new SQLDataException("Event not in database cannot be updated.");
-        PreparedStatement out = DBM.conn.prepareStatement("UPDATE `events` SET `EventName` = ?, `EventDescription` = ?, `EventImage` = ?, `StartYear` = ?,  `StartMonth` = ?,  `StartDay` = ?,  `StartHour` = ?,  `StartMinute` = ?,  " +
+        PreparedStatement out = DBM.conn.prepareStatement("UPDATE `events` SET `EventName` = ?, `EventDescription` = ?, `ImagePath` = ?, `StartYear` = ?,  `StartMonth` = ?,  `StartDay` = ?,  `StartHour` = ?,  `StartMinute` = ?,  " +
                 "`StartSecond` = ?,  `StartMillisecond` = ?,    `EndYear` = ?,  `EndMonth` = ?,  `EndDay` = ?,  `EndHour` = ?,  `EndMinute` = ?,  `EndSecond` = ?,  `EndMillisecond` = ?, `EventOwner` = ?  WHERE (`EventID` = ?);");
-        out.setString(1, this.eventName);
-        out.setString(2, this.eventDescription);
-        out.setInt(3, this.imageID);
+        out.setString(1, eventName);
+        out.setString(2, eventDescription);
+        out.setString(3, imagePath);
         out.setInt(4, startDate.getYear());
         out.setInt(5, startDate.getMonth());
         out.setInt(6, startDate.getDay());
@@ -252,7 +256,20 @@ public class Event implements DBObject<Event> {
     public PreparedStatement getDeleteQuery() throws SQLException {
         PreparedStatement out = DBM.conn.prepareStatement("DELETE FROM `events` WHERE (`EventID` = ?)");
         out.setInt(1, eventID);
+
+        // Deleting the images
+        if(getImagePath() != null) {
+            try {
+                Files.deleteIfExists(Paths.get(getImagePath()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         return out;
+    }
+
+    public void setUserID(int userID) {
+        this.userID = userID;
     }
 
     @Override
