@@ -84,7 +84,7 @@ public class EventSelector {
 
     @FXML
     void newEvent() {
-        openEditor(new Event(), true);
+        openEditor(new Event(GUIManager.loggedInUser), true);
     }
 
     @FXML

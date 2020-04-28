@@ -25,9 +25,9 @@
         <Insets bottom="10" left="10" right="10" top="10" />
     </padding>
     <Label fx:id="headerText" styleClass="headertext" GridPane.columnSpan="2" />
-    <Label styleClass="smallText" text="Title" GridPane.columnSpan="2" GridPane.rowIndex="1" GridPane.valignment="BOTTOM" />
+    <Label text="Title" GridPane.columnSpan="2" GridPane.rowIndex="1" GridPane.valignment="BOTTOM" />
     <TextField fx:id="titleInput" GridPane.columnSpan="2" GridPane.rowIndex="2" />
-    <Label styleClass="smallText" text="Description" GridPane.columnSpan="2" GridPane.rowIndex="3" GridPane.valignment="BOTTOM" />
+    <Label text="Description" GridPane.columnSpan="2" GridPane.rowIndex="3" GridPane.valignment="BOTTOM" />
     <TextArea fx:id="descriptionInput" maxHeight="1.7976931348623157E308" prefHeight="300.0" prefWidth="305.0" styleClass="smallText" wrapText="true" GridPane.columnSpan="2" GridPane.rowIndex="4" GridPane.vgrow="SOMETIMES" />
     <Label styleClass="smallText" text="Start:" GridPane.columnSpan="2" GridPane.rowIndex="8" GridPane.valignment="BOTTOM" />
     <FlowPane fx:id="startPane" alignment="CENTER_LEFT" hgap="5.0" GridPane.columnSpan="2" GridPane.rowIndex="9">
@@ -49,7 +49,7 @@
     </FlowPane>
     <Region prefHeight="30" GridPane.rowIndex="14" />
     <Button fx:id="editButton" alignment="CENTER" maxHeight="30" onAction="#saveEditButton" styleClass="smallButton" text="Edit" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="17" />
-    <Button fx:id="deleteButton" alignment="CENTER" maxHeight="30" onAction="#deleteEvent" styleClass="smallButton" text="Delete" GridPane.halignment="CENTER" GridPane.rowIndex="17" />
+    <Button fx:id="deleteButton" alignment="CENTER" maxHeight="30" onAction="#deleteTimeline" styleClass="smallButton" text="Delete" GridPane.halignment="CENTER" GridPane.rowIndex="17" />
     <Text fx:id="errorMessage" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="smallText" GridPane.columnSpan="2" GridPane.rowIndex="15" />
    <Label text="Key Words" GridPane.rowIndex="5" />
     <HBox fx:id="keyWordBox" GridPane.columnSpan="2" GridPane.rowIndex="6">
