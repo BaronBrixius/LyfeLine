@@ -11,7 +11,6 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
-import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import utils.Date;
 
@@ -258,9 +257,9 @@ public class EventEditor {
 
     @FXML
     private void uploadImage() throws IOException {    //Only working now for .jpg
-    	boolean placeholder = false; //for image routing
     	//tempLocation = fullOutPath;
-        System.out.println("the state of templocation in start of upload " + tempLocation);
+//        System.out.println("the state of templocation in start of upload " + tempLocation);
+        System.out.println("upload started");
         FileChooser chooser = new FileChooser(); //For the filedirectory
         chooser.setTitle("Upload image");
         //All the image formats supported by java.imageio https://docs.oracle.com/javase/7/docs/api/javax/imageio/package-summary.html
@@ -274,53 +273,49 @@ public class EventEditor {
                 new FileChooser.ExtensionFilter("WBMP", "*.wbmp")
         );
         this.imageChosen = chooser.showOpenDialog(GUIManager.mainStage); //This is the stage that needs to be edited (ok,cancel button) for the filechooser... do in FXML ?
-        if(this.imageChosen != null){
-        	if (tempLocation != null && event.getImagePath() == null && ImageSaveConfirm()) {
-            	try {
-                    Files.deleteIfExists(Paths.get(tempLocation));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            	tempLocation = null;
-            	this.filename = imageChosen.getName(); //THis is to take the name of the image choosen to add it to the copied version
-                image.setImage(new Image("File:" + this.imageChosen.getAbsolutePath()));
-            }
-        	else if (event.getImagePath() == null && !placeholder){
-            	this.filename = imageChosen.getName(); //THis is to take the name of the image choosen to add it to the copied version
-                image.setImage(new Image("File:" + this.imageChosen.getAbsolutePath()));
-                System.out.println("img W/o previous");
-                placeholder = true;
-                System.out.println("the state of placeholder " + placeholder);
-                System.out.println("the state of templocation " + tempLocation);
-            } 
-            else if (tempLocation != null && event.getImagePath() == null) {
-            	try {
-                    Files.deleteIfExists(Paths.get(tempLocation));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            	tempLocation = null;
-            }
-            else if (placeholder && ImageSaveConfirm()) {
-            	try {
-                    Files.deleteIfExists(Paths.get(event.getImagePath()));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                this.filename = imageChosen.getName(); //THis is to take the name of the image choosen to add it to the copied version
-                image.setImage(new Image("File:" + this.imageChosen.getAbsolutePath()));
-                System.out.println("img is in db");
-                placeholder = false;
-                System.out.println("the state of placeholder " + placeholder);
-                System.out.println("the state of templocation " + tempLocation);
-            }
-         else {
-            System.out.println("Cancel Button pressed.");
-        	System.out.println("the state of placeholder" + placeholder + "If I'm seeing this now, something is FUCKED UP!");
-        	placeholder = false;
-        	System.out.println("the state of placeholder" + placeholder);
-         }
+        if(this.imageChosen != null) {
+
+            image.setImage(new Image("File:" + imageChosen.getAbsolutePath()));
+
         }
+//        	if (tempLocation != null && event.getImagePath() == null && ImageSaveConfirm()) {
+//            	try {
+//                    Files.deleteIfExists(Paths.get(tempLocation));
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            	tempLocation = null;
+//            	this.filename = imageChosen.getName(); //THis is to take the name of the image choosen to add it to the copied version
+//                image.setImage(new Image("File:" + this.imageChosen.getAbsolutePath()));
+//            }
+//        	else if (event.getImagePath() == null){
+//            	this.filename = imageChosen.getName(); //THis is to take the name of the image choosen to add it to the copied version
+//                image.setImage(new Image("File:" + this.imageChosen.getAbsolutePath()));
+//            }
+//            else if (tempLocation != null && event.getImagePath() == null) {
+//            	try {
+//                    Files.deleteIfExists(Paths.get(tempLocation));
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            	tempLocation = null;
+//            }
+//            else if (ImageSaveConfirm()) {
+//            	try {
+//                    Files.deleteIfExists(Paths.get(event.getImagePath()));
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//                this.filename = imageChosen.getName(); //THis is to take the name of the image choosen to add it to the copied version
+//                image.setImage(new Image("File:" + this.imageChosen.getAbsolutePath()));
+//                System.out.println("img is in db");
+//            }
+//         else {
+//            System.out.println("Cancel Button pressed.");
+//        	System.out.println("If I'm seeing this now, something is FUCKED UP!");
+//
+//         }
+//        }
     }
 
     @FXML
