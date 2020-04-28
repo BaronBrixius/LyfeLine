@@ -28,7 +28,7 @@
     <Button alignment="CENTER" maxHeight="30" onAction="#close" styleClass="smallButton" text="Close" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="6" />
     <Button fx:id="deleteButton" alignment="CENTER" disable="true" maxHeight="30" onAction="#deleteButton" styleClass="smallButton" text="Delete" GridPane.halignment="CENTER" GridPane.rowIndex="6" />
    <Button alignment="CENTER" contentDisplay="CENTER" onAction="#setActiveTimeline" styleClass="tinyButton" text="Set Active" GridPane.columnIndex="1" GridPane.halignment="CENTER" />
-   <Button fx:id="addToTimelineButton" alignment="CENTER" disable="true" maxHeight="30" onAction="#addToTimeline" styleClass="smallButton" text="Add To Active Timeline" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
+   <Button fx:id="addToTimelineButton" alignment="CENTER" disable="true" maxHeight="30" maxWidth="1.7976931348623157E308" onAction="#addToTimeline" prefHeight="30.0" styleClass="smallButton" text="Add To Active Timeline" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
    <rowConstraints>
       <RowConstraints />
       <RowConstraints />

@@ -1,12 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.Pane?>
 
-<Pane fx:id="displayPane" onMouseClicked="#openEventViewer" onMouseEntered="#openDetails" onMouseExited="#closeDetails" prefHeight="10.0" prefWidth="30.0" styleClass="eventNode" stylesheets="@../styles/DefaultStyle.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.EventNode">
-    <Label fx:id="eventNameDisplay" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="10.0" prefWidth="30.0" styleClass="eventNode" text="Label" textFill="WHITE">
+<Pane fx:id="displayPane" maxHeight="20.0" onMouseClicked="#openEventViewer" onMouseEntered="#openDetails" onMouseExited="#closeDetails" styleClass="eventNode" stylesheets="@../styles/DefaultStyle.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.EventNode">
+    <Label fx:id="eventNameDisplay" alignment="CENTER" prefHeight="${displayPane.height}" prefWidth="${displayPane.width}" styleClass="eventNode" text="Label" textAlignment="CENTER" textFill="WHITE">
       <tooltip>
-         <Tooltip fx:id="hoverFlag" text="Tooltip" />
-      </tooltip></Label>
+         <Tooltip fx:id="hoverFlag" />
+      </tooltip>
+      <opaqueInsets>
+         <Insets />
+      </opaqueInsets></Label>
+   <opaqueInsets>
+      <Insets />
+   </opaqueInsets>
 </Pane>
