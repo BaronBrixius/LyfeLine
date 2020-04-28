@@ -244,6 +244,7 @@ public class TimelineEditor {
 
         if(timeline.getKeywords() != null)
         {
+            keywords.clear();
             keywords.addAll(timeline.getKeywords());
             keywords.sort((s1,s2)->s1.compareTo(s2));
         }
