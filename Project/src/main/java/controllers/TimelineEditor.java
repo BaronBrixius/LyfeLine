@@ -13,9 +13,11 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.util.StringConverter;
 import utils.Date;
 
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -111,32 +113,74 @@ public class TimelineEditor {
         listView.setItems(keywords);
     }
 
-    private void setupTimeInputBoxes(String timeSpinnerLabel, int maxValue, int i, List<Spinner<Integer>> startTimes, List<VBox> startBoxes) {
-        startTimes.add(i, new Spinner<>(0, maxValue, 0));
-        startBoxes.add(i, new VBox(new Label(timeSpinnerLabel), startTimes.get(i)));
-        startBoxes.get(i).setPrefWidth(70);
-        startBoxes.get(i).getChildren().get(0).getStyleClass().add("smallText");
+    private void setupTimeInputBoxes(String timeSpinnerLabel, int maxValue, int i, List<Spinner<Integer>> spinnerList, List<VBox> boxList) {
+        //startTimes.add(i, new Spinner<>(0, maxValue, 0));
+        //startBoxes.add(i, new VBox(new Label(timeSpinnerLabel), startTimes.get(i)));
+        //startBoxes.get(i).setPrefWidth(70);
+        //startBoxes.get(i).getChildren().get(0).getStyleClass().add("smallText");
+        SpinnerValueFactory.IntegerSpinnerValueFactory valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, maxValue, 0);
+        valueFactory.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(Integer value) {
+                if (value == null)
+                    return "0";
+                return value.toString();
+            }
+
+            @Override
+            public Integer fromString(String string) {
+                try {
+                    // If the specified value is null or zero-length, return null
+                    if (string == null)
+                        return 0;
+                    string = string.trim();
+                    if (string.length() < 1)
+                        return null;
+                    return Integer.parseInt(string);
+
+                } catch (NumberFormatException ex) {
+                    return 0;
+                }
+            }
+        });
+        spinnerList.add(i, new Spinner<>(valueFactory));
+        spinnerList.get(i).setEditable(true);
+
+        boxList.add(i, new VBox(new Label(timeSpinnerLabel), spinnerList.get(i)));
+        boxList.get(i).setPrefWidth(70);
+        boxList.get(i).getChildren().get(0).getStyleClass().add("smallText");
     }
 
     public void setParentController(TimelineView parentController) {             //TODO delete this inelegant solution
         this.parentController = parentController;
     }
 
-    //@FXML
-    //private void toggleHasDuration() {
-    //    endPane.setDisable(!hasDuration.isSelected());
-    //    setExpansion(false, hasDuration.isSelected() && endExpanded);   //compresses if disabled, if enabled leave it as user wanted
-    //    if (hasDuration.isSelected())
-    //        endPane.getStyleClass().remove("DisabledAnyways");
-    //    else
-    //        endPane.getStyleClass().add("DisabledAnyways");
-    //}
-
     public void saveEditButton() {
         if (editable && hasChanges())   //if unsaved changes, try to save
-            if (!saveConfirm())         //if save cancelled, don't change mode
+            if (!validData() || !saveConfirm())         //if save cancelled, don't change mode
                 return;
         toggleEditable(!editable);
+    }
+
+    public boolean validData() {
+        Date newStartDate = new Date(startInputs.get(0).getValue(), startInputs.get(1).getValue(), startInputs.get(2).getValue(),
+                startInputs.get(3).getValue(), startInputs.get(4).getValue(), startInputs.get(5).getValue(), startInputs.get(6).getValue());
+
+        Date newEndDate = new Date(endInputs.get(0).getValue(), endInputs.get(1).getValue(), endInputs.get(2).getValue(),
+                endInputs.get(3).getValue(), endInputs.get(4).getValue(), endInputs.get(5).getValue(), endInputs.get(6).getValue());
+
+        if (newStartDate.compareTo(newEndDate) > 0)
+        {
+            Alert confirmDelete = new Alert(Alert.AlertType.CONFIRMATION);
+            confirmDelete.setTitle("Invalid Dates");
+            confirmDelete.setHeaderText("The End Date must be after the Start Date.");
+            confirmDelete.setContentText("Make sure to check your dates before saving.");
+
+            confirmDelete.showAndWait();
+            return false;
+        }
+        else
+            return true;
     }
 
     void toggleEditable(boolean editable) {
@@ -174,31 +218,45 @@ public class TimelineEditor {
         titleInput.setText(timeline.getTimelineName());
         descriptionInput.setText(timeline.getTimelineDescription());
 
-        startInputs.get(0).getValueFactory().setValue(timeline.getStartDate().getYear());
-        startInputs.get(1).getValueFactory().setValue(timeline.getStartDate().getMonth());
-        startInputs.get(2).getValueFactory().setValue(timeline.getStartDate().getDay());
-        startInputs.get(3).getValueFactory().setValue(timeline.getStartDate().getHour());
-        startInputs.get(4).getValueFactory().setValue(timeline.getStartDate().getMinute());
-        startInputs.get(5).getValueFactory().setValue(timeline.getStartDate().getSecond());
-        startInputs.get(6).getValueFactory().setValue(timeline.getStartDate().getMillisecond());
+        if (timeline.getStartDate() != null)
+        {
+            startInputs.get(0).getValueFactory().setValue(timeline.getStartDate().getYear());
+            startInputs.get(1).getValueFactory().setValue(timeline.getStartDate().getMonth());
+            startInputs.get(2).getValueFactory().setValue(timeline.getStartDate().getDay());
+            startInputs.get(3).getValueFactory().setValue(timeline.getStartDate().getHour());
+            startInputs.get(4).getValueFactory().setValue(timeline.getStartDate().getMinute());
+            startInputs.get(5).getValueFactory().setValue(timeline.getStartDate().getSecond());
+            startInputs.get(6).getValueFactory().setValue(timeline.getStartDate().getMillisecond());
 
-        endInputs.get(0).getValueFactory().setValue(timeline.getEndDate().getYear());
-        endInputs.get(1).getValueFactory().setValue(timeline.getEndDate().getMonth());
-        endInputs.get(2).getValueFactory().setValue(timeline.getEndDate().getDay());
-        endInputs.get(3).getValueFactory().setValue(timeline.getEndDate().getHour());
-        endInputs.get(4).getValueFactory().setValue(timeline.getEndDate().getMinute());
-        endInputs.get(5).getValueFactory().setValue(timeline.getEndDate().getSecond());
-        endInputs.get(6).getValueFactory().setValue(timeline.getEndDate().getMillisecond());
+            endInputs.get(0).getValueFactory().setValue(timeline.getEndDate().getYear());
+            endInputs.get(1).getValueFactory().setValue(timeline.getEndDate().getMonth());
+            endInputs.get(2).getValueFactory().setValue(timeline.getEndDate().getDay());
+            endInputs.get(3).getValueFactory().setValue(timeline.getEndDate().getHour());
+            endInputs.get(4).getValueFactory().setValue(timeline.getEndDate().getMinute());
+            endInputs.get(5).getValueFactory().setValue(timeline.getEndDate().getSecond());
+            endInputs.get(6).getValueFactory().setValue(timeline.getEndDate().getMillisecond());
+        }
+
+
 
         setExpansion(true, false);
         setExpansion(false, false);
 
+        if(timeline.getKeywords() != null)
+        {
+            keywords.clear();
+            keywords.addAll(timeline.getKeywords());
+            keywords.sort((s1,s2)->s1.compareTo(s2));
+        }
+        else
+            timeline.setKeywords(FXCollections.observableArrayList());
 
-        keywords.addAll(timeline.getKeywords());
-        keywords.sort((s1,s2)->s1.compareTo(s2));
+
 
         return false;
     }
+
+
 
     @FXML
     private boolean saveConfirm() {
@@ -227,8 +285,6 @@ public class TimelineEditor {
 
         timeline.getKeywords().clear();
         timeline.getKeywords().addAll(keywords);
-
-
     }
 
     private boolean saveTimeline() {
@@ -236,8 +292,6 @@ public class TimelineEditor {
         try {
             if (timeline.getTimelineID() == 0) {
                 DBM.insertIntoDB(timeline);
-                //event.addToTimeline(parentController.timelineList.getSelectionModel().getSelectedItem().getTimelineID());
-                //parentController.populateEventList();             //TODO fix updating the display on the event selector
             } else
                 DBM.updateInDB(timeline);
             return true;
@@ -248,10 +302,10 @@ public class TimelineEditor {
     }
 
     @FXML
-    private boolean deleteEvent() {
+    private boolean deleteTimeline() {
         Alert confirmDelete = new Alert(Alert.AlertType.CONFIRMATION);
         confirmDelete.setTitle("Confirm Delete");
-        confirmDelete.setHeaderText("This will delete your timeline permanently!"); //TODO change text
+        confirmDelete.setHeaderText("This will delete your timeline permanently!");
         confirmDelete.setContentText("Are you ok with this?");
 
         Optional<ButtonType> result = confirmDelete.showAndWait();
@@ -259,20 +313,12 @@ public class TimelineEditor {
         if (result.get() == ButtonType.CANCEL)
             return false;
 
-        return true;
+        try {
+            DBM.deleteFromDB(timeline);
+            GUIManager.swapScene("Dashboard");
+            return true;
+        } catch (SQLException | IOException e) {e.printStackTrace(); return false;}
 
-        //try {
-        //    if (this.timeline.getEventID() == 0)
-        //        throw new IllegalArgumentException("event not in database");
-        //    else {
-        //        DBM.deleteFromDB(timeline);
-        //        close();
-        //    }
-        //    //parentController.populateEventList();             //TODO fix updating the display on the event selector
-        //    return true;
-        //} catch (SQLException e) {
-        //    return false;
-        //}
     }
 
     public void toggleStartExpanded(ActionEvent actionEvent) {
@@ -321,6 +367,7 @@ public class TimelineEditor {
 
         Date readEnd = new Date(endInputs.get(0).getValue(), endInputs.get(1).getValue(), endInputs.get(2).getValue(),
                 endInputs.get(3).getValue(), endInputs.get(4).getValue(), endInputs.get(5).getValue(), endInputs.get(6).getValue());
+
 
         if (timeline.getKeywords().size() != keywords.size())
             return true;

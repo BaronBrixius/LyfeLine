@@ -60,6 +60,7 @@ public class EventNode implements Comparable<EventNode> {
         parentController.editorController.close();
         parentController.editorController.setEvent(activeEvent);
         parentController.editorController.toggleEditable(false);
+        parentController.rightSidebar.getChildren().clear();
         parentController.rightSidebar.getChildren().add(parentController.editorController.editor);
     }
 

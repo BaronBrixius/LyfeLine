@@ -44,24 +44,9 @@
                         <Color blue="0.624" green="0.624" red="0.624" fx:id="x6" />
                      </textFill>
                   </Label>
-                  <GridPane fx:id="timelineGrid" layoutY="215.0" prefWidth="1607.0" stylesheets="@../styles/TimelineView.css" vgap="25.0">
+                  <GridPane fx:id="timelineGrid" layoutY="215.0" prefWidth="1607.0" scaleShape="false" stylesheets="@../styles/TimelineView.css" vgap="51.0">
                      <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="-Infinity" prefWidth="50.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="-Infinity" prefWidth="50.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="-Infinity" prefWidth="50.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="-Infinity" prefWidth="50.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="-Infinity" prefWidth="50.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="-Infinity" prefWidth="50.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="-Infinity" prefWidth="50.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="-Infinity" prefWidth="50.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="-Infinity" prefWidth="50.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="-Infinity" prefWidth="50.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="-Infinity" prefWidth="50.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="-Infinity" prefWidth="50.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="-Infinity" prefWidth="50.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="-Infinity" prefWidth="50.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="-Infinity" prefWidth="50.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="-Infinity" prefWidth="50.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="-Infinity" prefWidth="100.0" />
                      </columnConstraints>
                      <rowConstraints>
                         <RowConstraints minHeight="10.0" prefHeight="25.0" vgrow="NEVER" />
