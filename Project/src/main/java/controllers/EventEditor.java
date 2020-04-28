@@ -212,6 +212,7 @@ public class EventEditor {
             if (!saveConfirm())         //if save cancelled, don't change mode
                 return;
         toggleEditable(!editable);
+        fullOutPath = null;
     }
 
     void toggleEditable(boolean editable) {
@@ -251,7 +252,7 @@ public class EventEditor {
                 new FileChooser.ExtensionFilter("GIF", "*.gif"),
                 new FileChooser.ExtensionFilter("WBMP", "*.wbmp")
         );
-        this.imageChosen = chooser.showOpenDialog(new Stage()); //This is the stage that needs to be edited (ok,cancel button) for the filechooser... do in FXML ?
+        this.imageChosen = chooser.showOpenDialog(GUIManager.mainStage); //This is the stage that needs to be edited (ok,cancel button) for the filechooser... do in FXML ?
         if(this.imageChosen!= null){
             if (event.getImagePath() == null){
             	this.filename = imageChosen.getName(); //THis is to take the name of the image choosen to add it to the copied version
