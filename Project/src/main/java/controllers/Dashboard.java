@@ -203,13 +203,21 @@ public class Dashboard {
 				btnEdit.setDisable(true);
 			}
 
-			int year = list.getSelectionModel().getSelectedItem().getDateCreated().getYear();
-			int month = list.getSelectionModel().getSelectedItem().getDateCreated().getMonth();
-			int day = list.getSelectionModel().getSelectedItem().getDateCreated().getDay();
+			Timeline timeline = list.getSelectionModel().getSelectedItem();
 
-			titleText.setText("Title: " + list.getSelectionModel().getSelectedItem().getName()
-			+ "\nDescription: " + list.getSelectionModel().getSelectedItem().getTimelineDescription()
-			+ "\nDate Created: " + year + "/" + month + "/" + day);
+			int year = timeline.getDateCreated().getYear();
+			int month = timeline.getDateCreated().getMonth();
+			int day = timeline.getDateCreated().getDay();
+
+			StringBuilder keyWords = new StringBuilder();
+			for (String s: timeline.getKeywords())
+				keyWords.append(s + ", ");
+			keyWords.delete(keyWords.length() - 2, keyWords.length());
+
+			titleText.setText("Title: " + timeline.getName()
+			+ "\nDescription: " + timeline.getTimelineDescription()
+			+ "\nDate Created: " + year + "/" + month + "/" + day
+			+ "\nKeywords: " + keyWords);
 
 		}
 		else
