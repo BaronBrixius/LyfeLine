@@ -2,58 +2,37 @@
 
 /*.root applies to everything in a scene and overrides all other commands in this file. Use carefully.*/
 .root{
-    -fx-background-color: #f4f4f4;
 }
 
 /* .root was applying "weakly", causing gridpanes to be semi-transparent*/
 GridPane{
-    -fx-background-color: #f4f4f4;
 }
 
 /*Text applies to any free floating text (inc. TextField), does not apply to text in Buttons, etc.
 "-fx-text-fill" does not work here, use "fx-fill" to color the text instead.*/
 Text{
-    -fx-font-size: 1.75em;
 }
 
 .label{
-    -fx-padding: 5 0 0 0;
-    -fx-font-size: 1.5em;
-    -fx-font-weight: bold;
+    -fx-text-fill: black;
 }
 
 /*The following apply to any object of the corresponding name.*/
 .button{
-    -fx-font-size: 2em;
-    -fx-font-weight: bold;
-    -fx-pref-width: 250px;
-    -fx-pref-height: 100px;
-    -fx-text-fill: white;
-    -fx-background-color: #1aa9cd;
-    -fx-background-radius: 222px;
 }
 
 
 /*This is what the button looks like when you hover over it*/
 .button:hover {
-    -fx-background-color: #126c82;
-    -fx-scale-y: 1.1;
 }
 
 .text-field{
-    -fx-pref-height: 30px;
 }
 
 .text-area{
-    -fx-pref-height: 105px;
-    -fx-pref-width: 400px;
-    -fx-wrap-text: true;
-    -fx-font-size: 15px;
 }
 
 .smallTextArea{
-    -fx-pref-height: 40px;
-
 }
 
 .menu-item{
@@ -61,8 +40,6 @@ Text{
 }
 
 .menu-bar{
-    -fx-font-size: .6em;
-    -fx-font-weight: lighter;
 }
 
 .combo-box{
@@ -77,184 +54,122 @@ Text{
 /*The following are custom made presets, and must be applied in the actual code to apply.
 for example:      buttonName.getStyleClass().add("smallButton");                         */
 .smallButton{
-    -fx-font-size: 1.3em;
-    -fx-font-weight: bold;
-    -fx-pref-height: 50px;
-    -fx-pref-width: 150px;
 }
 
 .dashBoard{
-    -fx-pref-height: 75px;
 
 }
 
 .tinyButton{
-    -fx-pref-width: 90px;
-    -fx-pref-height: 25px;
-    -fx-font-size: 12;
 }
 
 .smallButton:hover {
-    -fx-background-color: #126c82;
-    -fx-scale-y: 1.1;
 }
 
 
 .logOutButton:hover {
-    -fx-background-color: #ff4251;
-    -fx-scale-y: 1.1;
 }
 
 .headertext{
-    -fx-font-size: 24;
 }
 
 .smallText{
-    -fx-font-size: 1em;
 }
 
 .popupButton{
-    -fx-font-size: 1.3em;
-    -fx-font-weight: bold;
-    -fx-pref-height: 35px;
-    -fx-pref-width: 90px;
 }
 
 .popupButton:hover {
-    -fx-background-color: #126c82;
-    -fx-scale-y: 1.1;
 }
 
 .hoverRed:hover {
-    -fx-background-color: #ff4251;
-    -fx-scale-y: 1.1;
 }
 
 .mediumText{
-	-fx-font-size: 1.5em;
 }
 .date-picker .label {
-    -fx-padding: 0 0 0 0;
-    -fx-pref-width: 5px;
-    -fx-pref-height: 15px;
-
 }
 
 /*.button settings was making Date picker weird, so these are the default settings for it, slightly tweaked for consistency.*/
 .date-picker-popup .button {
-    -fx-background-color: -fx-outer-border, -fx-inner-border, -fx-body-color;
-    -fx-background-insets: 0, 1, 2;
-    -fx-color: transparent;
-    -fx-background-radius: 222;
-    -fx-pref-width: 55px;
-    -fx-pref-height: 15px;
 }
 
 .date-picker-popup > * > .spinner > .button:focused {
-    -fx-background-insets: -0.2, 1, 2, -1.4, 2.6;
 }
 
 .date-picker-popup > * > .spinner > .button:hover {
-    -fx-color: -fx-hover-base;
 }
 
 .date-picker-popup > * > .spinner > .button:armed {
-    -fx-color: -fx-pressed-base;
 }
 
 .eventNode {
-    -fx-font-size: 1em;
+	-fx-font-size: 1em;
     -fx-font-weight: bold;
-    -fx-text-fill: white;
+    -fx-text-fill: black;
     -fx-pref-width: 150px;
     -fx-pref-height: 60px;
-    -fx-background-color: #1AA9CD;
-    -fx-effect: dropshadow(one-pass-box, #5969FF, 4, 0, 0, 0);
+    -fx-border-width: 2px;
+    -fx-border-color: black;
 }
 
 .eventNode:hover {
-	-fx-background-color: #1484a0;
 }
 
 .eventNode:pressed {
-	-fx-background-color: #1795b5;
-}
-
-.tooltip {
-	-fx-background-color: #0E5E72;
 }
 
 .timeline {
-	-fx-background-color: #6C54F2; 
-    -fx-effect: dropshadow(one-pass-box, #1AA9CD, 10, 0, 0, 0);
+	-fx-background-color: #000000;
+}
+
+.tooltip {
+	-fx-background-color: #000000;
 }
 
 .scroll-bar:horizontal.track,
 .scroll-bar:vertical.track{
-    -fx-background-color: white;
-    -fx-border-color: grey;
-    -fx-background-radius: 1.0em;
-    -fx-border-radius: 1.5em;
 }
 
 
 .scroll-bar:horizontal .increment-button ,
 .scroll-bar:horizontal .decrement-button {
-	-fx-background-color: #1AA9CD;
-    -fx-pref-width: 18px;
-    -fx-pref-height: 18px;
-    -fx-background-radius: 10px;
 }
 
 .scroll-bar:vertical .increment-button ,
 .scroll-bar:vertical .decrement-button {
-	-fx-background-color: #1AA9CD;
-    -fx-pref-width: 15px;
-    -fx-pref-height: 15px;
 }
 
 .scroll-bar:horizontal .increment-button:hover ,
 .scroll-bar:horizontal .decrement-button:hover {
-	-fx-background-color: #126C82;
 }
 
 .scroll-bar:vertical .increment-button:hover ,
 .scroll-bar:vertical .decrement-button:hover {
-	-fx-background-color: #126C82;
 }
 
 .scroll-bar:horizontal .increment-button:pressed ,
 .scroll-bar:horizontal .decrement-button:pressed {
-	-fx-background-color: #1795b5;
 }
 
 .scroll-bar:vertical .increment-button:pressed ,
 .scroll-bar:vertical .decrement-button:pressed {
-	-fx-background-color: #1795b5;
 }
 
  .scroll-bar .increment-arrow,
  .scroll-bar .decrement-arrow{
- 	-fx-background-color: white;
 }
 
  .scroll-bar:vertical .increment-arrow,
  .scroll-bar:vertical .decrement-arrow{
- 	-fx-background-color: white;
 }
 
 .scroll-bar:horizontal .thumb,
 .scroll-bar:vertical .thumb {
-    -fx-background-color: #1AA9CD;
-    -fx-background-insets: 2.0, 0.0, 0.0;
-    -fx-background-radius: 2.0em;
 }
 
 .scroll-bar:horizontal .thumb:hover,
 .scroll-bar:vertical .thumb:hover {
-    -fx-background-color: #126C82;
-    -fx-background-insets: 2.0, 0.0, 0.0;
-    -fx-background-radius: 2.0em;
 }
 
 /*Here is a list of useful CSS commands:

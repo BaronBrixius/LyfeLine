@@ -4,7 +4,7 @@
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.Pane?>
 
-<Pane fx:id="displayPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseClicked="#openEventViewer" onMouseEntered="#openDetails" onMouseExited="#closeDetails" styleClass="eventNode" stylesheets="@../styles/DefaultStyle.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.EventNode">
+<Pane fx:id="displayPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseClicked="#openEventViewer" onMouseEntered="#openDetails" onMouseExited="#closeDetails" styleClass="eventNode" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.EventNode">
     <Label fx:id="eventNameDisplay" alignment="CENTER" styleClass="eventNode" text="Label" textFill="WHITE">
       <tooltip>
          <Tooltip fx:id="hoverFlag" text="Tooltip" />
