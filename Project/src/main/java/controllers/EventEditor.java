@@ -258,7 +258,6 @@ public class EventEditor {
 
     @FXML
     private void uploadImage() throws IOException {    //Only working now for .jpg
-    	boolean placeholder = false; //for image routing
     	//tempLocation = fullOutPath;
         System.out.println("the state of templocation in start of upload " + tempLocation);
         FileChooser chooser = new FileChooser(); //For the filedirectory
@@ -281,27 +280,19 @@ public class EventEditor {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+            	System.out.println("1");
             	tempLocation = null;
             	this.filename = imageChosen.getName(); //THis is to take the name of the image choosen to add it to the copied version
                 image.setImage(new Image("File:" + this.imageChosen.getAbsolutePath()));
             }
-        	else if (event.getImagePath() == null && !placeholder){
+        	else if (event.getImagePath() == null){
             	this.filename = imageChosen.getName(); //THis is to take the name of the image choosen to add it to the copied version
                 image.setImage(new Image("File:" + this.imageChosen.getAbsolutePath()));
                 System.out.println("img W/o previous");
-                placeholder = true;
-                System.out.println("the state of placeholder " + placeholder);
                 System.out.println("the state of templocation " + tempLocation);
+                tempLocation = null;
             } 
-            else if (tempLocation != null && event.getImagePath() == null) {
-            	try {
-                    Files.deleteIfExists(Paths.get(tempLocation));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            	tempLocation = null;
-            }
-            else if (placeholder && ImageSaveConfirm()) {
+            else if (ImageSaveConfirm()) {
             	try {
                     Files.deleteIfExists(Paths.get(event.getImagePath()));
                 } catch (IOException e) {
@@ -310,17 +301,15 @@ public class EventEditor {
                 this.filename = imageChosen.getName(); //THis is to take the name of the image choosen to add it to the copied version
                 image.setImage(new Image("File:" + this.imageChosen.getAbsolutePath()));
                 System.out.println("img is in db");
-                placeholder = false;
-                System.out.println("the state of placeholder " + placeholder);
+                tempLocation = null;
                 System.out.println("the state of templocation " + tempLocation);
             }
+        }
          else {
             System.out.println("Cancel Button pressed.");
-        	System.out.println("the state of placeholder" + placeholder + "If I'm seeing this now, something is FUCKED UP!");
-        	placeholder = false;
-        	System.out.println("the state of placeholder" + placeholder);
+        	tempLocation = null;
          }
-        }
+        
     }
 
     @FXML
@@ -596,10 +585,18 @@ public class EventEditor {
     boolean close() {
         parentController.rightSidebar.getChildren().remove(editor);
         parentController.rightSidebar.getChildren().add(editor);
-        if (event != null && hasChanges() && !saveConfirm())          //do you wanna save and exit or just exit?
-            return false;
+        if (event != null && hasChanges() && !saveConfirm()) {         //do you wanna save and exit or just exit?
+        	image.setImage(null);
+        	event.setImage(null);
+        	fullOutPath = null;
+        	imageChosen = null;
+        	tempLocation = null;
+        	return false;
+        }
         parentController.rightSidebar.getChildren().remove(editor);
+        tempLocation = null;
         return true;
+        
     }
 
 
@@ -610,16 +607,26 @@ public class EventEditor {
             try {
             	System.out.println("IF statement active");
                 Files.deleteIfExists(Paths.get(event.getImagePath()));
+                tempLocation = null;
             } catch (IOException e) {
                 e.printStackTrace();
             }
+    	}
+        else if (tempLocation != null) {
+            	try {
+                    Files.deleteIfExists(Paths.get(tempLocation));
+                    tempLocation = null;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+    		tempLocation = null;
             image.setImage(null);
             event.setImage(null);
             fullOutPath = null;
             imageChosen = null;
             updateEvent();
-        }
-        image.setImage(null);
+            saveEvent();
     }
     
     
