@@ -322,7 +322,10 @@ public class EventEditor {
     private boolean populateDisplay() {
         titleInput.setText(event.getEventName());
         descriptionInput.setText(event.getEventDescrition());
-        //fullOutPath=event.getImagePath();
+        System.out.println(event.getImagePath());
+        System.out.println(event.getEventID());
+        if(event.getImagePath() != null)
+        image.setImage(new Image("File:" + event.getImagePath()));
         startDate.setValue(LocalDate.of(event.getStartDate().getYear(), event.getStartDate().getMonth(), event.getStartDate().getDay()));
 
         startTime1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23, event.getStartDate().getHours()));
