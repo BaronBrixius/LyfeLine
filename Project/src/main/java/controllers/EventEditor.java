@@ -48,6 +48,7 @@ public class EventEditor {
     @FXML
     public FlowPane endPane;
     public Button clearButton;
+    public Button addToTimelineButton;
     @FXML
     TextField titleInput = new TextField();
     @FXML
@@ -191,19 +192,22 @@ public class EventEditor {
     }
 
     public void saveEditButton() throws IOException {
-        if(uploadButton.isVisible()){//So we do not copy when edit is pressed/only save is pressed
-            if(this.imageChosen !=null) {//Only keep on with copy if there has been a chosen image
-                if(this.event.getEventID()==0){
-                    if(this.event.getImagePath()== null)
-                        this.fullOutPath = copyImage(imageChosen,filename);
+        if (uploadButton.isVisible()) {//So we do not copy when edit is pressed/only save is pressed
+            if (this.imageChosen != null) {//Only keep on with copy if there has been a chosen image
+                if (this.event.getEventID() == 0) {
+                    if (this.event.getImagePath() == null)
+                        this.fullOutPath = copyImage(imageChosen, filename);
                     else if (!this.event.getImagePath().equalsIgnoreCase(this.fullOutPath))
-                        this.fullOutPath = copyImage(imageChosen,filename);}
-                if(this.event.getEventID()>0){
-                    if(this.event.getImagePath()== null)
-                        this.fullOutPath = copyImage(imageChosen,filename);
+                        this.fullOutPath = copyImage(imageChosen, filename);
+                }
+                if (this.event.getEventID() > 0) {
+                    if (this.event.getImagePath() == null)
+                        this.fullOutPath = copyImage(imageChosen, filename);
                     else if (!this.event.getImagePath().equalsIgnoreCase(this.fullOutPath))
-                        this.fullOutPath = copyImage(imageChosen,filename);}}}
-
+                        this.fullOutPath = copyImage(imageChosen, filename);
+                }
+            }
+        }
 
         //To save to DB
         this.event.setImage(this.fullOutPath);
@@ -253,7 +257,7 @@ public class EventEditor {
         );
         this.imageChosen = chooser.showOpenDialog(new Stage()); //This is the stage that needs to be edited (ok,cancel button) for the filechooser... do in FXML ?
         this.filename = imageChosen.getName(); //THis is to take the name of the image choosen to add it to the copied version
-        System.out.println(this.imageChosen.getAbsolutePath());
+        //System.out.println(this.imageChosen.getAbsolutePath());
         image.setImage(new Image("File:" + this.imageChosen.getAbsolutePath()));
 
         System.out.println("Button pressed.");
@@ -282,11 +286,11 @@ public class EventEditor {
             //Path for saving, have special events folder now so if timeline guys are doing something they don't override copies
             int duplicateDigit = 2;
 
-            while(folderHasImage(imageName)) {
+            while (folderHasImage(imageName)) {
                 int indexOfDot = filename.lastIndexOf(".");
-                if(imageName.matches(".*\\s\\(\\d\\)\\..*")) {
+                if (imageName.matches(".*\\s\\(\\d\\)\\..*")) {
                     int indexOfBrackets = imageName.lastIndexOf("(");
-                    imageName = imageName.substring(0, indexOfBrackets + 1) +  duplicateDigit + ")" + "." + getFormat(image);
+                    imageName = imageName.substring(0, indexOfBrackets + 1) + duplicateDigit + ")" + "." + getFormat(image);
 
                 } else {
                     imageName = imageName.substring(0, indexOfDot) + " (" + duplicateDigit + ")" + "." + getFormat(image);
@@ -344,12 +348,16 @@ public class EventEditor {
     public boolean setEvent(Event event) {
         parentController.editorController.close();
         this.event = event;
+        if (event.getUserID() == 0)
+            event.setID(GUIManager.loggedInUser.getUserID());
         //Check if Admin
         if (GUIManager.loggedInUser.getUserID() != event.getUserID()) {
-            editButton.setVisible(false);
             editButton.setDisable(true);
-            deleteButton.setVisible(false);
+            editButton.setVisible(false);
             deleteButton.setDisable(true);
+            deleteButton.setVisible(false);
+            addToTimelineButton.setDisable(true);
+            addToTimelineButton.setVisible(false);
         }
         return populateDisplay();
     }
@@ -360,9 +368,10 @@ public class EventEditor {
 
         System.out.println(event.getImagePath());
         System.out.println(event.getEventID());
-        if(event.getImagePath() != null){
+        if (event.getImagePath() != null) {
             image.setImage(new Image("File:" + event.getImagePath()));
-            this.fullOutPath = event.getImagePath();}
+            this.fullOutPath = event.getImagePath();
+        }
 
 
         startInputs.get(0).getValueFactory().setValue(event.getStartDate().getYear());
