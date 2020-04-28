@@ -46,7 +46,6 @@ public class EventEditor {
     @FXML
     public FlowPane endPane;
     public Button deleteImageButton;
-    public Button addToTimelineButton;
     @FXML
     Button uploadImageButton;
     @FXML
@@ -216,6 +215,8 @@ public class EventEditor {
             if (!saveConfirm())         //if save cancelled, don't change mode
                 return;
         toggleEditable(!editable);
+        fullOutPath = null;
+        imageChosen = null;
     }
 
     void toggleEditable(boolean editable) {
@@ -257,10 +258,10 @@ public class EventEditor {
                 new FileChooser.ExtensionFilter("GIF", "*.gif"),
                 new FileChooser.ExtensionFilter("WBMP", "*.wbmp")
         );
-        this.imageChosen = chooser.showOpenDialog(new Stage()); //This is the stage that needs to be edited (ok,cancel button) for the filechooser... do in FXML ?
-        if (this.imageChosen != null) {
-            if (event.getImagePath() == null) {
-                this.filename = imageChosen.getName(); //THis is to take the name of the image choosen to add it to the copied version
+        this.imageChosen = chooser.showOpenDialog(GUIManager.mainStage); //This is the stage that needs to be edited (ok,cancel button) for the filechooser... do in FXML ?
+        if(this.imageChosen!= null){
+            if (event.getImagePath() == null){
+            	this.filename = imageChosen.getName(); //THis is to take the name of the image choosen to add it to the copied version
                 image.setImage(new Image("File:" + this.imageChosen.getAbsolutePath()));
                 System.out.println("img W/o previous");
             } else if (ImageSaveConfirm() || event.getImagePath() != null) {
@@ -273,7 +274,7 @@ public class EventEditor {
     }
 
     @FXML
-    private boolean ImageSaveConfirm() throws IOException {
+    private boolean ImageSaveConfirm() {
         Alert confirmsaveimage = new Alert(Alert.AlertType.CONFIRMATION);
         confirmsaveimage.setTitle("Confirm Change");
         confirmsaveimage.setHeaderText("Replacing or removing an image will permanently delete it from the system.");
@@ -302,7 +303,7 @@ public class EventEditor {
 
     private String copyImage(File image, String filename) throws IOException { //Takes the file chosen and the name of it
         String outPath = "src/main/resources/images/";
-        String imageName = "";
+        String imageName = filename;
         InputStream is = null;
         OutputStream os = null;
         try {
@@ -380,8 +381,6 @@ public class EventEditor {
         editButton.setVisible(owner);
         deleteButton.setDisable(!owner);
         deleteButton.setVisible(owner);
-        addToTimelineButton.setDisable(!owner);
-        addToTimelineButton.setVisible(owner);
 
         return populateDisplay();
     }
@@ -446,17 +445,29 @@ public class EventEditor {
             event.setEndDate(new Date(endInputs.get(0).getValue(), endInputs.get(1).getValue(), endInputs.get(2).getValue(),
                     endInputs.get(3).getValue(), endInputs.get(4).getValue(), endInputs.get(5).getValue(), endInputs.get(6).getValue()));
         } else                //if it has no duration, end = start
-            event.setEndDate(event.getStartDate());
+            setEndEqualsStart();
+    }
+
+    private void setEndEqualsStart() {
+        event.setEndDate(event.getStartDate());
+        endInputs.get(0).getValueFactory().setValue(event.getEndDate().getYear());
+        endInputs.get(1).getValueFactory().setValue(event.getEndDate().getMonth());
+        endInputs.get(2).getValueFactory().setValue(event.getEndDate().getDay());
+        endInputs.get(3).getValueFactory().setValue(event.getEndDate().getHour());
+        endInputs.get(4).getValueFactory().setValue(event.getEndDate().getMinute());
+        endInputs.get(5).getValueFactory().setValue(event.getEndDate().getSecond());
+        endInputs.get(6).getValueFactory().setValue(event.getEndDate().getMillisecond());
     }
 
     private boolean saveEvent() {
         updateEvent();
         try {
-            if (event.getEventID() == 0)
+            if (event.getEventID() == 0) {
                 DBM.insertIntoDB(event);//Save button clicked, the image chosen is saved and the String field is set as the path to the image in the resource folder
-            else
+                addToTimeline();        //new event is automatically added to active timeline when saved
+            } else
                 DBM.updateInDB(event);//Save button clicked, the image chosen is saved and the String field is set as the path to the image in the resource folder
-
+            parentController.selectorController.populateTimelineList();
             parentController.selectorController.populateEventList();
             return true;
         } catch (SQLException e) {
@@ -465,22 +476,22 @@ public class EventEditor {
         return true;
     }
 
+    private void addToTimeline() {
+        parentController.activeTimeline.getEventList().add(event);
+        try {
+            if (event.addToTimeline(parentController.activeTimeline.getTimelineID()))
+                System.out.println("Event added to " + parentController.activeTimeline + " timeline."); // remove this later once more user feedback is implemented
+            else
+                System.out.println("Event is already on " + parentController.activeTimeline + " timeline.");
+        } catch (SQLException e) {
+            System.out.println("Timeline not found.");
+        }
+    }
+
     @FXML
     private boolean deleteEvent() {
         parentController.selectorController.deleteEvent(event);
         return close();
-    }
-
-    public void addToTimeline() {
-        parentController.activeTimeline.getEventList().add(event);
-        try {
-            if (event.addToTimeline(parentController.activeTimeline.getTimelineID()))
-                System.out.println(event.getEventName() + " event added to " + parentController.activeTimeline + " timeline."); // remove this later once more user feedback is implemented
-            else
-                System.out.println(event.getEventName() + " is already on " + parentController.activeTimeline + " timeline.");
-        } catch (SQLException e) {
-            System.out.println("Timeline not found.");
-        }
     }
 
     public void toggleStartExpanded(ActionEvent actionEvent) {
@@ -520,6 +531,10 @@ public class EventEditor {
     }
 
     private boolean hasChanges() {
+        if (!event.getEventName().equals(titleInput.getText())
+                || !event.getEventDescrition().equals(descriptionInput.getText().replaceAll("([^\r])\n", "$1\r\n")))     //textArea tends to change the newline from \r\n to just \n which breaks some things)
+            return true;
+
         Date readStart = new Date(startInputs.get(0).getValue(), startInputs.get(1).getValue(), startInputs.get(2).getValue(),
                 startInputs.get(3).getValue(), startInputs.get(4).getValue(), startInputs.get(5).getValue(), startInputs.get(6).getValue());   //milliseconds not implemented yet, do we need to?
 
@@ -527,9 +542,7 @@ public class EventEditor {
                 endInputs.get(3).getValue(), endInputs.get(4).getValue(), endInputs.get(5).getValue(), endInputs.get(6).getValue());
 
         return (
-                !event.getEventName().equals(titleInput.getText())
-                        || !event.getEventDescrition().equals(descriptionInput.getText().replaceAll("([^\r])\n", "$1\r\n"))     //textArea tends to change the newline from \r\n to just \n which breaks some things
-                        || event.getStartDate().compareTo(readStart) != 0
+                event.getStartDate().compareTo(readStart) != 0
                         || event.getEndDate().compareTo(readEnd) != 0
         );
     }

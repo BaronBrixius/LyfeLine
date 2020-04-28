@@ -9,6 +9,10 @@
     -fx-focus-color: transparent;
 }
 
+.toggle-button:disabled, .toggle-button:disabled > * {
+    -fx-opacity: 1;
+}
+
 .spinner:disabled, .spinner:disabled > * {
     -fx-opacity: 1;
 }

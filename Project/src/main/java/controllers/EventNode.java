@@ -26,7 +26,7 @@ public class EventNode implements Comparable<EventNode> {
     }
 
     public void initialize() {
-    	hoverFlag.setShowDelay(hoverFlag.getShowDelay().divide(8));
+        hoverFlag.setShowDelay(hoverFlag.getShowDelay().divide(8));
     }
 
     public Event getActiveEvent() {
@@ -51,12 +51,8 @@ public class EventNode implements Comparable<EventNode> {
     }
 
     @FXML
-    public void openDetails(MouseEvent mouseEvent) {
+    public void openDetails() {
         hoverFlag.setText(activeEvent.getEventName() + "\n" + activeEvent.getEventDescrition());
-    }
-
-    @FXML
-    public void closeDetails(MouseEvent mouseEvent) {
     }
 
     @FXML
@@ -72,6 +68,6 @@ public class EventNode implements Comparable<EventNode> {
     public int compareTo(EventNode o) {     //sorts by earlier start, then by longest span as tiebreaker
         if (this.startColumn != o.startColumn)
             return this.startColumn - o.startColumn;
-        return this.columnSpan - o.columnSpan;
+        return o.columnSpan - this.columnSpan;
     }
 }
