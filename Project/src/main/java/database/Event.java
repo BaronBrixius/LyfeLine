@@ -2,6 +2,9 @@ package database;
 
 import utils.Date;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.*;
 import java.util.List;
 
@@ -253,7 +256,16 @@ public class Event implements DBObject<Event> {
     public PreparedStatement getDeleteQuery() throws SQLException {
         PreparedStatement out = DBM.conn.prepareStatement("DELETE FROM `events` WHERE (`EventID` = ?)");
         out.setInt(1, eventID);
-        return out;
+
+        // Deleting the images
+        if(getImagePath() != null) {
+            try {
+                Files.deleteIfExists(Paths.get(getImagePath()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+            return out;
     }
 
     @Override
