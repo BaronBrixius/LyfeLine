@@ -5,6 +5,7 @@ import database.Event;
 import database.Timeline;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
@@ -25,12 +26,23 @@ public class TimelineView {
     public Timeline activeTimeline;
     public BorderPane mainBorderPane;
     public StackPane rightSidebar;
+    public StackPane leftSidebar;
+    TimelineEditor timelineController;
     EventSelector selectorController;
     EventEditor editorController;
     @FXML
     private Button backButton;
 
     public void initialize() {
+        try {
+            FXMLLoader TimelineLoader = new FXMLLoader(getClass().getResource("../FXML/TimelineEditor.fxml"));
+            TimelineLoader.load();
+            timelineController = TimelineLoader.getController();
+            timelineController.setParentController(this);
+        } catch (IOException e) {
+            e.printStackTrace();        //TODO replace with better error message once dev is done
+        }
+
         try {
             FXMLLoader selectorLoader = new FXMLLoader(getClass().getResource("../FXML/EventSelector.fxml"));
             selectorLoader.load();
@@ -48,6 +60,12 @@ public class TimelineView {
         } catch (IOException e) {
             e.printStackTrace();        //TODO replace with better error message once dev is done
         }
+
+
+        //leftSidebar.getChildren().remove(timelineController.editor);
+
+        leftSidebar.getChildren().add(timelineController.editor);
+
     }
 
     public List<EventNode> getEventList() {
@@ -77,6 +95,7 @@ public class TimelineView {
             List<Timeline> list = DBM.getFromDB(stmt, new Timeline());
 
             setActiveTimeline(list.get(0));
+            timelineController.setTimeline(activeTimeline);
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -91,10 +110,11 @@ public class TimelineView {
         timelineGrid.getChildren().clear();
 
         Pane mainLine = new Pane();
-        mainLine.setStyle("-fx-background-color: #ff4251;");
+        mainLine.setStyle("-fx-background-color: #6C54F2;");
         timelineGrid.add(mainLine, 0, 0, GridPane.REMAINING, 1);
         //TODO set grid column count to actual timeline length, make the above look better (possibly with its own fxml?)
-
+        GridPane.setMargin(mainLine, new Insets(25, 0, -25, 0));
+        
         EventNode newNode;
 
         eventList.clear();
@@ -137,13 +157,20 @@ public class TimelineView {
             if (eventList.get(i).getStartColumn() <= newNode.getStartColumn() + newNode.getColumnSpan()             //if a previous node starts before the new one would end
             && eventList.get(i).getStartColumn() + eventList.get(i).getColumnSpan() >= newNode.getStartColumn())    //and it ends after the new one starts
                 row++;                                                                                              //try next row
-        }                                                                                                           //shouldn't need to check for if the reverse is the case (e.g. if previous node ends before
-
+        }
         timelineGrid.add(newNode.getDisplayPane(), startColumn, row, columnSpan, 1);
     }
 
     public void openEventSelector() {
         rightSidebar.getChildren().remove(selectorController.selector);       //resets the event selector if it already exists
         rightSidebar.getChildren().add(selectorController.selector);
+    }
+    
+    public void returnToDashboard() {
+    	try {
+			GUIManager.swapScene("Dashboard");
+		} catch (IOException e) {
+			
+		}
     }
 }
