@@ -16,6 +16,7 @@ import javafx.scene.text.Text;
 import utils.Date;
 
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -122,16 +123,6 @@ public class TimelineEditor {
         this.parentController = parentController;
     }
 
-    //@FXML
-    //private void toggleHasDuration() {
-    //    endPane.setDisable(!hasDuration.isSelected());
-    //    setExpansion(false, hasDuration.isSelected() && endExpanded);   //compresses if disabled, if enabled leave it as user wanted
-    //    if (hasDuration.isSelected())
-    //        endPane.getStyleClass().remove("DisabledAnyways");
-    //    else
-    //        endPane.getStyleClass().add("DisabledAnyways");
-    //}
-
     public void saveEditButton() {
         if (editable && hasChanges())   //if unsaved changes, try to save
             if (!saveConfirm())         //if save cancelled, don't change mode
@@ -227,8 +218,6 @@ public class TimelineEditor {
 
         timeline.getKeywords().clear();
         timeline.getKeywords().addAll(keywords);
-
-
     }
 
     private boolean saveTimeline() {
@@ -236,8 +225,6 @@ public class TimelineEditor {
         try {
             if (timeline.getTimelineID() == 0) {
                 DBM.insertIntoDB(timeline);
-                //event.addToTimeline(parentController.timelineList.getSelectionModel().getSelectedItem().getTimelineID());
-                //parentController.populateEventList();             //TODO fix updating the display on the event selector
             } else
                 DBM.updateInDB(timeline);
             return true;
@@ -248,10 +235,10 @@ public class TimelineEditor {
     }
 
     @FXML
-    private boolean deleteEvent() {
+    private boolean deleteTimeline() {
         Alert confirmDelete = new Alert(Alert.AlertType.CONFIRMATION);
         confirmDelete.setTitle("Confirm Delete");
-        confirmDelete.setHeaderText("This will delete your timeline permanently!"); //TODO change text
+        confirmDelete.setHeaderText("This will delete your timeline permanently!");
         confirmDelete.setContentText("Are you ok with this?");
 
         Optional<ButtonType> result = confirmDelete.showAndWait();
@@ -259,20 +246,12 @@ public class TimelineEditor {
         if (result.get() == ButtonType.CANCEL)
             return false;
 
-        return true;
+        try {
+            DBM.deleteFromDB(timeline);
+            GUIManager.swapScene("Dashboard");
+            return true;
+        } catch (SQLException | IOException e) {e.printStackTrace(); return false;}
 
-        //try {
-        //    if (this.timeline.getEventID() == 0)
-        //        throw new IllegalArgumentException("event not in database");
-        //    else {
-        //        DBM.deleteFromDB(timeline);
-        //        close();
-        //    }
-        //    //parentController.populateEventList();             //TODO fix updating the display on the event selector
-        //    return true;
-        //} catch (SQLException e) {
-        //    return false;
-        //}
     }
 
     public void toggleStartExpanded(ActionEvent actionEvent) {
