@@ -138,17 +138,14 @@ public class Dashboard {
 
 	@FXML
 	public void createTimeline(ActionEvent event) throws IOException {
-		OldTimelineEditor editor = GUIManager.swapScene("TimelineEditor");
-		editor.populateDisplay();
-
+		TimelineView view = GUIManager.swapScene("TimelineView");
 	}
 
 	@FXML
 	public void editTimeline(ActionEvent event) throws IOException {
 		if (activeTimeline != null) {
-			OldTimelineEditor editor = GUIManager.swapScene("TimelineEditor");
-			editor.setActiveTimeline(this.activeTimeline);
-			editor.populateDisplay();
+			TimelineView view = GUIManager.swapScene("TimelineView");
+			view.setActiveTimeline(this.activeTimeline);
 		}
 	}
 	

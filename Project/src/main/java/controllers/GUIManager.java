@@ -64,9 +64,9 @@ public class GUIManager extends Application {
         mainStage = primaryStage;
         mainStage.setScene(new Scene(main));
 
-        //swapScene("Dashboard");
-        TimelineView systemUnderDevelopment = swapScene("TimelineView");        //delete when merging to dev
-        systemUnderDevelopment.setActiveTimeline(1);
+        swapScene("Welcome");
+        //TimelineView systemUnderDevelopment = swapScene("TimelineView");        //delete when merging to dev
+        //systemUnderDevelopment.setActiveTimeline(1);
         applyStyle("DefaultStyle");
         mainStage.show();
     }
