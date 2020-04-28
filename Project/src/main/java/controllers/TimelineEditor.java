@@ -157,9 +157,30 @@ public class TimelineEditor {
 
     public void saveEditButton() {
         if (editable && hasChanges())   //if unsaved changes, try to save
-            if (!saveConfirm())         //if save cancelled, don't change mode
+            if (!validData() || !saveConfirm())         //if save cancelled, don't change mode
                 return;
         toggleEditable(!editable);
+    }
+
+    public boolean validData() {
+        Date newStartDate = new Date(startInputs.get(0).getValue(), startInputs.get(1).getValue(), startInputs.get(2).getValue(),
+                startInputs.get(3).getValue(), startInputs.get(4).getValue(), startInputs.get(5).getValue(), startInputs.get(6).getValue());
+
+        Date newEndDate = new Date(endInputs.get(0).getValue(), endInputs.get(1).getValue(), endInputs.get(2).getValue(),
+                endInputs.get(3).getValue(), endInputs.get(4).getValue(), endInputs.get(5).getValue(), endInputs.get(6).getValue());
+
+        if (newStartDate.compareTo(newEndDate) > 0)
+        {
+            Alert confirmDelete = new Alert(Alert.AlertType.CONFIRMATION);
+            confirmDelete.setTitle("Invalid Dates");
+            confirmDelete.setHeaderText("The End Date must be after the Start Date.");
+            confirmDelete.setContentText("Make sure to check your dates before saving.");
+
+            confirmDelete.showAndWait();
+            return false;
+        }
+        else
+            return true;
     }
 
     void toggleEditable(boolean editable) {
@@ -353,7 +374,7 @@ public class TimelineEditor {
         for (int i = 0; i < keywords.size(); i++)
             if (timeline.getKeywords().get(i).compareTo(keywords.get(i)) != 0)
                 return true;
-            
+
         return (
                 !timeline.getTimelineName().equals(titleInput.getText())
                         || !timeline.getTimelineDescription().equals(descriptionInput.getText().replaceAll("([^\r])\n", "$1\r\n"))     //textArea tends to change the newline from \r\n to just \n which breaks some things
