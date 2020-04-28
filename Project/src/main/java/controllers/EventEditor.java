@@ -341,24 +341,23 @@ public class EventEditor {
         /*Event newEvent = logic to find Event in database and get its info
         if (newEvent != null)
             return changeEvent(newEvent);*/
-
         return false;
     }
 
     public boolean setEvent(Event event) {
         parentController.editorController.close();
         this.event = event;
-        if (event.getUserID() == 0)
-            event.setID(GUIManager.loggedInUser.getUserID());
-        //Check if Admin
-        if (GUIManager.loggedInUser.getUserID() != event.getUserID()) {
-            editButton.setDisable(true);
-            editButton.setVisible(false);
-            deleteButton.setDisable(true);
-            deleteButton.setVisible(false);
-            addToTimelineButton.setDisable(true);
-            addToTimelineButton.setVisible(false);
-        }
+        if (this.event.getEventID() == 0)       //if new event, set current user as owner
+            this.event.setUserID(GUIManager.loggedInUser.getUserID());
+        //Check if Owner
+        boolean owner = GUIManager.loggedInUser.getUserID() == this.event.getUserID();
+        editButton.setDisable(!owner);
+        editButton.setVisible(owner);
+        deleteButton.setDisable(!owner);
+        deleteButton.setVisible(owner);
+        addToTimelineButton.setDisable(!owner);
+        addToTimelineButton.setVisible(owner);
+
         return populateDisplay();
     }
 
@@ -372,7 +371,6 @@ public class EventEditor {
             image.setImage(new Image("File:" + event.getImagePath()));
             this.fullOutPath = event.getImagePath();
         }
-
 
         startInputs.get(0).getValueFactory().setValue(event.getStartDate().getYear());
         startInputs.get(1).getValueFactory().setValue(event.getStartDate().getMonth());
