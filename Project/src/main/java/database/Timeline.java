@@ -143,6 +143,11 @@ public class Timeline implements DBObject<Timeline> {
         return out;
     }
 
+    // search the table
+    // left join to the events table
+    // if comes out null - delete
+
+
     @Override
     public Timeline createFromDB(ResultSet rs) throws SQLException {
         int TimelineID = rs.getInt("TimelineID");
