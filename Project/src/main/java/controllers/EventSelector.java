@@ -4,7 +4,6 @@ import database.DBM;
 import database.Event;
 import database.Timeline;
 import javafx.collections.FXCollections;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
@@ -30,15 +29,14 @@ public class EventSelector {
     @FXML
     public TextField searchBar;
     public Button newButton;
+    public Button addToTimelineButton;
     private TimelineView parentController;
 
     public void initialize() {
         populateTimelineList();
 
         sortBy.getItems().addAll("Alphabetic", "Reverse Alphabetic", "Creation Date", "Reverse Creation Date");
-        sortBy.getSelectionModel().selectedIndexProperty().addListener(ov -> {
-            sortEvents(sortBy.getSelectionModel().getSelectedIndex());
-        });
+        sortBy.getSelectionModel().selectedIndexProperty().addListener(ov -> sortEvents(sortBy.getSelectionModel().getSelectedIndex()));
 
         timelineList.setCellFactory(param -> new ListCell<>() {       //changes how Timelines are displayed (name only)
             @Override
@@ -71,6 +69,7 @@ public class EventSelector {
 
         eventList.getSelectionModel().selectedIndexProperty().addListener(e -> {
             viewButton.setDisable(eventList.getSelectionModel().selectedIndexProperty() == null);
+            addToTimelineButton.setDisable(eventList.getSelectionModel().selectedIndexProperty() == null);
             if (GUIManager.loggedInUser.getUserID() == timelineList.getSelectionModel().getSelectedItem().getTimelineOwnerID()) {
                 newButton.setDisable(timelineList.getSelectionModel().selectedIndexProperty() == null);     //only owner can edit
                 deleteButton.setDisable(eventList.getSelectionModel().selectedIndexProperty() == null);
@@ -110,7 +109,7 @@ public class EventSelector {
 
         Optional<ButtonType> result = confirmDelete.showAndWait();
 
-        if (result.get() == ButtonType.CANCEL)
+        if (result.isPresent() && result.get() == ButtonType.CANCEL)
             return false;
 
         try {
@@ -134,14 +133,15 @@ public class EventSelector {
         }
     }
 
-    private void populateTimelineList() {
+    void populateTimelineList() {
         /*Timeline all = new Timeline();
         all.setTimelineName("All");
         timelineList.getItems().add(all);*/
         try {
+            int currentIndex = timelineList.getSelectionModel().getSelectedIndex();
             PreparedStatement stmt = DBM.conn.prepareStatement("SELECT * FROM timelines");
             timelineList.getItems().addAll(FXCollections.observableArrayList(DBM.getFromDB(stmt, new Timeline())));
-            timelineList.getSelectionModel().select(1);
+            timelineList.getSelectionModel().select(currentIndex);
         } catch (SQLException e) {
             System.err.println("Could not get timelines from database.");
         }
@@ -153,6 +153,7 @@ public class EventSelector {
         eventList.getSelectionModel().clearSelection();
         newButton.setDisable(true);
         viewButton.setDisable(true);
+        addToTimelineButton.setDisable(true);
         deleteButton.setDisable(true);
         parentController.populateDisplay();
     }
@@ -174,15 +175,27 @@ public class EventSelector {
         }
     }
 
-    public void search(ActionEvent actionEvent) {
+    public void search() {
         //not implemented yet
     }
 
-    public void close(ActionEvent actionEvent) {
+    public void close() {
         parentController.rightSidebar.getChildren().remove(selector);
     }
 
-    public void setActiveTimeline(ActionEvent actionEvent) {
+    public void setActiveTimeline() {
         parentController.setActiveTimeline(timelineList.getSelectionModel().getSelectedItem());
+    }
+
+    public void addToTimeline() {
+        try {
+            if (eventList.getSelectionModel().getSelectedItem().addToTimeline(parentController.activeTimeline.getTimelineID())) {
+                parentController.activeTimeline.getEventList().add(eventList.getSelectionModel().getSelectedItem());
+                System.out.println("Event added to " + parentController.activeTimeline + " timeline."); // remove this later once more user feedback is implemented
+            } else
+                System.out.println("Event is already on " + parentController.activeTimeline + " timeline.");
+        } catch (SQLException e) {
+            System.out.println("Timeline not found.");
+        }
     }
 }
