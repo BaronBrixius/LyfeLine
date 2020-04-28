@@ -69,6 +69,8 @@ public class EventEditor {
     private boolean endExpanded;
     private Event event;
     private File imageChosen; //The current image chosen by FileChooser
+    private	String tempLocation;
+    
 
     public void initialize() {
         image.setOnMouseEntered(e -> {
@@ -194,6 +196,7 @@ public class EventEditor {
     }
 
     public void saveEditButton() throws IOException {
+    	String temp;
         if (uploadImageButton.isVisible()) {//So we do not copy when edit is pressed/only save is pressed
             if (this.imageChosen != null) {//Only keep on with copy if there has been a chosen image
                 if (this.event.getEventID() == 0) {
@@ -212,6 +215,9 @@ public class EventEditor {
         }
 
         //To save to DB
+        temp = fullOutPath;
+        if (temp != null)
+        tempLocation = temp;
         this.event.setImage(this.fullOutPath);
         System.out.println("This is from saveEdit " +fullOutPath + "and this bit" + this.event.getImagePath());
         if (editable && hasChanges())   //if unsaved changes, try to save
@@ -219,8 +225,10 @@ public class EventEditor {
                 return;
         toggleEditable(!editable);
         event.setImage(fullOutPath);
-        //fullOutPath = null;
-        //imageChosen = null;
+        saveEvent();
+        fullOutPath = null;
+        imageChosen = null;
+        System.out.println("the state of templocation in SAVE " + tempLocation);
     }
 
     void toggleEditable(boolean editable) {
@@ -250,6 +258,9 @@ public class EventEditor {
 
     @FXML
     private void uploadImage() throws IOException {    //Only working now for .jpg
+    	boolean placeholder = false; //for image routing
+    	//tempLocation = fullOutPath;
+        System.out.println("the state of templocation in start of upload " + tempLocation);
         FileChooser chooser = new FileChooser(); //For the filedirectory
         chooser.setTitle("Upload image");
         //All the image formats supported by java.imageio https://docs.oracle.com/javase/7/docs/api/javax/imageio/package-summary.html
@@ -263,20 +274,51 @@ public class EventEditor {
                 new FileChooser.ExtensionFilter("WBMP", "*.wbmp")
         );
         this.imageChosen = chooser.showOpenDialog(GUIManager.mainStage); //This is the stage that needs to be edited (ok,cancel button) for the filechooser... do in FXML ?
-        if(this.imageChosen!= null){
-            if (event.getImagePath() == null){
+        if(this.imageChosen != null){
+        	if (tempLocation != null && event.getImagePath() == null && ImageSaveConfirm()) {
+            	try {
+                    Files.deleteIfExists(Paths.get(tempLocation));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            	tempLocation = null;
+            }
+        	else if (event.getImagePath() == null && !placeholder){
             	this.filename = imageChosen.getName(); //THis is to take the name of the image choosen to add it to the copied version
                 image.setImage(new Image("File:" + this.imageChosen.getAbsolutePath()));
                 System.out.println("img W/o previous");
-                updateEvent();
-            } else if (ImageSaveConfirm() || event.getImagePath() != null) {
+                placeholder = true;
+                System.out.println("the state of placeholder " + placeholder);
+                System.out.println("the state of templocation " + tempLocation);
+            } 
+            else if (tempLocation != null && event.getImagePath() == null) {
+            	try {
+                    Files.deleteIfExists(Paths.get(tempLocation));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            	tempLocation = null;
+            }
+            else if (placeholder && ImageSaveConfirm()) {
+            	try {
+                    Files.deleteIfExists(Paths.get(event.getImagePath()));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 this.filename = imageChosen.getName(); //THis is to take the name of the image choosen to add it to the copied version
                 image.setImage(new Image("File:" + this.imageChosen.getAbsolutePath()));
                 System.out.println("img is in db");
-                updateEvent();
+                placeholder = false;
+                System.out.println("the state of placeholder " + placeholder);
+                System.out.println("the state of templocation " + tempLocation);
             }
-        } else
+         else {
             System.out.println("Cancel Button pressed.");
+        	System.out.println("the state of placeholder" + placeholder + "If I'm seeing this now, something is FUCKED UP!");
+        	placeholder = false;
+        	System.out.println("the state of placeholder" + placeholder);
+         }
+        }
     }
 
     @FXML
@@ -312,6 +354,8 @@ public class EventEditor {
         String imageName = filename;
         InputStream is = null;
         OutputStream os = null;
+        //tempLocation = fullOutPath;
+        System.out.println("the state of templocation in copy Image " + tempLocation);
         try {
             is = new FileInputStream(image);
             System.out.println("reading complete.");
@@ -568,9 +612,11 @@ public class EventEditor {
                 e.printStackTrace();
             }
             image.setImage(null);
+            event.setImage(null);
+            fullOutPath = null;
+            imageChosen = null;
+            updateEvent();
         }
-    	//fullOutPath = null;
-        //imageChosen = null;
         image.setImage(null);
     }
     
