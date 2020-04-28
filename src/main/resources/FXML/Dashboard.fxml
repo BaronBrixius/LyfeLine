@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.TextFlow?>
+
+<?import javafx.scene.text.Text?>
+<VBox stylesheets="@../styles/DefaultStyle.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.Dashboard">
+    <GridPane alignment="CENTER" prefHeight="700.0" prefWidth="1280.0" stylesheets="@../styles/DefaultStyle.css">
+        <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="914.6666870117188" minWidth="10.0" prefWidth="530.3333740234375" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="914.6666870117188" minWidth="10.0" prefWidth="281.6666259765625" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="810.6666870117188" minWidth="10.0" prefWidth="547.3333129882812" />
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints maxHeight="398.0" minHeight="10.0" prefHeight="95.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="675.9999923706055" minHeight="0.0" prefHeight="585.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+        <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+        </padding>
+        <VBox prefHeight="84.0" prefWidth="206.0" spacing="10.0" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+            <HBox alignment="CENTER_LEFT" spacing="10.0">
+                <ComboBox fx:id="sortBy" prefHeight="35.0" prefWidth="193.0" promptText="Sort By" style="-fx-font-size: 1.3em;" />
+                <CheckBox fx:id="cbOnlyViewPersonalLines" alignment="CENTER" mnemonicParsing="false" onAction="#onlyUserTimelines" style="-fx-font-size: 1.3em;" text="Only Show My Timelines" />
+            </HBox>
+            <TextField fx:id="searchInput" prefHeight="42.0" prefWidth="501.0" style="-fx-font-size: 1.3em;" text="Search here..." />
+         <padding>
+            <Insets bottom="10.0" top="10.0" />
+         </padding>
+        </VBox>
+        <ListView fx:id="list" onMouseClicked="#updateDisplays" prefHeight="590.0" prefWidth="753.0" GridPane.columnSpan="2" GridPane.rowIndex="1" />
+        <ScrollPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
+            <TextFlow fx:id="displayInfo" prefHeight="564.0" prefWidth="500.0">
+                <Text fx:id="titleText" strokeType="OUTSIDE" strokeWidth="0.0"/>
+            </TextFlow>
+        </ScrollPane>
+    </GridPane>
+    <GridPane fx:id="gridButtons">
+        <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="1029.3333740234375" minWidth="10.0" prefWidth="766.6666870117188" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="533.6666870117188" minWidth="10.0" prefWidth="524.3333129882812" />
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+        <HBox alignment="CENTER" prefHeight="100.0" prefWidth="880.0" spacing="10.0">
+            <padding>
+                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+            </padding>
+            <Button fx:id="btnCreate" mnemonicParsing="false" onAction="#createTimeline" styleClass="dashBoard" text="Create" />
+            <Button fx:id="btnEdit" mnemonicParsing="false" onAction="#editTimeline" style="-fx-pref-height: 75px;" styleClass="dashBoard" text="Edit" />
+            <Button fx:id="btnDelete" mnemonicParsing="false" onAction="#deleteConfirmation" style="-fx-pref-height: 75px;" text="Delete">
+                <styleClass>
+                    <String fx:value="hoverRed" />
+                    <String fx:value="dashBoard" />
+                </styleClass>
+            </Button>
+        </HBox>
+        <HBox prefHeight="100.0" prefWidth="200.0" spacing="10.0" GridPane.columnIndex="1">
+            <padding>
+                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+            </padding>
+            <Button fx:id="adminGUI" alignment="CENTER" mnemonicParsing="false" onAction="#adminScreen"
+                    prefWidth="297.0" styleClass="dashBoard" text="Admin Manager"/>
+            <Button fx:id="eventEditorButton" mnemonicParsing="false" onAction="#openEventEditor" styleClass="dashBoard"
+                    text="Event editor"/>
+        </HBox>
+    </GridPane>
+</VBox>
