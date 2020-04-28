@@ -2,7 +2,7 @@ CREATE TABLE `events`
 (
     `EventID`            int               NOT NULL AUTO_INCREMENT,
     `EventOwner`         int               NOT NULL,
-    `imagePath`         nvarchar(5000)    DEFAULT NULL,
+    `ImagePath`          nvarchar(5000)    DEFAULT NULL,
     `EventName`          nvarchar(100)     DEFAULT NULL,
     `EventDescription`   nvarchar(5000)    DEFAULT NULL,
     `StartYear`          bigint            NOT NULL,
@@ -205,8 +205,8 @@ CREATE TABLE `timelines`
     `CreatedSecond`       tinyint unsigned  DEFAULT NULL,
     `CreatedMillisecond`  smallint unsigned DEFAULT NULL,
     `Private`             boolean           DEFAULT true,
-    `TimelineOwner`       int 				NOT NULL,
-    `Keywords`				varchar(1000)   DEFAULT NULL,
+    `TimelineOwner`       int               NOT NULL,
+    `Keywords`            varchar(1000)     DEFAULT NULL,
     PRIMARY KEY (`TimelineID`),
     UNIQUE KEY `TimelineID_UNIQUE` (`TimelineID`)
 ) ENGINE = InnoDB

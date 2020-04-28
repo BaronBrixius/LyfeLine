@@ -36,8 +36,6 @@ public class EventEditor {
     @FXML
     public Button editButton;
     @FXML
-    public Button uploadButton;
-    @FXML
     public Button deleteButton;
     @FXML
     public Label headerText;
@@ -47,8 +45,10 @@ public class EventEditor {
     public FlowPane startPane;
     @FXML
     public FlowPane endPane;
-    public Button clearButton;
+    public Button deleteImageButton;
     public Button addToTimelineButton;
+    @FXML
+    Button uploadImageButton;
     @FXML
     TextField titleInput = new TextField();
     @FXML
@@ -192,7 +192,7 @@ public class EventEditor {
     }
 
     public void saveEditButton() throws IOException {
-        if (uploadButton.isVisible()) {//So we do not copy when edit is pressed/only save is pressed
+        if (uploadImageButton.isVisible()) {//So we do not copy when edit is pressed/only save is pressed
             if (this.imageChosen != null) {//Only keep on with copy if there has been a chosen image
                 if (this.event.getEventID() == 0) {
                     if (this.event.getImagePath() == null)
@@ -229,8 +229,10 @@ public class EventEditor {
         for (VBox box : endBoxes)
             box.getChildren().get(1).setDisable(!editable);
         imageInput.setDisable(!editable);
-        uploadButton.setVisible(editable);
-        uploadButton.setDisable(!editable);
+        uploadImageButton.setVisible(editable);
+        uploadImageButton.setDisable(!editable);
+        deleteImageButton.setVisible(editable);
+        deleteImageButton.setDisable(!editable);
 
         if (editable)
             editor.getStylesheets().remove("styles/DisabledViewable.css");
@@ -256,37 +258,34 @@ public class EventEditor {
                 new FileChooser.ExtensionFilter("WBMP", "*.wbmp")
         );
         this.imageChosen = chooser.showOpenDialog(new Stage()); //This is the stage that needs to be edited (ok,cancel button) for the filechooser... do in FXML ?
-        if(this.imageChosen!= null){
-            if (event.getImagePath() == null){
-            	this.filename = imageChosen.getName(); //THis is to take the name of the image choosen to add it to the copied version
+        if (this.imageChosen != null) {
+            if (event.getImagePath() == null) {
+                this.filename = imageChosen.getName(); //THis is to take the name of the image choosen to add it to the copied version
                 image.setImage(new Image("File:" + this.imageChosen.getAbsolutePath()));
                 System.out.println("img W/o previous");
-            }
-            else if (ImageSaveConfirm() || event.getImagePath() != null) {
-            	this.filename = imageChosen.getName(); //THis is to take the name of the image choosen to add it to the copied version
+            } else if (ImageSaveConfirm() || event.getImagePath() != null) {
+                this.filename = imageChosen.getName(); //THis is to take the name of the image choosen to add it to the copied version
                 image.setImage(new Image("File:" + this.imageChosen.getAbsolutePath()));
                 System.out.println("img is in db");
-            }}
-            
-            else
+            }
+        } else
             System.out.println("Cancel Button pressed.");
-        }
-        
-        @FXML
-        private boolean ImageSaveConfirm() throws IOException {
-            Alert confirmsaveimage = new Alert(Alert.AlertType.CONFIRMATION);
-            confirmsaveimage.setTitle("Confirm Change");
-            confirmsaveimage.setHeaderText("Replacing or removing an image will permanently delete it from the system.");
-            confirmsaveimage.setContentText("Would you like to make the change?");
+    }
 
-            Optional<ButtonType> result = confirmsaveimage.showAndWait();
+    @FXML
+    private boolean ImageSaveConfirm() throws IOException {
+        Alert confirmsaveimage = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmsaveimage.setTitle("Confirm Change");
+        confirmsaveimage.setHeaderText("Replacing or removing an image will permanently delete it from the system.");
+        confirmsaveimage.setContentText("Would you like to make the change?");
 
-            if (result.get() == ButtonType.CANCEL)
-                return false;
-            else
-            	return true;
-        }
+        Optional<ButtonType> result = confirmsaveimage.showAndWait();
 
+        if (result.get() == ButtonType.CANCEL)
+            return false;
+        else
+            return true;
+    }
 
 
     //Method that returns the image format as a string i.e sun.png == "png"
