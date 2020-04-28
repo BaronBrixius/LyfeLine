@@ -257,6 +257,20 @@ for example:      buttonName.getStyleClass().add("smallButton");                
     -fx-background-radius: 2.0em;
 }
 
+.spinner .increment-arrow-button {
+    -fx-padding: 2 4 2 4;
+}
+.spinner .decrement-arrow-button {
+    -fx-padding: 2 4 2 4;
+}
+
+.spinner .increment-arrow-button .increment-arrow {
+    -fx-padding: 2 3 2 3;
+}
+.spinner .decrement-arrow-button .decrement-arrow {
+    -fx-padding: 2 3 2 3;
+}
+
 /*Here is a list of useful CSS commands:
 -fx-text-fill: black; (sets text color)
 -fx-font-size: 1.5em; (sets text size)
