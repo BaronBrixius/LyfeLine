@@ -136,19 +136,30 @@ public class Timeline implements DBObject<Timeline> {
         return out;
     }
 
-    @Override
-    public PreparedStatement getDeleteQuery() throws SQLException {
-        PreparedStatement out = DBM.conn.prepareStatement("DELETE t, e FROM `timelines` t "
-                + "LEFT JOIN timelineevents te " + "ON t.TimelineID = te.TimelineID " + // destroys orphaned events
-                // (i.e. events where there are
-                // no
-                "LEFT JOIN events e " + // junction table records for them with a different TimelineID
-                "ON te.EventID = e.EventID AND e.EventID NOT IN (SELECT EventID FROM timelineevents WHERE TimelineID != ?) "
-                + "WHERE t.TimelineID = ? ");
+
+    public void deleteOrphans() throws SQLException {
+        PreparedStatement out = DBM.conn.prepareStatement("SELECT e.* FROM `timelines` t " +
+                "LEFT JOIN timelineevents te " +
+                "ON t.TimelineID = te.TimelineID " +        	//destroys orphaned events (i.e. events where there are no
+                "LEFT JOIN events e " +                        	//junction table records for them with a different TimelineID
+                "ON te.EventID = e.EventID AND e.EventID NOT IN (SELECT EventID FROM timelineevents WHERE TimelineID != ?) " +
+                "WHERE t.TimelineID = ? ");
+
         out.setInt(1, timelineID);
         out.setInt(2, timelineID);
+
+        DBM.deleteFromDB(DBM.getFromDB(out, new Event()));
+
+    }
+
+    @Override
+    public PreparedStatement getDeleteQuery() throws SQLException {
+        PreparedStatement out = DBM.conn.prepareStatement("DELETE FROM `timelines` WHERE (`TimelineID` = ?)");
+        out.setInt(1, timelineID);
         return out;
     }
+
+
 
     @Override
     public Timeline createFromDB(ResultSet rs) throws SQLException {
