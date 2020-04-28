@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Timeline implements DBObject<Timeline> {
-
     private int timelineID;
     private int scale;
     private String timelineName;
@@ -24,7 +23,6 @@ public class Timeline implements DBObject<Timeline> {
 
     // Default timeline
     public Timeline() {
-
     }
 
     // Public method for creating the timeline
