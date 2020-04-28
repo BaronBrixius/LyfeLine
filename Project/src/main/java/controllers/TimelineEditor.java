@@ -13,6 +13,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.util.StringConverter;
 import utils.Date;
 
 
@@ -112,11 +113,42 @@ public class TimelineEditor {
         listView.setItems(keywords);
     }
 
-    private void setupTimeInputBoxes(String timeSpinnerLabel, int maxValue, int i, List<Spinner<Integer>> startTimes, List<VBox> startBoxes) {
-        startTimes.add(i, new Spinner<>(0, maxValue, 0));
-        startBoxes.add(i, new VBox(new Label(timeSpinnerLabel), startTimes.get(i)));
-        startBoxes.get(i).setPrefWidth(70);
-        startBoxes.get(i).getChildren().get(0).getStyleClass().add("smallText");
+    private void setupTimeInputBoxes(String timeSpinnerLabel, int maxValue, int i, List<Spinner<Integer>> spinnerList, List<VBox> boxList) {
+        //startTimes.add(i, new Spinner<>(0, maxValue, 0));
+        //startBoxes.add(i, new VBox(new Label(timeSpinnerLabel), startTimes.get(i)));
+        //startBoxes.get(i).setPrefWidth(70);
+        //startBoxes.get(i).getChildren().get(0).getStyleClass().add("smallText");
+        SpinnerValueFactory.IntegerSpinnerValueFactory valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, maxValue, 0);
+        valueFactory.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(Integer value) {
+                if (value == null)
+                    return "0";
+                return value.toString();
+            }
+
+            @Override
+            public Integer fromString(String string) {
+                try {
+                    // If the specified value is null or zero-length, return null
+                    if (string == null)
+                        return 0;
+                    string = string.trim();
+                    if (string.length() < 1)
+                        return null;
+                    return Integer.parseInt(string);
+
+                } catch (NumberFormatException ex) {
+                    return 0;
+                }
+            }
+        });
+        spinnerList.add(i, new Spinner<>(valueFactory));
+        spinnerList.get(i).setEditable(true);
+
+        boxList.add(i, new VBox(new Label(timeSpinnerLabel), spinnerList.get(i)));
+        boxList.get(i).setPrefWidth(70);
+        boxList.get(i).getChildren().get(0).getStyleClass().add("smallText");
     }
 
     public void setParentController(TimelineView parentController) {             //TODO delete this inelegant solution
@@ -165,31 +197,44 @@ public class TimelineEditor {
         titleInput.setText(timeline.getTimelineName());
         descriptionInput.setText(timeline.getTimelineDescription());
 
-        startInputs.get(0).getValueFactory().setValue(timeline.getStartDate().getYear());
-        startInputs.get(1).getValueFactory().setValue(timeline.getStartDate().getMonth());
-        startInputs.get(2).getValueFactory().setValue(timeline.getStartDate().getDay());
-        startInputs.get(3).getValueFactory().setValue(timeline.getStartDate().getHour());
-        startInputs.get(4).getValueFactory().setValue(timeline.getStartDate().getMinute());
-        startInputs.get(5).getValueFactory().setValue(timeline.getStartDate().getSecond());
-        startInputs.get(6).getValueFactory().setValue(timeline.getStartDate().getMillisecond());
+        if (timeline.getStartDate() != null)
+        {
+            startInputs.get(0).getValueFactory().setValue(timeline.getStartDate().getYear());
+            startInputs.get(1).getValueFactory().setValue(timeline.getStartDate().getMonth());
+            startInputs.get(2).getValueFactory().setValue(timeline.getStartDate().getDay());
+            startInputs.get(3).getValueFactory().setValue(timeline.getStartDate().getHour());
+            startInputs.get(4).getValueFactory().setValue(timeline.getStartDate().getMinute());
+            startInputs.get(5).getValueFactory().setValue(timeline.getStartDate().getSecond());
+            startInputs.get(6).getValueFactory().setValue(timeline.getStartDate().getMillisecond());
 
-        endInputs.get(0).getValueFactory().setValue(timeline.getEndDate().getYear());
-        endInputs.get(1).getValueFactory().setValue(timeline.getEndDate().getMonth());
-        endInputs.get(2).getValueFactory().setValue(timeline.getEndDate().getDay());
-        endInputs.get(3).getValueFactory().setValue(timeline.getEndDate().getHour());
-        endInputs.get(4).getValueFactory().setValue(timeline.getEndDate().getMinute());
-        endInputs.get(5).getValueFactory().setValue(timeline.getEndDate().getSecond());
-        endInputs.get(6).getValueFactory().setValue(timeline.getEndDate().getMillisecond());
+            endInputs.get(0).getValueFactory().setValue(timeline.getEndDate().getYear());
+            endInputs.get(1).getValueFactory().setValue(timeline.getEndDate().getMonth());
+            endInputs.get(2).getValueFactory().setValue(timeline.getEndDate().getDay());
+            endInputs.get(3).getValueFactory().setValue(timeline.getEndDate().getHour());
+            endInputs.get(4).getValueFactory().setValue(timeline.getEndDate().getMinute());
+            endInputs.get(5).getValueFactory().setValue(timeline.getEndDate().getSecond());
+            endInputs.get(6).getValueFactory().setValue(timeline.getEndDate().getMillisecond());
+        }
+
+
 
         setExpansion(true, false);
         setExpansion(false, false);
 
+        if(timeline.getKeywords() != null)
+        {
+            keywords.addAll(timeline.getKeywords());
+            keywords.sort((s1,s2)->s1.compareTo(s2));
+        }
+        else
+            timeline.setKeywords(FXCollections.observableArrayList());
 
-        keywords.addAll(timeline.getKeywords());
-        keywords.sort((s1,s2)->s1.compareTo(s2));
+
 
         return false;
     }
+
+
 
     @FXML
     private boolean saveConfirm() {
@@ -301,13 +346,14 @@ public class TimelineEditor {
         Date readEnd = new Date(endInputs.get(0).getValue(), endInputs.get(1).getValue(), endInputs.get(2).getValue(),
                 endInputs.get(3).getValue(), endInputs.get(4).getValue(), endInputs.get(5).getValue(), endInputs.get(6).getValue());
 
+
         if (timeline.getKeywords().size() != keywords.size())
             return true;
 
         for (int i = 0; i < keywords.size(); i++)
             if (timeline.getKeywords().get(i).compareTo(keywords.get(i)) != 0)
                 return true;
-
+            
         return (
                 !timeline.getTimelineName().equals(titleInput.getText())
                         || !timeline.getTimelineDescription().equals(descriptionInput.getText().replaceAll("([^\r])\n", "$1\r\n"))     //textArea tends to change the newline from \r\n to just \n which breaks some things

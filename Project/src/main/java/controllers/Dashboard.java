@@ -5,7 +5,9 @@ import javafx.fxml.FXML;
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -19,6 +21,7 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import utils.Date;
 
 public class Dashboard {
 
@@ -139,6 +142,11 @@ public class Dashboard {
 	@FXML
 	public void createTimeline(ActionEvent event) throws IOException {
 		TimelineView view = GUIManager.swapScene("TimelineView");
+		Timeline t = new Timeline();
+		t.setTimelineOwner(GUIManager.loggedInUser.getUserID());
+		view.setActiveTimeline(t);
+		//public Timeline(String TimelineName, String TimelineDescription, int Scale, String Theme, Date StartDate,
+		//                    Date Enddate, boolean Private, List<String> keywords)
 	}
 
 	@FXML
