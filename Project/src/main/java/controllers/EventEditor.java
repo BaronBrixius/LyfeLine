@@ -190,7 +190,24 @@ public class EventEditor {
             endPane.getStyleClass().add("DisabledAnyways");
     }
 
-    public void saveEditButton() {
+    public void saveEditButton() throws IOException {
+        if(uploadButton.isVisible()){//So we do not copy when edit is pressed/only save is pressed
+            if(this.imageChosen !=null) {//Only keep on with copy if there has been a chosen image
+                if(this.event.getEventID()==0){
+                    if(this.event.getImagePath()== null)
+                        this.fullOutPath = copyImage(imageChosen,filename);
+                    else if (!this.event.getImagePath().equalsIgnoreCase(this.fullOutPath))
+                        this.fullOutPath = copyImage(imageChosen,filename);}
+                if(this.event.getEventID()>0){
+                    if(this.event.getImagePath()== null)
+                        this.fullOutPath = copyImage(imageChosen,filename);
+                    else if (!this.event.getImagePath().equalsIgnoreCase(this.fullOutPath))
+                        this.fullOutPath = copyImage(imageChosen,filename);}}}
+
+
+        //To save to DB
+        this.event.setImage(this.fullOutPath);
+
         if (editable && hasChanges())   //if unsaved changes, try to save
             if (!saveConfirm())         //if save cancelled, don't change mode
                 return;
@@ -262,14 +279,22 @@ public class EventEditor {
         try {
             is = new FileInputStream(image);
             System.out.println("reading complete.");
-            int imageNumer = 1; //For updating the number in the parenthesis based on how many with the same name in resources folder
-            imageName = filename;
             //Path for saving, have special events folder now so if timeline guys are doing something they don't override copies
-            while (folderHasImage(imageName)) { //Check if our folder has the imagename already if so, add (int) untill no more true
-                int index = imageName.indexOf(".");
-                imageName = imageName.substring(0, index) + "(" + imageNumer + ")" + ".jpg";
-                imageNumer++;
+            int duplicateDigit = 2;
+
+            while(folderHasImage(imageName)) {
+                int indexOfDot = filename.lastIndexOf(".");
+                if(imageName.matches(".*\\s\\(\\d\\)\\..*")) {
+                    int indexOfBrackets = imageName.lastIndexOf("(");
+                    imageName = imageName.substring(0, indexOfBrackets + 1) +  duplicateDigit + ")" + "." + getFormat(image);
+
+                } else {
+                    imageName = imageName.substring(0, indexOfDot) + " (" + duplicateDigit + ")" + "." + getFormat(image);
+                }
+                duplicateDigit++;
             }
+
+
             os = new FileOutputStream(new File(outPath + imageName));
             byte[] buffer = new byte[1024];
             int length;
@@ -332,6 +357,13 @@ public class EventEditor {
     private boolean populateDisplay() {
         titleInput.setText(event.getEventName());
         descriptionInput.setText(event.getEventDescrition());
+
+        System.out.println(event.getImagePath());
+        System.out.println(event.getEventID());
+        if(event.getImagePath() != null){
+            image.setImage(new Image("File:" + event.getImagePath()));
+            this.fullOutPath = event.getImagePath();}
+
 
         startInputs.get(0).getValueFactory().setValue(event.getStartDate().getYear());
         startInputs.get(1).getValueFactory().setValue(event.getStartDate().getMonth());
