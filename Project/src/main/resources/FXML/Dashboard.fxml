@@ -73,7 +73,7 @@
                 <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
             </padding>
             <Button fx:id="adminGUI" alignment="CENTER" mnemonicParsing="false" onAction="#adminScreen" prefWidth="297.0" styleClass="dashBoard" text="Admin Manager" />
-            <Button fx:id="eventEditorButton" mnemonicParsing="false" onAction="#openTimeline" styleClass="dashBoard" text="View Event" />
+            <Button fx:id="eventEditorButton" mnemonicParsing="false" onAction="#openTimeline" styleClass="dashBoard" text="View Timeline" />
         </HBox>
     </GridPane>
 </VBox>

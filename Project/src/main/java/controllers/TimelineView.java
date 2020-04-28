@@ -8,6 +8,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -81,11 +82,13 @@ public class TimelineView {
     }
 
     //Call this method when swapping scenes
+    
     public void setActiveTimeline(Timeline t) {
         this.activeTimeline = t;
         selectorController.setTimelineSelected(activeTimeline);  //sets the selected index to the currently viewed timeline
         populateDisplay();
     }
+    
 
     //This method is probably not needed, but whatever      //useful for dev work to set things up quickly!
     public boolean setActiveTimeline(int id) {
@@ -107,14 +110,27 @@ public class TimelineView {
     }
 
     void populateDisplay() {
-        timelineGrid.getChildren().clear();
+    	timelineGrid.getChildren().clear();
+    	timelineGrid.getColumnConstraints().clear();
 
         Pane mainLine = new Pane();
         mainLine.setStyle("-fx-background-color: #6C54F2;");
-        timelineGrid.add(mainLine, 0, 0, GridPane.REMAINING, 1);
+        int numberOfCol = activeTimeline.getStartDate().distanceTo(activeTimeline.getEndDate(), activeTimeline.getScale());
+
+        for (int i = 0; i < (numberOfCol); i++) {
+            ColumnConstraints colConst = new ColumnConstraints();
+            colConst.setPercentWidth(100.0 / numberOfCol);
+            timelineGrid.getColumnConstraints().add(colConst);
+        }
+        
+        //System.out.print("Count from .getColumnCount " + timelineGrid.getColumnCount()); for testing columns for the timeline
+       
+        if (numberOfCol>=1) // if the start date is later than the end date, numberOfCol would be negative, which does not work for the amount of columns
+        timelineGrid.add(mainLine, 0, 0, numberOfCol, 1);
+
         //TODO set grid column count to actual timeline length, make the above look better (possibly with its own fxml?)
         GridPane.setMargin(mainLine, new Insets(25, 0, -25, 0));
-        
+
         EventNode newNode;
 
         eventList.clear();
