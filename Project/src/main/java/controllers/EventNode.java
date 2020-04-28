@@ -1,7 +1,5 @@
 package controllers;
 
-import java.time.Duration;
-
 import database.Event;
 import database.Timeline;
 import javafx.fxml.FXML;
@@ -28,7 +26,7 @@ public class EventNode implements Comparable<EventNode> {
     }
 
     public void initialize() {
-    	hoverFlag.setShowDelay(hoverFlag.getShowDelay().divide(8));
+        hoverFlag.setShowDelay(hoverFlag.getShowDelay().divide(8));
     }
 
     public Event getActiveEvent() {
@@ -53,13 +51,8 @@ public class EventNode implements Comparable<EventNode> {
     }
 
     @FXML
-    public void openDetails(MouseEvent mouseEvent) {
+    public void openDetails() {
         hoverFlag.setText(activeEvent.getEventName() + "\n" + activeEvent.getEventDescrition());
-    }
-
-    @FXML
-    public void closeDetails(MouseEvent mouseEvent) {
-
     }
 
     @FXML
