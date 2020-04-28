@@ -19,6 +19,8 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -211,13 +213,14 @@ public class EventEditor {
 
         //To save to DB
         this.event.setImage(this.fullOutPath);
-
+        System.out.println("This is from saveEdit " +fullOutPath + "and this bit" + this.event.getImagePath());
         if (editable && hasChanges())   //if unsaved changes, try to save
             if (!saveConfirm())         //if save cancelled, don't change mode
                 return;
         toggleEditable(!editable);
-        fullOutPath = null;
-        imageChosen = null;
+        event.setImage(fullOutPath);
+        //fullOutPath = null;
+        //imageChosen = null;
     }
 
     void toggleEditable(boolean editable) {
@@ -265,10 +268,12 @@ public class EventEditor {
             	this.filename = imageChosen.getName(); //THis is to take the name of the image choosen to add it to the copied version
                 image.setImage(new Image("File:" + this.imageChosen.getAbsolutePath()));
                 System.out.println("img W/o previous");
+                updateEvent();
             } else if (ImageSaveConfirm() || event.getImagePath() != null) {
                 this.filename = imageChosen.getName(); //THis is to take the name of the image choosen to add it to the copied version
                 image.setImage(new Image("File:" + this.imageChosen.getAbsolutePath()));
                 System.out.println("img is in db");
+                updateEvent();
             }
         } else
             System.out.println("Cancel Button pressed.");
@@ -398,6 +403,8 @@ public class EventEditor {
             image.setImage(new Image("File:" + event.getImagePath()));
             this.fullOutPath = event.getImagePath();
         }
+        else 
+        	image.setImage(null);
 
         startInputs.get(0).getValueFactory().setValue(event.getStartDate().getYear());
         startInputs.get(1).getValueFactory().setValue(event.getStartDate().getMonth());
@@ -439,9 +446,11 @@ public class EventEditor {
 
     void updateEvent() {
         //setters to update each field of this.event, based on the current info in the text fields
+    	this.event.setImage(this.fullOutPath);
+    	System.out.println("Update Event worked!" +this.fullOutPath);
         event.setTitle(titleInput.getText());
         event.setDescription(descriptionInput.getText().replaceAll("([^\r])\n", "$1\r\n"));
-
+        this.event.setImage(this.fullOutPath);
         event.setStartDate(new Date(startInputs.get(0).getValue(), startInputs.get(1).getValue(), startInputs.get(2).getValue(),
                 startInputs.get(3).getValue(), startInputs.get(4).getValue(), startInputs.get(5).getValue(), startInputs.get(6).getValue()));
         if (hasDuration.isSelected()) {
@@ -452,6 +461,7 @@ public class EventEditor {
     }
 
     private boolean saveEvent() {
+    	event.setImage(fullOutPath);
         updateEvent();
         try {
             if (event.getEventID() == 0)
@@ -547,6 +557,22 @@ public class EventEditor {
     }
 
 
+    
     public void clearImage(ActionEvent actionEvent) {
+    	System.out.println("Delete button pressed");
+    	if(event.getImagePath() != null) {
+            try {
+            	System.out.println("IF statement active");
+                Files.deleteIfExists(Paths.get(event.getImagePath()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            image.setImage(null);
+        }
+    	//fullOutPath = null;
+        //imageChosen = null;
+        image.setImage(null);
     }
+    
+    
 }

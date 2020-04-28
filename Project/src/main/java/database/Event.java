@@ -13,7 +13,7 @@ public class Event implements DBObject<Event> {
     private int userID;
     private String eventName = "";
     private String eventDescription = "";
-    private String imagePath = null;
+    private String imagePath;
     private Date startDate = new Date();
     private Date endDate = new Date();
     private Date creationDate;
