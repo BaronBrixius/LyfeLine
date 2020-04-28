@@ -11,7 +11,6 @@ public class Event implements DBObject<Event> {
     private String eventName = "";
     private String eventDescription = "";
     private String imagePath = null;
-
     private Date startDate = new Date();
     private Date endDate = new Date();
     private Date creationDate;
@@ -42,8 +41,6 @@ public class Event implements DBObject<Event> {
     public String  imagePath() {
         return imagePath;
     }
-
-
 
     //Some examples of working with the database
     /*static List<Event> getAll() throws SQLException {
@@ -257,6 +254,10 @@ public class Event implements DBObject<Event> {
         PreparedStatement out = DBM.conn.prepareStatement("DELETE FROM `events` WHERE (`EventID` = ?)");
         out.setInt(1, eventID);
         return out;
+    }
+
+    public void setUserID(int userID) {
+        this.userID = userID;
     }
 
     @Override

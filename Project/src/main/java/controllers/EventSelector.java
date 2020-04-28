@@ -154,6 +154,7 @@ public class EventSelector {
         newButton.setDisable(true);
         viewButton.setDisable(true);
         deleteButton.setDisable(true);
+        parentController.populateDisplay();
     }
 
     public void sortEvents(int selection) {

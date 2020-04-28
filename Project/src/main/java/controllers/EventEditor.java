@@ -48,6 +48,7 @@ public class EventEditor {
     @FXML
     public FlowPane endPane;
     public Button clearButton;
+    public Button addToTimelineButton;
     @FXML
     TextField titleInput = new TextField();
     @FXML
@@ -191,19 +192,22 @@ public class EventEditor {
     }
 
     public void saveEditButton() throws IOException {
-        if(uploadButton.isVisible()){//So we do not copy when edit is pressed/only save is pressed
-            if(this.imageChosen !=null) {//Only keep on with copy if there has been a chosen image
-                if(this.event.getEventID()==0){
-                    if(this.event.getImagePath()== null)
-                        this.fullOutPath = copyImage(imageChosen,filename);
+        if (uploadButton.isVisible()) {//So we do not copy when edit is pressed/only save is pressed
+            if (this.imageChosen != null) {//Only keep on with copy if there has been a chosen image
+                if (this.event.getEventID() == 0) {
+                    if (this.event.getImagePath() == null)
+                        this.fullOutPath = copyImage(imageChosen, filename);
                     else if (!this.event.getImagePath().equalsIgnoreCase(this.fullOutPath))
-                        this.fullOutPath = copyImage(imageChosen,filename);}
-                if(this.event.getEventID()>0){
-                    if(this.event.getImagePath()== null)
-                        this.fullOutPath = copyImage(imageChosen,filename);
+                        this.fullOutPath = copyImage(imageChosen, filename);
+                }
+                if (this.event.getEventID() > 0) {
+                    if (this.event.getImagePath() == null)
+                        this.fullOutPath = copyImage(imageChosen, filename);
                     else if (!this.event.getImagePath().equalsIgnoreCase(this.fullOutPath))
-                        this.fullOutPath = copyImage(imageChosen,filename);}}}
-
+                        this.fullOutPath = copyImage(imageChosen, filename);
+                }
+            }
+        }
 
         //To save to DB
         this.event.setImage(this.fullOutPath);
@@ -308,11 +312,11 @@ public class EventEditor {
             //Path for saving, have special events folder now so if timeline guys are doing something they don't override copies
             int duplicateDigit = 2;
 
-            while(folderHasImage(imageName)) {
+            while (folderHasImage(imageName)) {
                 int indexOfDot = filename.lastIndexOf(".");
-                if(imageName.matches(".*\\s\\(\\d\\)\\..*")) {
+                if (imageName.matches(".*\\s\\(\\d\\)\\..*")) {
                     int indexOfBrackets = imageName.lastIndexOf("(");
-                    imageName = imageName.substring(0, indexOfBrackets + 1) +  duplicateDigit + ")" + "." + getFormat(image);
+                    imageName = imageName.substring(0, indexOfBrackets + 1) + duplicateDigit + ")" + "." + getFormat(image);
 
                 } else {
                     imageName = imageName.substring(0, indexOfDot) + " (" + duplicateDigit + ")" + "." + getFormat(image);
@@ -363,20 +367,23 @@ public class EventEditor {
         /*Event newEvent = logic to find Event in database and get its info
         if (newEvent != null)
             return changeEvent(newEvent);*/
-
         return false;
     }
 
     public boolean setEvent(Event event) {
         parentController.editorController.close();
         this.event = event;
-        //Check if Admin
-        if (GUIManager.loggedInUser.getUserID() != event.getUserID()) {
-            editButton.setVisible(false);
-            editButton.setDisable(true);
-            deleteButton.setVisible(false);
-            deleteButton.setDisable(true);
-        }
+        if (this.event.getEventID() == 0)       //if new event, set current user as owner
+            this.event.setUserID(GUIManager.loggedInUser.getUserID());
+        //Check if Owner
+        boolean owner = GUIManager.loggedInUser.getUserID() == this.event.getUserID();
+        editButton.setDisable(!owner);
+        editButton.setVisible(owner);
+        deleteButton.setDisable(!owner);
+        deleteButton.setVisible(owner);
+        addToTimelineButton.setDisable(!owner);
+        addToTimelineButton.setVisible(owner);
+
         return populateDisplay();
     }
 
@@ -386,10 +393,10 @@ public class EventEditor {
 
         System.out.println(event.getImagePath());
         System.out.println(event.getEventID());
-        if(event.getImagePath() != null){
+        if (event.getImagePath() != null) {
             image.setImage(new Image("File:" + event.getImagePath()));
-            this.fullOutPath = event.getImagePath();}
-
+            this.fullOutPath = event.getImagePath();
+        }
 
         startInputs.get(0).getValueFactory().setValue(event.getStartDate().getYear());
         startInputs.get(1).getValueFactory().setValue(event.getStartDate().getMonth());
