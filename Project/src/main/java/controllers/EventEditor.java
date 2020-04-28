@@ -217,6 +217,7 @@ public class EventEditor {
                 return;
         toggleEditable(!editable);
         fullOutPath = null;
+        imageChosen = null;
     }
 
     void toggleEditable(boolean editable) {
@@ -303,7 +304,7 @@ public class EventEditor {
 
     private String copyImage(File image, String filename) throws IOException { //Takes the file chosen and the name of it
         String outPath = "src/main/resources/images/";
-        String imageName = "";
+        String imageName = filename;
         InputStream is = null;
         OutputStream os = null;
         try {
