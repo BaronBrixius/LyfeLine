@@ -118,7 +118,7 @@ public class TimelineView {
 		int numberOfCol = activeTimeline.getStartDate().distanceTo(activeTimeline.getEndDate(),
 				activeTimeline.getScale());
 		int counter, start = 0, frequency=1;
-		
+
 		int scale=activeTimeline.getScale();
 		switch(scale) {
 		  case 1:
@@ -154,20 +154,20 @@ public class TimelineView {
 			break;
 		  case 11:
 			start=activeTimeline.getStartDate().getYear()/1000;
-			break;		    
+			break;
 		}
-		
+
 		counter=start;
-		
+
 		for (int i = 0; i <= numberOfCol; i++) {
 			ColumnConstraints colConst = new ColumnConstraints();
 			colConst.setPercentWidth(100.0 / numberOfCol);
 			timelineGrid.getColumnConstraints().add(colConst);
-			
+
 			if (i % frequency == 0) {
 				timelineGrid.add(new Text("" + counter), i, 0);
 				counter+=frequency;
-				
+
 			} else if (i == 0) {
 				timelineGrid.add(new Text("" + start), i, 0);
 			} else if (i == numberOfCol) {

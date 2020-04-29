@@ -64,7 +64,7 @@ public class Dashboard {
         }
 
         // approach adapted from https://stackoverflow.com/a/36657553
-        list.setCellFactory(param -> new ListCell<Timeline>() {
+        list.setCellFactory(param -> new ListCell<>() {
             @Override
             protected void updateItem(Timeline item, boolean empty) {
                 super.updateItem(item, empty);
