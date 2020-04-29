@@ -22,6 +22,16 @@ public class TopMenu {
     public void saveFile(ActionEvent actionEvent) {
         System.out.println("Save");
     }
+    
+    @FXML
+    public void styleDefaultPressed() {
+    	GUIManager.applyStyle("DefaultStyle");
+    }
+    
+    @FXML
+    public void styleNonePressed() {
+    	GUIManager.applyStyle("None");
+    }
 
     @FXML
     public void updateLoggedInStatus() {
