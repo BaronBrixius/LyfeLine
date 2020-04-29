@@ -138,8 +138,8 @@ public class Timeline implements DBObject<Timeline> {
     public void deleteOrphans() throws SQLException {
         PreparedStatement out = DBM.conn.prepareStatement("SELECT e.* FROM `timelines` t " +
                 "LEFT JOIN timelineevents te " +
-                "ON t.TimelineID = te.TimelineID " +        	//destroys orphaned events (i.e. events where there are no
-                "LEFT JOIN events e " +                        	//junction table records for them with a different TimelineID
+                "ON t.TimelineID = te.TimelineID " +            //destroys orphaned events (i.e. events where there are no
+                "LEFT JOIN events e " +                            //junction table records for them with a different TimelineID
                 "ON te.EventID = e.EventID AND e.EventID NOT IN (SELECT EventID FROM timelineevents WHERE TimelineID != ?) " +
                 "WHERE t.TimelineID = ? ");
 
@@ -156,7 +156,6 @@ public class Timeline implements DBObject<Timeline> {
         out.setInt(1, timelineID);
         return out;
     }
-
 
 
     @Override
@@ -244,23 +243,6 @@ public class Timeline implements DBObject<Timeline> {
         return true;
     }
 
-    // Sets all the info from the column unit from scale_lookup and set it to an array to be read in TimelineEditor GUI for
-    // the timeInput combobox
-    public ArrayList<String> scales() throws SQLException{
-        try {
-            PreparedStatement state = DBM.conn.prepareStatement("SELECT unit FROM scale_lookup");
-            ResultSet rs = state.executeQuery();
-            ArrayList<String> array = new ArrayList<String>();
-            while(rs.next()){
-                array.add(rs.getString("unit"));
-            }
-            return array;
-        }
-        catch(SQLException e){
-            System.out.println(e);
-        }
-        return null;
-    }
 
     // Getters
     public int getTimelineID() {
