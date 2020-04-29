@@ -179,7 +179,7 @@ CREATE TABLE `users`
 CREATE TABLE `timelines`
 (
     `TimelineID`          int               NOT NULL AUTO_INCREMENT,
-    `Scale`               int               DEFAULT NULL,
+    `Scale`               int               DEFAULT 8,
     `TimelineName`        nvarchar(100)     DEFAULT NULL,
     `TimelineDescription` nvarchar(5000)    DEFAULT NULL,
     `Theme`               nvarchar(100)     DEFAULT NULL,
