@@ -181,7 +181,7 @@ public class Dashboard {
 
 		FXMLLoader popupDeletion = new FXMLLoader(GUIManager.class.getResource("../FXML/Popup.fxml"));
 		VBox popup = popupDeletion.load();
-		popup.getStylesheets().add("styles/DefaultStyle.css");
+		popup.getStylesheets().add(GUIManager.mainStage.getScene().getStylesheets().get(0));
 		delConfirm.setScene(new Scene(popup));
 
 		Popup deletionPopup = popupDeletion.getController();

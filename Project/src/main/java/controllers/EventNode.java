@@ -1,11 +1,9 @@
 package controllers;
-
 import database.Event;
 import database.Timeline;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 
 public class EventNode implements Comparable<EventNode> {
