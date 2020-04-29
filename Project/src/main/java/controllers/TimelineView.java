@@ -13,7 +13,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
-import jdk.nashorn.api.tree.ForInLoopTree;
 
 import java.io.IOException;
 import java.sql.PreparedStatement;
@@ -67,7 +66,6 @@ public class TimelineView {
 		// leftSidebar.getChildren().remove(timelineController.editor);
 
 		leftSidebar.getChildren().add(timelineController.editor);
-
 	}
 
 	public List<EventNode> getEventList() {
@@ -84,11 +82,11 @@ public class TimelineView {
 
 	// Call this method when swapping scenes
 
-	public void setActiveTimeline(Timeline t) {
-		this.activeTimeline = t;
-		selectorController.setTimelineSelected(activeTimeline); // sets the selected index to the currently viewed
+	public void setActiveTimeline(Timeline activeTimeline) {
+		this.activeTimeline = activeTimeline;
+		selectorController.setTimelineSelected(this.activeTimeline); // sets the selected index to the currently viewed
 																// timeline
-		timelineController.setTimeline(activeTimeline);
+		timelineController.setTimeline(this.activeTimeline);
 	}
 
 	// This method is probably not needed, but whatever //useful for dev work to set
@@ -223,7 +221,7 @@ public class TimelineView {
 		if (startColumn + columnSpan > timelineGrid.getColumnCount()) // if node goes past the timeline's end, cut the
 																		// end
 			columnSpan = timelineGrid.getColumnCount() - startColumn;
-		if (columnSpan < 1) // if, after cutting, nothing remains, don't display it at all
+		if (columnSpan < 1) // if, after cutting, nothing remains, don'activeTimeline display it at all
 			return;
 
 		int row = 1;

@@ -531,7 +531,7 @@ public class EventEditor {
         return expandPane.getChildren().size();
     }
 
-    private boolean hasChanges() {
+    boolean hasChanges() {
         if (!event.getEventName().equals(titleInput.getText())
                 || !event.getEventDescrition().equals(descriptionInput.getText().replaceAll("([^\r])\n", "$1\r\n")))     //textArea tends to change the newline from \r\n to just \n which breaks some things)
             return true;
