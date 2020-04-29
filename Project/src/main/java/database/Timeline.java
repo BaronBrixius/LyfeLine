@@ -244,6 +244,24 @@ public class Timeline implements DBObject<Timeline> {
         return true;
     }
 
+    // Sets all the info from the column unit from scale_lookup and set it to an array to be read in TimelineEditor GUI for
+    // the timeInput combobox
+    public ArrayList<String> scales() throws SQLException{
+        try {
+            PreparedStatement state = DBM.conn.prepareStatement("SELECT unit FROM scale_lookup");
+            ResultSet rs = state.executeQuery();
+            ArrayList<String> array = new ArrayList<String>();
+            while(rs.next()){
+                array.add(rs.getString("unit"));
+            }
+            return array;
+        }
+        catch(SQLException e){
+            System.out.println(e);
+        }
+        return null;
+    }
+
     // Getters
     public int getTimelineID() {
         return this.timelineID;

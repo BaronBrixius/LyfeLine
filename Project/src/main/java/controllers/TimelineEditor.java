@@ -37,6 +37,7 @@ public class TimelineEditor {
     @FXML public Text errorMessage;
     @FXML public FlowPane startPane;
     @FXML public FlowPane endPane;
+    @FXML private ComboBox<String> timeInput;
     public Button removeButton;
     public Button addKeyWord;
     public ListView<String> listView;
@@ -54,7 +55,7 @@ public class TimelineEditor {
     private TextField keywordInput;
     private ObservableList<String> keywords = FXCollections.observableArrayList();
 
-    public void initialize() {
+    public void initialize() throws SQLException {
 
         //Set Up the Spinners for Start/End Inputs, would have bloated the .fxml and variable list a ton if these were in fxml
         String timeSpinnerLabel = null;
@@ -105,6 +106,9 @@ public class TimelineEditor {
 
             setupTimeInputBoxes(timeSpinnerLabel, maxValue, i, startInputs, startBoxes);
             setupTimeInputBoxes(timeSpinnerLabel, maxValue, i, endInputs, endBoxes);
+
+            Timeline time = new Timeline();
+            timeInput.setItems(FXCollections.observableArrayList(time.scales()));
         }
         //fix ranges for years since they're a little different
         startInputs.get(0).setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(Integer.MIN_VALUE, Integer.MAX_VALUE, 0));
@@ -285,6 +289,8 @@ public class TimelineEditor {
 
         timeline.getKeywords().clear();
         timeline.getKeywords().addAll(keywords);
+
+        timeline.setScale((timeInput.getSelectionModel().getSelectedIndex()) + 1);
     }
 
     private boolean saveTimeline() {
@@ -370,6 +376,9 @@ public class TimelineEditor {
 
 
         if (timeline.getKeywords().size() != keywords.size())
+            return true;
+
+        if(timeline.getScale() != timeInput.getSelectionModel().getSelectedIndex()+1)
             return true;
 
         for (int i = 0; i < keywords.size(); i++)
