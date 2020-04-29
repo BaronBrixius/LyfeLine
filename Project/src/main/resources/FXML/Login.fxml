@@ -27,10 +27,10 @@
     <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Email" GridPane.halignment="LEFT" />
     <TextField fx:id="usernameInput" GridPane.columnIndex="2" />
     <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Password" GridPane.halignment="LEFT" GridPane.rowIndex="1" />
-    <PasswordField fx:id="passwordInput" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+    <PasswordField fx:id="passwordInput" GridPane.columnIndex="2" GridPane.rowIndex="1" onAction="#loginUser" />
     <Text fx:id="errorMessage" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="smallText" wrappingWidth="190" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
     <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0" GridPane.columnIndex="2" GridPane.rowIndex="2">
-        <Button defaultButton="true" mnemonicParsing="false" onMouseClicked="#loginUser" styleClass="smallButton" text="Login" />
-        <Button mnemonicParsing="false" onMouseClicked="#close" styleClass="smallButton" text="Cancel" />
+        <Button defaultButton="true" mnemonicParsing="false" onAction="#loginUser" styleClass="smallButton" text="Login" />
+        <Button mnemonicParsing="false" onAction="#close" styleClass="smallButton" text="Cancel" />
     </HBox>
 </GridPane>

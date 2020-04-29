@@ -1,6 +1,7 @@
 package controllers;
 
 import database.*;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -62,12 +63,12 @@ public class LoginAndRegistration {
     }
 
     @FXML
-    public void close(MouseEvent mouseEvent) {
-        ((Node) (mouseEvent.getSource())).getScene().getWindow().hide();
+    public void close(ActionEvent event) {
+        ((Node) (event.getSource())).getScene().getWindow().hide();
     }
 
     @FXML
-    public void registerUser(MouseEvent event) {
+    public void registerUser(ActionEvent event) {
 
         //Reset the error message if the input fields match after getting the error
         errorMessage.setText("");
@@ -100,7 +101,7 @@ public class LoginAndRegistration {
     }
 
     @FXML
-    public void loginUser(MouseEvent event) {
+    public void loginUser(ActionEvent event) {
 // Reset the error message if the input fields match after getting the error
         errorMessage.setText("");
 
