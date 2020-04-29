@@ -201,6 +201,7 @@ public class EventSelector {
         try {
             if (eventList.getSelectionModel().getSelectedItem().addToTimeline(parentController.activeTimeline.getTimelineID())) {
                 parentController.activeTimeline.getEventList().add(eventList.getSelectionModel().getSelectedItem());
+                parentController.populateDisplay();
                 System.out.println("Event added to " + parentController.activeTimeline + " timeline."); // remove this later once more user feedback is implemented
             } else
                 System.out.println("Event is already on " + parentController.activeTimeline + " timeline.");
