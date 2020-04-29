@@ -138,8 +138,8 @@ public class Timeline implements DBObject<Timeline> {
     public void deleteOrphans() throws SQLException {
         PreparedStatement out = DBM.conn.prepareStatement("SELECT e.* FROM `timelines` t " +
                 "LEFT JOIN timelineevents te " +
-                "ON t.TimelineID = te.TimelineID " +        	//destroys orphaned events (i.e. events where there are no
-                "LEFT JOIN events e " +                        	//junction table records for them with a different TimelineID
+                "ON t.TimelineID = te.TimelineID " +            //destroys orphaned events (i.e. events where there are no
+                "LEFT JOIN events e " +                            //junction table records for them with a different TimelineID
                 "ON te.EventID = e.EventID AND e.EventID NOT IN (SELECT EventID FROM timelineevents WHERE TimelineID != ?) " +
                 "WHERE t.TimelineID = ? ");
 
@@ -156,7 +156,6 @@ public class Timeline implements DBObject<Timeline> {
         out.setInt(1, timelineID);
         return out;
     }
-
 
 
     @Override
@@ -243,6 +242,7 @@ public class Timeline implements DBObject<Timeline> {
         // If not found in the DB its good and returns true
         return true;
     }
+
 
     // Getters
     public int getTimelineID() {

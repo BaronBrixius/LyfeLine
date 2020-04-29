@@ -71,16 +71,16 @@ public class EventEditor {
     
 
     public void initialize() {
-        image.setOnMouseEntered(e -> {
-            image.setScaleX(8);
-            image.setScaleY(8);
-            image.setScaleZ(8);
-        });
-        image.setOnMouseExited(e -> {
-            image.setScaleX(1);
-            image.setScaleY(1);
-            image.setScaleZ(1);
-        });
+//        image.setOnMouseEntered(e -> {
+////            image.setScaleX(8);
+////            image.setScaleY(8);
+////            image.setScaleZ(8);
+//        });
+//        image.setOnMouseExited(e -> {
+//            image.setScaleX(1);
+//            image.setScaleY(1);
+//            image.setScaleZ(1);
+//        });
 
         //Set Up the Spinners for Start/End Inputs, would have bloated the .fxml and variable list a ton if these were in fxml
         String timeSpinnerLabel = null;
