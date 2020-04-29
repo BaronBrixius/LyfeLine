@@ -4,7 +4,6 @@ import database.DBM;
 import database.Timeline;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.FlowPane;
@@ -130,6 +129,12 @@ public class TimelineEditor {
         endInputs.get(0).setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(Integer.MIN_VALUE, Integer.MAX_VALUE, 0));
         toggleEditable(false);
         listView.setItems(keywords);
+
+        timeInput.valueProperty().addListener(e -> {
+                    setExpansion(true, startExpanded, timeInput.getSelectionModel().getSelectedIndex()+1);
+                    setExpansion(false, endExpanded, timeInput.getSelectionModel().getSelectedIndex()+1);
+                }
+        );
     }
 
     private void setupTimeInputBoxes(String timeSpinnerLabel, int maxValue, int i, List<Spinner<Integer>> spinnerList, List<VBox> boxList) {
@@ -276,10 +281,13 @@ public class TimelineEditor {
     }
 
     private int setExpansion(boolean start, boolean expanding) {
+        return setExpansion(start, expanding, parentController.activeTimeline.getScale());
+    }
+
+    private int setExpansion(boolean start, boolean expanding, int scale) {
         FlowPane expandPane = start ? startPane : endPane;
         List<VBox> boxesToAddFrom = start ? startBoxes : endBoxes;
         expandPane.getChildren().removeAll(boxesToAddFrom);         //clear out the current contents except the expansion button
-        int scale = parentController.activeTimeline.getScale();     //TODO change to this event's scale
 
         if (expanding) {                //if expanding, add everything in
             expandPane.getChildren().addAll(0, boxesToAddFrom);
@@ -287,17 +295,17 @@ public class TimelineEditor {
         } else {                        //if contracting, add based on scale
             if (scale == 1)             //don't try to convert to switch statement unless you're a genius, the overlaps made it ugly when I tried
                 expandPane.getChildren().add(0, boxesToAddFrom.get(6)); //milliseconds
-            if (scale <= 3)
+            if (scale <= 2)
                 expandPane.getChildren().add(0, boxesToAddFrom.get(5)); //seconds
-            if (scale >= 3 && scale <= 5)
+            if (scale <= 3)
                 expandPane.getChildren().add(0, boxesToAddFrom.get(4)); //minutes
-            if (scale >= 4 && scale <= 6)
+            if (scale >= 2 && scale <= 4)
                 expandPane.getChildren().add(0, boxesToAddFrom.get(3)); //hours
-            if (scale >= 5 && scale <= 8)
+            if (scale >= 3 && scale <= 6)
                 expandPane.getChildren().add(0, boxesToAddFrom.get(2)); //days
-            if (scale >= 7)
+            if (scale >= 4 && scale <= 7)
                 expandPane.getChildren().add(0, boxesToAddFrom.get(1)); //months
-            if (scale >= 8)
+            if (scale >= 5)
                 expandPane.getChildren().add(0, boxesToAddFrom.get(0)); //years
         }
         return expandPane.getChildren().size();
