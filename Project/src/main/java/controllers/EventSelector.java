@@ -62,17 +62,27 @@ public class EventSelector {
             }
         });
 
+        if (!GUIManager.loggedInUser.getAdmin()){
+            newButton.setVisible(false);
+            deleteButton.setVisible(false);
+            addToTimelineButton.setVisible(false);
+        }
+
         timelineList.getSelectionModel().selectedIndexProperty().addListener(e -> {
             populateEventList();
-            newButton.setDisable(timelineList.getSelectionModel().selectedIndexProperty() == null);
+            if (GUIManager.loggedInUser.getAdmin())
+                newButton.setDisable(timelineList.getSelectionModel().selectedIndexProperty() == null);
         });
 
         eventList.getSelectionModel().selectedIndexProperty().addListener(e -> {
             viewButton.setDisable(eventList.getSelectionModel().selectedIndexProperty() == null);
-            addToTimelineButton.setDisable(eventList.getSelectionModel().selectedIndexProperty() == null);
-            if (GUIManager.loggedInUser.getUserID() == timelineList.getSelectionModel().getSelectedItem().getTimelineOwnerID()) {
-                newButton.setDisable(timelineList.getSelectionModel().selectedIndexProperty() == null);     //only owner can edit
-                deleteButton.setDisable(eventList.getSelectionModel().selectedIndexProperty() == null);
+
+            if (GUIManager.loggedInUser.getAdmin()) {
+                addToTimelineButton.setDisable(eventList.getSelectionModel().selectedIndexProperty() == null);
+                if (GUIManager.loggedInUser.getUserID() == timelineList.getSelectionModel().getSelectedItem().getTimelineOwnerID()) {
+                    newButton.setDisable(timelineList.getSelectionModel().selectedIndexProperty() == null);     //only owner can edit
+                    deleteButton.setDisable(timelineList.getSelectionModel().selectedIndexProperty() == null);
+                }
             }
         });
     }

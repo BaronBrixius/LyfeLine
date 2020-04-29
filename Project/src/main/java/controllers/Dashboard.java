@@ -52,8 +52,15 @@ public class Dashboard {
     private Timeline activeTimeline;
 
     public void initialize() {
-        gridButtons.setVisible(GUIManager.loggedInUser.getAdmin());
-        gridButtons.setDisable(!GUIManager.loggedInUser.getAdmin());
+        //TODO fix this to be cleaner, I did it as a last second thing because it used to prevent nonadmins from even viewing anything
+        btnCreate.setVisible(GUIManager.loggedInUser.getAdmin());
+        btnCreate.setDisable(!GUIManager.loggedInUser.getAdmin());
+        btnEdit.setVisible(GUIManager.loggedInUser.getAdmin());
+        btnEdit.setDisable(!GUIManager.loggedInUser.getAdmin());
+        btnDelete.setVisible(GUIManager.loggedInUser.getAdmin());
+        btnDelete.setDisable(!GUIManager.loggedInUser.getAdmin());
+        adminGUI.setVisible(GUIManager.loggedInUser.getAdmin());
+        adminGUI.setDisable(!GUIManager.loggedInUser.getAdmin());
 
         // Fill ListView with the timelines
         try {
