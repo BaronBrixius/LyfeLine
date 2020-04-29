@@ -84,7 +84,7 @@ public class TimelineView {
         this.activeTimeline = t;
         selectorController.setTimelineSelected(activeTimeline); // sets the selected index to the currently viewed
         // timeline
-        timelineController.setTimeline(activeTimeline);
+        timelineController.setTimeline(t);
     }
 
     // This method is probably not needed, but whatever //useful for dev work to set
@@ -96,7 +96,6 @@ public class TimelineView {
             List<Timeline> list = DBM.getFromDB(stmt, new Timeline());
 
             setActiveTimeline(list.get(0));
-            timelineController.setTimeline(activeTimeline);
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
