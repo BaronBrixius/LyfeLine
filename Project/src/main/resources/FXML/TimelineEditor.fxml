@@ -15,6 +15,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
+<?import javafx.scene.control.ComboBox?>
 <GridPane fx:id="editor" alignment="CENTER_RIGHT" hgap="5" maxHeight="1.7976931348623157E308" prefWidth="325.0" vgap="5" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.TimelineEditor">
     <columnConstraints>
         <ColumnConstraints prefWidth="150" />
@@ -68,6 +69,8 @@
     </HBox>
    <ListView fx:id="listView" prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="2" GridPane.rowIndex="7" GridPane.vgrow="SOMETIMES" />
    <Text fx:id="feedbackText" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="smallText" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+    <ComboBox fx:id="timeInput" nodeOrientation="LEFT_TO_RIGHT" prefWidth="150.0" GridPane.rowIndex="16" />
+    <Label text="Time Unit" GridPane.rowIndex="14" />
    <rowConstraints>
       <RowConstraints />
       <RowConstraints />

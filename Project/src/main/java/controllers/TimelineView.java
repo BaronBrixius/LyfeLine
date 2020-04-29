@@ -13,7 +13,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
-import jdk.nashorn.api.tree.ForInLoopTree;
 
 import java.io.IOException;
 import java.sql.PreparedStatement;
@@ -38,9 +37,9 @@ public class TimelineView {
 
 	public void initialize() {
 		try {
-			FXMLLoader TimelineLoader = new FXMLLoader(getClass().getResource("../FXML/TimelineEditor.fxml"));
-			TimelineLoader.load();
-			timelineController = TimelineLoader.getController();
+			FXMLLoader timelineLoader = new FXMLLoader(getClass().getResource("../FXML/TimelineEditor.fxml"));
+			timelineLoader.load();
+			timelineController = timelineLoader.getController();
 			timelineController.setParentController(this);
 		} catch (IOException e) {
 			e.printStackTrace(); // TODO replace with better error message once dev is done
