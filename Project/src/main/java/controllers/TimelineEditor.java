@@ -1,7 +1,6 @@
 package controllers;
 
 import database.DBM;
-import database.Event;
 import database.Timeline;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -16,8 +15,8 @@ import javafx.scene.text.Text;
 import javafx.util.StringConverter;
 import utils.Date;
 
-
 import java.io.IOException;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,34 +27,45 @@ public class TimelineEditor {
     private final List<Spinner<Integer>> startInputs = new ArrayList<>();
     private final List<VBox> endBoxes = new ArrayList<>();
     private final List<Spinner<Integer>> endInputs = new ArrayList<>();
-    @FXML public GridPane editor;
-    @FXML public Button editButton;
-    @FXML public Button moreStart;
-    @FXML public Button moreEnd;
-    @FXML public Button deleteButton;
-    @FXML public Label headerText;
-    @FXML public Text errorMessage;
-    @FXML public FlowPane startPane;
-    @FXML public FlowPane endPane;
-    @FXML private ComboBox<String> timeInput;
+    @FXML
+    public GridPane editor;
+    @FXML
+    public Button editButton;
+    @FXML
+    public Button moreStart;
+    @FXML
+    public Button moreEnd;
+    @FXML
+    public Button deleteButton;
+    @FXML
+    public Label headerText;
+    @FXML
+    public Text errorMessage;
+    @FXML
+    public FlowPane startPane;
+    @FXML
+    public FlowPane endPane;
     public Button removeButton;
     public Button addKeyWord;
     public ListView<String> listView;
     public Text feedbackText;
     public HBox keyWordBox;
-    @FXML TextField titleInput = new TextField();
-    @FXML TextArea descriptionInput = new TextArea();
+    public Timeline timeline;
+    @FXML
+    TextField titleInput = new TextField();
+    @FXML
+    TextArea descriptionInput = new TextArea();
     boolean editable = true;
     TimelineView parentController;
+    @FXML
+    private ComboBox<String> timeInput;
     private boolean startExpanded;
     private boolean endExpanded;
-    public Timeline timeline;
-
     @FXML
     private TextField keywordInput;
     private ObservableList<String> keywords = FXCollections.observableArrayList();
 
-    public void initialize() throws SQLException {
+    public void initialize() {
 
         //Set Up the Spinners for Start/End Inputs, would have bloated the .fxml and variable list a ton if these were in fxml
         String timeSpinnerLabel = null;
@@ -107,8 +117,13 @@ public class TimelineEditor {
             setupTimeInputBoxes(timeSpinnerLabel, maxValue, i, startInputs, startBoxes);
             setupTimeInputBoxes(timeSpinnerLabel, maxValue, i, endInputs, endBoxes);
 
-            Timeline time = new Timeline();
-            timeInput.setItems(FXCollections.observableArrayList(time.scales()));
+            //Get list of scales
+            try {
+                PreparedStatement state = DBM.conn.prepareStatement("SELECT unit FROM scale_lookup");
+                timeInput.setItems(FXCollections.observableArrayList(DBM.getFromDB(state, rs -> rs.getString("unit"))));
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
         //fix ranges for years since they're a little different
         startInputs.get(0).setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(Integer.MIN_VALUE, Integer.MAX_VALUE, 0));
@@ -159,53 +174,6 @@ public class TimelineEditor {
         this.parentController = parentController;
     }
 
-    public void saveEditButton() {
-        if (editable && hasChanges())   //if unsaved changes, try to save
-            if (!validData() || !saveConfirm())         //if save cancelled, don't change mode
-                return;
-        toggleEditable(!editable);
-    }
-
-    public boolean validData() {
-        Date newStartDate = new Date(startInputs.get(0).getValue(), startInputs.get(1).getValue(), startInputs.get(2).getValue(),
-                startInputs.get(3).getValue(), startInputs.get(4).getValue(), startInputs.get(5).getValue(), startInputs.get(6).getValue());
-
-        Date newEndDate = new Date(endInputs.get(0).getValue(), endInputs.get(1).getValue(), endInputs.get(2).getValue(),
-                endInputs.get(3).getValue(), endInputs.get(4).getValue(), endInputs.get(5).getValue(), endInputs.get(6).getValue());
-
-        if (newStartDate.compareTo(newEndDate) > 0)
-        {
-            Alert confirmDelete = new Alert(Alert.AlertType.CONFIRMATION);
-            confirmDelete.setTitle("Invalid Dates");
-            confirmDelete.setHeaderText("The End Date must be after the Start Date.");
-            confirmDelete.setContentText("Make sure to check your dates before saving.");
-
-            confirmDelete.showAndWait();
-            return false;
-        }
-        else
-            return true;
-    }
-
-    void toggleEditable(boolean editable) {
-        this.editable = editable;
-
-        titleInput.setEditable(editable);
-        descriptionInput.setEditable(editable);
-        for (VBox box : startBoxes)
-            box.getChildren().get(1).setDisable(!editable);
-        for (VBox box : endBoxes)
-            box.getChildren().get(1).setDisable(!editable);
-        keyWordBox.setDisable(!editable);
-
-        if (editable)
-            editor.getStylesheets().remove("styles/DisabledViewable.css");
-        else
-            editor.getStylesheets().add("styles/DisabledViewable.css");
-
-        editButton.setText(editable ? "Save" : "Edit");
-    }
-
     public boolean setTimeline(Timeline timeline) {
         this.timeline = timeline;
         //Check if Admin
@@ -222,8 +190,7 @@ public class TimelineEditor {
         titleInput.setText(timeline.getTimelineName());
         descriptionInput.setText(timeline.getTimelineDescription());
 
-        if (timeline.getStartDate() != null)
-        {
+        if (timeline.getStartDate() != null) {
             startInputs.get(0).getValueFactory().setValue(timeline.getStartDate().getYear());
             startInputs.get(1).getValueFactory().setValue(timeline.getStartDate().getMonth());
             startInputs.get(2).getValueFactory().setValue(timeline.getStartDate().getDay());
@@ -241,39 +208,19 @@ public class TimelineEditor {
             endInputs.get(6).getValueFactory().setValue(timeline.getEndDate().getMillisecond());
         }
 
-
-
         setExpansion(true, false);
         setExpansion(false, false);
 
-        if(timeline.getKeywords() != null)
-        {
+        if (timeline.getKeywords() != null) {
             keywords.clear();
             keywords.addAll(timeline.getKeywords());
-            keywords.sort((s1,s2)->s1.compareTo(s2));
-        }
-        else
+            keywords.sort(String::compareTo);
+        } else
             timeline.setKeywords(FXCollections.observableArrayList());
 
-
+        timeInput.getSelectionModel().select(timeline.getScale() - 1);
 
         return false;
-    }
-
-
-
-    @FXML
-    private boolean saveConfirm() {
-        Alert confirmsave = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmsave.setTitle("Confirm Save");
-        confirmsave.setHeaderText("This will make permanent changes to your timeline!"); //TODO change text
-        confirmsave.setContentText("Would you like to save?");
-
-        Optional<ButtonType> result = confirmsave.showAndWait();
-
-        if (result.get() == ButtonType.CANCEL)
-            return false;
-        return saveTimeline();
     }
 
     void updateTimeline() {
@@ -293,20 +240,6 @@ public class TimelineEditor {
         timeline.setScale((timeInput.getSelectionModel().getSelectedIndex()) + 1);
     }
 
-    private boolean saveTimeline() {
-        updateTimeline();
-        try {
-            if (timeline.getTimelineID() == 0) {
-                DBM.insertIntoDB(timeline);
-            } else
-                DBM.updateInDB(timeline);
-            return true;
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return true;
-    }
-
     @FXML
     private boolean deleteTimeline() {
         Alert confirmDelete = new Alert(Alert.AlertType.CONFIRMATION);
@@ -323,17 +256,20 @@ public class TimelineEditor {
             DBM.deleteFromDB(timeline);
             GUIManager.swapScene("Dashboard");
             return true;
-        } catch (SQLException | IOException e) {e.printStackTrace(); return false;}
+        } catch (SQLException | IOException e) {
+            e.printStackTrace();
+            return false;
+        }
 
     }
 
-    public void toggleStartExpanded(ActionEvent actionEvent) {
+    public void toggleStartExpanded() {
         startExpanded = !startExpanded;
         setExpansion(true, startExpanded);
         moreStart.setText(startExpanded ? "Less..." : "More...");
     }
 
-    public void toggleEndExpanded(ActionEvent actionEvent) {
+    public void toggleEndExpanded() {
         endExpanded = !endExpanded;
         setExpansion(false, endExpanded);
         moreEnd.setText(endExpanded ? "Less..." : "More...");
@@ -367,7 +303,34 @@ public class TimelineEditor {
         return expandPane.getChildren().size();
     }
 
-    private boolean hasChanges() {
+    public void saveEditButton() {
+        if (editable && hasChanges())   //if unsaved changes, try to save
+            if (!validData() || !saveConfirm())         //if save cancelled, don't change mode
+                return;
+        toggleEditable(!editable);
+    }
+
+    void toggleEditable(boolean editable) {
+        this.editable = editable;
+
+        titleInput.setEditable(editable);
+        descriptionInput.setEditable(editable);
+        for (VBox box : startBoxes)
+            box.getChildren().get(1).setDisable(!editable);
+        for (VBox box : endBoxes)
+            box.getChildren().get(1).setDisable(!editable);
+        keyWordBox.setDisable(!editable);
+        timeInput.setDisable(!editable);
+
+        if (editable)
+            editor.getStylesheets().remove("styles/DisabledViewable.css");
+        else
+            editor.getStylesheets().add("styles/DisabledViewable.css");
+
+        editButton.setText(editable ? "Save" : "Edit");
+    }
+
+    boolean hasChanges() {
         Date readStart = new Date(startInputs.get(0).getValue(), startInputs.get(1).getValue(), startInputs.get(2).getValue(),
                 startInputs.get(3).getValue(), startInputs.get(4).getValue(), startInputs.get(5).getValue(), startInputs.get(6).getValue());   //milliseconds not implemented yet, do we need to?
 
@@ -378,7 +341,7 @@ public class TimelineEditor {
         if (timeline.getKeywords().size() != keywords.size())
             return true;
 
-        if(timeline.getScale() != timeInput.getSelectionModel().getSelectedIndex()+1)
+        if (timeline.getScale() != timeInput.getSelectionModel().getSelectedIndex() + 1)
             return true;
 
         for (int i = 0; i < keywords.size(); i++)
@@ -393,6 +356,55 @@ public class TimelineEditor {
         );
     }
 
+    boolean validData() {
+        Date newStartDate = new Date(startInputs.get(0).getValue(), startInputs.get(1).getValue(), startInputs.get(2).getValue(),
+                startInputs.get(3).getValue(), startInputs.get(4).getValue(), startInputs.get(5).getValue(), startInputs.get(6).getValue());
+
+        Date newEndDate = new Date(endInputs.get(0).getValue(), endInputs.get(1).getValue(), endInputs.get(2).getValue(),
+                endInputs.get(3).getValue(), endInputs.get(4).getValue(), endInputs.get(5).getValue(), endInputs.get(6).getValue());
+
+        if (newStartDate.compareTo(newEndDate) > 0) {
+            Alert confirmDelete = new Alert(Alert.AlertType.CONFIRMATION);
+            confirmDelete.setTitle("Invalid Dates");
+            confirmDelete.setHeaderText("The End Date must be after the Start Date.");
+            confirmDelete.setContentText("Make sure to check your dates before saving.");
+
+            confirmDelete.showAndWait();
+            return false;
+        } else
+            return true;
+    }
+
+    @FXML
+    private boolean saveConfirm() {
+        Alert confirmsave = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmsave.setTitle("Confirm Save");
+        confirmsave.setHeaderText("This will make permanent changes to your timeline!"); //TODO change text
+        confirmsave.setContentText("Would you like to save?");
+
+        Optional<ButtonType> result = confirmsave.showAndWait();
+
+        if (result.get() == ButtonType.CANCEL)
+            return false;
+        return saveTimeline();
+    }
+
+    boolean saveTimeline() {
+        updateTimeline();
+        try {
+            if (timeline.getTimelineID() == 0) {
+                DBM.insertIntoDB(timeline);
+            } else
+                DBM.updateInDB(timeline);
+
+            parentController.populateDisplay();
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return true;
+    }
+
     @FXML
     void close() {
         if (timeline != null && hasChanges())
@@ -401,41 +413,38 @@ public class TimelineEditor {
     }
 
     public boolean isUniqueKeyword(String k) {
-        for(String s:keywords) {
-            if(k.equalsIgnoreCase(s)) return false;
+        for (String s : keywords) {
+            if (k.equalsIgnoreCase(s)) return false;
 
         }
         return true;
     }
 
 
-    public void addKeyword(ActionEvent event) {
+    public void addKeyword() {
         String inputWord = keywordInput.getText();
         inputWord = inputWord.replace(",", " ");
-        if(inputWord.isBlank()) {
+        if (inputWord.isBlank()) {
             feedbackText.setText("Keyword cannot be empty!");
-        }
-        else {
-            if(!isUniqueKeyword(inputWord)) {
+        } else {
+            if (!isUniqueKeyword(inputWord)) {
                 feedbackText.setText("Keyword already exists!");
-            }
-            else {
+            } else {
                 keywords.add(inputWord);
-                feedbackText.setText("Keyword "+inputWord+" added");
-                keywords.sort((s1,s2)->s1.compareTo(s2));
+                feedbackText.setText("Keyword " + inputWord + " added");
+                keywords.sort(String::compareTo);
                 keywordInput.setText("");
             }
         }
     }
 
-    public void removeKeyword(ActionEvent event) {
-        if(listView.getSelectionModel().getSelectedIndex()<0) {
+    public void removeKeyword() {
+        if (listView.getSelectionModel().getSelectedIndex() < 0) {
             feedbackText.setText("No keyword selected!");
-        }
-        else {
-            String removedWord=listView.getSelectionModel().getSelectedItem();
+        } else {
+            String removedWord = listView.getSelectionModel().getSelectedItem();
             keywords.remove(listView.getSelectionModel().getSelectedIndex());
-            feedbackText.setText("Keyword "+removedWord+" removed!");
+            feedbackText.setText("Keyword " + removedWord + " removed!");
             listView.getSelectionModel().select(-1);
         }
     }
