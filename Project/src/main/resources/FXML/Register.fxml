@@ -35,12 +35,12 @@
           GridPane.rowIndex="3"/>
     <Text strokeType="OUTSIDE" strokeWidth="0.0" GridPane.halignment="LEFT" GridPane.rowIndex="4"
           styleClass="smallText" wrappingWidth="190" fx:id="errorMessage"/>
-    <TextField GridPane.columnIndex="2"  fx:id="emailInput"/>
-    <TextField GridPane.columnIndex="2" GridPane.rowIndex="1" fx:id="usernameInput"/>
-    <PasswordField GridPane.columnIndex="2" GridPane.rowIndex="2" fx:id="passwordInput"/>
-    <PasswordField GridPane.columnIndex="2" GridPane.rowIndex="3" fx:id="confirmPasswordInput"/>
+    <TextField GridPane.columnIndex="2"  fx:id="emailInput" onAction="#registerUser"/>
+    <TextField GridPane.columnIndex="2" GridPane.rowIndex="1" fx:id="usernameInput" onAction="#registerUser"/>
+    <PasswordField GridPane.columnIndex="2" GridPane.rowIndex="2" fx:id="passwordInput" onAction="#registerUser"/>
+    <PasswordField GridPane.columnIndex="2" GridPane.rowIndex="3" fx:id="confirmPasswordInput" onAction="#registerUser"/>
     <HBox prefHeight="100.0" prefWidth="200.0" spacing="10.0" GridPane.columnIndex="2" GridPane.rowIndex="4">
-        <Button mnemonicParsing="false" onMouseClicked="#registerUser" styleClass="smallButton" text="Register"/>
-        <Button mnemonicParsing="false" onMouseClicked="#close" styleClass="smallButton" text="Close"/>
+        <Button mnemonicParsing="false" onAction="#registerUser" styleClass="smallButton" text="Register"/>
+        <Button mnemonicParsing="false" onAction="#close" styleClass="smallButton" text="Close"/>
     </HBox>
 </GridPane>
