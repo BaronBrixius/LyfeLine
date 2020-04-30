@@ -347,7 +347,7 @@ VALUES ( '1', 'Crossing the Rubicon', 'Julius Caesar''s crossing the Rubicon riv
         traditionalist faction of the Roman Senate, who were supported by Pompey (106–48 BC) and his legions.[1]',
         '48', '5', '5', '5', '10', '10', '10', '51', '10', '25', '22', '50', '45', '40'),
        ('1', 'Marcus Tullius Cicero', 'Marcus Tullius Cicero[a] (/ˈsɪsəroʊ/ SISS-ə-roh, Latin:
-        [ˈmaːrkʊs ˈtʊllɪ.ʊs ˈkɪkɛroː]; 3 January 106 BC – 7 December 43 BC) was a Roman statesman, lawyer and Academic
+        ; 3 January 106 BC – 7 December 43 BC) was a Roman statesman, lawyer and Academic
         Skeptic philosopher[3] who wrote extensively on rhetoric, orations, philosophy, and politics, and is considered one of
         Rome''s greatest orators and prose stylists.[4][5] A leading political figure in the final years of the Roman Republic,
         Cicero vainly tried to uphold the republican system''s integrity during the instability that led to the establishment of

@@ -32,12 +32,13 @@
         </padding>
         <VBox prefHeight="84.0" prefWidth="206.0" spacing="10.0" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
             <HBox alignment="CENTER_LEFT" spacing="10.0">
-                <ComboBox fx:id="sortBy" prefHeight="35.0" prefWidth="193.0" promptText="Sort By" style="-fx-font-size: 1.3em;" />
-                <CheckBox fx:id="cbOnlyViewPersonalLines" alignment="CENTER" mnemonicParsing="false" onAction="#onlyUserTimelines" style="-fx-font-size: 1.3em;" text="Only Show My Timelines" />
+             <TextField fx:id="searchInput" prefHeight="42.0" prefWidth="501.0" style="-fx-font-size: 1.3em;" text="Search here..." />
+              
             </HBox>
-            <TextField fx:id="searchInput" prefHeight="42.0" prefWidth="501.0" style="-fx-font-size: 1.3em;" text="Search here..." />
+             <ComboBox fx:id="sortBy" prefHeight="35.0" prefWidth="193.0" promptText="Sort By" style="-fx-font-size: 1.3em;" />
+                <CheckBox fx:id="cbOnlyViewPersonalLines" alignment="CENTER" mnemonicParsing="false" onAction="#onlyUserTimelines" style="-fx-font-size: 1.3em;" text="Only Show My Timelines" />
          <padding>
-            <Insets bottom="10.0" top="10.0" />
+            <Insets bottom="15.0" top="10.0" />
          </padding>
         </VBox>
         <ListView fx:id="list" onMouseClicked="#updateDisplays" prefHeight="590.0" prefWidth="753.0" GridPane.columnSpan="2" GridPane.rowIndex="1" />
