@@ -145,6 +145,37 @@ public class EventEditor {
         } catch (SQLException e) {
             errorMessage.setText("Images could not be loaded");
         }
+        
+        //set up slider labels
+        prioritySlider.setLabelFormatter(new StringConverter<Double>() {
+        	@Override
+            public String toString(Double n) {
+                if (n < 0.5) return "Not set";
+                if (n < 1.5) return "Low";
+                if (n < 2.5) return "Medium";
+                if (n < 3.5) return "High";
+
+                return "Not set";
+            }
+
+        	//probably not used but required for the override
+            @Override
+            public Double fromString(String s) {
+                switch (s) {
+                    case "Not set":
+                        return 0d;
+                    case "Low":
+                        return 1d;
+                    case "Medium":
+                        return 2d;
+                    case "High":
+                        return 3d;
+
+                    default:
+                        return 0d;
+                }
+            }
+        });
     }
 
     private void setupTimeInputBoxes(String timeSpinnerLabel, int maxValue, int i, List<Spinner<Integer>> spinnerList, List<VBox> boxList) {
