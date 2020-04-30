@@ -146,7 +146,7 @@ public class EventEditor {
             errorMessage.setText("Images could not be loaded");
         }
         
-        //set up slider labels
+        //set up priority slider labels
         prioritySlider.setLabelFormatter(new StringConverter<Double>() {
         	@Override
             public String toString(Double n) {
@@ -251,6 +251,8 @@ public class EventEditor {
         uploadImageButton.setDisable(!editable);
         deleteImageButton.setVisible(editable);
         deleteImageButton.setDisable(!editable);
+        
+        prioritySlider.setDisable(!editable);
 
         if (editable)
             editor.getStylesheets().remove("styles/DisabledViewable.css");

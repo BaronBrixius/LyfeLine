@@ -270,8 +270,8 @@ for example:      buttonName.getStyleClass().add("smallButton");                
 .spinner .decrement-arrow-button .decrement-arrow {
     -fx-padding: 2 3 2 3;
 }
-.slider > .axis {
-    -fx-tick-label-font-size: 0.5em;
+.slider .axis{
+    -fx-font-size: 7;
 }
 
 /*Here is a list of useful CSS commands:
