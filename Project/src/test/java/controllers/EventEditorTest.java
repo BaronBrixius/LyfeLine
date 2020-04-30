@@ -1,7 +1,6 @@
 package controllers;
 
 import database.DBM;
-import database.Event;
 import database.User;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -12,18 +11,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.testfx.framework.junit5.ApplicationExtension;
-import org.testfx.framework.junit5.ApplicationTest;
 import org.testfx.framework.junit5.Start;
-
 
 import java.sql.SQLException;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 @ExtendWith(ApplicationExtension.class)
 public class EventEditorTest {
+    private static final String SCHEMA = "test";
     static private int testCount = 0;
-    private final String SCHEMA = "test";
     TimelineView parent;
     EventEditor sut;
     EventSelector selector;
@@ -38,14 +33,19 @@ public class EventEditorTest {
         GUIManager.loggedInUser.setID(ownerID);
     }
 
+    @BeforeAll
+    static void beforeAll() throws SQLException, ClassNotFoundException {
+        new DBM(SCHEMA);
+    }
+
     @Start
     public void start(Stage stage) throws Exception {
-        new DBM(SCHEMA);
+
         FXMLLoader loader = new FXMLLoader(
                 getClass().getResource("../../classes/FXML/EventEditor.fxml"));
         stage.setScene(new Scene(loader.load(), 300, 300));
-        parent = loader.getController();
-        sut = parent.editorController;
+        //parent = ;
+        sut = loader.getController();
         stage.show();
     }
 
@@ -58,79 +58,82 @@ public class EventEditorTest {
     @AfterEach
     void tearDown() {
     }
-/*
+
+
     @Test
     void initialize() {
-    }
 
-    @Test
-    void setParentController() {
-    }
-
-    @Test
-    void saveEditButton() {
-    }
-
-    @Test
-    void toggleEditable() {
-    }
-
-    @Test
-    void setEvent() {
-    }
-
-    @Test
-    void testSetEvent() {
-    }
-
-    @Test
-    void updateEvent() {
-    }
-
-    @Test
-    void toggleStartExpanded() {
-    }
-
-    @Test
-    void toggleEndExpanded() {
-    }
-
-    @Test
-    void hasChangesNewEventNoChanges() {
-        sut.setEvent(new Event());
-        assertFalse(sut.hasChanges());
-    }
-
-    @Test
-    void hasChangesViewEventNoChanges() throws SQLException {
-        Event event1 = DBM.getFromDB(DBM.conn.prepareStatement("SELECT * FROM events"), new Event()).get(0);
-        sut.setEvent(event1);
-        assertFalse(sut.hasChanges());
     }
 
     /*
-        @Test
-        void hasChangesNewEventNoChanges() {
-            sut.setEvent(new Event());
-            assertFalse(sut.hasChanges());
-        }
+            @Test
+            void setParentController() {
+            }
 
-        @Test
-        void hasChangesNewEventNoChanges() {
-            sut.setEvent(new Event());
-            assertFalse(sut.hasChanges());
-        }
+            @Test
+            void saveEditButton() {
+            }
 
-        @Test
-        void hasChangesNewEventNoChanges() {
-            sut.setEvent(new Event());
-            assertFalse(sut.hasChanges());
-        }
+            @Test
+            void toggleEditable() {
+            }
 
-    @Test
-    void close() {
-    }
-  */
+            @Test
+            void setEvent() {
+            }
+
+            @Test
+            void testSetEvent() {
+            }
+
+            @Test
+            void updateEvent() {
+            }
+
+            @Test
+            void toggleStartExpanded() {
+            }
+
+            @Test
+            void toggleEndExpanded() {
+            }
+
+            @Test
+            void hasChangesNewEventNoChanges() {
+                sut.setEvent(new Event());
+                assertFalse(sut.hasChanges());
+            }
+
+            @Test
+            void hasChangesViewEventNoChanges() throws SQLException {
+                Event event1 = DBM.getFromDB(DBM.conn.prepareStatement("SELECT * FROM events"), new Event()).get(0);
+                sut.setEvent(event1);
+                assertFalse(sut.hasChanges());
+            }
+
+            /*
+                @Test
+                void hasChangesNewEventNoChanges() {
+                    sut.setEvent(new Event());
+                    assertFalse(sut.hasChanges());
+                }
+
+                @Test
+                void hasChangesNewEventNoChanges() {
+                    sut.setEvent(new Event());
+                    assertFalse(sut.hasChanges());
+                }
+
+                @Test
+                void hasChangesNewEventNoChanges() {
+                    sut.setEvent(new Event());
+                    assertFalse(sut.hasChanges());
+                }
+
+            @Test
+            void close() {
+            }
+          */
     @Test
     void clearImage() {
     }

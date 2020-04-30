@@ -53,15 +53,6 @@ public class EventNode implements Comparable<EventNode> {
         hoverFlag.setText(activeEvent.getEventName() + "\n" + activeEvent.getEventDescrition());
     }
 
-    @FXML
-    public void openEventViewer() {       //upon clicking a node
-        parentController.editorController.close();
-        parentController.editorController.setEvent(activeEvent);
-        parentController.editorController.toggleEditable(false);
-        parentController.rightSidebar.getChildren().clear();
-        parentController.rightSidebar.getChildren().add(parentController.editorController.editor);
-    }
-
     @Override
     public int compareTo(EventNode o) {     //sorts by earlier start, then by longest span as tiebreaker
         if (this.startColumn != o.startColumn)

@@ -62,14 +62,15 @@ public class EventSelector {
             }
         });
 
-        if (!GUIManager.loggedInUser.getAdmin()){
+        if (!GUIManager.loggedInUser.getAdmin()) {
             newButton.setVisible(false);
             deleteButton.setVisible(false);
             addToTimelineButton.setVisible(false);
         }
 
         timelineList.getSelectionModel().selectedIndexProperty().addListener(e -> {
-            populateEventList();
+
+                populateEventList();
             if (GUIManager.loggedInUser.getAdmin())
                 newButton.setDisable(timelineList.getSelectionModel().selectedIndexProperty() == null);
         });
@@ -93,18 +94,12 @@ public class EventSelector {
 
     @FXML
     void newEvent() {
-        openEditor(new Event(), true);
+        parentController.openEventEditor(new Event(), true);
     }
 
     @FXML
     void openEvent() {
-        openEditor(eventList.getSelectionModel().getSelectedItem(), false);
-    }
-
-    private void openEditor(Event eventToOpen, boolean editable) {
-        parentController.editorController.setEvent(eventToOpen);
-        parentController.editorController.toggleEditable(editable);
-        parentController.rightSidebar.getChildren().add(parentController.editorController.editor);
+        parentController.openEventEditor(eventList.getSelectionModel().getSelectedItem(), false);
     }
 
     public boolean deleteButton() {
@@ -134,7 +129,25 @@ public class EventSelector {
         }
     }
 
+    void populateTimelineList() {
+        /*Timeline all = new Timeline();
+        all.setTimelineName("All");
+        timelineList.getItems().add(all);*/
+        try {
+            Timeline currentSelected = timelineList.getSelectionModel().getSelectedItem();
+            PreparedStatement stmt = DBM.conn.prepareStatement("SELECT * FROM timelines");
+            timelineList.getItems().setAll(FXCollections.observableArrayList(DBM.getFromDB(stmt, new Timeline())));
+            setTimelineSelected(currentSelected);
+        } catch (SQLException e) {
+            System.err.println("Could not get timelines from database.");
+        }
+    }
+
     void setTimelineSelected(Timeline timelineToSelect) {
+        if (timelineToSelect == null) {
+            timelineList.getSelectionModel().select(0);
+            return;
+        }
         for (Timeline t : timelineList.getItems()) {
             if (timelineToSelect.equals(t)) {
                 timelineList.getSelectionModel().select(t);
@@ -143,23 +156,10 @@ public class EventSelector {
         }
     }
 
-    void populateTimelineList() {
-        /*Timeline all = new Timeline();
-        all.setTimelineName("All");
-        timelineList.getItems().add(all);*/
-        try {
-            int currentIndex = timelineList.getSelectionModel().getSelectedIndex();
-            PreparedStatement stmt = DBM.conn.prepareStatement("SELECT * FROM timelines");
-            timelineList.getItems().addAll(FXCollections.observableArrayList(DBM.getFromDB(stmt, new Timeline())));
-            timelineList.getSelectionModel().select(currentIndex);
-        } catch (SQLException e) {
-            System.err.println("Could not get timelines from database.");
-        }
-    }
-
     @FXML
     void populateEventList() {
-        eventList.setItems(FXCollections.observableArrayList(timelineList.getSelectionModel().getSelectedItem().getEventList()));
+        if (timelineList.getSelectionModel().getSelectedItem() != null)
+            eventList.setItems(FXCollections.observableArrayList(timelineList.getSelectionModel().getSelectedItem().getEventList()));
         eventList.getSelectionModel().clearSelection();
         newButton.setDisable(true);
         viewButton.setDisable(true);

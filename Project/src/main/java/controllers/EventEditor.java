@@ -2,6 +2,7 @@ package controllers;
 
 import database.DBM;
 import database.Event;
+import database.Timeline;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -35,7 +36,7 @@ public class EventEditor {
     private final List<Spinner<Integer>> endInputs = new ArrayList<>();
     public ScrollPane editor;
     @FXML
-    public Button editButton;
+    public Button saveEditButton;
     @FXML
     public Button deleteButton;
     @FXML
@@ -47,6 +48,7 @@ public class EventEditor {
     @FXML
     public FlowPane endPane;
     public Button deleteImageButton;
+    public Button closeButton;
     @FXML
     Button uploadImageButton;
     @FXML
@@ -60,15 +62,15 @@ public class EventEditor {
     @FXML
     ImageView image;
     boolean editable = true;
-    TimelineView parentController;
     String filename; //THis is to take the name of the image choosen to add it to the copied version
     String fullOutPath; //When event is saved the path to the image in resource folder is sent here (the one we can use to send to DB)
     private boolean startExpanded;
     private boolean endExpanded;
     private Event event;
     private File imageChosen; //The current image chosen by FileChooser
-    private	String tempLocation;
-    
+    private String tempLocation;
+    private Timeline activeTimeline;
+
 
     public void initialize() {
 //        image.setOnMouseEntered(e -> {
@@ -179,10 +181,6 @@ public class EventEditor {
         boxList.get(i).getChildren().get(0).getStyleClass().add("smallText");
     }
 
-    public void setParentController(TimelineView parentController) {             //TODO delete this inelegant solution
-        this.parentController = parentController;
-    }
-
     @FXML
     private void toggleHasDuration() {
         endPane.setDisable(!hasDuration.isSelected());
@@ -224,7 +222,7 @@ public class EventEditor {
         else
             editor.getStylesheets().add("styles/DisabledViewable.css");
 
-        editButton.setText(editable ? "Save" : "Edit");
+        saveEditButton.setText(editable ? "Save" : "Edit");
     }
 
 
@@ -233,11 +231,11 @@ public class EventEditor {
 
         boolean confirm = true;
 
-        if(event.getImagePath()!=null) {
-            confirm = ImageSaveConfirm();
+        if (event.getImagePath() != null) {
+            confirm = imageSaveConfirm();
         }
 
-        if(confirm) {
+        if (confirm) {
             FileChooser chooser = new FileChooser(); //For the filedirectory
             chooser.setTitle("Upload image");
 
@@ -271,7 +269,7 @@ public class EventEditor {
     }
 
     @FXML
-    private boolean ImageSaveConfirm() {
+    private boolean imageSaveConfirm() {
         Alert confirmsaveimage = new Alert(Alert.AlertType.CONFIRMATION);
         confirmsaveimage.setTitle("Confirm Change");
         confirmsaveimage.setHeaderText("Replacing or removing an image will permanently delete it from the system.");
@@ -362,40 +360,31 @@ public class EventEditor {
         return false;
     }
 
-    public boolean setEvent(int eventID) {       //is this even needed? don't implement yet
-        /*Event newEvent = logic to find Event in database and get its info
-        if (newEvent != null)
-            return changeEvent(newEvent);*/
-        return false;
-    }
-
-    public boolean setEvent(Event event) {
-        parentController.editorController.close();
+    public void setEvent(Event event, Timeline activeTimeline) {
         this.event = event;
+        this.activeTimeline = activeTimeline;
+
         if (this.event.getEventID() == 0)       //if new event, set current user as owner
             this.event.setUserID(GUIManager.loggedInUser.getUserID());
         //Check if Owner
         boolean owner = GUIManager.loggedInUser.getUserID() == this.event.getUserID();
-        editButton.setDisable(!owner);
-        editButton.setVisible(owner);
+        saveEditButton.setDisable(!owner);
+        saveEditButton.setVisible(owner);
         deleteButton.setDisable(!owner);
         deleteButton.setVisible(owner);
 
-        return populateDisplay();
+        populateDisplay();
     }
 
-    private boolean populateDisplay() {
+    private void populateDisplay() {
         titleInput.setText(event.getEventName());
         descriptionInput.setText(event.getEventDescrition());
 
-        System.out.println(event.getImagePath());
-        System.out.println(event.getEventID());
         if (event.getImagePath() != null) {
             image.setImage(new Image("File:" + event.getImagePath()));
             this.fullOutPath = event.getImagePath();
-        }
-        else 
-        	image.setImage(null);
+        } else
+            image.setImage(null);
 
         startInputs.get(0).getValueFactory().setValue(event.getStartDate().getYear());
         startInputs.get(1).getValueFactory().setValue(event.getStartDate().getMonth());
@@ -419,7 +408,6 @@ public class EventEditor {
 
         setExpansion(startPane, startBoxes, false);
         setExpansion(endPane, endBoxes, false);
-        return true;
     }
 
     @FXML
@@ -430,7 +418,7 @@ public class EventEditor {
         confirmsave.setContentText("Would you like to save?");
 
         Optional<ButtonType> result = confirmsave.showAndWait();
-        if (result.get() == ButtonType.CANCEL)
+        if (result.isPresent() && result.get() == ButtonType.CANCEL)
             return false;
         return saveEvent();
     }
@@ -460,39 +448,23 @@ public class EventEditor {
         endInputs.get(6).getValueFactory().setValue(event.getEndDate().getMillisecond());
     }
 
-    private boolean saveEvent() {
+    boolean saveEvent() {
         updateEvent();
         try {
             if (event.getEventID() == 0) {
-                DBM.insertIntoDB(event);//Save button clicked, the image chosen is saved and the String field is set as the path to the image in the resource folder
-                addToTimeline();        //new event is automatically added to active timeline when saved
+                DBM.insertIntoDB(event);                                //Save button clicked, the image chosen is saved and the String field is set as the path to the image in the resource folder
+                event.addToTimeline(activeTimeline.getTimelineID());    //new event is added to active timeline
             } else
                 DBM.updateInDB(event);//Save button clicked, the image chosen is saved and the String field is set as the path to the image in the resource folder
-            parentController.selectorController.populateTimelineList();
-            parentController.selectorController.populateEventList();
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
-        }
-        return true;
-    }
-
-    private void addToTimeline() {
-        parentController.activeTimeline.getEventList().add(event);
-        try {
-            if (event.addToTimeline(parentController.activeTimeline.getTimelineID()))
-                System.out.println("Event added to " + parentController.activeTimeline + " timeline."); // remove this later once more user feedback is implemented
-            else
-                System.out.println("Event is already on " + parentController.activeTimeline + " timeline.");
-        } catch (SQLException e) {
-            System.out.println("Timeline not found.");
+            return false;
         }
     }
 
-    @FXML
-    private boolean deleteEvent() {
-        parentController.selectorController.deleteEvent(event);
-        return close();
+    Event getEvent() {
+        return event;
     }
 
     public void toggleStartExpanded(ActionEvent actionEvent) {
@@ -507,7 +479,7 @@ public class EventEditor {
 
     private int setExpansion(FlowPane expandPane, List<VBox> boxesToAddFrom, boolean expanding) {
         expandPane.getChildren().removeAll(boxesToAddFrom);         //clear out the current contents except the expansion button
-        int scale = parentController.activeTimeline.getScale();
+        int scale = activeTimeline.getScale();
 
         if (expanding) {                //if expanding, add everything in
             expandPane.getChildren().addAll(0, boxesToAddFrom);
@@ -548,19 +520,11 @@ public class EventEditor {
         );
     }
 
-    @FXML
     boolean close() {
-        parentController.rightSidebar.getChildren().remove(editor);
-        parentController.rightSidebar.getChildren().add(editor);
-        if (event != null && hasChanges() && !saveConfirm())          //do you wanna save and exit or just exit?
-            return false;
-        parentController.rightSidebar.getChildren().remove(editor);
-        return true;
+        return (event == null || !hasChanges() || saveConfirm());        //do you wanna save and exit or just exit?
     }
 
-
-    
-    public void clearImage(ActionEvent actionEvent) {
+    public void clearImage() {
         if (event.getImagePath() != null) {
             try {
                 Files.deleteIfExists(Paths.get(event.getImagePath()));
@@ -569,7 +533,6 @@ public class EventEditor {
             }
             event.setImage(null);
             image.setImage(null);
-            updateEvent();
         }
 
     }
