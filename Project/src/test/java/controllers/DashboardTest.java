@@ -27,6 +27,8 @@ public class DashboardTest {
 
     @Start
     public void start(Stage stage) throws Exception {
+        System.out.println("===========================================================================");  //Makes each test easier to distinguish in console view
+        System.out.println("Test " + ++testCount);
         GUIManager.loggedInUser = new User();
         new DBM(SCHEMA);
         DBM.setupSchema();
@@ -38,7 +40,6 @@ public class DashboardTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        System.out.println("Test " + ++testCount);
     }
 
     @AfterEach
