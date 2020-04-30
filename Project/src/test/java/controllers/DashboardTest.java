@@ -15,7 +15,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.testfx.framework.junit5.ApplicationExtension;
 import org.testfx.framework.junit5.Start;
 
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.concurrent.Semaphore;
@@ -84,12 +83,7 @@ public class DashboardTest {
 
         int intitialListSize = sut.list.getItems().size();
 
-        addNewTimelineToDB("");
-        addNewTimelineToDB("abcd");
-        addNewTimelineToDB("ABCD");
-        addNewTimelineToDB("1234");
-        addNewTimelineToDB("!@#$");
-        addNewTimelineToDB("åöäå§");
+        addNewTimelineToDBByName("", "abcd", "ABCD", "1234", "!@#$", "åöäå§");
 
         Platform.runLater(() -> sut.initialize());
         waitForRunLater();
@@ -191,12 +185,7 @@ public class DashboardTest {
 
         int intitialListSize = sut.list.getItems().size();
 
-        addNewTimelineToDB("");
-        addNewTimelineToDB("abcd");
-        addNewTimelineToDB("ABCD");
-        addNewTimelineToDB("1234");
-        addNewTimelineToDB("!@#$");
-        addNewTimelineToDB("åöäå§");
+        addNewTimelineToDBByName("", "abcd", "ABCD", "1234", "!@#$", "åöäå§");
 
         try {
             DBM.deleteFromDB(sut.list.getItems().get(0));
@@ -206,11 +195,7 @@ public class DashboardTest {
         }
         catch (SQLException e) {e.printStackTrace();}
 
-        addNewTimelineToDB("");
-        addNewTimelineToDB("1234");
-        addNewTimelineToDB("!@#$");
-        addNewTimelineToDB("☺☻♥♦♣♠");
-        addNewTimelineToDB("ÖÄÅåöäå§");
+        addNewTimelineToDBByName("", "1234", "!@#$", "☺☻♥♦♣♠", "ÖÄÅåöäå§");
 
         try {
             DBM.deleteFromDB(sut.list.getItems().get(5));
@@ -300,14 +285,7 @@ public class DashboardTest {
 
     @Test
     void testOnlyViewPersonalTimelines() throws InterruptedException {
-        Timeline newTimeline1 = new Timeline();
-        newTimeline1.setTimelineOwner(-1);
-        Timeline newTimeline2 = new Timeline();
-        newTimeline2.setTimelineOwner(-1);
-        Timeline newTimeline3 = new Timeline();
-        newTimeline3.setTimelineOwner(-1);
-
-        try {DBM.insertIntoDB(newTimeline1, newTimeline2, newTimeline3);} catch (SQLException e) {e.printStackTrace();}
+        addNewTimelineToDBByOwnerId(-1, -1, -1);
 
         Platform.runLater(() -> {
             sut.initialize();
@@ -333,6 +311,60 @@ public class DashboardTest {
         assertEquals(expected, actual);    //Makes sure that the timelines are on the list
     }
 
+    @Test
+    void testViewPersonalChangeSortMethodThenViewAllTimelines() throws InterruptedException {
+        addNewTimelineToDBByOwnerId(-1, -1, -1);    //Add some new timelines to the list
+
+        Platform.runLater(() -> {       //View only personal timelines
+            sut.initialize();
+            sut.cbOnlyViewPersonalLines.setSelected(true);
+            sut.onlyUserTimelines();
+        });
+        waitForRunLater();
+
+        changeSortBy(1);    //Change the sorting method
+
+        ArrayList<Timeline> timelinesList = new ArrayList<>(sut.list.getItems());
+        int initialListSize = timelinesList.size(); //Keep track of how many timelines are currently in the list
+
+        int actual;
+        int expected;
+        Timeline higherTimelineOnList;
+
+        for (int i = 0; i < timelinesList.size(); i++) {
+            higherTimelineOnList = timelinesList.get(i);
+
+            expected = GUIManager.loggedInUser.getUserID();
+            actual = higherTimelineOnList.getTimelineOwnerID();
+            assertEquals(expected, actual);     //Check that the timelines are owned by the user
+
+            if (i != timelinesList.size() - 1)  //Don't compare the last one to avoid null pointer
+                assertTrue(higherTimelineOnList.getName().compareTo(timelinesList.get(i + 1).getName()) >= 0);   //assert that the one below it comes before alphabetically by name, or is the same
+        }
+
+        expected = 3;
+        actual = sut.list.getItems().size();
+        assertEquals(expected, actual);    //Make sure that only the User's timelines are on the list
+
+        Platform.runLater(() -> {       //View all timelines again
+            sut.cbOnlyViewPersonalLines.setSelected(false);
+            sut.onlyUserTimelines();
+        });
+        waitForRunLater();
+
+        Timeline lowerTimelineOnList;
+        for (int i = 0; i < timelinesList.size() - 1; i++) {
+            higherTimelineOnList = timelinesList.get(i);
+            lowerTimelineOnList = timelinesList.get(i + 1);
+
+            assertTrue(higherTimelineOnList.getName().compareTo(lowerTimelineOnList.getName()) >= 0);   //assert that the one below it comes before alphabetically by name, or is the same
+        }
+
+        expected = initialListSize;
+        actual = timelinesList.size();
+        assertEquals(expected, actual);     //Check that all the timelines are being shown
+    }
+
     //Helper methods to make changing GUI elements possible
     void changeSortBy(int selection) throws InterruptedException {
         Platform.runLater(() -> sut.sortBy.getSelectionModel().clearAndSelect(selection));
@@ -351,9 +383,19 @@ public class DashboardTest {
     }
 
     //Helper method for making and adding Timelines
-    void addNewTimelineToDB(String name) {
-        Timeline newTimeline = new Timeline();
-        newTimeline.setTimelineName(name);
-        try {DBM.insertIntoDB(newTimeline);} catch (SQLException e) {e.printStackTrace();}
+    void addNewTimelineToDBByName(String... name) {
+        for (String n : name) {
+            Timeline newTimeline = new Timeline();
+            newTimeline.setTimelineName(n);
+            try {DBM.insertIntoDB(newTimeline);} catch (SQLException e) {e.printStackTrace();}
+        }
+    }
+
+    void addNewTimelineToDBByOwnerId(int... ownerID) {
+        for (int n : ownerID) {
+            Timeline newTimeline = new Timeline();
+            newTimeline.setTimelineOwner(n);
+            try {DBM.insertIntoDB(newTimeline);} catch (SQLException e) {e.printStackTrace();}
+        }
     }
 }
