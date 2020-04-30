@@ -9,22 +9,24 @@ import javafx.stage.Stage;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.testfx.framework.junit.ApplicationTest;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.testfx.framework.junit5.ApplicationExtension;
+import org.testfx.framework.junit5.ApplicationTest;
+import org.testfx.framework.junit5.Start;
+
 
 import java.sql.SQLException;
 
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.*;
 
-class EventEditorTest extends ApplicationTest {
+@ExtendWith(ApplicationExtension.class)
+public class EventEditorTest {
     static private int testCount = 0;
     private final String SCHEMA = "test";
     TimelineView parent;
     EventEditor sut;
     EventSelector selector;
 
-    EventEditorTest() throws SQLException, ClassNotFoundException {
-        new DBM(SCHEMA);
-    }
 
     //helper methods control who is logged in
     static void setAdminLoggedIn(boolean admin) {
@@ -35,8 +37,7 @@ class EventEditorTest extends ApplicationTest {
         GUIManager.loggedInUser.setID(ownerID);
     }
 
-
-    @Override
+    @Start
     public void start(Stage stage) throws Exception {
         FXMLLoader loader = new FXMLLoader(
                 getClass().getResource("FXML/TimelineView.fxml"));
@@ -47,7 +48,7 @@ class EventEditorTest extends ApplicationTest {
     }
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws Exception {
         GUIManager.loggedInUser = new User();
         System.out.println("Test " + ++testCount);
     }
@@ -55,7 +56,7 @@ class EventEditorTest extends ApplicationTest {
     @AfterEach
     void tearDown() {
     }
-
+/*
     @Test
     void initialize() {
     }
