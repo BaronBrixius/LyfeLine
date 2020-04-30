@@ -59,6 +59,8 @@ public class EventEditor {
     ComboBox<ImageView> imageInput = new ComboBox<>();
     @FXML
     ImageView image;
+    @FXML
+    Slider prioritySlider;
     boolean editable = true;
     TimelineView parentController;
     String filename; //THis is to take the name of the image choosen to add it to the copied version
