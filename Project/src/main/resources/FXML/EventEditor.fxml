@@ -5,6 +5,7 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.ImageView?>
@@ -15,14 +16,14 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Text?>
 
-<ScrollPane fx:id="editor" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.EventEditor">
-    <GridPane alignment="CENTER_RIGHT" hgap="5" maxHeight="1.7976931348623157E308" prefWidth="325.0" vgap="5">
+<ScrollPane fx:id="editor" vbarPolicy="ALWAYS" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.EventEditor">
+    <GridPane alignment="CENTER_RIGHT" hgap="5" maxHeight="1.7976931348623157E308" prefWidth="340.0" vgap="5">
         <columnConstraints>
             <ColumnConstraints prefWidth="150" />
             <ColumnConstraints prefWidth="150" />
         </columnConstraints>
         <padding>
-            <Insets bottom="10" left="10" right="10" top="10" />
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
         </padding>
         <Label fx:id="headerText" styleClass="headertext" GridPane.columnSpan="2" />
         <Label styleClass="smallText" text="Title" GridPane.columnSpan="2" GridPane.rowIndex="2" GridPane.valignment="BOTTOM" />
@@ -30,7 +31,7 @@
         <Label styleClass="smallText" text="Description" GridPane.columnSpan="2" GridPane.rowIndex="4" GridPane.valignment="BOTTOM" />
         <TextArea fx:id="descriptionInput" maxHeight="1.7976931348623157E308" prefHeight="300.0" styleClass="smallText" wrapText="true" GridPane.columnSpan="2" GridPane.rowIndex="5" GridPane.vgrow="ALWAYS" />
         <Label styleClass="smallText" text="Start:" GridPane.columnSpan="2" GridPane.rowIndex="6" GridPane.valignment="BOTTOM" />
-        <FlowPane fx:id="startPane" alignment="CENTER_LEFT" hgap="5.0" GridPane.columnSpan="2" GridPane.rowIndex="7">
+        <FlowPane fx:id="startPane" alignment="CENTER_LEFT" hgap="5.0" prefWrapLength="340.0" GridPane.columnSpan="2" GridPane.rowIndex="7">
             <Button alignment="CENTER" ellipsisString="" maxWidth="50.0" minWidth="60.0" mnemonicParsing="false" onAction="#toggleStartExpanded" styleClass="tinyButton" text="more..." textAlignment="CENTER">
                 <FlowPane.margin>
                     <Insets left="7.0" top="18.0" />
@@ -41,7 +42,7 @@
             <CheckBox fx:id="hasDuration" onAction="#toggleHasDuration" />
             <Label contentDisplay="RIGHT" styleClass="smallText" text="End" />
         </HBox>
-        <FlowPane fx:id="endPane" alignment="CENTER_LEFT" disable="true" hgap="5.0" GridPane.columnSpan="2" GridPane.rowIndex="9">
+        <FlowPane fx:id="endPane" alignment="CENTER_LEFT" disable="true" hgap="5.0" prefWrapLength="340.0" GridPane.columnSpan="2" GridPane.rowIndex="9">
             <Button alignment="CENTER" ellipsisString="" maxWidth="50.0" minWidth="60.0" mnemonicParsing="false" onAction="#toggleEndExpanded" styleClass="tinyButton" text="more..." textAlignment="CENTER">
                 <FlowPane.margin>
                     <Insets left="7.0" top="18.0" />
@@ -58,11 +59,17 @@
                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
             </GridPane.margin>
         </Button>
-        <Button fx:id="editButton" alignment="CENTER" maxHeight="30" onAction="#saveEditButton" styleClass="smallButton" text="Save" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="14" />
-        <Button fx:id="deleteButton" alignment="CENTER" maxHeight="30" onAction="#deleteEvent" styleClass="smallButton" text="Delete" GridPane.halignment="CENTER" GridPane.rowIndex="15" />
-        <Button alignment="CENTER" maxHeight="30" onAction="#close" styleClass="smallButton" text="Close" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="15" />
+        <Button fx:id="editButton" alignment="CENTER" maxHeight="30" onAction="#saveEditButton" styleClass="smallButton" text="Save" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="16" />
+        <Button fx:id="deleteButton" alignment="CENTER" maxHeight="30" onAction="#deleteEvent" styleClass="smallButton" text="Delete" GridPane.halignment="CENTER" GridPane.rowIndex="17" />
+        <Button alignment="CENTER" maxHeight="30" onAction="#close" styleClass="smallButton" text="Close" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="17" />
         <Text fx:id="errorMessage" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="smallText" GridPane.columnSpan="2" GridPane.rowIndex="13" />
         <ImageView fx:id="image" fitHeight="200.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" GridPane.columnSpan="2" GridPane.halignment="CENTER" />
+      <Label styleClass="smallText" text="Priority:" GridPane.rowIndex="11" />
+      <Slider fx:id="prioritySlider" blockIncrement="1.0" majorTickUnit="1.0" max="3.0" minorTickCount="0" showTickLabels="true" showTickMarks="true" snapToTicks="true" styleClass="smallText" GridPane.columnSpan="2" GridPane.rowIndex="13">
+         <GridPane.margin>
+            <Insets left="10.0" right="10.0" />
+         </GridPane.margin>
+      </Slider>
       <rowConstraints>
          <RowConstraints />
          <RowConstraints />
@@ -74,6 +81,8 @@
          <RowConstraints />
          <RowConstraints />
          <RowConstraints />
+         <RowConstraints maxHeight="0.0" minHeight="0.0" prefHeight="0.0" />
+         <RowConstraints maxHeight="0.0" minHeight="0.0" prefHeight="0.0" />
          <RowConstraints />
          <RowConstraints />
          <RowConstraints />
