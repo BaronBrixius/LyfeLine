@@ -452,6 +452,8 @@ public class EventEditor {
         endInputs.get(5).getValueFactory().setValue(event.getEndDate().getSecond());
         endInputs.get(6).getValueFactory().setValue(event.getEndDate().getMillisecond());
 
+        prioritySlider.setValue(2); //change once priority is implemented in event.java
+        
         setExpansion(startPane, startBoxes, false);
         setExpansion(endPane, endBoxes, false);
         return true;
@@ -473,6 +475,7 @@ public class EventEditor {
     void updateEvent() {
         //setters to update each field of this.event, based on the current info in the text fields
 
+    	//event.setPriority(prioritySlider.getValue())
         event.setTitle(titleInput.getText());
         event.setDescription(descriptionInput.getText().replaceAll("([^\r])\n", "$1\r\n"));
         event.setStartDate(new Date(startInputs.get(0).getValue(), startInputs.get(1).getValue(), startInputs.get(2).getValue(),
@@ -581,6 +584,7 @@ public class EventEditor {
                 event.getStartDate().compareTo(readStart) != 0
                         || event.getEndDate().compareTo(readEnd) != 0
         );
+        //return(!(event.getPriority()==prioritySlider.getValue()));
     }
 
     @FXML
