@@ -5,10 +5,12 @@ import database.Timeline;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
@@ -19,7 +21,10 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
 
 public class Dashboard {
 
@@ -47,6 +52,7 @@ public class Dashboard {
     private GridPane gridButtons;
     @FXML
     private Text titleText;
+    List<Timeline> timelines;
 
 
     private Timeline activeTimeline;
@@ -65,7 +71,8 @@ public class Dashboard {
         // Fill ListView with the timelines
         try {
             PreparedStatement stmt = DBM.conn.prepareStatement("SELECT * FROM timelines");
-            list.setItems(FXCollections.observableArrayList(DBM.getFromDB(stmt, new Timeline())));
+            timelines = DBM.getFromDB(stmt, new Timeline());
+            list.setItems(FXCollections.observableArrayList(timelines));
         } catch (SQLException e) {
             System.err.println("Could not get timelines from database.");
         }
@@ -114,8 +121,11 @@ public class Dashboard {
 
         // Search field
         searchInput.focusedProperty().addListener(ov -> {
-            if (searchInput.isFocused())
+            if (searchInput.isPressed())
                 searchInput.setText("");
+                searchTimelines();
+
+
         });
 
         list.getSelectionModel().selectedIndexProperty().addListener(e -> {
@@ -131,6 +141,26 @@ public class Dashboard {
         GUIManager.swapScene("AdminRoleManager");
     }
 
+
+    @FXML
+    public void searchTimelines() {
+            searchInput.setOnKeyPressed(keyEvent -> {
+                  String[] inputs = searchInput.getText().trim().split("\\s++");
+                List<Timeline> templist = new ArrayList<>();
+                  for(int i = 0; i<timelines.size(); i++){
+                      for(int j = 0; j<inputs.length;j++){
+                          String toFind = inputs[j];
+                          boolean found = Arrays.asList(timelines.get(i).getKeywords().toArray()).stream().anyMatch(s -> s.toString().toLowerCase().contains( toFind.toLowerCase()));
+                          if(found){
+                              if(!templist.contains(timelines.get(i)))
+                              templist.add(timelines.get(i));}
+                      }
+                      list.setItems(FXCollections.observableArrayList(templist));
+                      if (searchInput.getText().equalsIgnoreCase(""))
+                          list.setItems(FXCollections.observableArrayList(timelines));
+                  }
+            });
+    }
 
     @FXML
     public void onlyUserTimelines() {
