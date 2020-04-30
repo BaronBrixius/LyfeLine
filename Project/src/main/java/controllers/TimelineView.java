@@ -71,6 +71,7 @@ public class TimelineView {
         eventSelectorController.setTimelineSelected(activeTimeline);    // sets the selected index to the currently viewed
         // timeline
         timelineEditorController.setTimeline(t);
+        populateDisplay();
     }
 
     // This method is probably not needed, but whatever     //useful for dev work to set things up quickly!

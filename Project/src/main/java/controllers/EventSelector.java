@@ -145,7 +145,7 @@ public class EventSelector {
 
     void setTimelineSelected(Timeline timelineToSelect) {
         if (timelineToSelect == null) {
-            timelineList.getSelectionModel().select(0);
+            timelineList.getSelectionModel().select(-1);
             return;
         }
         for (Timeline t : timelineList.getItems()) {
