@@ -23,30 +23,19 @@ import java.util.Comparator;
 
 public class Dashboard {
 
-    @FXML
-    private Button eventEditorButton;
-    @FXML
-    private Button adminGUI;
-    @FXML
-    private Button btnDelete;
-    @FXML
-    private Button btnEdit;
-    @FXML
-    private Button btnCreate;
-    @FXML
-    private TextFlow displayInfo;
-    @FXML
-    private ListView<Timeline> list;
-    @FXML
-    private TextField searchInput;
-    @FXML
-    private CheckBox cbOnlyViewPersonalLines;
-    @FXML
-    private ComboBox<String> sortBy;
-    @FXML
-    private GridPane gridButtons;
-    @FXML
-    private Text titleText;
+
+    @FXML protected Button eventEditorButton;
+    @FXML protected Button adminGUI;
+    @FXML protected Button btnDelete;
+    @FXML protected Button btnEdit;
+    @FXML protected Button btnCreate;
+    @FXML protected TextFlow displayInfo;
+    @FXML protected ListView<Timeline> list;
+    @FXML protected TextField searchInput;
+    @FXML protected CheckBox cbOnlyViewPersonalLines;
+    @FXML protected ComboBox<String> sortBy;
+    @FXML protected GridPane gridButtons;
+    @FXML protected Text titleText;
 
 
     private Timeline activeTimeline;

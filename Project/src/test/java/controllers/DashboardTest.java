@@ -1,40 +1,29 @@
 package controllers;
 
 import database.DBM;
-import database.Event;
+import database.Timeline;
 import database.User;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.testfx.framework.junit5.ApplicationExtension;
-import org.testfx.framework.junit5.ApplicationTest;
 import org.testfx.framework.junit5.Start;
 
+import java.util.ArrayList;
+import java.util.concurrent.Semaphore;
 
-import java.sql.SQLException;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.assertTrue;
 
 @ExtendWith(ApplicationExtension.class)
 public class DashboardTest {
     static private int testCount = 0;
     private final String SCHEMA = "test";
     Dashboard sut;
-
-
-    //helper methods control who is logged in
-    static void setAdminLoggedIn(boolean admin) {
-        GUIManager.loggedInUser.setAdmin(admin);
-    }
-
-    static void setUserIDLoggedIn(int ownerID) {
-        GUIManager.loggedInUser.setID(ownerID);
-    }
 
     @Start
     public void start(Stage stage) throws Exception {
@@ -56,31 +45,91 @@ public class DashboardTest {
     void tearDown() {
     }
 
+
     @Test
-    void testInitialize() {
+    void testSortTimelinesAlphabetically() throws InterruptedException {
+        Timeline higherTimelineOnList;
+        Timeline lowerTimelineOnList;
+
+        changeSortBy(0);    //Select sort alphabetically
+        ArrayList<Timeline> timelinesList = new ArrayList<>(sut.list.getItems());
+
+        for (int i = 0; i < timelinesList.size() - 1; i++) {  //For each timeline on the list except the last one,
+            higherTimelineOnList = timelinesList.get(i);
+            lowerTimelineOnList = timelinesList.get(i + 1);
+
+            assertTrue(higherTimelineOnList.getName().compareTo(lowerTimelineOnList.getName()) <= 0);   //assert that the one below it comes after alphabetically by name, or is the same
+        }
     }
 
+    @Test
+    void testSortTimelinesReverseAlphabetically() throws InterruptedException {
+        Timeline higherTimelineOnList;
+        Timeline lowerTimelineOnList;
+
+        changeSortBy(1);    //Select sort reverse alphabetically
+        ArrayList<Timeline> timelinesList = new ArrayList<>(sut.list.getItems());
+
+        for (int i = 0; i < timelinesList.size() - 1; i++) {  //For each timeline on the list except the last one,
+            higherTimelineOnList = timelinesList.get(i);
+            lowerTimelineOnList = timelinesList.get(i + 1);
+
+            assertTrue(higherTimelineOnList.getName().compareTo(lowerTimelineOnList.getName()) >= 0);   //assert that the one below it comes before alphabetically by name, or is the same
+        }
+    }
+
+    @Test
+    void testSortTimelinesDateCreatedNewestFirst() throws InterruptedException {
+        Timeline higherTimelineOnList;
+        Timeline lowerTimelineOnList;
+
+        changeSortBy(2);    //Select sort date created, newest first
+        ArrayList<Timeline> timelinesList = new ArrayList<>(sut.list.getItems());
+
+        for (int i = 0; i < timelinesList.size() - 1; i++) {  //For each timeline on the list except the last one,
+            higherTimelineOnList = timelinesList.get(i);
+            lowerTimelineOnList = timelinesList.get(i + 1);
+
+            assertTrue(higherTimelineOnList.getDateCreated().compareTo(lowerTimelineOnList.getDateCreated()) >= 0);   //assert that the one below it was created later, or at the same time
+        }
+    }
+
+    @Test
+    void testSortTimelinesDateCreatedOldestFirst() throws InterruptedException {
+        Timeline higherTimelineOnList;
+        Timeline lowerTimelineOnList;
+
+        changeSortBy(3);    //Select sort date created, oldest first
+        ArrayList<Timeline> timelinesList = new ArrayList<>(sut.list.getItems());
+
+        for (int i = 0; i < timelinesList.size() - 1; i++) {  //For each timeline on the list except the last one,
+            higherTimelineOnList = timelinesList.get(i);
+            lowerTimelineOnList = timelinesList.get(i + 1);
+
+            assertTrue(higherTimelineOnList.getDateCreated().compareTo(lowerTimelineOnList.getDateCreated()) <= 0);   //assert that the one below it was created sooner, or at the same time
+        }
+    }
+
+    /*
     @Test
     void testAdminScreen() {
+    }*/
+
+    //Helper methods to make changing GUI elements possible
+    private void changeSortBy(int selection) throws InterruptedException {
+        Platform.runLater(() -> sut.sortBy.getSelectionModel().clearAndSelect(selection));
+        waitForRunLater();
     }
 
-    @Test
-    void testOnlyUserTimelines() {
+    public static void waitForRunLater() throws InterruptedException {
+        Semaphore semaphore = new Semaphore(0);
+        Platform.runLater(semaphore::release);
+        semaphore.acquire();
     }
 
-    @Test
-    void testCreateTimeline() {
+    //Helper methods to change who is logged in
+    static void setAdminLoggedIn(boolean admin) {
+        GUIManager.loggedInUser.setAdmin(admin);
     }
 
-    @Test
-    void testEditTimeline() {
-    }
-
-    @Test
-    void testOpenTimeline() {
-    }
-
-    @Test
-    void testDeleteConfirmation() {
-    }
 }
