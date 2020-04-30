@@ -145,7 +145,7 @@ public class Dashboard {
 
     @FXML
     public void searchTimelines() {
-            searchInput.setOnKeyPressed(keyEvent -> {//Each time new key is pressed
+            searchInput.setOnKeyReleased(keyEvent -> {//Each time new key is pressed
                   String[] inputs = searchInput.getText().trim().split("\\s++"); //String is updated by the newest textfield read, if spaces the strings are split up into "string keywords" for search l
                 List<Timeline> templist = new ArrayList<>(); //List of timelines that fullfill the textfield input string - used to fill the ListView of timelines
                 if (cbOnlyViewPersonalLines.isSelected()){ onlyUserTimelines(); //If only search user's timelines
