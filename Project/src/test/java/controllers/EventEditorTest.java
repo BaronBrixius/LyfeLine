@@ -7,6 +7,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,8 +40,9 @@ public class EventEditorTest {
 
     @Start
     public void start(Stage stage) throws Exception {
+        new DBM(SCHEMA);
         FXMLLoader loader = new FXMLLoader(
-                getClass().getResource("FXML/TimelineView.fxml"));
+                getClass().getResource("../../classes/FXML/EventEditor.fxml"));
         stage.setScene(new Scene(loader.load(), 300, 300));
         parent = loader.getController();
         sut = parent.editorController;
@@ -124,11 +126,11 @@ public class EventEditorTest {
             sut.setEvent(new Event());
             assertFalse(sut.hasChanges());
         }
-            */
+
     @Test
     void close() {
     }
-
+  */
     @Test
     void clearImage() {
     }
