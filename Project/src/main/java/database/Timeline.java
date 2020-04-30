@@ -313,14 +313,6 @@ public class Timeline implements DBObject<Timeline> {
         this.timelineOwner = TimelineOwner;
     }
 
-    public boolean getPrivate() {
-        return this.isPrivate;
-    }
-
-    public void setPrivate(boolean isPrivate) {
-        this.isPrivate = isPrivate;
-    }
-
     public List<String> getKeywords() {
         return keywords;
     }
