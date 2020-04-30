@@ -114,7 +114,7 @@ public class EventSelector {
 
         Optional<ButtonType> result = confirmDelete.showAndWait();
 
-        if (result.isPresent() && result.get() == ButtonType.CANCEL)
+        if (result.get() == ButtonType.CANCEL)
             return false;
 
         try {
@@ -122,9 +122,12 @@ public class EventSelector {
                 throw new IllegalArgumentException("event not in database");
 
             DBM.deleteFromDB(eventToDelete);
+            populateTimelineList();
             populateEventList();
+            parentController.populateDisplay();
             return true;
         } catch (SQLException e) {
+            e.printStackTrace();
             return false;
         }
     }
@@ -165,7 +168,6 @@ public class EventSelector {
         viewButton.setDisable(true);
         addToTimelineButton.setDisable(true);
         deleteButton.setDisable(true);
-        parentController.populateDisplay();
     }
 
     public void sortEvents(int selection) {
@@ -191,10 +193,6 @@ public class EventSelector {
 
     public void close() {
         parentController.rightSidebar.getChildren().remove(selector);
-    }
-
-    public void setActiveTimeline() {
-        parentController.setActiveTimeline(timelineList.getSelectionModel().getSelectedItem());
     }
 
     public void addToTimeline() {

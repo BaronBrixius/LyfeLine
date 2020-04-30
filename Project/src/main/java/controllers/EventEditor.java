@@ -191,14 +191,13 @@ public class EventEditor {
             endPane.getStyleClass().add("DisabledAnyways");
     }
 
-    public void saveEditButton() throws IOException {
-
-//        //To save to DB
+    public boolean saveEditButton() {
         if (editable && hasChanges())   //if unsaved changes, try to save
             if (!saveConfirm())         //if save cancelled, don't change mode
-                return;
+                return editable;
         toggleEditable(!editable);
         saveEvent();
+        return editable;
     }
 
     void toggleEditable(boolean editable) {
@@ -520,7 +519,7 @@ public class EventEditor {
         );
     }
 
-    boolean close() {
+    boolean isOkayToClose() {
         return (event == null || !hasChanges() || saveConfirm());        //do you wanna save and exit or just exit?
     }
 

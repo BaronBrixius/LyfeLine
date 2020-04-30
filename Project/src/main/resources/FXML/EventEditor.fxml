@@ -59,8 +59,7 @@
                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
             </GridPane.margin>
         </Button>
-        <Button fx:id="saveEditButton" alignment="CENTER" maxHeight="30" onAction="#saveEditButton"
-                styleClass="smallButton"
+        <Button fx:id="saveEditButton" alignment="CENTER" maxHeight="30" styleClass="smallButton"
                 text="Save" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="14"/>
         <Button fx:id="deleteButton" alignment="CENTER" maxHeight="30" styleClass="smallButton"
                 text="Delete" GridPane.halignment="CENTER" GridPane.rowIndex="15"/>

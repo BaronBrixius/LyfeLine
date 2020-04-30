@@ -44,32 +44,20 @@ public class TimelineView {
             eventSelectorController.deleteEvent(eventEditorController.getEvent());
             closeEventEditor();
         });
-    }
-
-    private void closeEventEditor() {
-        rightSidebar.getChildren().remove(eventEditorController.editor);
-        rightSidebar.getChildren().add(eventEditorController.editor);
-        if (eventEditorController.close())
-            rightSidebar.getChildren().remove(eventEditorController.editor);
+        eventEditorController.saveEditButton.setOnAction(e->{
+            if (!eventEditorController.saveEditButton())        //if mode isn't editable any more, it was just saved
+                populateDisplay();
+        });
     }
 
     public List<EventNode> getEventList() {
         return eventList;
     }
 
-    public void goBackButton() {
-        try {
-            GUIManager.swapScene("Dashboard");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     // Call this method when swapping scenes
     public void setActiveTimeline(Timeline t) {
         this.activeTimeline = t;
-        eventSelectorController.setTimelineSelected(activeTimeline);    // sets the selected index to the currently viewed
-        // timeline
+        eventSelectorController.setTimelineSelected(activeTimeline);    // sets the selected index to the currently viewed timeline
         timelineEditorController.setTimeline(t);
         populateDisplay();
     }
@@ -100,6 +88,7 @@ public class TimelineView {
 
         eventList.clear();
         EventNode newNode;
+        activeTimeline.refreshEventList();
         for (Event e : activeTimeline.getEventList()) {
             newNode = addEvent(e);
             eventList.add(newNode);
@@ -180,6 +169,21 @@ public class TimelineView {
         timelineGrid.add(newNode.getDisplayPane(), startColumn, row, columnSpan, 1);
     }
 
+    private void closeEventEditor() {
+        rightSidebar.getChildren().remove(eventEditorController.editor);
+        rightSidebar.getChildren().add(eventEditorController.editor);
+        if (eventEditorController.isOkayToClose())
+            rightSidebar.getChildren().remove(eventEditorController.editor);
+    }
+
+    public void goBackButton() {
+        try {
+            GUIManager.swapScene("Dashboard");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void openEventSelector() {
         eventSelectorController.populateTimelineList();
         //eventSelectorController.populateEventList();
@@ -198,7 +202,7 @@ public class TimelineView {
     void openEventEditor(Event eventToOpen, boolean editable) {
         rightSidebar.getChildren().remove(eventEditorController.editor);
         rightSidebar.getChildren().add(eventEditorController.editor);
-        if (!eventEditorController.close())
+        if (!eventEditorController.isOkayToClose())
             return;
         eventEditorController.setEvent(eventToOpen, activeTimeline);
         eventEditorController.toggleEditable(editable);

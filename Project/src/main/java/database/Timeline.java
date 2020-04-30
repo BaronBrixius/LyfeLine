@@ -5,9 +5,12 @@ import utils.Date;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.EventObject;
 import java.util.List;
 
 public class Timeline implements DBObject<Timeline> {
+    EventObject changeAlarm = new EventObject(this);
     private int timelineID;
     private int scale;
     private String timelineName = "";
@@ -40,8 +43,7 @@ public class Timeline implements DBObject<Timeline> {
     }
 
     private Timeline(int TimeLineID, String TimelineName, String TimelineDescription, int Scale, String Theme,
-                     Date StartDate, Date Enddate, Date DateCreated, int TimelineOwner, boolean Private, List<String> keywords, List<Event> eventList)
-            throws SQLException {
+                     Date StartDate, Date Enddate, Date DateCreated, int TimelineOwner, boolean Private, List<String> keywords, List<Event> eventList) {
 
         this.timelineID = TimeLineID;
         this.timelineName = TimelineName;
@@ -191,25 +193,34 @@ public class Timeline implements DBObject<Timeline> {
         String keywordString = rs.getString("Keywords");
 
         // keyword list generation from comma string
-        List<String> keywords = new ArrayList<String>();
         String[] words = keywordString.split(",");
-        for (String s : words) {
-            keywords.add(s);
-        }
-        List<Event> eventList;
-        try (PreparedStatement stmt = DBM.conn.prepareStatement("SELECT e.* FROM events e " +
-                "INNER JOIN timelineevents t " +
-                "ON e.EventID = t.EventID " +
-                "WHERE t.TimelineID = ?")) {
-            stmt.setInt(1, TimelineID);
-            eventList = DBM.getFromDB(stmt, new Event());
-        }
+        List<String> keywords = new ArrayList<>(Arrays.asList(words));
+        List<Event> eventList = createEventList(TimelineID);
+
         return new Timeline(TimelineID, TimelineName, TimelineDesription, Scale, Theme,
                 new Date(StartYear, StartMonth, StartDay, StartHour, StartMinute, StartSecond, StartMillisecond),
                 new Date(EndYear, EndMonth, EndDay, EndHour, EndMinute, EndSecond, EndMillisecond),
                 new Date(CreatedYear, CreatedMonth, CreatedDay, CreatedHour, CreatedMinute, CreatedSecond,
                         CreatedMillisecond),
                 TimelineOwner, isPrivate, keywords, eventList);
+    }
+
+    public void refreshEventList() {
+        eventList = createEventList(timelineID);
+    }
+
+
+    private List<Event> createEventList(int timelineID) {
+        try (PreparedStatement stmt = DBM.conn.prepareStatement("SELECT e.* FROM events e " +
+                "INNER JOIN timelineevents t " +
+                "ON e.EventID = t.EventID " +
+                "WHERE t.TimelineID = ?")) {
+            stmt.setInt(1, timelineID);
+            return DBM.getFromDB(stmt, new Event());
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
     }
 
     @Override
@@ -305,8 +316,8 @@ public class Timeline implements DBObject<Timeline> {
         return this.dateCreated;
     }
 
-    public int getTimelineOwner() {
-        return this.timelineOwner;
+    public int getTimelineOwnerID() {
+        return timelineOwner;
     }
 
     public void setTimelineOwner(int TimelineOwner) {
@@ -329,14 +340,11 @@ public class Timeline implements DBObject<Timeline> {
         this.keywords = keywords;
     }
 
+
     // Setters
     @Override
     public void setID(int id) {
         this.timelineID = id;
-    }
-
-    public int getTimelineOwnerID() {
-        return timelineOwner;
     }
 
     public List<Event> getEventList() {
@@ -347,6 +355,5 @@ public class Timeline implements DBObject<Timeline> {
         if (this.timelineID == 0)
             return false;
         return this.timelineID == other.timelineID;
-
     }
 }
