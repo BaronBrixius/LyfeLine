@@ -15,21 +15,23 @@ import java.util.Optional;
 
 public class EventSelector {
     @FXML
-    public GridPane selector;
+    GridPane selector;
     @FXML
-    public ComboBox<Timeline> timelineList;
+    ComboBox<Timeline> timelineList;
     @FXML
-    public ListView<Event> eventList;
+    ListView<Event> eventList;
     @FXML
-    public Button viewButton;
+    Button viewButton;
     @FXML
-    public ComboBox<String> sortBy;
+    ComboBox<String> sortBy;
     @FXML
-    public Button deleteButton;
+    Button deleteButton;
     @FXML
-    public TextField searchBar;
-    public Button newButton;
-    public Button addToTimelineButton;
+    TextField searchBar;
+    @FXML
+    Button newButton;
+    @FXML
+    Button addToTimelineButton;
     private TimelineView parentController;
 
     public void initialize() {
@@ -62,7 +64,7 @@ public class EventSelector {
             }
         });
 
-        if (!GUIManager.loggedInUser.getAdmin()){
+        if (!GUIManager.loggedInUser.getAdmin()) {
             newButton.setVisible(false);
             deleteButton.setVisible(false);
             addToTimelineButton.setVisible(false);
@@ -102,9 +104,9 @@ public class EventSelector {
     }
 
     private void openEditor(Event eventToOpen, boolean editable) {
-        parentController.editorController.setEvent(eventToOpen);
-        parentController.editorController.toggleEditable(editable);
-        parentController.rightSidebar.getChildren().add(parentController.editorController.editor);
+        parentController.eventEditorController.setEvent(eventToOpen);
+        parentController.eventEditorController.toggleEditable(editable);
+        parentController.rightSidebar.getChildren().add(parentController.eventEditorController.editor);
     }
 
     public boolean deleteButton() {
@@ -127,19 +129,12 @@ public class EventSelector {
                 throw new IllegalArgumentException("event not in database");
 
             DBM.deleteFromDB(eventToDelete);
+            populateTimelineList();
             populateEventList();
+            parentController.populateDisplay();
             return true;
         } catch (SQLException e) {
             return false;
-        }
-    }
-
-    void setTimelineSelected(Timeline timelineToSelect) {
-        for (Timeline t : timelineList.getItems()) {
-            if (timelineToSelect.equals(t)) {
-                timelineList.getSelectionModel().select(t);
-                break;
-            }
         }
     }
 
@@ -148,12 +143,25 @@ public class EventSelector {
         all.setTimelineName("All");
         timelineList.getItems().add(all);*/
         try {
-            int currentIndex = timelineList.getSelectionModel().getSelectedIndex();
+            Timeline currentSelection = timelineList.getSelectionModel().getSelectedItem();
             PreparedStatement stmt = DBM.conn.prepareStatement("SELECT * FROM timelines");
             timelineList.getItems().addAll(FXCollections.observableArrayList(DBM.getFromDB(stmt, new Timeline())));
-            timelineList.getSelectionModel().select(currentIndex);
+            setTimelineSelected(currentSelection);
         } catch (SQLException e) {
             System.err.println("Could not get timelines from database.");
+        }
+    }
+
+    void setTimelineSelected(Timeline timelineToSelect) {
+        timelineList.getSelectionModel().select(-1);
+        if (timelineToSelect == null)
+            return;
+        for (Timeline t : timelineList.getItems()) {
+            if (timelineToSelect.equals(t)) {
+                timelineList.getSelectionModel().select(t);
+                populateEventList();
+                break;
+            }
         }
     }
 
@@ -191,10 +199,6 @@ public class EventSelector {
 
     public void close() {
         parentController.rightSidebar.getChildren().remove(selector);
-    }
-
-    public void setActiveTimeline() {
-        parentController.setActiveTimeline(timelineList.getSelectionModel().getSelectedItem());
     }
 
     public void addToTimeline() {
