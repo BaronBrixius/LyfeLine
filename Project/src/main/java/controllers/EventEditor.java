@@ -62,13 +62,11 @@ public class EventEditor {
     ImageView image;
     @FXML
     Slider prioritySlider;
-    boolean editable = true;
-    TimelineView parentController;
-    String filename; //THis is to take the name of the image choosen to add it to the copied version
-    String fullOutPath; //When event is saved the path to the image in resource folder is sent here (the one we can use to send to DB)
+    private TimelineView parentController;
+    private Event event;
+    private boolean editable = true;
     private boolean startExpanded;
     private boolean endExpanded;
-    private Event event;
     private String tempLocation;
 
 
@@ -138,17 +136,9 @@ public class EventEditor {
         startInputs.get(0).setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(Integer.MIN_VALUE, Integer.MAX_VALUE, 0));
         endInputs.get(0).setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(Integer.MIN_VALUE, Integer.MAX_VALUE, 0));
 
-        //Get Images
-        try (PreparedStatement stmt = DBM.conn.prepareStatement("SELECT * FROM Images")) {
-            List<String> images = DBM.getFromDB(stmt,
-                    rs -> rs.getString("ImageURL"));
-        } catch (SQLException e) {
-            errorMessage.setText("Images could not be loaded");
-        }
-        
         //set up priority slider labels
         prioritySlider.setLabelFormatter(new StringConverter<Double>() {
-        	@Override
+            @Override
             public String toString(Double n) {
                 if (n < 0.5) return "Not set";
                 if (n < 1.5) return "Low";
@@ -158,7 +148,7 @@ public class EventEditor {
                 return "Not set";
             }
 
-        	//probably not used but required for the override
+            //probably not used but required for the override
             @Override
             public Double fromString(String s) {
                 switch (s) {
@@ -249,7 +239,7 @@ public class EventEditor {
         uploadImageButton.setDisable(!editable);
         deleteImageButton.setVisible(editable);
         deleteImageButton.setDisable(!editable);
-        
+
         prioritySlider.setDisable(!editable);
 
         if (editable)
@@ -453,7 +443,7 @@ public class EventEditor {
         endInputs.get(6).getValueFactory().setValue(event.getEndDate().getMillisecond());
 
         prioritySlider.setValue(event.getEventPriority());
-        
+
         setExpansion(startPane, startBoxes, false);
         setExpansion(endPane, endBoxes, false);
         return true;
@@ -475,7 +465,7 @@ public class EventEditor {
     void updateEvent() {
         //setters to update each field of this.event, based on the current info in the text fields
 
-    	event.setEventPriority((int)prioritySlider.getValue());
+        event.setEventPriority((int) prioritySlider.getValue());
         event.setTitle(titleInput.getText());
         event.setDescription(descriptionInput.getText().replaceAll("([^\r])\n", "$1\r\n"));
         event.setStartDate(new Date(startInputs.get(0).getValue(), startInputs.get(1).getValue(), startInputs.get(2).getValue(),
@@ -580,13 +570,12 @@ public class EventEditor {
         Date readEnd = new Date(endInputs.get(0).getValue(), endInputs.get(1).getValue(), endInputs.get(2).getValue(),
                 endInputs.get(3).getValue(), endInputs.get(4).getValue(), endInputs.get(5).getValue(), endInputs.get(6).getValue());
 
-        if(!(event.getEventPriority()==prioritySlider.getValue())) return true;
-        
+        if (!(event.getEventPriority() == prioritySlider.getValue())) return true;
+
         return (
                 event.getStartDate().compareTo(readStart) != 0
                         || event.getEndDate().compareTo(readEnd) != 0
         );
-        
     }
 
     @FXML

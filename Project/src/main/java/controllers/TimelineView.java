@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 
@@ -42,6 +43,14 @@ public class TimelineView {
 
         leftSidebar.getChildren().add(timelineEditorController.editor);
         rightSidebar.getChildren().add(eventSelectorController.selector);
+
+        //setup horizontal scroll with mouse wheel
+        ScrollPane mainScrollPane = (ScrollPane) mainBorderPane.getCenter();
+        mainScrollPane.setOnScroll(e -> {
+            if (e.getDeltaX() == 0 && e.getDeltaY() != 0) {
+                mainScrollPane.setHvalue(mainScrollPane.getHvalue() - e.getDeltaY() / mainScrollPane.getWidth());
+            }
+        });
     }
 
     public List<EventNode> getEventList() {

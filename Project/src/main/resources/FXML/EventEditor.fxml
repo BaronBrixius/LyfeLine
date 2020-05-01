@@ -16,7 +16,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Text?>
 
-<ScrollPane fx:id="editor" vbarPolicy="ALWAYS" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.EventEditor">
+<ScrollPane fx:id="editor" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.EventEditor">
     <GridPane alignment="CENTER_RIGHT" hgap="5" maxHeight="1.7976931348623157E308" prefWidth="340.0" vgap="5">
         <columnConstraints>
             <ColumnConstraints prefWidth="150" />
@@ -59,7 +59,7 @@
                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
             </GridPane.margin>
         </Button>
-        <Button fx:id="editButton" alignment="CENTER" maxHeight="30" onAction="#saveEditButton" styleClass="smallButton" text="Save" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="16" />
+        <Button fx:id="saveEditButton" alignment="CENTER" maxHeight="30" onAction="#saveEditButton" styleClass="smallButton" text="Save" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="16" />
         <Button fx:id="deleteButton" alignment="CENTER" maxHeight="30" onAction="#deleteEvent" styleClass="smallButton" text="Delete" GridPane.halignment="CENTER" GridPane.rowIndex="17" />
         <Button alignment="CENTER" maxHeight="30" onAction="#close" styleClass="smallButton" text="Close" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="17" />
         <Text fx:id="errorMessage" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="smallText" GridPane.columnSpan="2" GridPane.rowIndex="13" />
