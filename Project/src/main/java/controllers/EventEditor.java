@@ -20,7 +20,6 @@ import javax.imageio.stream.ImageInputStream;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -29,24 +28,26 @@ import java.util.Optional;
 
 public class EventEditor {
 
-    private final List<VBox> startBoxes = new ArrayList<>();
-    private final List<Spinner<Integer>> startInputs = new ArrayList<>();
-    private final List<VBox> endBoxes = new ArrayList<>();
-    private final List<Spinner<Integer>> endInputs = new ArrayList<>();
-    public ScrollPane editor;
+    private final List<VBox> startBoxes = new ArrayList<>(7);
+    private final List<Spinner<Integer>> startInputs = new ArrayList<>(7);
+    private final List<VBox> endBoxes = new ArrayList<>(7);
+    private final List<Spinner<Integer>> endInputs = new ArrayList<>(7);
     @FXML
-    public Button editButton;
+    ScrollPane editor;
     @FXML
-    public Button deleteButton;
+    Button saveEditButton;
     @FXML
-    public Label headerText;
+    Button deleteButton;
     @FXML
-    public Text errorMessage;
+    Label headerText;
     @FXML
-    public FlowPane startPane;
+    Text errorMessage;
     @FXML
-    public FlowPane endPane;
-    public Button deleteImageButton;
+    FlowPane startPane;
+    @FXML
+    FlowPane endPane;
+    @FXML
+    Button deleteImageButton;
     @FXML
     Button uploadImageButton;
     @FXML
@@ -68,9 +69,8 @@ public class EventEditor {
     private boolean startExpanded;
     private boolean endExpanded;
     private Event event;
-    private File imageChosen; //The current image chosen by FileChooser
-    private	String tempLocation;
-    
+    private String tempLocation;
+
 
     public void initialize() {
 //        image.setOnMouseEntered(e -> {
@@ -227,8 +227,6 @@ public class EventEditor {
     }
 
     public void saveEditButton() throws IOException {
-
-//        //To save to DB
         if (editable && hasChanges())   //if unsaved changes, try to save
             if (!saveConfirm())         //if save cancelled, don't change mode
                 return;
@@ -259,7 +257,7 @@ public class EventEditor {
         else
             editor.getStylesheets().add("styles/DisabledViewable.css");
 
-        editButton.setText(editable ? "Save" : "Edit");
+        saveEditButton.setText(editable ? "Save" : "Edit");
     }
 
 
@@ -268,11 +266,11 @@ public class EventEditor {
 
         boolean confirm = true;
 
-        if(event.getImagePath()!=null) {
+        if (event.getImagePath() != null) {
             confirm = ImageSaveConfirm();
         }
 
-        if(confirm) {
+        if (confirm) {
             FileChooser chooser = new FileChooser(); //For the filedirectory
             chooser.setTitle("Upload image");
 
@@ -286,12 +284,14 @@ public class EventEditor {
                     new FileChooser.ExtensionFilter("GIF", "*.gif"),
                     new FileChooser.ExtensionFilter("WBMP", "*.wbmp")
             );
-            this.imageChosen = chooser.showOpenDialog(GUIManager.mainStage);
-            if (this.imageChosen != null) {
+            //The current image chosen by FileChooser
+            File imageChosen = chooser.showOpenDialog(GUIManager.mainStage);
+            if (imageChosen != null) {
 
                 image.setImage(new Image("File:" + imageChosen.getAbsolutePath()));
 
-                filename = copyImage(imageChosen, imageChosen.getName());
+                //THis is to take the name of the image chosen to add it to the copied version
+                String filename = copyImage(imageChosen, imageChosen.getName());
 
                 if (event.getImagePath() != null) {
                     try {
@@ -405,14 +405,14 @@ public class EventEditor {
     }
 
     public boolean setEvent(Event event) {
-        parentController.editorController.close();
+        parentController.eventEditorController.close();
         this.event = event;
         if (this.event.getEventID() == 0)       //if new event, set current user as owner
             this.event.setUserID(GUIManager.loggedInUser.getUserID());
         //Check if Owner
         boolean owner = GUIManager.loggedInUser.getUserID() == this.event.getUserID();
-        editButton.setDisable(!owner);
-        editButton.setVisible(owner);
+        saveEditButton.setDisable(!owner);
+        saveEditButton.setVisible(owner);
         deleteButton.setDisable(!owner);
         deleteButton.setVisible(owner);
 
@@ -427,10 +427,10 @@ public class EventEditor {
         System.out.println(event.getEventID());
         if (event.getImagePath() != null) {
             image.setImage(new Image("File:" + event.getImagePath()));
-            this.fullOutPath = event.getImagePath();
-        }
-        else 
-        	image.setImage(null);
+            //When event is saved the path to the image in resource folder is sent here (the one we can use to send to DB)
+            String fullOutPath = event.getImagePath();
+        } else
+            image.setImage(null);
 
         startInputs.get(0).getValueFactory().setValue(event.getStartDate().getYear());
         startInputs.get(1).getValueFactory().setValue(event.getStartDate().getMonth());
@@ -506,8 +506,8 @@ public class EventEditor {
                 addToTimeline();        //new event is automatically added to active timeline when saved
             } else
                 DBM.updateInDB(event);//Save button clicked, the image chosen is saved and the String field is set as the path to the image in the resource folder
-            parentController.selectorController.populateTimelineList();
-            parentController.selectorController.populateEventList();
+            parentController.eventSelectorController.populateTimelineList();
+            parentController.eventSelectorController.populateEventList();
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -529,7 +529,7 @@ public class EventEditor {
 
     @FXML
     private boolean deleteEvent() {
-        parentController.selectorController.deleteEvent(event);
+        parentController.eventSelectorController.deleteEvent(event);
         return close();
     }
 
@@ -600,7 +600,6 @@ public class EventEditor {
     }
 
 
-    
     public void clearImage(ActionEvent actionEvent) {
         if (event.getImagePath() != null) {
             try {

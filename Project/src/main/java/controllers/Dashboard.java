@@ -23,30 +23,19 @@ import java.util.Comparator;
 
 public class Dashboard {
 
-    @FXML
-    private Button eventEditorButton;
-    @FXML
-    private Button adminGUI;
-    @FXML
-    private Button btnDelete;
-    @FXML
-    private Button btnEdit;
-    @FXML
-    private Button btnCreate;
-    @FXML
-    private TextFlow displayInfo;
-    @FXML
-    private ListView<Timeline> list;
-    @FXML
-    private TextField searchInput;
-    @FXML
-    private CheckBox cbOnlyViewPersonalLines;
-    @FXML
-    private ComboBox<String> sortBy;
-    @FXML
-    private GridPane gridButtons;
-    @FXML
-    private Text titleText;
+
+    @FXML protected Button eventEditorButton;
+    @FXML protected Button adminGUI;
+    @FXML protected Button btnDelete;
+    @FXML protected Button btnEdit;
+    @FXML protected Button btnCreate;
+    @FXML protected TextFlow displayInfo;
+    @FXML protected ListView<Timeline> list;
+    @FXML protected TextField searchInput;
+    @FXML protected CheckBox cbOnlyViewPersonalLines;
+    @FXML protected ComboBox<String> sortBy;
+    @FXML protected GridPane gridButtons;
+    @FXML protected Text titleText;
 
 
     private Timeline activeTimeline;
@@ -92,22 +81,7 @@ public class Dashboard {
         sortBy.setItems(sortOptions);
 
         // Sort order selection events
-        sortBy.getSelectionModel().selectedIndexProperty().addListener(ov -> {
-            switch (sortBy.getSelectionModel().getSelectedIndex()) {
-                case 0:
-                    list.getItems().sort(Comparator.comparing(Timeline::getName));
-                    break;
-                case 1:
-                    list.getItems().sort((t1, t2) -> (t2.getName().compareTo(t1.getName())));
-                    break;
-                case 2:
-                    list.getItems().sort((t1, t2) -> (t2.getDateCreated().compareTo(t1.getDateCreated())));
-                    break;
-                case 3:
-                    list.getItems().sort(Comparator.comparing(Timeline::getDateCreated));
-                    break;
-            }
-        });
+        sortBy.getSelectionModel().selectedIndexProperty().addListener(ov -> sortTimelines());
 
         // Initialised sorting
         sortBy.getSelectionModel().select(0);
@@ -124,6 +98,23 @@ public class Dashboard {
         });
 
         titleText.setText("Select a Timeline.");
+    }
+
+    public void sortTimelines() {
+        switch (sortBy.getSelectionModel().getSelectedIndex()) {
+            case 0:
+                list.getItems().sort((t1, t2) -> (t1.getName().compareToIgnoreCase(t2.getName())));
+                break;
+            case 1:
+                list.getItems().sort((t1, t2) -> (t2.getName().compareToIgnoreCase(t1.getName())));
+                break;
+            case 2:
+                list.getItems().sort((t1, t2) -> (t2.getDateCreated().compareTo(t1.getDateCreated())));
+                break;
+            case 3:
+                list.getItems().sort(Comparator.comparing(Timeline::getDateCreated));
+                break;
+        }
     }
 
     @FXML
@@ -148,7 +139,7 @@ public class Dashboard {
             try {
                 PreparedStatement stmt = DBM.conn.prepareStatement("SELECT * FROM timelines");
                 list.setItems(FXCollections.observableArrayList(DBM.getFromDB(stmt, new Timeline())));
-                sortBy.getSelectionModel().select(0);
+                sortTimelines();
             } catch (SQLException e) {
                 System.err.println("Could not get timelines from database.");
             }
