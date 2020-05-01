@@ -1,24 +1,16 @@
 package controllers;
 
 import database.DBM;
-import database.Event;
 import database.User;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.testfx.framework.junit5.ApplicationExtension;
-import org.testfx.framework.junit5.ApplicationTest;
 import org.testfx.framework.junit5.Start;
-
-
-import java.sql.SQLException;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(ApplicationExtension.class)
 public class EventEditorTest {
@@ -45,7 +37,7 @@ public class EventEditorTest {
                 getClass().getResource("../../classes/FXML/EventEditor.fxml"));
         stage.setScene(new Scene(loader.load(), 300, 300));
         parent = loader.getController();
-        sut = parent.editorController;
+        sut = parent.eventEditorController;
         stage.show();
     }
 

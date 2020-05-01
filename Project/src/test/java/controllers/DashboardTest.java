@@ -19,8 +19,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.concurrent.Semaphore;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(ApplicationExtension.class)
 public class DashboardTest {
