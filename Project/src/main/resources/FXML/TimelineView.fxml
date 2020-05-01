@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
 
-<BorderPane fx:id="mainBorderPane" prefWidth="1580.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.TimelineView">
+<BorderPane fx:id="mainBorderPane" prefHeight="900.0" prefWidth="1580.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.TimelineView">
     <fx:define>
         <fx:include fx:id="eventSelector" source="EventSelector.fxml" />
         <fx:include fx:id="eventEditor" source="EventEditor.fxml" />
