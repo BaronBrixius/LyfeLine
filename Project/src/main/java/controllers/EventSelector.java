@@ -159,7 +159,6 @@ public class EventSelector {
         for (Timeline t : timelineList.getItems()) {
             if (timelineToSelect.equals(t)) {
                 timelineList.getSelectionModel().select(t);
-                populateEventList();
                 break;
             }
         }
