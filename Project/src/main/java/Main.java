@@ -14,7 +14,8 @@ class Main {
         PreparedStatement stmt;
         PreparedStatement stmt2;
         try {
-            new DBM();
+            new DBM(
+            );
             DBM.setupSchema();       //destroys + remakes DB with default settings, can comment this out after first run if desired
 
             //Makes a list of events from the DB and prints it
@@ -62,11 +63,11 @@ class Main {
 
 
             //THE CODE FOR ADVANCED SEARCH,JUST ADD TO IT FOR MORE SEARCH OPTIONS - NOW IT DEALS WITH TWO OF THE MORE COMPLICATED ONES - GETTING THE CREATOR NAME FROM USERS AND READING THE COMMA SPLIT KEYWORDS
-            String name = null; //IMAGEN THESE TREE ARE THE TextFields inputs from the user
+            String name = "fall of"; //IMAGEN THESE TREE ARE THE TextFields inputs from the user
             String keyword2 = null;
-            String author = "ben";
+            String author = null;
             PreparedStatement stmt3 = DBM.conn.prepareStatement("SELECT * FROM `timelines` LEFT JOIN `users` ON users.UserID = timelines.TimelineOwner WHERE " +
-                    " `TimelineName` = COALESCE(NULLIF(?, ''), `TimelineName`) AND CONCAT(',', `Keywords`, ',') LIKE CONCAT('%,', COALESCE(?, '%'), ',%')  AND `UserName` = COALESCE(NULLIF(?, ''), `UserName`);") ;
+                    " CONCAT(' ', `TimelineName`, ' ') LIKE CONCAT('% ', COALESCE(?, '%'), ' %') AND CONCAT(',', `Keywords`, ',') LIKE CONCAT('%,', COALESCE(?, '%'), ',%')  AND `UserName` = COALESCE(NULLIF(?, ''), `UserName`);") ;
             stmt3.setString(1, name);
             stmt3.setString(2, keyword2);
             stmt3.setString(3, author);
@@ -78,13 +79,13 @@ class Main {
             System.out.println(list.get(i).getName());
             //EXAMPLE OF RETURNING THE TIMELINE's IDs THAT FULFILL THE SEARCH. THE IDs WILL THEN BE USED TO FILTER THE DASHBOARD OBSERVABLE LIST
             PreparedStatement stmt4 = DBM.conn.prepareStatement("SELECT `TimelineID` FROM `timelines` LEFT JOIN `users` ON users.UserID = timelines.TimelineOwner WHERE " +
-                    " `TimelineName` = COALESCE(NULLIF(?, ''), `TimelineName`) AND CONCAT(',', `Keywords`, ',') LIKE CONCAT('%,', COALESCE(?, '%'), ',%')  AND `UserName` = COALESCE(NULLIF(?, ''), `UserName`);") ;
+                    " CONCAT(' ', `TimelineName`, ' ') LIKE CONCAT('% ', COALESCE(?, '%'), ' %') AND CONCAT(',', `Keywords`, ',') LIKE CONCAT('%,', COALESCE(?, '%'), ',%')  AND `UserName` = COALESCE(NULLIF(?, ''), `UserName`);") ;
             stmt4.setString(1, name);
             stmt4.setString(2, keyword2);
             stmt4.setString(3, author);
             List<Integer> list2 = DBM.getFromDB(stmt3, rs -> rs.getInt("TimelineID"));
             System.out.println("======SEARCH RESULTS - THE TIMELINES ID's==========");
-            for(int i = 0; i<list.size();i++)
+            for(int i = 0; i<list2.size();i++)
                 System.out.println(list2.get(i));
 
 
