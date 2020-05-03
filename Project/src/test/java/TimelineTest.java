@@ -1,12 +1,14 @@
-package database;
-
 import database.DBM;
 import database.Timeline;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.sql.*;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class TimelineTest {
 	static private DBM sut;
@@ -37,50 +39,6 @@ class TimelineTest {
 		timelines[3] = timeline4;
 		DBM.insertIntoDB(timeline4);
 	}
-	
-	static void getInsertQueryTest() {
-		
-	}
-	
-	static void getUpdateQueryTest() {
-		
-	}
-	
-	static void deleteOrphansTest() {
-		
-	}
-	
-	static void getDeleteQueryTest() {
-		
-	}
-	
-	static void createFromDBTest() {
-		
-	}
-	
-	static void toStringTest() {
-		
-	}
-	
-	static void setTimelineNameTest() {
-		
-	}
-	
-	static void validNameTest() {
-		
-	}
-	
-	static void getTimelineIDTest() {
-		
-	}
-	
-	static void getNameTest() {
-		
-	}
-	
-	
-	
-	
 
 	@AfterAll
 	static void tearDown() throws SQLException {
