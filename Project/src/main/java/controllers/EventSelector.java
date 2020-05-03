@@ -70,10 +70,10 @@ public class EventSelector {
             @Override
             protected void updateItem(Event item, boolean empty) {
                 super.updateItem(item, empty);
-                if (empty || item == null || item.getEventName() == null) {
+                if (empty || item == null || item.getName() == null) {
                     setText(null);
                 } else {
-                    setText(item.getEventName());
+                    setText(item.getName());
                 }
             }
         });
@@ -89,7 +89,7 @@ public class EventSelector {
                 newButton.setDisable(true);
             else
                 newButton.setDisable(!GUIManager.loggedInUser.getAdmin()
-                        && GUIManager.loggedInUser.getUserID() != timelineComboBox.getSelectionModel().getSelectedItem().getTimelineOwnerID());
+                        && GUIManager.loggedInUser.getUserID() != timelineComboBox.getSelectionModel().getSelectedItem().getOwnerID());
 
         });
 
@@ -103,8 +103,8 @@ public class EventSelector {
                     newButton.setDisable(true);
                     deleteButton.setDisable(true);
                 } else {        //only owner can edit
-                    newButton.setDisable(GUIManager.loggedInUser.getUserID() != timelineComboBox.getSelectionModel().getSelectedItem().getTimelineOwnerID());
-                    deleteButton.setDisable(GUIManager.loggedInUser.getUserID() != timelineComboBox.getSelectionModel().getSelectedItem().getTimelineOwnerID());
+                    newButton.setDisable(GUIManager.loggedInUser.getUserID() != timelineComboBox.getSelectionModel().getSelectedItem().getOwnerID());
+                    deleteButton.setDisable(GUIManager.loggedInUser.getUserID() != timelineComboBox.getSelectionModel().getSelectedItem().getOwnerID());
                 }
             }
         });
@@ -122,8 +122,8 @@ public class EventSelector {
             filterableEventList.setPredicate(e -> true);
         else
             filterableEventList.setPredicate(e -> (timelineEventLinks.stream().anyMatch(                        //checks the junction table
-                    te -> te.get(0) == timelineComboBox.getSelectionModel().getSelectedItem().getTimelineID()   //filters by the selected timeline
-                            && e.getEventID() == te.get(1))));                                                  //and returns whether each event is on that timeline
+                    te -> te.get(0) == timelineComboBox.getSelectionModel().getSelectedItem().getID()   //filters by the selected timeline
+                            && e.getID() == te.get(1))));                                                  //and returns whether each event is on that timeline
     }
 
     void setParentController(TimelineView parentController) {             //TODO delete this inelegant solution
@@ -153,7 +153,7 @@ public class EventSelector {
     boolean deleteEvent(Event eventToDelete) {
         Alert confirmDelete = new Alert(Alert.AlertType.CONFIRMATION);
         confirmDelete.setTitle("Confirm Delete");
-        confirmDelete.setHeaderText("Deleting " + eventToDelete.getEventName() + " will remove it from all other timelines as well.");
+        confirmDelete.setHeaderText("Deleting " + eventToDelete.getName() + " will remove it from all other timelines as well.");
         confirmDelete.setContentText("Are you ok with this?");
 
         Optional<ButtonType> result = confirmDelete.showAndWait();
@@ -162,7 +162,7 @@ public class EventSelector {
             return false;
 
         try {
-            if (eventToDelete.getEventID() == 0)
+            if (eventToDelete.getID() == 0)
                 throw new IllegalArgumentException("event not in database");
 
             DBM.deleteFromDB(eventToDelete);
@@ -217,10 +217,10 @@ public class EventSelector {
     public void sortEvents(int selection) {
         switch (selection) {
             case 0:
-                eventListView.getItems().sort(Comparator.comparing(Event::getEventName));
+                eventListView.getItems().sort(Comparator.comparing(Event::getName));
                 break;
             case 1:
-                eventListView.getItems().sort((t1, t2) -> (t2.getEventName().compareTo(t1.getEventName())));
+                eventListView.getItems().sort((t1, t2) -> (t2.getName().compareTo(t1.getName())));
                 break;
             case 2:
                 eventListView.getItems().sort((t1, t2) -> (t2.getCreationDate().compareTo(t1.getCreationDate())));
@@ -241,7 +241,7 @@ public class EventSelector {
 
     public void addToTimeline() {
         try {
-            if (eventListView.getSelectionModel().getSelectedItem().addToTimeline(parentController.activeTimeline.getTimelineID())) {
+            if (eventListView.getSelectionModel().getSelectedItem().addToTimeline(parentController.activeTimeline.getID())) {
                 parentController.activeTimeline.getEventList().add(eventListView.getSelectionModel().getSelectedItem());
                 parentController.populateDisplay();
                 System.out.println("Event added to " + parentController.activeTimeline + " timeline."); // remove this later once more user feedback is implemented
