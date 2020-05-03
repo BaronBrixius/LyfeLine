@@ -40,6 +40,10 @@ Text{
     -fx-scale-y: 1.1;
 }
 
+.DisabledInvisible:disabled, .DisabledInvisible:disabled > * {
+    -fx-opacity: 0 !important;
+}
+
 .text-field{
     -fx-pref-height: 30px;
 }

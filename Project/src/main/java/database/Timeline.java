@@ -1,47 +1,31 @@
 package database;
 
-import controllers.GUIManager;
 import utils.Date;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Timeline implements DBObject<Timeline> {
+public class Timeline extends TimelineObject<Timeline> {
     private int timelineID;
     private int scale;
     private String timelineName = "";
     private String theme;
-    private Date startDate = new Date();
-    private Date endDate = new Date();
-    private Date dateCreated;
     private String timelineDescription = "";
-    private int timelineOwner;
-    private boolean isPrivate = false;
     private List<Event> eventList = new ArrayList<>();
     private List<String> keywords = new ArrayList<>();
 
-    // Default timeline
     public Timeline() {
     }
 
-    // Public method for creating the timeline
+    //Do we need this? We mostly create blank timelines and then use setters called from GUI fields for new timelines
     public Timeline(String TimelineName, String TimelineDescription, int Scale, String Theme, Date StartDate,
-                    Date Enddate, boolean Private, List<String> keywords) {
-        this.timelineName = TimelineName;
-        this.scale = Scale;
-        this.timelineDescription = TimelineDescription;
-        this.theme = Theme;
-        this.startDate = StartDate;
-        this.endDate = Enddate;
-        this.timelineOwner = GUIManager.loggedInUser.getUserID();
-        this.isPrivate = Private;
-        this.keywords = keywords;
+                    Date Enddate, List<String> keywords) {
+        this(0, TimelineName, TimelineDescription, Scale, Theme, StartDate, Enddate, null, 0, keywords, null);
     }
 
     private Timeline(int TimeLineID, String TimelineName, String TimelineDescription, int Scale, String Theme,
-                     Date StartDate, Date Enddate, Date DateCreated, int TimelineOwner, boolean Private, List<String> keywords, List<Event> eventList) {
-
+                     Date StartDate, Date Enddate, Date DateCreated, int TimelineOwner, List<String> keywords, List<Event> eventList) {
         this.timelineID = TimeLineID;
         this.timelineName = TimelineName;
         this.scale = Scale;
@@ -49,9 +33,8 @@ public class Timeline implements DBObject<Timeline> {
         this.theme = Theme;
         this.startDate = StartDate;
         this.endDate = Enddate;
-        this.dateCreated = DateCreated;
-        this.timelineOwner = TimelineOwner;
-        this.isPrivate = Private;
+        this.creationDate = DateCreated;
+        this.ownerID = TimelineOwner;
         this.keywords = keywords;
         this.eventList = eventList;
     }
@@ -64,7 +47,7 @@ public class Timeline implements DBObject<Timeline> {
         PreparedStatement out = DBM.conn.prepareStatement(
                 "INSERT INTO `timelines` ( `Scale`,`TimelineName`, `TimelineDescription`, `Theme`,`StartYear`,`StartMonth`,`StartDay`,`StartHour`"
                         + ",`StartMinute`,`StartSecond`,`StartMillisecond`,`EndYear`,`EndMonth`,`EndDay`,`EndHour`,`EndMinute`,`EndSecond`,"
-                        + "`EndMillisecond`,`Private`,`TimelineOwner`,`Keywords`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                        + "`EndMillisecond`,`TimelineOwner`,`Keywords`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
                 Statement.RETURN_GENERATED_KEYS);
         out.setInt(1, scale);
         out.setString(2, timelineName);
@@ -84,15 +67,14 @@ public class Timeline implements DBObject<Timeline> {
         out.setInt(16, endDate.getMinute());
         out.setInt(17, endDate.getSecond());
         out.setInt(18, endDate.getMillisecond());
-        out.setBoolean(19, isPrivate);
-        out.setInt(20, timelineOwner);
+        out.setInt(19, ownerID);
         // keyword string generation from list
         StringBuilder sb = new StringBuilder();
         for (String s : keywords) {
             sb.append(s);
             sb.append(",");
         }
-        out.setString(21, sb.toString());
+        out.setString(20, sb.toString());
         return out;
     }
 
@@ -102,7 +84,7 @@ public class Timeline implements DBObject<Timeline> {
                 "UPDATE `timelines` SET `Scale` = ?, `TimelineName` = ?, `TimelineDescription` = ?,  `Theme` = ?,   "
                         + "`StartYear` = ?,  `StartMonth` = ?,  `StartDay` = ?,  `StartHour` = ?,  `StartMinute` = ?,  `StartSecond` = ?,  "
                         + "`StartMillisecond` = ?,    `EndYear` = ?,  `EndMonth` = ?,  `EndDay` = ?,  `EndHour` = ?,  `EndMinute` = ?,  "
-                        + "`EndSecond` = ?,  `EndMillisecond` = ?, `Private` = ?, `Keywords` = ? WHERE (`TimelineID` = ?)");
+                        + "`EndSecond` = ?,  `EndMillisecond` = ?, `Keywords` = ? WHERE (`TimelineID` = ?)");
         out.setInt(1, scale);
         out.setString(2, timelineName);
         out.setString(3, timelineDescription);
@@ -121,18 +103,16 @@ public class Timeline implements DBObject<Timeline> {
         out.setInt(16, endDate.getMinute());
         out.setInt(17, endDate.getSecond());
         out.setInt(18, endDate.getMillisecond());
-        out.setBoolean(19, isPrivate);
         // keyword string generation from list
         StringBuilder sb = new StringBuilder();
         for (String s : keywords) {
             sb.append(s);
             sb.append(",");
         }
-        out.setString(20, sb.toString());
-        out.setInt(21, timelineID);
+        out.setString(19, sb.toString());
+        out.setInt(20, timelineID);
         return out;
     }
-
 
     public void deleteOrphans() throws SQLException {
         PreparedStatement out = DBM.conn.prepareStatement("SELECT e.* FROM `timelines` t " +
@@ -146,7 +126,6 @@ public class Timeline implements DBObject<Timeline> {
         out.setInt(2, timelineID);
 
         DBM.deleteFromDB(DBM.getFromDB(out, new Event()));
-
     }
 
     @Override
@@ -155,7 +134,6 @@ public class Timeline implements DBObject<Timeline> {
         out.setInt(1, timelineID);
         return out;
     }
-
 
     @Override
     public Timeline createFromDB(ResultSet rs) throws SQLException {
@@ -186,7 +164,6 @@ public class Timeline implements DBObject<Timeline> {
         int CreatedSecond = rs.getInt("CreatedSecond");
         int CreatedMillisecond = rs.getInt("CreatedMillisecond");
         int TimelineOwner = rs.getInt("TimelineOwner");
-        boolean isPrivate = rs.getBoolean("Private");
         String keywordString = rs.getString("Keywords");
 
         // keyword list generation from comma string
@@ -208,7 +185,7 @@ public class Timeline implements DBObject<Timeline> {
                 new Date(EndYear, EndMonth, EndDay, EndHour, EndMinute, EndSecond, EndMillisecond),
                 new Date(CreatedYear, CreatedMonth, CreatedDay, CreatedHour, CreatedMinute, CreatedSecond,
                         CreatedMillisecond),
-                TimelineOwner, isPrivate, keywords, eventList);
+                TimelineOwner, keywords, eventList);
     }
 
     @Override
@@ -218,7 +195,7 @@ public class Timeline implements DBObject<Timeline> {
 
     // This method will set the name of the timeline if this user has not timeline
     // with the same name already in the DB
-    public void setTimelineName(String name, int userID) throws SQLException, IllegalArgumentException {
+    public void setName(String name, int userID) throws SQLException, IllegalArgumentException {
         if (validName(name, userID)) // uses this private method for validation
             this.timelineName = name;
         else
@@ -244,12 +221,8 @@ public class Timeline implements DBObject<Timeline> {
 
 
     // Getters
-    public int getTimelineID() {
+    public int getID() {
         return this.timelineID;
-    }
-
-    public String getName() {
-        return this.timelineName;
     }
 
     public int getScale() {
@@ -260,19 +233,19 @@ public class Timeline implements DBObject<Timeline> {
         this.scale = scale;
     }
 
-    public String getTimelineDescription() {
+    public String getDescription() {
         return this.timelineDescription;
     }
 
-    public void setTimelineDescription(String description) {
+    public void setDescription(String description) {
         this.timelineDescription = description;
     }
 
-    public String getTimelineName() {
+    public String getName() {
         return this.timelineName;
     }
 
-    public void setTimelineName(String name) {
+    public void setName(String name) {
         this.timelineName = name;
     }
 
@@ -282,34 +255,6 @@ public class Timeline implements DBObject<Timeline> {
 
     public void setTheme(String theme) {
         this.theme = theme;
-    }
-
-    public Date getStartDate() {
-        return this.startDate;
-    }
-
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
-    }
-
-    public Date getEndDate() {
-        return this.endDate;
-    }
-
-    public void setEndDate(Date endDate) {
-        this.endDate = endDate;
-    }
-
-    public Date getDateCreated() {
-        return this.dateCreated;
-    }
-
-    public int getTimelineOwner() {
-        return this.timelineOwner;
-    }
-
-    public void setTimelineOwner(int TimelineOwner) {
-        this.timelineOwner = TimelineOwner;
     }
 
     public List<String> getKeywords() {
@@ -324,10 +269,6 @@ public class Timeline implements DBObject<Timeline> {
     @Override
     public void setID(int id) {
         this.timelineID = id;
-    }
-
-    public int getTimelineOwnerID() {
-        return timelineOwner;
     }
 
     public List<Event> getEventList() {

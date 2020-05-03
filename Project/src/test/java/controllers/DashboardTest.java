@@ -73,7 +73,7 @@ public class DashboardTest {
         }
 
         for (Timeline t : timelinesList)
-            System.out.println(t.getTimelineName());
+            System.out.println(t.getName());
     }
 
     @Test
@@ -105,7 +105,7 @@ public class DashboardTest {
         assertEquals(expected, actual); //Checks to make sure that the Timelines were actually added to the list.
 
         for (Timeline t : timelinesList)
-            System.out.println(t.getTimelineName());
+            System.out.println(t.getName());
     }
 
     @Test
@@ -143,7 +143,7 @@ public class DashboardTest {
         assertEquals(expected, actual);         //Makes sure that the Timelines were removed
 
         for (Timeline t : timelinesList)
-            System.out.println(t.getTimelineName());
+            System.out.println(t.getName());
     }
 
     @Test
@@ -223,7 +223,7 @@ public class DashboardTest {
         assertEquals(expected, actual);         //Makes sure that the Timelines were added and removed
 
         for (Timeline t : timelinesList)
-            System.out.println(t.getTimelineName());
+            System.out.println(t.getName());
     }
 
     @Test
@@ -242,7 +242,7 @@ public class DashboardTest {
         }
 
         for (Timeline t : timelinesList)
-            System.out.println(t.getTimelineName());
+            System.out.println(t.getName());
     }
 
     @Test
@@ -257,11 +257,11 @@ public class DashboardTest {
             higherTimelineOnList = timelinesList.get(i);
             lowerTimelineOnList = timelinesList.get(i + 1);
 
-            assertTrue(higherTimelineOnList.getDateCreated().compareTo(lowerTimelineOnList.getDateCreated()) >= 0);   //assert that the one below it was created later, or at the same time
+            assertTrue(higherTimelineOnList.getCreationDate().compareTo(lowerTimelineOnList.getCreationDate()) >= 0);   //assert that the one below it was created later, or at the same time
         }
 
         for (Timeline t : timelinesList)
-            System.out.println(t.getTimelineName());
+            System.out.println(t.getName());
     }
 
     @Test
@@ -276,11 +276,11 @@ public class DashboardTest {
             higherTimelineOnList = timelinesList.get(i);
             lowerTimelineOnList = timelinesList.get(i + 1);
 
-            assertTrue(higherTimelineOnList.getDateCreated().compareTo(lowerTimelineOnList.getDateCreated()) <= 0);   //assert that the one below it was created sooner, or at the same time
+            assertTrue(higherTimelineOnList.getCreationDate().compareTo(lowerTimelineOnList.getCreationDate()) <= 0);   //assert that the one below it was created sooner, or at the same time
         }
 
         for (Timeline t : timelinesList)
-            System.out.println(t.getTimelineName());
+            System.out.println(t.getName());
     }
 
     @Test
@@ -300,7 +300,7 @@ public class DashboardTest {
         int expected;
         for (Timeline timeline : timelinesList) {
             expected = GUIManager.loggedInUser.getUserID();
-            actual = timeline.getTimelineOwnerID();
+            actual = timeline.getOwnerID();
 
             assertEquals(expected, actual);
         }
@@ -335,7 +335,7 @@ public class DashboardTest {
             higherTimelineOnList = timelinesList.get(i);
 
             expected = GUIManager.loggedInUser.getUserID();
-            actual = higherTimelineOnList.getTimelineOwnerID();
+            actual = higherTimelineOnList.getOwnerID();
             assertEquals(expected, actual);     //Check that the timelines are owned by the user
 
             if (i != timelinesList.size() - 1)  //Don't compare the last one to avoid null pointer
@@ -386,7 +386,7 @@ public class DashboardTest {
     void addNewTimelineToDBByName(String... name) {
         for (String n : name) {
             Timeline newTimeline = new Timeline();
-            newTimeline.setTimelineName(n);
+            newTimeline.setName(n);
             try {DBM.insertIntoDB(newTimeline);} catch (SQLException e) {e.printStackTrace();}
         }
     }
@@ -394,7 +394,7 @@ public class DashboardTest {
     void addNewTimelineToDBByOwnerId(int... ownerID) {
         for (int n : ownerID) {
             Timeline newTimeline = new Timeline();
-            newTimeline.setTimelineOwner(n);
+            newTimeline.setOwnerID(n);
             try {DBM.insertIntoDB(newTimeline);} catch (SQLException e) {e.printStackTrace();}
         }
     }
