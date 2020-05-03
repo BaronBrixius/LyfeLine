@@ -188,7 +188,7 @@ class Main {
 
         List<Integer> timelineIDList = new ArrayList<>();
         for(int i = 0; i< rightTimelines.size(); i++)
-            timelineIDList.add(rightTimelines.get(i).getTimelineID());
+            timelineIDList.add(rightTimelines.get(i).getID());
 
         return timelineIDList;
     }
