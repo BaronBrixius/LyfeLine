@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 
@@ -26,44 +27,30 @@ public class TimelineView {
     public BorderPane mainBorderPane;
     public StackPane rightSidebar;
     public StackPane leftSidebar;
-    TimelineEditor timelineController;
-    EventSelector selectorController;
-    EventEditor editorController;
+    @FXML
+    TimelineEditor timelineEditorController;
+    @FXML
+    EventSelector eventSelectorController;
+    @FXML
+    EventEditor eventEditorController;
     @FXML
     private Button backButton;
 
     public void initialize() {
-        try {
-            FXMLLoader timelineLoader = new FXMLLoader(getClass().getResource("../FXML/TimelineEditor.fxml"));
-            timelineLoader.load();
-            timelineController = timelineLoader.getController();
-            timelineController.setParentController(this);
-        } catch (IOException e) {
-            e.printStackTrace(); // TODO replace with better error message once dev is done
-        }
+        timelineEditorController.setParentController(this);
+        eventSelectorController.setParentController(this);
+        eventEditorController.setParentController(this);
 
-        try {
-            FXMLLoader selectorLoader = new FXMLLoader(getClass().getResource("../FXML/EventSelector.fxml"));
-            selectorLoader.load();
-            selectorController = selectorLoader.getController();
-            selectorController.setParentController(this);
-        } catch (IOException e) {
-            e.printStackTrace(); // TODO replace with better error message once dev is done
-        }
+        leftSidebar.getChildren().add(timelineEditorController.editor);
+        rightSidebar.getChildren().add(eventSelectorController.selector);
 
-        try {
-            FXMLLoader editorLoader = new FXMLLoader(getClass().getResource("../FXML/EventEditor.fxml"));
-            editorLoader.load();
-            editorController = editorLoader.getController();
-            editorController.setParentController(this);
-        } catch (IOException e) {
-            e.printStackTrace(); // TODO replace with better error message once dev is done
-        }
-
-        // leftSidebar.getChildren().remove(timelineController.editor);
-
-        leftSidebar.getChildren().add(timelineController.editor);
-
+        //setup horizontal scroll with mouse wheel
+        ScrollPane mainScrollPane = (ScrollPane) mainBorderPane.getCenter();
+        mainScrollPane.setOnScroll(e -> {
+            if (e.getDeltaX() == 0 && e.getDeltaY() != 0) {
+                mainScrollPane.setHvalue(mainScrollPane.getHvalue() - e.getDeltaY() / mainScrollPane.getWidth());
+            }
+        });
     }
 
     public List<EventNode> getEventList() {
@@ -79,16 +66,14 @@ public class TimelineView {
     }
 
     // Call this method when swapping scenes
-
     public void setActiveTimeline(Timeline t) {
         this.activeTimeline = t;
-        selectorController.setTimelineSelected(activeTimeline); // sets the selected index to the currently viewed
-        // timeline
-        timelineController.setTimeline(t);
+        timelineEditorController.setTimeline(t);
+        eventSelectorController.setTimelineSelected(activeTimeline); // sets the selected index to the currently viewed timeline
+        populateDisplay();
     }
 
-    // This method is probably not needed, but whatever //useful for dev work to set
-    // things up quickly!
+    // This method is probably not needed, but whatever //useful for dev work to set things up quickly!
     public boolean setActiveTimeline(int id) {
         try {
             PreparedStatement stmt = DBM.conn.prepareStatement("SELECT * FROM timelines WHERE TimelineID = ?");
@@ -118,7 +103,7 @@ public class TimelineView {
             newNode = addEvent(e);
             eventList.add(newNode);
         }
-        Collections.sort(eventList); // sort so that earlier events are placed first (longer first in case of tie)
+        Collections.sort(eventList);            // sort so that earlier events are placed first (longer comes first in case of tie)
         for (int i = 0; i < eventList.size(); i++)
             placeEvent(eventList.get(i), i);
     }
@@ -153,9 +138,8 @@ public class TimelineView {
             timelineGrid.add(new Text(String.valueOf(i + start)), i, 0);
         }
 
-        if (numberOfCol >= 1) // if the start date is later than the end date, numberOfCol would be negative,
-            // which does not work for the amount of columns
-            timelineGrid.add(mainLine, 0, 0, numberOfCol, 1);
+        if (numberOfCol >= 1)                               // if the start date is later than the end date, numberOfCol would be negative,
+            timelineGrid.add(mainLine, 0, 0, numberOfCol, 1);   // which does not work for the amount of columns
         GridPane.setMargin(mainLine, new Insets(25, 0, -25, 0));
         return mainLine;
     }
@@ -176,40 +160,28 @@ public class TimelineView {
     void placeEvent(EventNode newNode, int eventsPlacedCount) {
         int startColumn = newNode.getStartColumn();
         int columnSpan = newNode.getColumnSpan();
-        if (startColumn < 0) { // if node starts before the timeline begins, cut the beginning
+        if (startColumn < 0) {                                          // if node starts before the timeline begins, cut the beginning
             columnSpan += startColumn;
             startColumn = 0;
         }
-        if (startColumn + columnSpan > timelineGrid.getColumnCount()) // if node goes past the timeline's end, cut the
+        if (startColumn + columnSpan > timelineGrid.getColumnCount())   // if node goes past the timeline's end, cut the
             // end
             columnSpan = timelineGrid.getColumnCount() - startColumn;
-        if (columnSpan < 1) // if, after cutting, nothing remains, don't display it at all
+        if (columnSpan < 1)                                             // if, after cutting, nothing remains, don't display it at all
             return;
 
         int row = 1;
         for (int i = 0; i < eventsPlacedCount; i++) { // check previous nodes to see if they occupy desired columns
-            if (eventList.get(i).getStartColumn() <= newNode.getStartColumn() + newNode.getColumnSpan() // if a previous
-                    // node starts
-                    // before the
-                    // new one would
-                    // end
-                    && eventList.get(i).getStartColumn() + eventList.get(i).getColumnSpan() >= newNode.getStartColumn()) // and
-                // it
-                // ends
-                // after
-                // the
-                // new
-                // one
-                // starts
-                row++; // try next row
+            if (eventList.get(i).getStartColumn() <= newNode.getStartColumn() + newNode.getColumnSpan()                     // if a previous node starts before the new one wouldend
+                    && eventList.get(i).getStartColumn() + eventList.get(i).getColumnSpan() >= newNode.getStartColumn())    // and it ends after the new one starts
+                row++;                                                                                                      // try next row
         }
         timelineGrid.add(newNode.getDisplayPane(), startColumn, row, columnSpan, 1);
     }
 
     public void openEventSelector() {
-        rightSidebar.getChildren().remove(selectorController.selector); // resets the event selector if it already
-        // exists
-        rightSidebar.getChildren().add(selectorController.selector);
+        rightSidebar.getChildren().remove(eventSelectorController.selector); // resets the event selector if it already exists
+        rightSidebar.getChildren().add(eventSelectorController.selector);
     }
 
     public void returnToDashboard() {

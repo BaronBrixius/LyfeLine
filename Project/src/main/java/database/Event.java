@@ -11,6 +11,7 @@ import java.util.List;
 public class Event implements DBObject<Event> {
     private int eventID = 0;
     private int userID;
+    private int eventPriority = 0;
     private String eventName = "";
     private String eventDescription = "";
     private String imagePath = null;
@@ -25,7 +26,7 @@ public class Event implements DBObject<Event> {
         this.userID = user.getUserID();
     }
 
-    private Event(int eventID, int userID, Date startDate, Date endDate, Date creationDate, String title, String description, String imagePath) {      //for reading from database
+    private Event(int eventID, int userID, Date startDate, Date endDate, Date creationDate, String title, String description, String imagePath, int eventPriority) {      //for reading from database
         this.eventID = eventID;
         this.userID = userID;
         this.startDate = startDate;
@@ -34,6 +35,7 @@ public class Event implements DBObject<Event> {
         this.eventName = title;
         this.eventDescription = description;
         this.imagePath = imagePath;
+        this.eventPriority = eventPriority;
     }
 
 
@@ -67,7 +69,7 @@ public class Event implements DBObject<Event> {
 
         PreparedStatement out = DBM.conn.prepareStatement("INSERT INTO `events` (`EventName`, `EventDescription`,`StartYear`,`StartMonth`,`StartDay`,`StartHour`, " +
                 "`StartMinute`,`StartSecond`,`StartMillisecond`,`EndYear`,`EndMonth`,`EndDay`,`EndHour`,`EndMinute`,`EndSecond`, " +
-                "`EndMillisecond`,`CreatedYear`,`CreatedMonth`,`CreatedDay`,`CreatedHour`,`CreatedMinute`,`CreatedSecond`,`CreatedMillisecond`,`EventOwner`, `ImagePath`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);", Statement.RETURN_GENERATED_KEYS);
+                "`EndMillisecond`,`CreatedYear`,`CreatedMonth`,`CreatedDay`,`CreatedHour`,`CreatedMinute`,`CreatedSecond`,`CreatedMillisecond`,`EventOwner`, `ImagePath`, `EventPriority`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);", Statement.RETURN_GENERATED_KEYS);
         out.setString(1, eventName);
         out.setString(2, eventDescription);
         out.setInt(3, startDate.getYear());
@@ -107,6 +109,8 @@ public class Event implements DBObject<Event> {
             out.setNull(25, Types.INTEGER);
         else
             out.setString(25, imagePath);
+
+        out.setInt(26, eventPriority);
 
         return out;
     }
@@ -155,8 +159,9 @@ public class Event implements DBObject<Event> {
         Date start = new Date(StartYear, StartMonth, StartDay, StartHour, StartMinute, StartSecond, StartMillisecond);
         Date end = new Date(EndYear, EndMonth, EndDay, EndHour, EndMinute, EndSecond, EndMillisecond);
         Date created = new Date(CreatedYear, CreatedMonth, CreatedDay, CreatedHour, CreatedMinute, CreatedSecond, CreatedMillisecond);
+        int EventPriority = rs.getInt("EventPriority");
 
-        return new Event(eventID, ownerID, start, end, created, eventName, eventDescription, imagePath);
+        return new Event(eventID, ownerID, start, end, created, eventName, eventDescription, imagePath, EventPriority);
     }
 
     @Override
@@ -272,9 +277,16 @@ public class Event implements DBObject<Event> {
         this.userID = userID;
     }
 
+    public int getEventPriority() {
+        return eventPriority;
+    }
+
+    public void setEventPriority(int eventPriority) {
+        this.eventPriority = eventPriority;
+    }
+
     @Override
     public String toString() {
         return "EventID: " + eventID + " EventName " + eventName + " EventDescription " + eventDescription + " Start Date: " + startDate + " End Date: " + endDate + " Created: " + creationDate;
     }
-
 }

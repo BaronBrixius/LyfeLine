@@ -1,7 +1,8 @@
 CREATE TABLE `events`
 (
     `EventID`            int               NOT NULL AUTO_INCREMENT,
-    `EventOwner`         int               NOT NULL,
+    `EventOwner`         int               DEFAULT 0,
+    `EventPriority`      int               NOT NULL,
     `ImagePath`          nvarchar(5000)    DEFAULT NULL,
     `EventName`          nvarchar(100)     DEFAULT NULL,
     `EventDescription`   nvarchar(5000)    DEFAULT NULL,
@@ -325,11 +326,11 @@ VALUES (01, 8, 'Fall of Rome', 'Out with a wimper, not a bang', 'dark', 45, 5, 2
 ;
 
 
-INSERT INTO `events` (`EventOwner`, `EventName`, `EventDescription`, `StartYear`, `StartMonth`,
+INSERT INTO `events` (`EventOwner`, `EventPriority`, `EventName`, `EventDescription`, `StartYear`, `StartMonth`,
                       `StartDay`, `StartHour`, `StartMinute`, `StartSecond`, `StartMillisecond`, `EndYear`, `EndMonth`,
                       `EndDay`,
                       `EndHour`, `EndMinute`, `EndSecond`, `EndMillisecond`)
-VALUES ( '1', 'Crossing the Rubicon', 'Julius Caesar''s crossing the Rubicon river in January 49 BC precipitated
+VALUES ( '1', '1', 'Crossing the Rubicon', 'Julius Caesar''s crossing the Rubicon river in January 49 BC precipitated
         the Roman Civil War, which ultimately led to Caesar becoming dictator and the rise of the imperial era of Rome.
         Caesar had been appointed to a governorship over a region that ranged from southern Gaul to Illyricum (but not Italy).
         As his term of governorship ended, the Roman Senate ordered Caesar to disband his army and return to Rome. He was
@@ -338,15 +339,15 @@ VALUES ( '1', 'Crossing the Rubicon', 'Julius Caesar''s crossing the Rubicon riv
         insurrection, treason, and a declaration of war on the Roman Senate. According to some authors, he is said to have
         uttered the phrase "alea iacta est"—the die is cast—as his army marched through the shallow river.'
        , '49', '1', '13', '17', '25', '40', '20', '52', '10', '25', '22', '50', '45', '40'),
-       ( '1', 'New Event', '.'
+       ( '1', '2', 'TestEvent', '.'
        , '49', '1', '13', '17', '25', '40', '20', '56', '10', '25', '22', '50', '45', '40'),
-       ('1', 'Great Roman Civil War', 'The Great Roman Civil War (49–45 BC), also known as Caesar''s Civil War, was
+       ('1', '2', 'Great Roman Civil War', 'The Great Roman Civil War (49–45 BC), also known as Caesar''s Civil War, was
         one of the last politico-military conflicts in the Roman Republic before the establishment of the Roman Empire.
         It began as a series of political and military confrontations, between Julius Caesar (100–44 BC), his political supporters
         (broadly known as Populares), and his legions, against the Optimates (or Boni), the politically conservative and socially
         traditionalist faction of the Roman Senate, who were supported by Pompey (106–48 BC) and his legions.[1]',
         '48', '5', '5', '5', '10', '10', '10', '51', '10', '25', '22', '50', '45', '40'),
-       ('1', 'Marcus Tullius Cicero', 'Marcus Tullius Cicero[a] (/ˈsɪsəroʊ/ SISS-ə-roh, Latin:
+       ('1', '3', 'Marcus Tullius Cicero', 'Marcus Tullius Cicero[a] (/ˈsɪsəroʊ/ SISS-ə-roh, Latin:
         [ˈmaːrkʊs ˈtʊllɪ.ʊs ˈkɪkɛroː]; 3 January 106 BC – 7 December 43 BC) was a Roman statesman, lawyer and Academic
         Skeptic philosopher[3] who wrote extensively on rhetoric, orations, philosophy, and politics, and is considered one of
         Rome''s greatest orators and prose stylists.[4][5] A leading political figure in the final years of the Roman Republic,

@@ -245,7 +245,7 @@ public class TimelineEditor {
         timeline.setScale((timeInput.getSelectionModel().getSelectedIndex()) + 1);
 
         parentController.setActiveTimeline(timeline);
-        parentController.selectorController.populateTimelineList();
+        parentController.eventSelectorController.populateTimelineList();
     }
 
     @FXML
