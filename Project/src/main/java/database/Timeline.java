@@ -10,16 +10,16 @@ import java.util.List;
 public class Timeline implements DBObject<Timeline> {
     private int timelineID;
     private int scale;
-    private String timelineName;
+    private String timelineName = "";
     private String theme;
-    private Date startDate;
-    private Date endDate;
+    private Date startDate = new Date();
+    private Date endDate = new Date();
     private Date dateCreated;
-    private String timelineDescription;
+    private String timelineDescription = "";
     private int timelineOwner;
     private boolean isPrivate = false;
-    private List<Event> eventList;
-    private List<String> keywords;
+    private List<Event> eventList = new ArrayList<>();
+    private List<String> keywords = new ArrayList<>();
 
     // Default timeline
     public Timeline() {

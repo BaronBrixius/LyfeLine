@@ -243,6 +243,9 @@ public class TimelineEditor {
         timeline.getKeywords().addAll(keywords);
 
         timeline.setScale((timeInput.getSelectionModel().getSelectedIndex()) + 1);
+
+        parentController.setActiveTimeline(timeline);
+        parentController.selectorController.populateTimelineList();
     }
 
     @FXML
