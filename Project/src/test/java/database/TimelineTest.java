@@ -1,14 +1,12 @@
+package database;
+
 import database.DBM;
 import database.Timeline;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.sql.*;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class TimelineTest {
 	static private DBM sut;

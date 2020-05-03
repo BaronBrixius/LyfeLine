@@ -7,6 +7,7 @@ import database.Event;
 import java.io.FileNotFoundException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 class Main {
@@ -14,9 +15,8 @@ class Main {
         PreparedStatement stmt;
         PreparedStatement stmt2;
         try {
-            new DBM();
+            new DBM(     );
             DBM.setupSchema();       //destroys + remakes DB with default settings, can comment this out after first run if desired
-
 
             //Makes a list of events from the DB and prints it
             stmt = DBM.conn.prepareStatement("SELECT * FROM events");
@@ -24,6 +24,9 @@ class Main {
             System.out.println("\nEvent List:");
             for (Event e : eventList)
                 System.out.println(e);
+
+
+
 
             //Makes a list of event years from the DB and prints it
             //note: you can just prepare a statement right in the method parameters if there aren't any field values that need to be set
@@ -45,10 +48,10 @@ class Main {
             //Example of Prepared Statement with field value
             stmt = DBM.conn.prepareStatement("SELECT * FROM users WHERE userEmail = ?");
             stmt.setString(1, teacher.getUserEmail());
-            
+
             //PreparedStatement for printing out timelines
             stmt2 = DBM.conn.prepareStatement("SELECT * FROM timelines");
-            List<Timeline> timelineList = DBM.getFromDB(stmt2, new Timeline());          
+            List<Timeline> timelineList = DBM.getFromDB(stmt2, new Timeline());
             System.out.println("\nTimeline List:");
             for (Timeline f : timelineList)
                 System.out.println(f);
@@ -57,6 +60,36 @@ class Main {
             System.out.println("\nUser:");
             for (User e : userList)
                 System.out.println(e);
+
+            //timeline.setStartDate(new Date(startInputs.get(0).getValue(), startInputs.get(1).getValue(), startInputs.get(2).getValue(),
+               //     startInputs.get(3).getValue(), startInputs.get(4).getValue(), startInputs.get(5).getValue(), startInputs.get(6).getValue()));
+
+
+           // timeline.setEndDate(new Date(endInputs.get(0).getValue(), endInputs.get(1).getValue(), endInputs.get(2).getValue(),
+            // endInputs.get(3).getValue(), endInputs.get(4).getValue(), endInputs.get(5).getValue(), endInputs.get(6).getValue()));
+
+
+            //THE CODE FOR ADVANCED SEARCH,JUST ADD TO IT FOR MORE SEARCH OPTIONS - NOW IT DEALS WITH TWO OF THE MORE COMPLICATED ONES - GETTING THE CREATOR NAME FROM USERS AND READING THE COMMA SPLIT KEYWORDS
+            String name = null; //IMAGEN THESE TREE ARE THE TextFields inputs from the user
+            String keyword2 = null;
+            String author = null ;
+            Date startDateSpinner = new Date();
+            Date endDateSpinner = null;
+            startDateSpinner.setYear(10);
+            advancedSearch(name,keyword2,author,startDateSpinner,endDateSpinner);
+
+
+           /* //EXAMPLE OF RETURNING THE TIMELINE's IDs THAT FULFILL THE SEARCH. THE IDs WILL THEN BE USED TO FILTER THE DASHBOARD OBSERVABLE LIST
+            PreparedStatement stmt4 = DBM.conn.prepareStatement("SELECT `TimelineID` FROM `timelines` LEFT JOIN `users` ON users.UserID = timelines.TimelineOwner WHERE " +
+                    " CONCAT(' ', `TimelineName`, ' ') LIKE CONCAT('% ', COALESCE(?, '%'), ' %') AND CONCAT(',', `Keywords`, ',') LIKE CONCAT('%,', COALESCE(?, '%'), ',%')  AND `UserName` = COALESCE(NULLIF(?, ''), `UserName`);") ;
+            stmt4.setString(1, name);
+            stmt4.setString(2, keyword2);
+            stmt4.setString(3, author);
+            List<Integer> list2 = DBM.getFromDB(stmt3, rs -> rs.getInt("TimelineID"));
+            System.out.println("======SEARCH RESULTS - THE TIMELINES ID's==========");
+            for(int i = 0; i<list2.size();i++)
+                System.out.println(list2.get(i)); */
+
 
         } catch (SQLException | ClassNotFoundException | FileNotFoundException e) {
             e.printStackTrace();
@@ -68,4 +101,97 @@ class Main {
             }
         }
     }
+
+    public static List<Integer> advancedSearch(String name, String keyword2, String author, Date startDateSpinner, Date endDateSpinner) throws SQLException {
+        PreparedStatement stmt3 = DBM.conn.prepareStatement("SELECT * FROM `timelines` LEFT JOIN `users` ON users.UserID = timelines.TimelineOwner WHERE " +
+                " CONCAT(' ', `TimelineName`, ' ') LIKE CONCAT('% ', COALESCE(?, '%'), ' %') AND CONCAT(',', `Keywords`, ',') LIKE CONCAT('%,', COALESCE(?, '%'), ',%')  AND `UserName` = COALESCE(NULLIF(?, ''), `UserName`);") ;
+        stmt3.setString(1, name);
+        stmt3.setString(2, keyword2);
+        stmt3.setString(3, author);
+        //EXAMPLE OF RETURNING THE TIMELINES THAT FULFILL THE SEARCH AS TIMELINE OBJECT
+        System.out.println();
+        System.out.println("======SEARCH RESULTS as objects - THE TIMELINES NAMES==========");
+        List<Timeline> list = DBM.getFromDB(stmt3, new Timeline());
+        List<Timeline> tempAllList;
+        List<Timeline> rightTimelines = list; //Currently the right list unless we need to update it with spinner search
+        //If only searching with Range and nothing else
+        if(list.isEmpty() & (startDateSpinner != null || endDateSpinner != null )) {
+            rightTimelines = new ArrayList<>();
+            PreparedStatement out = DBM.conn.prepareStatement("SELECT * FROM timelines");
+            tempAllList = DBM.getFromDB(out, new Timeline());
+            //If range is defined in both ends
+            if (startDateSpinner != null & endDateSpinner != null) {
+                Date start = startDateSpinner;
+                Date end = endDateSpinner;
+                for(int i = 0; i<tempAllList.size(); i++){
+                    if(tempAllList.get(i).getStartDate().compareTo(start) != -1 || tempAllList.get(i).getEndDate().compareTo(end) != 1)
+                        rightTimelines.add(tempAllList.get(i));
+                }
+
+            }
+            //If range is defined in start
+            else if (startDateSpinner != null ) {
+                Date start = startDateSpinner;
+                Date end = endDateSpinner;
+                for(int i = 0; i<tempAllList.size(); i++){
+                    if(tempAllList.get(i).getStartDate().compareTo(start) != -1 )
+                        rightTimelines.add(tempAllList.get(i));
+                }
+            }
+            //If range is defined in end
+            else {
+                Date start = startDateSpinner;
+                Date end = endDateSpinner;
+                for(int i = 0; i<tempAllList.size(); i++){
+                    if(tempAllList.get(i).getEndDate().compareTo(end) != 1)
+                        rightTimelines.add(tempAllList.get(i));
+                }
+            }
+        }
+
+        //If searching with Range amongst else
+        if(!list.isEmpty() & (startDateSpinner != null || endDateSpinner != null )) {
+            PreparedStatement out = DBM.conn.prepareStatement("SELECT * FROM timelines");
+            rightTimelines = new ArrayList<>();
+            //If range is defined in both ends
+            if (startDateSpinner != null & endDateSpinner != null) {
+                Date start = startDateSpinner;
+                Date end = endDateSpinner;
+                for(int i = 0; i<list.size(); i++){
+                    if(list.get(i).getStartDate().compareTo(start) != -1 || list.get(i).getEndDate().compareTo(end) != 1)
+                        rightTimelines.add(list.get(i));
+                }
+
+            }
+            //If range is defined in start
+            else if (startDateSpinner != null ) {
+                Date start = startDateSpinner;
+                Date end = endDateSpinner;
+                for(int i = 0; i<list.size(); i++){
+                    if(list.get(i).getStartDate().compareTo(start) != -1 )
+                        rightTimelines.add(list.get(i));
+                }
+            }
+            //If range is defined in end
+            else {
+                Date start = startDateSpinner;
+                Date end = endDateSpinner;
+                for(int i = 0; i<list.size(); i++){
+                    if(list.get(i).getEndDate().compareTo(end) != 1)
+                        rightTimelines.add(list.get(i));
+                }
+            }
+        }
+
+        for(int i = 0; i<rightTimelines.size();i++)
+            System.out.println(list.get(i).getName());
+
+        List<Integer> timelineIDList = new ArrayList<>();
+        for(int i = 0; i< rightTimelines.size(); i++)
+            timelineIDList.add(rightTimelines.get(i).getTimelineID());
+
+        return timelineIDList;
+    }
+
 }
+

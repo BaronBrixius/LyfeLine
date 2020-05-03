@@ -1,149 +1,227 @@
 package controllers;
 
-import database.*;
-import utils.*;
-import javafx.collections.FXCollections;
+import database.DBM;
+import database.Event;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
+import javafx.util.StringConverter;
+import utils.Date;
 
-import java.io.IOException;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.SQLException;
-import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
 public class EventEditor {
 
-    @FXML public GridPane editor;
-    @FXML public Button editButton;
-    @FXML public Button uploadButton;
-    @FXML public Button deleteButton;
-
-    @FXML public HBox startTime;
-    @FXML public HBox endTime;
-    @FXML public Spinner<Integer> startTime1;
-    @FXML public Spinner<Integer> startTime2;
-    @FXML public Spinner<Integer> startTime3;
-    @FXML public Spinner<Integer> endTime1;
-    @FXML public Spinner<Integer> endTime2;
-    @FXML public Spinner<Integer> endTime3;
-
-    @FXML public Label headerText;
-    @FXML public Text errorMessage;
-    @FXML TextField titleInput = new TextField();
-    @FXML TextArea descriptionInput = new TextArea();
-    @FXML DatePicker startDate = new DatePicker();
-    @FXML CheckBox hasDuration = new CheckBox();@FXML DatePicker endDate = new DatePicker(); //only a datepicker for skeleton, will figure best way to enter info later
-    @FXML ComboBox<ImageView> imageInput = new ComboBox<>();
+    private final List<VBox> startBoxes = new ArrayList<>(7);
+    private final List<Spinner<Integer>> startInputs = new ArrayList<>(7);
+    private final List<VBox> endBoxes = new ArrayList<>(7);
+    private final List<Spinner<Integer>> endInputs = new ArrayList<>(7);
+    @FXML
+    ScrollPane editor;
+    @FXML
+    Button saveEditButton;
+    @FXML
+    Button deleteButton;
+    @FXML
+    Label headerText;
+    @FXML
+    Text errorMessage;
+    @FXML
+    FlowPane startPane;
+    @FXML
+    FlowPane endPane;
+    @FXML
+    Button deleteImageButton;
+    @FXML
+    Button uploadImageButton;
+    @FXML
+    TextField titleInput = new TextField();
+    @FXML
+    TextArea descriptionInput = new TextArea();
+    @FXML
+    CheckBox hasDuration = new CheckBox();
+    @FXML
+    ComboBox<ImageView> imageInput = new ComboBox<>();
+    @FXML
     ImageView image;
-
-    int startYear;
-
-    boolean editable = true;
-    EventSelector prevScreen;
+    @FXML
+    Slider prioritySlider;
+    private TimelineView parentController;
     private Event event;
+    private boolean editable = true;
+    private boolean startExpanded;
+    private boolean endExpanded;
+    private String tempLocation;
 
-    public void setPrevScreen(EventSelector prevScreen) {             //TODO delete this inelegant solution
-        this.prevScreen = prevScreen;
-    }
 
     public void initialize() {
-        if (
-                GUIManager.loggedInUser == null ||          //TODO delete this when hooked up to rest of program
-                        !GUIManager.loggedInUser.getAdmin()) {
-            editButton.setVisible(false);
-            editButton.setDisable(true);
-            deleteButton.setVisible(false);
-            deleteButton.setDisable(true);
-        }
+//        image.setOnMouseEntered(e -> {
+////            image.setScaleX(8);
+////            image.setScaleY(8);
+////            image.setScaleZ(8);
+//        });
+//        image.setOnMouseExited(e -> {
+//            image.setScaleX(1);
+//            image.setScaleY(1);
+//            image.setScaleZ(1);
+//        });
 
-        try {
-            List<String> images = DBM.getFromDB(DBM.conn.prepareStatement("SELECT * FROM Images"),
-                    rs -> rs.getString("ImageURL"));
-
-            List<ImageView> views = new ArrayList<>();
-            ImageView blank = new ImageView(new Image("file:src/main/resources/images/pleasedontnameanythingthis.png"));
-            blank.setFitHeight(40);
-            blank.setFitWidth(40);
-            views.add(blank);
-
-            ImageView currImage;
-            for (String s : images) {
-                currImage = new ImageView(new Image("file:src/main/resources/images/" + s));
-                currImage.setFitHeight(40);
-                currImage.setFitWidth(40);
-                views.add(currImage);
+        //Set Up the Spinners for Start/End Inputs, would have bloated the .fxml and variable list a ton if these were in fxml
+        String timeSpinnerLabel = null;
+        int maxValue = 0;
+        for (int i = 0; i < 7; i++) {
+            switch (i) {                //labels
+                case 0:
+                    timeSpinnerLabel = "Year";
+                    break;
+                case 1:
+                    timeSpinnerLabel = "Month";
+                    break;
+                case 2:
+                    timeSpinnerLabel = "Day";
+                    break;
+                case 3:
+                    timeSpinnerLabel = "Hour";
+                    break;
+                case 4:
+                    timeSpinnerLabel = "Minute";
+                    break;
+                case 5:
+                    timeSpinnerLabel = "Second";
+                    break;
+                case 6:
+                    timeSpinnerLabel = "Millisecond";
+                    break;
             }
 
-            imageInput.setItems(FXCollections.observableArrayList(views));
-            imageInput.setCellFactory(param -> new ListCell<>() {
-                @Override
-                protected void updateItem(ImageView item, boolean empty) {
-                    super.updateItem(item, empty);
-                    setGraphic(item);
-                }
-            });
-        } catch (SQLException e) {
-            e.printStackTrace();
+            switch (i) {            //max values
+                case 1:
+                    maxValue = 12;
+                    break;
+                case 2:
+                    maxValue = 31;
+                    break;
+                case 3:
+                    maxValue = 23;
+                    break;
+                case 4:             //intentional fallthrough
+                case 5:
+                    maxValue = 59;
+                    break;
+                case 6:
+                    maxValue = 999;
+                    break;
+            }
+
+            setupTimeInputBoxes(timeSpinnerLabel, maxValue, i, startInputs, startBoxes);
+            setupTimeInputBoxes(timeSpinnerLabel, maxValue, i, endInputs, endBoxes);
         }
+        //fix ranges for years since they're a little different
+        startInputs.get(0).setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(Integer.MIN_VALUE, Integer.MAX_VALUE, 0));
+        endInputs.get(0).setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(Integer.MIN_VALUE, Integer.MAX_VALUE, 0));
+
+        //set up priority slider labels
+        prioritySlider.setLabelFormatter(new StringConverter<Double>() {
+            @Override
+            public String toString(Double n) {
+                if (n < 0.5) return "Not set";
+                if (n < 1.5) return "Low";
+                if (n < 2.5) return "Medium";
+                if (n < 3.5) return "High";
+
+                return "Not set";
+            }
+
+            //probably not used but required for the override
+            @Override
+            public Double fromString(String s) {
+                switch (s) {
+                    case "Not set":
+                        return 0d;
+                    case "Low":
+                        return 1d;
+                    case "Medium":
+                        return 2d;
+                    case "High":
+                        return 3d;
+
+                    default:
+                        return 0d;
+                }
+            }
+        });
+    }
+
+    private void setupTimeInputBoxes(String timeSpinnerLabel, int maxValue, int i, List<Spinner<Integer>> spinnerList, List<VBox> boxList) {
+        SpinnerValueFactory.IntegerSpinnerValueFactory valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, maxValue, 0);
+        valueFactory.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(Integer value) {
+                if (value == null)
+                    return "0";
+                return value.toString();
+            }
+
+            @Override
+            public Integer fromString(String string) {
+                try {
+                    // If the specified value is null or zero-length, return null
+                    if (string == null)
+                        return 0;
+                    string = string.trim();
+                    if (string.length() < 1)
+                        return null;
+                    return Integer.parseInt(string);
+
+                } catch (NumberFormatException ex) {
+                    return 0;
+                }
+            }
+        });
+        spinnerList.add(i, new Spinner<>(valueFactory));
+        spinnerList.get(i).setEditable(true);
+
+        boxList.add(i, new VBox(new Label(timeSpinnerLabel), spinnerList.get(i)));
+        boxList.get(i).setPrefWidth(70);
+        boxList.get(i).getChildren().get(0).getStyleClass().add("smallText");
+    }
+
+    public void setParentController(TimelineView parentController) {             //TODO delete this inelegant solution
+        this.parentController = parentController;
     }
 
     @FXML
     private void toggleHasDuration() {
-        endDate.setDisable(!hasDuration.isSelected());
-        endTime.setDisable(!hasDuration.isSelected());
+        endPane.setDisable(!hasDuration.isSelected());
+        setExpansion(endPane, endBoxes, hasDuration.isSelected() && endExpanded);   //compresses if disabled, if enabled leave it as user wanted
+        if (hasDuration.isSelected())
+            endPane.getStyleClass().remove("DisabledAnyways");
+        else
+            endPane.getStyleClass().add("DisabledAnyways");
     }
 
-    public void saveEditButton() {      //I know this is ugly right now
-        LocalDate start;
-        LocalDate end;
-        Date readStart = new Date();
-        Date readEnd = new Date();
-
-
-        try {
-            //Date Picker is literally bugged, this line works around it.
-            startDate.setValue(startDate.getConverter().fromString(startDate.getEditor().getText()));
-            //Convert the Date Picker to Date and see if problems happen
-            start = startDate.getValue();
-            readStart = new Date(start.getYear(), start.getMonth().getValue(), start.getDayOfMonth(),
-                    startTime1.getValue(), startTime2.getValue(), startTime3.getValue(), event.getStartDate().getMilliseconds());   //milliseconds not implemented yet, do we need to?
-        } catch (NullPointerException e) {
-            errorMessage.setText("Start date can't be empty.");
-            return;
-        } catch (DateTimeParseException d) {
-            errorMessage.setText("Start date's format is improper.");
-            return;
-        }
-
-        //If the End Date is selected, check it for problems too.
-        if (hasDuration.isSelected()) {
-            try {
-                endDate.setValue(endDate.getConverter().fromString(endDate.getEditor().getText()));
-                end = endDate.getValue();
-                readEnd = new Date(end.getYear(), end.getMonth().getValue(), end.getDayOfMonth(), endTime1.getValue(), endTime2.getValue(), endTime3.getValue(), 0);
-
-            } catch (NullPointerException e) {
-                errorMessage.setText("End date can't be empty if selected.");
-                return;
-            } catch (DateTimeParseException d) {
-                errorMessage.setText("End date's format is improper.");
-                return;
-            }
-        }
-
+    public void saveEditButton() throws IOException {
         if (editable && hasChanges())   //if unsaved changes, try to save
             if (!saveConfirm())         //if save cancelled, don't change mode
                 return;
-
         toggleEditable(!editable);
+        saveEvent();
     }
 
     void toggleEditable(boolean editable) {
@@ -152,48 +230,182 @@ public class EventEditor {
         titleInput.setEditable(editable);
         descriptionInput.setEditable(editable);
         hasDuration.setDisable(!editable);
-
-        startDate.setDisable(!editable);
-        startTime1.setDisable(!editable);
-        startTime2.setDisable(!editable);
-        startTime3.setDisable(!editable);
-
-        endDate.setEditable(editable);
-        endTime1.setEditable(editable);
-        endTime2.setEditable(editable);
-        endTime3.setEditable(editable);
-        endTime1.setDisable(!editable);
-        endTime2.setDisable(!editable);
-        endTime3.setDisable(!editable);
-
+        for (VBox box : startBoxes)
+            box.getChildren().get(1).setDisable(!editable);
+        for (VBox box : endBoxes)
+            box.getChildren().get(1).setDisable(!editable);
         imageInput.setDisable(!editable);
-        uploadButton.setVisible(editable);
-        uploadButton.setDisable(!editable);
+        uploadImageButton.setVisible(editable);
+        uploadImageButton.setDisable(!editable);
+        deleteImageButton.setVisible(editable);
+        deleteImageButton.setDisable(!editable);
+
+        prioritySlider.setDisable(!editable);
 
         if (editable)
-            editor.getStylesheets().removeAll("styles/DisabledEditing.css");
+            editor.getStylesheets().remove("styles/DisabledViewable.css");
         else
-            editor.getStylesheets().add("styles/DisabledEditing.css");
+            editor.getStylesheets().add("styles/DisabledViewable.css");
 
-        editButton.setText(editable ? "Save" : "Edit");
+        saveEditButton.setText(editable ? "Save" : "Edit");
+    }
+
+
+    @FXML
+    private void uploadImage() throws IOException {    //Only working now for .jpg
+
+        boolean confirm = true;
+
+        if (event.getImagePath() != null) {
+            confirm = ImageSaveConfirm();
+        }
+
+        if (confirm) {
+            FileChooser chooser = new FileChooser(); //For the filedirectory
+            chooser.setTitle("Upload image");
+
+            //All the image formats supported by java.imageio https://docs.oracle.com/javase/7/docs/api/javax/imageio/package-summary.html
+            chooser.getExtensionFilters().addAll(
+                    new FileChooser.ExtensionFilter("All Images", "*.jpg", "*.jpeg", "*.png", "*.bmp", "*.gif", "*.wbmp"),
+                    new FileChooser.ExtensionFilter("JPG", "*.jpg"),
+                    new FileChooser.ExtensionFilter("JPEG", "*.jpeg"),
+                    new FileChooser.ExtensionFilter("PNG", "*.png"),
+                    new FileChooser.ExtensionFilter("BMP", "*.bmp"),
+                    new FileChooser.ExtensionFilter("GIF", "*.gif"),
+                    new FileChooser.ExtensionFilter("WBMP", "*.wbmp")
+            );
+            //The current image chosen by FileChooser
+            File imageChosen = chooser.showOpenDialog(GUIManager.mainStage);
+            if (imageChosen != null) {
+
+                image.setImage(new Image("File:" + imageChosen.getAbsolutePath()));
+
+                //THis is to take the name of the image chosen to add it to the copied version
+                String filename = copyImage(imageChosen, imageChosen.getName());
+
+                if (event.getImagePath() != null) {
+                    try {
+                        Files.deleteIfExists(Paths.get(event.getImagePath()));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                event.setImage(filename);
+            }
+        }
     }
 
     @FXML
-    private void uploadImage() {
-        //don't implement, not part of current sprint
-        System.out.println("Button pressed.");
+    private boolean ImageSaveConfirm() {
+        Alert confirmsaveimage = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmsaveimage.setTitle("Confirm Change");
+        confirmsaveimage.setHeaderText("Replacing or removing an image will permanently delete it from the system.");
+        confirmsaveimage.setContentText("Would you like to make the change?");
+
+        Optional<ButtonType> result = confirmsaveimage.showAndWait();
+
+        if (result.get() == ButtonType.CANCEL)
+            return false;
+        else
+            return true;
+    }
+
+
+    //Method that returns the image format as a string i.e sun.png == "png"
+    private String getFormat(File f) throws IOException {
+        ImageInputStream iis = ImageIO.createImageInputStream(f);
+        Iterator<ImageReader> imageReaders = ImageIO.getImageReaders(iis);
+        String type = "png";
+        while (imageReaders.hasNext()) {
+            ImageReader reader = imageReaders.next();
+            type = reader.getFormatName();
+        }
+        return type;
+    }
+
+    private String copyImage(File image, String filename) throws IOException { //Takes the file chosen and the name of it
+        String outPath = "src/main/resources/images/";
+        String imageName = filename;
+        InputStream is = null;
+        OutputStream os = null;
+        //tempLocation = fullOutPath;
+        System.out.println("the state of templocation in copy Image " + tempLocation);
+        try {
+            is = new FileInputStream(image);
+            System.out.println("reading complete.");
+            //Path for saving, have special events folder now so if timeline guys are doing something they don't override copies
+            int duplicateDigit = 2;
+
+            while (folderHasImage(imageName)) {
+                int indexOfDot = filename.lastIndexOf(".");
+                if (imageName.matches(".*\\s\\(\\d\\)\\..*")) {
+                    int indexOfBrackets = imageName.lastIndexOf("(");
+                    imageName = imageName.substring(0, indexOfBrackets + 1) + duplicateDigit + ")" + "." + getFormat(image);
+
+                } else {
+                    imageName = imageName.substring(0, indexOfDot) + " (" + duplicateDigit + ")" + "." + getFormat(image);
+                }
+                duplicateDigit++;
+            }
+
+
+            os = new FileOutputStream(new File(outPath + imageName));
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = is.read(buffer)) > 0) {
+                os.write(buffer, 0, length);
+            }
+
+            System.out.println("Writing complete.");
+        } catch (IOException e) {
+            System.out.println("Error: " + e);
+
+        } finally {
+            if (is != null)
+                is.close();
+            if (os != null)
+                os.close();
+        }
+        return outPath + imageName;
+    }
+
+    //Method to check if the image folder has this name already to avoid if two are copied with same name the latter will just override the firs
+    private boolean folderHasImage(String path) {
+        File folder = new File("src/main/resources/images/");
+        File[] listOfFiles = folder.listFiles();
+        List<String> images = new ArrayList<>();
+
+        for (int i = 0; i < listOfFiles.length; i++) {
+            if (listOfFiles[i].isFile()) {
+                images.add(listOfFiles[i].getName());
+            }
+        }
+        for (String s : images) {
+            if (path.equalsIgnoreCase(s))
+                return true;
+        }
+        return false;
     }
 
     public boolean setEvent(int eventID) {       //is this even needed? don't implement yet
         /*Event newEvent = logic to find Event in database and get its info
         if (newEvent != null)
             return changeEvent(newEvent);*/
-
         return false;
     }
 
     public boolean setEvent(Event event) {
+        parentController.eventEditorController.close();
         this.event = event;
+        if (this.event.getEventID() == 0)       //if new event, set current user as owner
+            this.event.setUserID(GUIManager.loggedInUser.getUserID());
+        //Check if Owner
+        boolean owner = GUIManager.loggedInUser.getUserID() == this.event.getUserID();
+        saveEditButton.setDisable(!owner);
+        saveEditButton.setVisible(owner);
+        deleteButton.setDisable(!owner);
+        deleteButton.setVisible(owner);
+
         return populateDisplay();
     }
 
@@ -201,28 +413,40 @@ public class EventEditor {
         titleInput.setText(event.getEventName());
         descriptionInput.setText(event.getEventDescrition());
 
-        startDate.setValue(LocalDate.of(event.getStartDate().getYear(), event.getStartDate().getMonth(), event.getStartDate().getDay()));
+        System.out.println(event.getImagePath());
+        System.out.println(event.getEventID());
+        if (event.getImagePath() != null) {
+            image.setImage(new Image("File:" + event.getImagePath()));
+            //When event is saved the path to the image in resource folder is sent here (the one we can use to send to DB)
+            String fullOutPath = event.getImagePath();
+        } else
+            image.setImage(null);
 
-        startTime1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23, event.getStartDate().getHours()));
-        startTime2.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, event.getStartDate().getMinutes()));
-        startTime3.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, event.getStartDate().getSeconds()));
+        startInputs.get(0).getValueFactory().setValue(event.getStartDate().getYear());
+        startInputs.get(1).getValueFactory().setValue(event.getStartDate().getMonth());
+        startInputs.get(2).getValueFactory().setValue(event.getStartDate().getDay());
+        startInputs.get(3).getValueFactory().setValue(event.getStartDate().getHour());
+        startInputs.get(4).getValueFactory().setValue(event.getStartDate().getMinute());
+        startInputs.get(5).getValueFactory().setValue(event.getStartDate().getSecond());
+        startInputs.get(6).getValueFactory().setValue(event.getStartDate().getMillisecond());
 
-        if (event.getStartDate().compareTo(event.getEndDate()) == 0) {
-            endDate.setValue(LocalDate.of(event.getStartDate().getYear(), event.getStartDate().getMonth(), event.getStartDate().getDay()));
-            endTime1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23, event.getStartDate().getHours()));
-            endTime2.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, event.getStartDate().getMinutes()));
-            endTime3.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, event.getStartDate().getSeconds()));
-        } else {
+        if (event.getStartDate().compareTo(event.getEndDate()) != 0) {
             hasDuration.setSelected(true);
             toggleHasDuration();
-            endDate.setValue(LocalDate.of(event.getEndDate().getYear(), event.getEndDate().getMonth(), event.getEndDate().getDay()));
-            endTime1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23, event.getEndDate().getHours()));
-            endTime2.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, event.getEndDate().getMinutes()));
-            endTime3.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, event.getEndDate().getSeconds()));
         }
+        endInputs.get(0).getValueFactory().setValue(event.getEndDate().getYear());
+        endInputs.get(1).getValueFactory().setValue(event.getEndDate().getMonth());
+        endInputs.get(2).getValueFactory().setValue(event.getEndDate().getDay());
+        endInputs.get(3).getValueFactory().setValue(event.getEndDate().getHour());
+        endInputs.get(4).getValueFactory().setValue(event.getEndDate().getMinute());
+        endInputs.get(5).getValueFactory().setValue(event.getEndDate().getSecond());
+        endInputs.get(6).getValueFactory().setValue(event.getEndDate().getMillisecond());
 
-        imageInput.getSelectionModel().select(event.getImageID());
-        return false;
+        prioritySlider.setValue(event.getEventPriority());
+
+        setExpansion(startPane, startBoxes, false);
+        setExpansion(endPane, endBoxes, false);
+        return true;
     }
 
     @FXML
@@ -233,7 +457,6 @@ public class EventEditor {
         confirmsave.setContentText("Would you like to save?");
 
         Optional<ButtonType> result = confirmsave.showAndWait();
-
         if (result.get() == ButtonType.CANCEL)
             return false;
         return saveEvent();
@@ -241,34 +464,40 @@ public class EventEditor {
 
     void updateEvent() {
         //setters to update each field of this.event, based on the current info in the text fields
+
+        event.setEventPriority((int) prioritySlider.getValue());
         event.setTitle(titleInput.getText());
         event.setDescription(descriptionInput.getText().replaceAll("([^\r])\n", "$1\r\n"));
-
-        LocalDate start = startDate.getValue();
-        event.setStartDate(new Date(start.getYear(), start.getMonth().getValue(), start.getDayOfMonth(),
-                startTime1.getValue(), startTime2.getValue(), startTime3.getValue(), event.getStartDate().getMilliseconds()));  //milliseconds not implemented yet, do we need to?
-
-
-        LocalDate end;
+        event.setStartDate(new Date(startInputs.get(0).getValue(), startInputs.get(1).getValue(), startInputs.get(2).getValue(),
+                startInputs.get(3).getValue(), startInputs.get(4).getValue(), startInputs.get(5).getValue(), startInputs.get(6).getValue()));
         if (hasDuration.isSelected()) {
-            end = endDate.getValue();
-            event.setEndDate(new Date(end.getYear(), end.getMonth().getValue(), end.getDayOfMonth(),
-                    endTime1.getValue(), endTime2.getValue(), endTime3.getValue(), event.getEndDate().getMilliseconds()));      //milliseconds not implemented yet, do we need to?
+            event.setEndDate(new Date(endInputs.get(0).getValue(), endInputs.get(1).getValue(), endInputs.get(2).getValue(),
+                    endInputs.get(3).getValue(), endInputs.get(4).getValue(), endInputs.get(5).getValue(), endInputs.get(6).getValue()));
         } else                //if it has no duration, end = start
-            event.setEndDate(event.getStartDate());
+            setEndEqualsStart();
+    }
 
-        this.event.setImage(imageInput.getSelectionModel().getSelectedIndex());
+    private void setEndEqualsStart() {
+        event.setEndDate(event.getStartDate());
+        endInputs.get(0).getValueFactory().setValue(event.getEndDate().getYear());
+        endInputs.get(1).getValueFactory().setValue(event.getEndDate().getMonth());
+        endInputs.get(2).getValueFactory().setValue(event.getEndDate().getDay());
+        endInputs.get(3).getValueFactory().setValue(event.getEndDate().getHour());
+        endInputs.get(4).getValueFactory().setValue(event.getEndDate().getMinute());
+        endInputs.get(5).getValueFactory().setValue(event.getEndDate().getSecond());
+        endInputs.get(6).getValueFactory().setValue(event.getEndDate().getMillisecond());
     }
 
     private boolean saveEvent() {
         updateEvent();
         try {
             if (event.getEventID() == 0) {
-                DBM.insertIntoDB(event);
-                event.addToTimeline(prevScreen.timelineList.getSelectionModel().getSelectedItem().getTimelineID());
-                prevScreen.populateEventList();             //TODO delete this inelegant solution
+                DBM.insertIntoDB(event);//Save button clicked, the image chosen is saved and the String field is set as the path to the image in the resource folder
+                addToTimeline();        //new event is automatically added to active timeline when saved
             } else
-                DBM.updateInDB(event);
+                DBM.updateInDB(event);//Save button clicked, the image chosen is saved and the String field is set as the path to the image in the resource folder
+            parentController.eventSelectorController.populateTimelineList();
+            parentController.eventSelectorController.populateEventList();
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -276,55 +505,101 @@ public class EventEditor {
         return true;
     }
 
-    @FXML
-    private boolean deleteEvent() {
-        Alert confirmDelete = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmDelete.setTitle("Confirm Delete");
-        confirmDelete.setHeaderText("Deleting this event will remove it from all other timelines as well.");
-        confirmDelete.setContentText("Are you ok with this?");
-
-        Optional<ButtonType> result = confirmDelete.showAndWait();
-
-        if (result.get() == ButtonType.CANCEL)
-            return false;
-
+    private void addToTimeline() {
+        parentController.activeTimeline.getEventList().add(event);
         try {
-            if (this.event.getEventID() == 0)
-                throw new IllegalArgumentException("event not in database");
-            else {
-                DBM.deleteFromDB(event);
-                close();
-            }
-            prevScreen.populateEventList();             //TODO delete this inelegant solution
-            return true;
-        } catch (SQLException | IOException e) {
-            return false;
+            if (event.addToTimeline(parentController.activeTimeline.getTimelineID()))
+                System.out.println("Event added to " + parentController.activeTimeline + " timeline."); // remove this later once more user feedback is implemented
+            else
+                System.out.println("Event is already on " + parentController.activeTimeline + " timeline.");
+        } catch (SQLException e) {
+            System.out.println("Timeline not found.");
         }
     }
 
-    private boolean hasChanges() {
-        LocalDate start = startDate.getValue();
-        Date readStart = new Date(start.getYear(), start.getMonth().getValue(), start.getDayOfMonth(),
-                startTime1.getValue(), startTime2.getValue(), startTime3.getValue(), event.getStartDate().getMilliseconds());   //milliseconds not implemented yet, do we need to?
+    @FXML
+    private boolean deleteEvent() {
+        parentController.eventSelectorController.deleteEvent(event);
+        return close();
+    }
 
-        //If end is null, set end equal to start
-        LocalDate end = endDate.getValue();
-        Date readEnd = new Date(end.getYear(), end.getMonth().getValue(), end.getDayOfMonth(), endTime1.getValue(), endTime2.getValue(), endTime3.getValue(), event.getEndDate().getMilliseconds());
+    public void toggleStartExpanded(ActionEvent actionEvent) {
+        startExpanded = !startExpanded;
+        setExpansion(startPane, startBoxes, startExpanded);
+    }
+
+    public void toggleEndExpanded(ActionEvent actionEvent) {
+        endExpanded = !endExpanded;
+        setExpansion(endPane, endBoxes, endExpanded);
+    }
+
+    private int setExpansion(FlowPane expandPane, List<VBox> boxesToAddFrom, boolean expanding) {
+        expandPane.getChildren().removeAll(boxesToAddFrom);         //clear out the current contents except the expansion button
+        int scale = parentController.activeTimeline.getScale();
+
+        if (expanding) {                //if expanding, add everything in
+            expandPane.getChildren().addAll(0, boxesToAddFrom);
+
+        } else {                        //if contracting, add based on scale
+            if (scale == 1)             //don't try to convert to switch statement unless you're a genius, the overlaps made it ugly when I tried
+                expandPane.getChildren().add(0, boxesToAddFrom.get(6)); //milliseconds
+            if (scale <= 3)
+                expandPane.getChildren().add(0, boxesToAddFrom.get(5)); //seconds
+            if (scale >= 3 && scale <= 5)
+                expandPane.getChildren().add(0, boxesToAddFrom.get(4)); //minutes
+            if (scale >= 4 && scale <= 6)
+                expandPane.getChildren().add(0, boxesToAddFrom.get(3)); //hours
+            if (scale >= 5 && scale <= 8)
+                expandPane.getChildren().add(0, boxesToAddFrom.get(2)); //days
+            if (scale >= 7)
+                expandPane.getChildren().add(0, boxesToAddFrom.get(1)); //months
+            if (scale >= 8)
+                expandPane.getChildren().add(0, boxesToAddFrom.get(0)); //years
+        }
+        return expandPane.getChildren().size();
+    }
+
+    boolean hasChanges() {
+        if (!event.getEventName().equals(titleInput.getText())
+                || !event.getEventDescrition().equals(descriptionInput.getText().replaceAll("([^\r])\n", "$1\r\n")))     //textArea tends to change the newline from \r\n to just \n which breaks some things)
+            return true;
+
+        Date readStart = new Date(startInputs.get(0).getValue(), startInputs.get(1).getValue(), startInputs.get(2).getValue(),
+                startInputs.get(3).getValue(), startInputs.get(4).getValue(), startInputs.get(5).getValue(), startInputs.get(6).getValue());   //milliseconds not implemented yet, do we need to?
+
+        Date readEnd = new Date(endInputs.get(0).getValue(), endInputs.get(1).getValue(), endInputs.get(2).getValue(),
+                endInputs.get(3).getValue(), endInputs.get(4).getValue(), endInputs.get(5).getValue(), endInputs.get(6).getValue());
+
+        if (!(event.getEventPriority() == prioritySlider.getValue())) return true;
 
         return (
-                !event.getEventName().equals(titleInput.getText())
-                        || !event.getEventDescrition().equals(descriptionInput.getText().replaceAll("([^\r])\n", "$1\r\n"))     //textArea tends to change the newline from \r\n to just \n which breaks some things
-                        || event.getStartDate().compareTo(readStart) != 0
+                event.getStartDate().compareTo(readStart) != 0
                         || event.getEndDate().compareTo(readEnd) != 0
-                        || event.getImageID() != imageInput.getSelectionModel().getSelectedIndex()
         );
     }
 
     @FXML
-    private void close() throws IOException {
-        if (hasChanges())
-            saveConfirm();        //do you wanna save and exit or just save?
-        GUIManager.previousPage();        //close editor, return to previous screen
+    boolean close() {
+        parentController.rightSidebar.getChildren().remove(editor);
+        parentController.rightSidebar.getChildren().add(editor);
+        if (event != null && hasChanges() && !saveConfirm())          //do you wanna save and exit or just exit?
+            return false;
+        parentController.rightSidebar.getChildren().remove(editor);
+        return true;
     }
 
+
+    public void clearImage(ActionEvent actionEvent) {
+        if (event.getImagePath() != null) {
+            try {
+                Files.deleteIfExists(Paths.get(event.getImagePath()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            event.setImage(null);
+            image.setImage(null);
+            updateEvent();
+        }
+
+    }
 }

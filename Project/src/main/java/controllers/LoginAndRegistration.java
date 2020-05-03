@@ -1,6 +1,7 @@
 package controllers;
 
 import database.*;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -43,7 +44,7 @@ public class LoginAndRegistration {
 
         Parent root = FXMLLoader.load(GUIManager.class.getResource("../FXML/Login.fxml"));
         loginStage.setScene(new Scene(root));
-        loginStage.getScene().getStylesheets().add("File:src/main/resources/styles/DefaultStyle.css");
+        loginStage.getScene().getStylesheets().add(GUIManager.mainStage.getScene().getStylesheets().get(0));
         loginStage.show();
     }
 
@@ -56,18 +57,18 @@ public class LoginAndRegistration {
         registerStage.initModality(Modality.WINDOW_MODAL);  //I don't actually know what Modality is, Google just said this works and it does.
 
         registerStage.setScene(new Scene(FXMLLoader.load(GUIManager.class.getResource("../FXML/Register.fxml"))));
-        registerStage.getScene().getStylesheets().add("File:src/main/resources/styles/DefaultStyle.css");
+        registerStage.getScene().getStylesheets().add(GUIManager.mainStage.getScene().getStylesheets().get(0));
         registerStage.show();
 
     }
 
     @FXML
-    public void close(MouseEvent mouseEvent) {
-        ((Node) (mouseEvent.getSource())).getScene().getWindow().hide();
+    public void close(ActionEvent event) {
+        ((Node) (event.getSource())).getScene().getWindow().hide();
     }
 
     @FXML
-    public void registerUser(MouseEvent event) {
+    public void registerUser(ActionEvent event) {
 
         //Reset the error message if the input fields match after getting the error
         errorMessage.setText("");
@@ -100,7 +101,7 @@ public class LoginAndRegistration {
     }
 
     @FXML
-    public void loginUser(MouseEvent event) {
+    public void loginUser(ActionEvent event) {
 // Reset the error message if the input fields match after getting the error
         errorMessage.setText("");
 
