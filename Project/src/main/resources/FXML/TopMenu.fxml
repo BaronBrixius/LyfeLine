@@ -6,26 +6,32 @@
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.layout.HBox?>
 
-<HBox xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="TopMenu">
+<HBox xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.TopMenu">
     <MenuBar maxHeight="25.0">
         <Menu mnemonicParsing="false" text="File">
-          <MenuItem fx:id="saveButton" mnemonicParsing="false" onAction="#saveFile" text="Save"/>
-          <MenuItem mnemonicParsing="false" text="Delete"/>
-          <MenuItem mnemonicParsing="false" text="Zoom"/>
+          <MenuItem fx:id="saveButton" mnemonicParsing="false" onAction="#saveFile" text="Save" />
+          <MenuItem mnemonicParsing="false" text="Delete" />
+          <MenuItem mnemonicParsing="false" text="Zoom" />
         </Menu>
         <Menu mnemonicParsing="false" text="Edit">
-          <MenuItem mnemonicParsing="false" text="Edit Mode"/>
+          <MenuItem mnemonicParsing="false" text="Edit Mode" />
         </Menu>
         <Menu mnemonicParsing="false" text="View">
-          <MenuItem mnemonicParsing="false" text="View Mode"/>
+          <MenuItem mnemonicParsing="false" text="View Mode" />
+         <Menu mnemonicParsing="false" text="Style">
+           <items>
+             <MenuItem mnemonicParsing="false" onAction="#styleDefaultPressed" text="Default" />
+               <MenuItem mnemonicParsing="false" onAction="#styleNonePressed" text="None" />
+           </items>
+         </Menu>
         </Menu>
     </MenuBar>
     <MenuBar nodeOrientation="RIGHT_TO_LEFT" prefHeight="25.0" prefWidth="334.0" HBox.hgrow="SOMETIMES">
         <HBox.margin>
-            <Insets/>
+            <Insets />
         </HBox.margin>
         <Menu fx:id="loggedInStatus" mnemonicParsing="false" text="Not logged in">
-            <MenuItem mnemonicParsing="false" onAction="#logOutPressed" text="Log Out"/>
+            <MenuItem mnemonicParsing="false" onAction="#logOutPressed" text="Log Out" />
         </Menu>
     </MenuBar>
 </HBox>

@@ -1,0 +1,280 @@
+package database;
+
+import utils.Date;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.sql.*;
+import java.util.List;
+
+public class Event implements DBObject<Event> {
+    private int eventID = 0;
+    private int userID;
+    private String eventName = "";
+    private String eventDescription = "";
+    private String imagePath = null;
+    private Date startDate = new Date();
+    private Date endDate = new Date();
+    private Date creationDate;
+
+    public Event() {
+    } //dummy constructor
+
+    public Event(User user) {//defaults, bare minimum - only related to the logged in user, timeline working on and sets creation date
+        this.userID = user.getUserID();
+    }
+
+    private Event(int eventID, int userID, Date startDate, Date endDate, Date creationDate, String title, String description, String imagePath) {      //for reading from database
+        this.eventID = eventID;
+        this.userID = userID;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.creationDate = creationDate;
+        this.eventName = title;
+        this.eventDescription = description;
+        this.imagePath = imagePath;
+    }
+
+
+    public static List<Integer> getYears() throws SQLException {
+        return DBM.getFromDB(DBM.conn.prepareStatement("SELECT StartYear FROM events"), rs -> rs.getInt("StartYear"));
+    }
+
+    public String  imagePath() {
+        return imagePath;
+    }
+
+    //Some examples of working with the database
+    /*static List<Event> getAll() throws SQLException {
+        return DBM.getFromDB(DBM.conn.prepareStatement("SELECT * FROM events"), new Event());     //blank object so functional interface method can be accessed
+    }*/
+
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
+    public int getUserID() {
+        return userID;
+    }
+
+    public String getImagePath(){return this.imagePath;}
+
+    @Override
+    public PreparedStatement getInsertQuery() throws SQLException, RuntimeException {
+        if (eventID > 0)
+            throw new SQLIntegrityConstraintViolationException("Event is already in DB.");
+
+        PreparedStatement out = DBM.conn.prepareStatement("INSERT INTO `events` (`EventName`, `EventDescription`,`StartYear`,`StartMonth`,`StartDay`,`StartHour`, " +
+                "`StartMinute`,`StartSecond`,`StartMillisecond`,`EndYear`,`EndMonth`,`EndDay`,`EndHour`,`EndMinute`,`EndSecond`, " +
+                "`EndMillisecond`,`CreatedYear`,`CreatedMonth`,`CreatedDay`,`CreatedHour`,`CreatedMinute`,`CreatedSecond`,`CreatedMillisecond`,`EventOwner`, `ImagePath`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);", Statement.RETURN_GENERATED_KEYS);
+        out.setString(1, eventName);
+        out.setString(2, eventDescription);
+        out.setInt(3, startDate.getYear());
+        out.setInt(4, startDate.getMonth());
+        out.setInt(5, startDate.getDay());
+        out.setInt(6, startDate.getHour());
+        out.setInt(7, startDate.getMinute());
+        out.setInt(8, startDate.getSecond());
+        out.setInt(9, startDate.getMillisecond());
+        out.setInt(10, endDate.getYear());
+        out.setInt(11, endDate.getMonth());
+        out.setInt(12, endDate.getDay());
+        out.setInt(13, endDate.getHour());
+        out.setInt(14, endDate.getMinute());
+        out.setInt(15, endDate.getSecond());
+        out.setInt(16, endDate.getMillisecond());
+
+        if (creationDate == null) {       //if new event
+            out.setNull(17, Types.INTEGER);
+            out.setNull(18, Types.INTEGER);
+            out.setNull(19, Types.INTEGER);
+            out.setNull(20, Types.INTEGER);
+            out.setNull(21, Types.INTEGER);
+            out.setNull(22, Types.INTEGER);
+            out.setNull(23, Types.INTEGER);
+        } else {
+            out.setInt(17, creationDate.getYear());
+            out.setInt(18, creationDate.getMonth());
+            out.setInt(19, creationDate.getDay());
+            out.setInt(20, creationDate.getHour());
+            out.setInt(21, creationDate.getMinute());
+            out.setInt(22, creationDate.getSecond());
+            out.setInt(23, creationDate.getMillisecond());
+        }
+        out.setInt(24, userID);
+        if (imagePath == null)
+            out.setNull(25, Types.INTEGER);
+        else
+            out.setString(25, imagePath);
+
+        return out;
+    }
+
+    public boolean addToTimeline(int timelineID) throws SQLException {
+        PreparedStatement out = DBM.conn.prepareStatement("INSERT IGNORE INTO `timelineevents` (`TimelineID`, `EventID`) VALUES (?, ?);");
+        out.setInt(1, timelineID);
+        out.setInt(2, this.eventID);
+        return out.executeUpdate() > 0;
+
+    }
+
+    public boolean removeFromTimeline(int timelineID) throws SQLException {
+        PreparedStatement out = DBM.conn.prepareStatement("DELETE FROM `timelineevents` WHERE EventID = " + this.eventID + " AND TimelineID = " + timelineID + ";");
+        return out.executeUpdate() > 0;
+    }
+
+    @Override
+    public Event createFromDB(ResultSet rs) throws SQLException {
+        int eventID = rs.getInt("EventID");
+        String imagePath = rs.getString("ImagePath");
+        int ownerID = rs.getInt("EventOwner");
+        String eventName = rs.getString("EventName");
+        String eventDescription = rs.getString("EventDescription");
+        int StartYear = rs.getInt("StartYear");
+        int StartMonth = rs.getInt("StartMonth");
+        int StartDay = rs.getInt("StartDay");
+        int StartHour = rs.getInt("StartHour");
+        int StartMinute = rs.getInt("StartMinute");
+        int StartSecond = rs.getInt("StartSecond");
+        int StartMillisecond = rs.getInt("StartMillisecond");
+        int EndYear = rs.getInt("EndYear");
+        int EndMonth = rs.getInt("EndMonth");
+        int EndDay = rs.getInt("EndDay");
+        int EndHour = rs.getInt("EndHour");
+        int EndMinute = rs.getInt("EndMinute");
+        int EndSecond = rs.getInt("EndSecond");
+        int EndMillisecond = rs.getInt("EndMillisecond");
+        int CreatedYear = rs.getInt("CreatedYear");
+        int CreatedMonth = rs.getInt("CreatedMonth");
+        int CreatedDay = rs.getInt("CreatedDay");
+        int CreatedHour = rs.getInt("CreatedHour");
+        int CreatedMinute = rs.getInt("CreatedMinute");
+        int CreatedSecond = rs.getInt("CreatedSecond");
+        int CreatedMillisecond = rs.getInt("CreatedMillisecond");
+        Date start = new Date(StartYear, StartMonth, StartDay, StartHour, StartMinute, StartSecond, StartMillisecond);
+        Date end = new Date(EndYear, EndMonth, EndDay, EndHour, EndMinute, EndSecond, EndMillisecond);
+        Date created = new Date(CreatedYear, CreatedMonth, CreatedDay, CreatedHour, CreatedMinute, CreatedSecond, CreatedMillisecond);
+
+        return new Event(eventID, ownerID, start, end, created, eventName, eventDescription, imagePath);
+    }
+
+    @Override
+    public void setID(int id) {
+        this.eventID = id;
+    }
+
+    //Setters for editing Event fields
+    public void setTitle(String title) {
+        this.eventName = title;
+    }
+
+    public void setDescription(String description) {
+        this.eventDescription = description;
+    }
+
+    /*public void setStartDate(String startDate) {
+       String string = startDate;
+       String[] parts = string.split("-");
+       int year = Integer.parseInt(parts[0]);
+       int month = Integer.parseInt(parts[1]);;
+       int date = Integer.parseInt(parts[2]);;
+        this.startDate = new Date(year,month,date,0,0,0,0);
+    }
+    public void setDateEnd(String endDate) {
+        String string = endDate;
+        String[] parts = string.split("-");
+        int year = Integer.parseInt(parts[0]);
+        int month = Integer.parseInt(parts[1]);;
+        int date = Integer.parseInt(parts[2]);;
+        this.endDate = new Date(year,month,date,0,0,0,0);
+    }*/
+
+    public void setImage(String image) {
+        this.imagePath = image;
+    }
+
+
+    //Getters for Event fields
+    public int getEventID() {
+        return this.eventID;
+    }
+
+    public String getEventDescrition() {
+        return this.eventDescription;
+    }
+
+    public String getEventName() {
+        return this.eventName;
+    }
+
+    public Date getStartDate() {
+        return this.startDate;
+    }
+
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    public Date getEndDate() {
+        return this.endDate;
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
+
+    @Override
+    public PreparedStatement getUpdateQuery() throws SQLException {
+        if (eventID == 0)
+            throw new SQLDataException("Event not in database cannot be updated.");
+        PreparedStatement out = DBM.conn.prepareStatement("UPDATE `events` SET `EventName` = ?, `EventDescription` = ?, `ImagePath` = ?, `StartYear` = ?,  `StartMonth` = ?,  `StartDay` = ?,  `StartHour` = ?,  `StartMinute` = ?,  " +
+                "`StartSecond` = ?,  `StartMillisecond` = ?,    `EndYear` = ?,  `EndMonth` = ?,  `EndDay` = ?,  `EndHour` = ?,  `EndMinute` = ?,  `EndSecond` = ?,  `EndMillisecond` = ?, `EventOwner` = ?  WHERE (`EventID` = ?);");
+        out.setString(1, eventName);
+        out.setString(2, eventDescription);
+        out.setString(3, imagePath);
+        out.setInt(4, startDate.getYear());
+        out.setInt(5, startDate.getMonth());
+        out.setInt(6, startDate.getDay());
+        out.setInt(7, startDate.getHour());
+        out.setInt(8, startDate.getMinute());
+        out.setInt(9, startDate.getSecond());
+        out.setInt(10, startDate.getMillisecond());
+        out.setInt(11, endDate.getYear());
+        out.setInt(12, endDate.getMonth());
+        out.setInt(13, endDate.getDay());
+        out.setInt(14, endDate.getHour());
+        out.setInt(15, endDate.getMinute());
+        out.setInt(16, endDate.getSecond());
+        out.setInt(17, endDate.getMillisecond());
+        out.setInt(18, userID);
+        out.setInt(19, eventID);
+        return out;
+    }
+
+    @Override
+    public PreparedStatement getDeleteQuery() throws SQLException {
+        PreparedStatement out = DBM.conn.prepareStatement("DELETE FROM `events` WHERE (`EventID` = ?)");
+        out.setInt(1, eventID);
+
+        // Deleting the images
+        if(getImagePath() != null) {
+            try {
+                Files.deleteIfExists(Paths.get(getImagePath()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return out;
+    }
+
+    public void setUserID(int userID) {
+        this.userID = userID;
+    }
+
+    @Override
+    public String toString() {
+        return "EventID: " + eventID + " EventName " + eventName + " EventDescription " + eventDescription + " Start Date: " + startDate + " End Date: " + endDate + " Created: " + creationDate;
+    }
+
+}
