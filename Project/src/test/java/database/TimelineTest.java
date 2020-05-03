@@ -25,6 +25,7 @@ class TimelineTest {
 		createTestDB(); // Adds some rows to the database tables and exports them to .xml, don't need to
 						// run this often
 	}
+	//trying to get testing to work, delete later
 	@Test
 	void test() {
 		fail("Not yet implemented");
