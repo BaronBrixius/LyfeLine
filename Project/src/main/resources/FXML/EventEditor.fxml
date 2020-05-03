@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
@@ -46,15 +47,23 @@
                </rowConstraints>
                <children>
                   <ImageView fx:id="image" fitHeight="200.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" GridPane.columnSpan="2" GridPane.halignment="CENTER" />
-                  <Button fx:id="uploadImageButton" alignment="CENTER" onAction="#uploadImage" prefWidth="80.0" style=":disabled -fx-opacity: 0;" styleClass="tinyButton" text="Upload img" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
+                  <Button fx:id="uploadImageButton" alignment="CENTER" onAction="#uploadImage" prefWidth="80.0" style=":disabled -fx-opacity: 0;" text="Upload img" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
                      <GridPane.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </GridPane.margin>
+                     <styleClass>
+                        <String fx:value="tinyButton" />
+                        <String fx:value="DisabledInvisible" />
+                     </styleClass>
                   </Button>
-                  <Button fx:id="deleteImageButton" alignment="CENTER" onAction="#clearImage" prefWidth="80.0" style=":disabled -fx-opacity: 0;" styleClass="tinyButton" text="Delete img" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="1">
+                  <Button fx:id="deleteImageButton" alignment="CENTER" onAction="#clearImage" prefWidth="80.0" style=":disabled -fx-opacity: 0;" text="Delete img" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="1">
                      <GridPane.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </GridPane.margin>
+                     <styleClass>
+                        <String fx:value="tinyButton" />
+                        <String fx:value="DisabledInvisible" />
+                     </styleClass>
                   </Button>
                   <Label styleClass="smallText" text="Title" GridPane.columnSpan="2" GridPane.rowIndex="2" GridPane.valignment="BOTTOM" />
                   <TextField fx:id="titleInput" GridPane.columnSpan="2" GridPane.rowIndex="3" />
@@ -105,8 +114,16 @@
                   <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                </rowConstraints>
                <children>
-                  <Button fx:id="saveEditButton" alignment="CENTER" maxHeight="30" onAction="#saveEditButton" styleClass="smallButton" text="Save" GridPane.halignment="CENTER" />
-                  <Button fx:id="deleteButton" alignment="CENTER" maxHeight="30" onAction="#deleteEvent" styleClass="smallButton" text="Delete" GridPane.columnIndex="1" GridPane.halignment="CENTER" />
+                  <Button fx:id="saveEditButton" alignment="CENTER" maxHeight="30" onAction="#saveEditButton" text="Save" GridPane.halignment="CENTER">
+                     <styleClass>
+                        <String fx:value="smallButton" />
+                        <String fx:value="DisabledInvisible" />
+                     </styleClass></Button>
+                  <Button fx:id="deleteButton" alignment="CENTER" maxHeight="30" onAction="#deleteEvent" text="Delete" GridPane.columnIndex="1" GridPane.halignment="CENTER">
+                     <styleClass>
+                        <String fx:value="smallButton" />
+                        <String fx:value="DisabledInvisible" />
+                     </styleClass></Button>
                   <Button alignment="CENTER" maxHeight="30" onAction="#close" styleClass="smallButton" text="Close" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
                </children>
             </GridPane>

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
@@ -112,8 +113,16 @@
                   <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                </rowConstraints>
                <children>
-                  <Button fx:id="saveEditButton" alignment="CENTER" maxHeight="30" onAction="#saveEditButton" styleClass="smallButton" text="Edit" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
-                  <Button fx:id="deleteButton" alignment="CENTER" maxHeight="30" onAction="#deleteTimeline" styleClass="smallButton" text="Delete" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+                  <Button fx:id="saveEditButton" alignment="CENTER" maxHeight="30" onAction="#saveEditButton" text="Edit" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+                     <styleClass>
+                        <String fx:value="smallButton" />
+                        <String fx:value="DisabledInvisible" />
+                     </styleClass></Button>
+                  <Button fx:id="deleteButton" alignment="CENTER" maxHeight="30" onAction="#deleteTimeline" text="Delete" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+                     <styleClass>
+                        <String fx:value="smallButton" />
+                        <String fx:value="DisabledInvisible" />
+                     </styleClass></Button>
                </children>
             </GridPane>
          </children>

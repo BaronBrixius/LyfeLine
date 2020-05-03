@@ -69,15 +69,12 @@ public class EventEditor extends Editor {
             @Override
             public Double fromString(String s) {
                 switch (s) {
-                    case "Not set":
-                        return 0d;
                     case "Low":
                         return 1d;
                     case "Medium":
                         return 2d;
                     case "High":
                         return 3d;
-
                     default:
                         return 0d;
                 }
@@ -237,7 +234,7 @@ public class EventEditor extends Editor {
         return false;
     }
 
-    public boolean setEvent(Event event) {
+    boolean setEvent(Event event) {
         parentController.eventEditorController.close();
         this.event = event;
         if (this.event.getID() == 0)       //if new event, set current user as owner
@@ -318,7 +315,8 @@ public class EventEditor extends Editor {
         return true;
     }
 
-    public void clearImage(ActionEvent actionEvent) {
+    @FXML
+    void clearImage(ActionEvent actionEvent) {
         if (event.getImagePath() != null) {
             try {
                 Files.deleteIfExists(Paths.get(event.getImagePath()));

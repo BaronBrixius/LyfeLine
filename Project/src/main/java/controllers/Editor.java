@@ -2,7 +2,6 @@ package controllers;
 
 import database.DBM;
 import database.TimelineObject;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.FlowPane;
@@ -153,13 +152,13 @@ public abstract class Editor {
     }
 
     @FXML
-    void toggleStartExpanded(ActionEvent actionEvent) {
+    void toggleStartExpanded() {
         startExpanded = !startExpanded;
         setExpansion(startPane, startBoxes, startExpanded, parentController.activeTimeline.getScale());
     }
 
     @FXML
-    void toggleEndExpanded(ActionEvent actionEvent) {
+    void toggleEndExpanded() {
         endExpanded = !endExpanded;
         setExpansion(endPane, endBoxes, endExpanded, parentController.activeTimeline.getScale());
     }
@@ -252,12 +251,10 @@ public abstract class Editor {
 
     void setOwner(boolean owner) {        //Check if Owner
         saveEditButton.setDisable(!owner);
-        saveEditButton.setVisible(owner);
         deleteButton.setDisable(!owner);
-        deleteButton.setVisible(owner);
     }
 
-    void populateDisplay(TimelineObject itemInEditor){
+    void populateDisplay(TimelineObject itemInEditor) {
         titleInput.setText(itemInEditor.getName());
         descriptionInput.setText(itemInEditor.getDescription());
 
@@ -285,7 +282,7 @@ public abstract class Editor {
 
     abstract boolean populateDisplay();
 
-    void updateItem(TimelineObject itemInEditor){
+    void updateItem(TimelineObject itemInEditor) {
         itemInEditor.setName(titleInput.getText());
         itemInEditor.setDescription(descriptionInput.getText().replaceAll("([^\r])\n", "$1\r\n"));
 
@@ -296,7 +293,7 @@ public abstract class Editor {
                 endInputs.get(3).getValue(), endInputs.get(4).getValue(), endInputs.get(5).getValue(), endInputs.get(6).getValue()));
     }
 
-    boolean hasChanges(TimelineObject itemInEditor){
+    boolean hasChanges(TimelineObject itemInEditor) {
         if (!itemInEditor.getName().equals(titleInput.getText())
                 || !itemInEditor.getDescription().equals(descriptionInput.getText().replaceAll("([^\r])\n", "$1\r\n")))     //textArea tends to change the newline from \r\n to just \n which breaks some things)
             return true;
@@ -313,7 +310,7 @@ public abstract class Editor {
         );
     }
 
-    boolean save(TimelineObject itemInEditor){
+    boolean save(TimelineObject itemInEditor) {
         try {
             if (itemInEditor.getID() == 0) {
                 DBM.insertIntoDB(itemInEditor);
