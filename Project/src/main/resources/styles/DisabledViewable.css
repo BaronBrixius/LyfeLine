@@ -1,0 +1,44 @@
+
+.text-field{
+    -fx-text-box-border: transparent;
+    -fx-focus-color: transparent;
+}
+
+.text-area{
+    -fx-text-box-border: transparent;
+    -fx-focus-color: transparent;
+}
+
+.toggle-button:disabled, .toggle-button:disabled > * {
+    -fx-opacity: 1;
+}
+
+.spinner:disabled, .spinner:disabled > * {
+    -fx-opacity: 1;
+}
+
+.combo-box:disabled, .combo-box:disabled > * {
+    -fx-opacity: 1;
+}
+
+.DisabledAnyways, .DisabledAnyways > * {
+    -fx-opacity: .4 !important;
+}
+
+ImageView {
+    -fx-opacity: 1;
+}
+
+.spinner .increment-arrow-button .increment-arrow {
+    -fx-padding: 0px;
+}
+.spinner .decrement-arrow-button .decrement-arrow {
+    -fx-padding: 0px;
+}
+
+.spinner .increment-arrow-button {
+    -fx-padding: 3 7 3 7;
+}
+.spinner .decrement-arrow-button {
+    -fx-padding: 2 7 5 7;
+}
