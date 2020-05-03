@@ -84,8 +84,7 @@ public class TimelineView {
         this.activeTimeline = t;
         selectorController.setTimelineSelected(activeTimeline); // sets the selected index to the currently viewed
         // timeline
-        timelineController.setTimeline(activeTimeline);
-        populateDisplay();
+        timelineController.setTimeline(t);
     }
 
     // This method is probably not needed, but whatever //useful for dev work to set
