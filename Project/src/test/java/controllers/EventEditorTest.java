@@ -1,7 +1,9 @@
 package controllers;
 
 import database.DBM;
+import database.Event;
 import database.User;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -11,6 +13,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.testfx.framework.junit5.ApplicationExtension;
 import org.testfx.framework.junit5.Start;
+
+import java.sql.SQLException;
+import java.util.concurrent.Semaphore;
 
 @ExtendWith(ApplicationExtension.class)
 public class EventEditorTest {
@@ -50,7 +55,7 @@ public class EventEditorTest {
     @AfterEach
     void tearDown() {
     }
-/*
+
     @Test
     void initialize() {
     }
@@ -100,7 +105,7 @@ public class EventEditorTest {
         assertFalse(sut.hasChanges());
     }
 
-    /*
+ /*
         @Test
         void hasChangesNewEventNoChanges() {
             sut.setEvent(new Event());
@@ -118,12 +123,22 @@ public class EventEditorTest {
             sut.setEvent(new Event());
             assertFalse(sut.hasChanges());
         }
+*/
+    private void assertFalse(boolean hasChanges) {
+    }
 
     @Test
     void close() {
     }
-  */
+
     @Test
     void clearImage() {
+    }
+
+
+    void waitForRunLater() throws InterruptedException {
+        Semaphore semaphore = new Semaphore(0);
+        Platform.runLater(semaphore::release);
+        semaphore.acquire();
     }
 }
