@@ -149,7 +149,7 @@ public class Timeline implements DBObject<Timeline> {
         DBM.deleteFromDB(DBM.getFromDB(out, new Event()));
 
     }
-
+    
     @Override
     public PreparedStatement getDeleteQuery() throws SQLException {
         PreparedStatement out = DBM.conn.prepareStatement("DELETE FROM `timelines` WHERE (`TimelineID` = ?)");
