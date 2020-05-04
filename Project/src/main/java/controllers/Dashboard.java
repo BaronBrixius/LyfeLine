@@ -75,6 +75,7 @@ public class Dashboard {
 	public void initialize() {
 		// TODO fix this to be cleaner, I did it as a last second thing because it used
 		// to prevent nonadmins from even viewing anything
+		//
 		btnCreate.setVisible(GUIManager.loggedInUser.getAdmin());
 		btnCreate.setDisable(!GUIManager.loggedInUser.getAdmin());
 		btnEdit.setVisible(GUIManager.loggedInUser.getAdmin());
