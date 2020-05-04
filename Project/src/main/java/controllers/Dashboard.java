@@ -124,8 +124,6 @@ public class Dashboard {
 
 		// Search field
 		searchInput.focusedProperty().addListener(ov -> {
-			if (searchInput.isPressed())
-				searchInput.setText("");
 			searchTimelines();
 
 		});
@@ -178,9 +176,16 @@ public class Dashboard {
 						String toFind = inputs[j]; // while a keyword is just one letter i.e. "f" if a keyword in
 													// timeline has that letter then it will be shown (instant search
 													// feature)
-						boolean found = Arrays.asList(userTimelines.get(i).getKeywords().toArray()).stream()
-								.anyMatch(s -> s.toString().toLowerCase().contains(toFind.toLowerCase()));
-						if (found) {
+                        List<String> allThisTimelineKeywords = timelines.get(i).getKeywords();
+                        List<String> possibleKeywords = new ArrayList<>();
+                        for(int k = 0; k< allThisTimelineKeywords.size(); k++){
+                            if(allThisTimelineKeywords.get(k).length()>=toFind.length()){
+                                possibleKeywords.add(allThisTimelineKeywords.get(k));
+                            }
+                        }
+                        boolean found = Arrays.asList(possibleKeywords.toArray()).stream().anyMatch(s -> s.toString().toLowerCase().substring(0,toFind.length()).equalsIgnoreCase( toFind.toLowerCase()));
+
+                        if (found) {
 							if (!templist.contains(userTimelines.get(i))) // if the timline has not already been
 																			// associated with this search then add it
 																			// to the temporary timelinelist
@@ -202,9 +207,16 @@ public class Dashboard {
 						String toFind = inputs[j]; // while a keyword is just one letter i.e. "f" if a keyword in
 													// timeline has that letter then it will be shown (instant search
 													// feature)
-						boolean found = Arrays.asList(timelines.get(i).getKeywords().toArray()).stream()
-								.anyMatch(s -> s.toString().toLowerCase().contains(toFind.toLowerCase()));
-						if (found) {
+                        List<String> allThisTimelineKeywords = timelines.get(i).getKeywords();
+                        List<String> possibleKeywords = new ArrayList<>();
+                        for(int k = 0; k< allThisTimelineKeywords.size(); k++){
+                            if(allThisTimelineKeywords.get(k).length()>=toFind.length()){
+                                possibleKeywords.add(allThisTimelineKeywords.get(k));
+                            }
+                        }
+                        boolean found = Arrays.asList(possibleKeywords.toArray()).stream().anyMatch(s -> s.toString().toLowerCase().substring(0,toFind.length()).equalsIgnoreCase( toFind.toLowerCase()));
+
+                        if (found) {
 							if (!templist.contains(timelines.get(i))) // if the timline has not already been associated
 																		// with this search then add it to the temporary
 																		// timelinelist
