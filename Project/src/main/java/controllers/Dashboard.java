@@ -92,9 +92,6 @@ public class Dashboard {
 
         // Search field
         searchInput.focusedProperty().addListener(ov -> {
-
-            if (searchInput.isPressed())
-                searchInput.setText("");
                 searchTimelines();
 
         });
@@ -262,6 +259,7 @@ public class Dashboard {
 
     @FXML
     private void updateDisplays() {
+
         if (list.getSelectionModel().getSelectedItem() != null) {
             if (list.getSelectionModel().getSelectedItem().getOwnerID() == GUIManager.loggedInUser.getUserID()) {
                 btnDelete.setDisable(false);
