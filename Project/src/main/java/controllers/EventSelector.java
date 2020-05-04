@@ -184,6 +184,7 @@ public class EventSelector {
         try {
             Timeline currentSelection = timelineComboBox.getSelectionModel().getSelectedItem();
             PreparedStatement stmt = DBM.conn.prepareStatement("SELECT * FROM timelines");
+            timelineComboBox.getItems().clear();
             timelineComboBox.getItems().addAll(FXCollections.observableArrayList(DBM.getFromDB(stmt, new Timeline())));
             setTimelineSelected(currentSelection);
         } catch (SQLException e) {
