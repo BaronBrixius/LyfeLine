@@ -45,6 +45,19 @@ public class Dashboard {
 	@FXML
 	protected TextField searchInput;
 	@FXML
+	protected TextField searchTimelineName;
+	@FXML
+	protected TextField searchCreator;
+	@FXML
+	protected TextField searchKeywords;
+	@FXML
+	protected ComboBox searchRating;
+	@FXML
+	protected DatePicker startDate;
+	@FXML
+	protected DatePicker endDate;
+
+	@FXML
 	protected CheckBox cbOnlyViewPersonalLines;
 	@FXML
 	protected ComboBox<String> sortBy;
@@ -177,16 +190,17 @@ public class Dashboard {
 						String toFind = inputs[j]; // while a keyword is just one letter i.e. "f" if a keyword in
 													// timeline has that letter then it will be shown (instant search
 													// feature)
-                        List<String> allThisTimelineKeywords = timelines.get(i).getKeywords();
-                        List<String> possibleKeywords = new ArrayList<>();
-                        for(int k = 0; k< allThisTimelineKeywords.size(); k++){
-                            if(allThisTimelineKeywords.get(k).length()>=toFind.length()){
-                                possibleKeywords.add(allThisTimelineKeywords.get(k));
-                            }
-                        }
-                        boolean found = Arrays.asList(possibleKeywords.toArray()).stream().anyMatch(s -> s.toString().toLowerCase().substring(0,toFind.length()).equalsIgnoreCase( toFind.toLowerCase()));
+						List<String> allThisTimelineKeywords = timelines.get(i).getKeywords();
+						List<String> possibleKeywords = new ArrayList<>();
+						for (int k = 0; k < allThisTimelineKeywords.size(); k++) {
+							if (allThisTimelineKeywords.get(k).length() >= toFind.length()) {
+								possibleKeywords.add(allThisTimelineKeywords.get(k));
+							}
+						}
+						boolean found = Arrays.asList(possibleKeywords.toArray()).stream().anyMatch(s -> s.toString()
+								.toLowerCase().substring(0, toFind.length()).equalsIgnoreCase(toFind.toLowerCase()));
 
-                        if (found) {
+						if (found) {
 							if (!templist.contains(userTimelines.get(i))) // if the timline has not already been
 																			// associated with this search then add it
 																			// to the temporary timelinelist
@@ -208,16 +222,17 @@ public class Dashboard {
 						String toFind = inputs[j]; // while a keyword is just one letter i.e. "f" if a keyword in
 													// timeline has that letter then it will be shown (instant search
 													// feature)
-                        List<String> allThisTimelineKeywords = timelines.get(i).getKeywords();
-                        List<String> possibleKeywords = new ArrayList<>();
-                        for(int k = 0; k< allThisTimelineKeywords.size(); k++){
-                            if(allThisTimelineKeywords.get(k).length()>=toFind.length()){
-                                possibleKeywords.add(allThisTimelineKeywords.get(k));
-                            }
-                        }
-                        boolean found = Arrays.asList(possibleKeywords.toArray()).stream().anyMatch(s -> s.toString().toLowerCase().substring(0,toFind.length()).equalsIgnoreCase( toFind.toLowerCase()));
+						List<String> allThisTimelineKeywords = timelines.get(i).getKeywords();
+						List<String> possibleKeywords = new ArrayList<>();
+						for (int k = 0; k < allThisTimelineKeywords.size(); k++) {
+							if (allThisTimelineKeywords.get(k).length() >= toFind.length()) {
+								possibleKeywords.add(allThisTimelineKeywords.get(k));
+							}
+						}
+						boolean found = Arrays.asList(possibleKeywords.toArray()).stream().anyMatch(s -> s.toString()
+								.toLowerCase().substring(0, toFind.length()).equalsIgnoreCase(toFind.toLowerCase()));
 
-                        if (found) {
+						if (found) {
 							if (!templist.contains(timelines.get(i))) // if the timline has not already been associated
 																		// with this search then add it to the temporary
 																		// timelinelist
@@ -246,13 +261,12 @@ public class Dashboard {
 	@FXML
 	public void toggleHHMMSS() {
 		toggleHHMMSS.setOnMouseClicked(e -> {
-			
-		startHHMMSS.setVisible(true);
-		endHHMMSS.setVisible(true);
-		topLabels.setVisible(true);
-		bottomLabels.setVisible(true);
-		
-		
+
+			startHHMMSS.setVisible(true);
+			endHHMMSS.setVisible(true);
+			topLabels.setVisible(true);
+			bottomLabels.setVisible(true);
+
 		});
 	}
 
