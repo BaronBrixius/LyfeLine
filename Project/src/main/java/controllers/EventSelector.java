@@ -44,7 +44,7 @@ public class EventSelector {
     public void initialize() {
         populateTimelineList();
 
-        sortBy.getItems().addAll("Alphabetic", "Reverse Alphabetic", "Creation Date", "Reverse Creation Date");
+        sortBy.getItems().addAll("Alphabetic", "Reverse Alphabetic", "Creation Date", "Reverse Creation Date", "Priority");
         sortBy.getSelectionModel().selectedIndexProperty().addListener(ov -> sortEvents(sortBy.getSelectionModel().getSelectedIndex()));
 
         if (!GUIManager.loggedInUser.getAdmin()) {
@@ -223,13 +223,16 @@ public class EventSelector {
                 sortableEventList.setComparator(Comparator.comparing(Event::getName));
                 break;
             case 1:
-                sortableEventList.setComparator((t1, t2) -> (t2.getName().compareTo(t1.getName())));
+                sortableEventList.setComparator((e1, e2) -> (e2.getName().compareTo(e1.getName())));
                 break;
             case 2:
-                sortableEventList.setComparator((t1, t2) -> (t2.getCreationDate().compareTo(t1.getCreationDate())));
+                sortableEventList.setComparator((e1, e2) -> (e2.getCreationDate().compareTo(e1.getCreationDate())));
                 break;
             case 3:
                 sortableEventList.setComparator(Comparator.comparing(Event::getCreationDate));
+                break;
+            case 4:
+                sortableEventList.setComparator((e1, e2) -> (Integer.compare(e2.getEventPriority(), e1.getEventPriority())));
                 break;
         }
     }
