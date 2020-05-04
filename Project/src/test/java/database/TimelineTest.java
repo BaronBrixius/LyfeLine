@@ -2,8 +2,12 @@ package database;
 
 import database.DBM;
 import database.Timeline;
+
+//import org.junit.Test;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+
+//import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.sql.*;
@@ -21,6 +25,12 @@ class TimelineTest {
 		createTestDB(); // Adds some rows to the database tables and exports them to .xml, don't need to
 						// run this often
 	}
+/*
+ * 	//trying to get testing to work, delete later
+	@Test
+	void test() {
+		fail("Not yet implemented");
+	}*/
 
 	static void createTestDB() throws SQLException {
 										//(int TimeLineID, String TimelineName, String TimelineDescription, String Scale, String Theme, Date StartDate, Date Enddate, Date DateCreated, int TimelineOwner, boolean Private)
