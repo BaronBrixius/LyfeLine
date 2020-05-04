@@ -5,6 +5,7 @@ import database.Event;
 import database.Timeline;
 import javafx.collections.FXCollections;
 import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
@@ -37,6 +38,7 @@ public class EventSelector {
     Button addToTimelineButton;
     private TimelineView parentController;
     private FilteredList<Event> filterableEventList;
+    private SortedList<Event> sortableEventList;
     private List<List<Integer>> timelineEventLinks;
 
     public void initialize() {
@@ -205,7 +207,8 @@ public class EventSelector {
     void populateEventList() {
         try {
             filterableEventList = new FilteredList<>(FXCollections.observableArrayList(DBM.getFromDB(DBM.conn.prepareStatement("SELECT * FROM events"), new Event())));
-            eventListView.setItems(filterableEventList);
+            sortableEventList = new SortedList<>(filterableEventList);
+            eventListView.setItems(sortableEventList);
             timelineEventLinks = DBM.getFromDB(DBM.conn.prepareStatement("SELECT * FROM timelineevents"),
                     rs -> Arrays.asList(rs.getInt("TimelineID"), rs.getInt("EventID")));
             eventListView.getSelectionModel().select(-1);
@@ -217,16 +220,16 @@ public class EventSelector {
     public void sortEvents(int selection) {
         switch (selection) {
             case 0:
-                eventListView.getItems().sort(Comparator.comparing(Event::getName));
+                sortableEventList.setComparator(Comparator.comparing(Event::getName));
                 break;
             case 1:
-                eventListView.getItems().sort((t1, t2) -> (t2.getName().compareTo(t1.getName())));
+                sortableEventList.setComparator((t1, t2) -> (t2.getName().compareTo(t1.getName())));
                 break;
             case 2:
-                eventListView.getItems().sort((t1, t2) -> (t2.getCreationDate().compareTo(t1.getCreationDate())));
+                sortableEventList.setComparator((t1, t2) -> (t2.getCreationDate().compareTo(t1.getCreationDate())));
                 break;
             case 3:
-                eventListView.getItems().sort(Comparator.comparing(Event::getCreationDate));
+                sortableEventList.setComparator(Comparator.comparing(Event::getCreationDate));
                 break;
         }
     }
