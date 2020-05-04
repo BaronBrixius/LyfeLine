@@ -5,12 +5,10 @@ import database.Timeline;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
@@ -41,8 +39,8 @@ public class Dashboard {
     @FXML protected ComboBox<String> sortBy;
     @FXML protected GridPane gridButtons;
     @FXML protected Text titleText;
-
-
+    private List<Timeline> timelines;
+    private List<Timeline> userTimelines;
     private Timeline activeTimeline;
 
     public void initialize() {
@@ -94,10 +92,7 @@ public class Dashboard {
 
         // Search field
         searchInput.focusedProperty().addListener(ov -> {
-            if (searchInput.isPressed())
-                searchInput.setText("");
                 searchTimelines();
-
 
         });
 
@@ -118,10 +113,10 @@ public class Dashboard {
                 list.getItems().sort((t1, t2) -> (t2.getName().compareToIgnoreCase(t1.getName())));
                 break;
             case 2:
-                list.getItems().sort((t1, t2) -> (t2.getDateCreated().compareTo(t1.getDateCreated())));
+                list.getItems().sort((t1, t2) -> (t2.getCreationDate().compareTo(t1.getCreationDate())));
                 break;
             case 3:
-                list.getItems().sort(Comparator.comparing(Timeline::getDateCreated));
+                list.getItems().sort(Comparator.comparing(Timeline::getCreationDate));
                 break;
         }
     }
@@ -141,7 +136,14 @@ public class Dashboard {
                     for(int i = 0; i<userTimelines.size(); i++){ //go trough all the current user's timelines in the database
                         for(int j = 0; j<inputs.length;j++){//No check all the search words used if they are to be found anywhere as keywords
                             String toFind = inputs[j]; //while a keyword is just one letter i.e. "f" if a keyword in timeline has that letter then it will be shown (instant search feature)
-                            boolean found = Arrays.asList(userTimelines.get(i).getKeywords().toArray()).stream().anyMatch(s -> s.toString().toLowerCase().contains( toFind.toLowerCase()));
+                            List<String> allThisTimelineKeywords = timelines.get(i).getKeywords();
+                            List<String> possibleKeywords = new ArrayList<>();
+                            for(int k = 0; k< allThisTimelineKeywords.size(); k++){
+                                if(allThisTimelineKeywords.get(k).length()>=toFind.length()){
+                                    possibleKeywords.add(allThisTimelineKeywords.get(k));
+                                }
+                            }
+                          boolean found = Arrays.asList(possibleKeywords.toArray()).stream().anyMatch(s -> s.toString().toLowerCase().substring(0,toFind.length()).equalsIgnoreCase( toFind.toLowerCase()));
                             if(found){
                                 if(!templist.contains(userTimelines.get(i))) //if the timline has not already been associated with this search then add it to the temporary timelinelist
                                     templist.add(userTimelines.get(i));}
@@ -155,7 +157,14 @@ public class Dashboard {
                   for(int i = 0; i<timelines.size(); i++){ //go trough all the current timelines in the database
                       for(int j = 0; j<inputs.length;j++){//No check all the search words used if they are to be found anywhere as keywords
                           String toFind = inputs[j]; //while a keyword is just one letter i.e. "f" if a keyword in timeline has that letter then it will be shown (instant search feature)
-                          boolean found = Arrays.asList(timelines.get(i).getKeywords().toArray()).stream().anyMatch(s -> s.toString().toLowerCase().contains( toFind.toLowerCase()));
+                          List<String> allThisTimelineKeywords = timelines.get(i).getKeywords();
+                          List<String> possibleKeywords = new ArrayList<>();
+                          for(int k = 0; k< allThisTimelineKeywords.size(); k++){
+                              if(allThisTimelineKeywords.get(k).length()>=toFind.length()){
+                                  possibleKeywords.add(allThisTimelineKeywords.get(k));
+                              }
+                          }
+                          boolean found = Arrays.asList(possibleKeywords.toArray()).stream().anyMatch(s -> s.toString().toLowerCase().substring(0,toFind.length()).equalsIgnoreCase( toFind.toLowerCase()));
                           if(found){
                               if(!templist.contains(timelines.get(i))) //if the timline has not already been associated with this search then add it to the temporary timelinelist
                               templist.add(timelines.get(i));}
@@ -195,7 +204,7 @@ public class Dashboard {
     @FXML
     public void createTimeline() {
         Timeline t = new Timeline();
-        t.setTimelineOwner(GUIManager.loggedInUser.getUserID());
+        t.setOwnerID(GUIManager.loggedInUser.getUserID());
         openTimelineView(t);
     }
 
@@ -238,7 +247,7 @@ public class Dashboard {
 
         Popup deletionPopup = popupDeletion.getController();
         deletionPopup.setMode(1);
-        if (list.getSelectionModel().getSelectedItem() != null && list.getSelectionModel().getSelectedItem().getTimelineOwnerID() == GUIManager.loggedInUser.getUserID()) {
+        if (list.getSelectionModel().getSelectedItem() != null && list.getSelectionModel().getSelectedItem().getOwnerID() == GUIManager.loggedInUser.getUserID()) {
             titleText.setText("");
             deletionPopup.setList(list);
             deletionPopup.setDisplayTxt(
@@ -250,8 +259,9 @@ public class Dashboard {
 
     @FXML
     private void updateDisplays() {
+
         if (list.getSelectionModel().getSelectedItem() != null) {
-            if (list.getSelectionModel().getSelectedItem().getTimelineOwnerID() == GUIManager.loggedInUser.getUserID()) {
+            if (list.getSelectionModel().getSelectedItem().getOwnerID() == GUIManager.loggedInUser.getUserID()) {
                 btnDelete.setDisable(false);
                 btnEdit.setDisable(false);
             } else {
@@ -261,9 +271,9 @@ public class Dashboard {
 
             Timeline timeline = list.getSelectionModel().getSelectedItem();
 
-            int year = timeline.getDateCreated().getYear();
-            int month = timeline.getDateCreated().getMonth();
-            int day = timeline.getDateCreated().getDay();
+            int year = timeline.getCreationDate().getYear();
+            int month = timeline.getCreationDate().getMonth();
+            int day = timeline.getCreationDate().getDay();
 
             StringBuilder keyWords = new StringBuilder();
             for (String s : timeline.getKeywords())
@@ -271,7 +281,7 @@ public class Dashboard {
             keyWords.delete(keyWords.length() - 2, keyWords.length());
 
             titleText.setText("Title: " + timeline.getName()
-                    + "\nDescription: " + timeline.getTimelineDescription()
+                    + "\nDescription: " + timeline.getDescription()
                     + "\nDate Created: " + year + "/" + month + "/" + day
                     + "\nKeywords: " + keyWords);
 
