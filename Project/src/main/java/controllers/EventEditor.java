@@ -36,7 +36,7 @@ public class EventEditor extends Editor {
     ImageView image;
     @FXML
     Slider prioritySlider;
-    private Event event;
+    Event event;
     private String tempLocation;
 
     public void initialize() {
