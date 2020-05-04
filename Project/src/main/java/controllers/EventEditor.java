@@ -278,6 +278,7 @@ public class EventEditor extends Editor {
             addToTimeline();        //new event is automatically added to active timeline when saved
         parentController.eventSelectorController.populateTimelineList();
         parentController.eventSelectorController.populateEventList();
+        parentController.populateDisplay();
         return true;
     }
 

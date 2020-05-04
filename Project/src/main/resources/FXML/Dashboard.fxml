@@ -13,7 +13,6 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
-
 <?import javafx.scene.text.Text?>
 <?import javafx.scene.text.TextFlow?>
 
@@ -33,7 +32,7 @@
         </padding>
         <VBox prefHeight="84.0" prefWidth="206.0" spacing="10.0" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
             <HBox alignment="CENTER_LEFT" spacing="10.0">
-             <TextField fx:id="searchInput" prefHeight="42.0" prefWidth="501.0" style="-fx-font-size: 1.3em;" text="Search here..." />
+             <TextField fx:id="searchInput" prefHeight="42.0" prefWidth="501.0" promptText="Search here..." style="-fx-font-size: 1.3em;" />
               
             </HBox>
              <ComboBox fx:id="sortBy" prefHeight="35.0" prefWidth="193.0" promptText="Sort By" style="-fx-font-size: 1.3em;" />
