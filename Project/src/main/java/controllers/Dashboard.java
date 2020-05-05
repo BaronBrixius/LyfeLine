@@ -274,6 +274,15 @@ public class Dashboard {
 			endHHMMSS.setVisible(false);
 			topLabels.setVisible(false);
 			bottomLabels.setVisible(false);
+			searchTimelineName.clear();
+			searchCreator.clear();
+			searchKeywords.clear();
+			if (cbOnlyViewPersonalLines.isSelected()) {
+				onlyUserTimelines();
+			} else
+				this.list.setItems(FXCollections.observableArrayList(timelines));
+
+			
 		}
 
 	}
