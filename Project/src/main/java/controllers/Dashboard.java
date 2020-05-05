@@ -270,17 +270,14 @@ public class Dashboard {
 	public void toggleAdvancedSearch() {
 		if (advancedSearchView.isVisible() == false)
 			advancedSearchView.setVisible(true);
-		else
-			closeAdvancedSearch();
+		else {
+			clearAdvancedSearch();
+			advancedSearchView.setVisible(false);
+		}
 	}
 
 	@FXML
-	public void closeAdvancedSearch() {
-		advancedSearchView.setVisible(false);
-		startHHMMSS.setVisible(false);
-		endHHMMSS.setVisible(false);
-		topLabels.setVisible(false);
-		bottomLabels.setVisible(false);
+	public void clearAdvancedSearch() {
 		searchTimelineName.clear();
 		searchCreator.clear();
 		searchKeywords.clear();
