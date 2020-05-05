@@ -245,35 +245,42 @@ public abstract class Editor {
     }
 
     private void setupTimeInput(String timeSpinnerLabel, int minValue, int maxValue, int index, List<Spinner<Integer>> spinnerList, List<VBox> boxList) {
-        SpinnerValueFactory.IntegerSpinnerValueFactory valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(minValue, maxValue, minValue);
-        valueFactory.setConverter(new StringConverter<>() {
+        int initValue = (timeSpinnerLabel.equals("Year")) ? 0 : minValue;   //initial value is minimum, except for years
+        SpinnerValueFactory.IntegerSpinnerValueFactory valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(minValue, maxValue, initValue);
+
+        valueFactory.setConverter(new StringConverter<>() {                 //makes spinners revert to default values in case of invalid input
             @Override
             public String toString(Integer value) {
                 if (value == null)
-                    return "1";
+                    return String.valueOf(initValue);
                 return value.toString();
             }
 
             @Override
             public Integer fromString(String string) {
                 try {
-                    // If the specified value is null or zero-length, return null
+                    // If the specified value is null or zero-length, return default value
                     if (string == null)
-                        return 1;
+                        return initValue;
                     string = string.trim();
                     if (string.length() < 1)
-                        return null;
+                        return initValue;
                     return Integer.parseInt(string);
 
                 } catch (NumberFormatException ex) {
-                    return 1;
+                    return initValue;
                 }
             }
         });
 
         spinnerList.add(index, new Spinner<>(valueFactory));
         spinnerList.get(index).setEditable(true);
+        spinnerList.get(index).focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if (!newValue)                                  //the display doesn't restore if invalid info is entered repeatedly, this fixes that
+                spinnerList.get(index).cancelEdit();        //note: cancelEdit() is really more like "update display" as implemented
+        });                                                 //why this isn't default behavior I'll never know
 
+        //adds each spinner to a VBox underneath its label, to keep the two connected as they move around
         boxList.add(index, new VBox(new Label(timeSpinnerLabel), spinnerList.get(index)));
         boxList.get(index).setPrefWidth(70);
         boxList.get(index).getChildren().get(0).getStyleClass().add("smallText");
