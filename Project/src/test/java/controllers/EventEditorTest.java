@@ -20,6 +20,7 @@ import org.testfx.framework.junit5.ApplicationExtension;
 import org.testfx.framework.junit5.Start;
 import utils.Date;
 
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.concurrent.Semaphore;
@@ -46,12 +47,14 @@ public class EventEditorTest {
     @Start
     public void start(Stage stage) throws Exception {
         System.out.println("Test " + ++testCount);
+
         DBM.setupSchema();
         GUIManager.loggedInUser = new User();
+
         FXMLLoader loader = new FXMLLoader(getClass().getResource("../../classes/FXML/TimelineView.fxml"));
         stage.setScene(new Scene(loader.load()));
         parent = loader.getController();
-        parent.setActiveTimeline(new Timeline());
+        parent.setActiveTimeline(DBM.getFromDB(DBM.conn.prepareStatement("SELECT * FROM timelines LIMIT 1"), new Timeline()).get(0));
         selector = parent.eventSelectorController;
         sut = parent.eventEditorController;
 
@@ -102,44 +105,51 @@ public class EventEditorTest {
 */
     @Test
     void hasChangesNewEventNoChanges() throws InterruptedException {
-        Platform.runLater(() -> {
+        runLater(() -> {
             sut.setEvent(new Event());
             assertFalse(sut.hasChanges());
         });
-        waitForRunLater();
-
     }
 
     @Test
     void hasChangesViewEventNoChanges() throws SQLException, InterruptedException {
         Event event1 = DBM.getFromDB(DBM.conn.prepareStatement("SELECT * FROM events"), new Event()).get(0);
-        Platform.runLater(() -> {
+        runLater(() -> {
             sut.setEvent(event1);
             assertFalse(sut.hasChanges());
         });
-        waitForRunLater();
     }
 
     @Test
     void newEventSaved() throws SQLException, InterruptedException {
-        int expectedDB = 1 + DBM.getFromDB(DBM.conn.prepareStatement("SELECT COUNT(*) FROM events"), rs -> rs.getInt(1)).get(0);
+        int expectedDB = 1 + DBM.getFromDB(DBM.conn.prepareStatement("SELECT COUNT(*) FROM events LIMIT 1"), rs -> rs.getInt(1)).get(0);
         int expectedTimelineList = 1 + parent.activeTimeline.getEventList().size();
 
         setAdminLoggedIn(true);
-        Platform.runLater(() -> {
-            selector.newEvent();
-        });
-        waitForRunLater();
-        Platform.runLater(() -> {
+        runLater(() -> selector.newEvent());
+        PreparedStatement stmt = DBM.conn.prepareStatement("SELECT COUNT(*) FROM timelineevents WHERE EventID = ?");
+        stmt.setInt(1, sut.event.getID());
+
+        boolean inDB = DBM.getFromDB(stmt, rs -> rs.getInt(1)).get(0) > 0;
+        assertFalse(inDB);
+
+        runLater(() -> {
             sut.toggleEditable(true);
             sut.titleInput.setText("test");
             sut.saveEditButton();
-
+        });
+        runLater(() -> {
             DialogPane alert = getDialogPane();
             robot.clickOn(alert.lookupButton(ButtonType.OK));
+        });
+        runLater(() -> {
             int actualDB = 0;
+
             try {
-                actualDB = DBM.getFromDB(DBM.conn.prepareStatement("SELECT COUNT(*) FROM events"), rs -> rs.getInt(1)).get(0);
+                actualDB = DBM.getFromDB(DBM.conn.prepareStatement("SELECT COUNT(*) FROM events LIMIT 1"), rs -> rs.getInt(1)).get(0);
+
+                stmt.setInt(1, sut.event.getID());
+                assertTrue(DBM.getFromDB(stmt, rs -> rs.getInt(1)).get(0) > 0);    //assert count in junction table > 0
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -147,129 +157,142 @@ public class EventEditorTest {
             assertEquals(expectedDB, actualDB);
             assertEquals(expectedTimelineList, actualTimelineList);
         });
-        waitForRunLater();
+
     }
 
     @Test
     void oldEventSaved() throws InterruptedException {
         String expected = "test";
 
-        Platform.runLater(() -> {
-            selector.eventListView.getSelectionModel().select(1);
-            selector.openEvent();
-            setOwnerLoggedIn();
-        });
-        waitForRunLater();
-        Platform.runLater(() -> {
-            sut.toggleEditable(true);
+        openEventFromSelector(1, true);
+        runLater(() -> {
+            sut.saveEditButton();
             sut.titleInput.setText("test");
             sut.saveEditButton();
-
+        });
+        runLater(() -> {
             DialogPane alert = getDialogPane();
             robot.clickOn(alert.lookupButton(ButtonType.OK));
+        });
+        runLater(() -> {
             String actual = null;
             try {
-                actual = DBM.getFromDB(DBM.conn.prepareStatement("SELECT * FROM events WHERE UserID = " + sut.event), rs -> rs.getString("EventName")).get(0);
+                actual = DBM.getFromDB(DBM.conn.prepareStatement("SELECT * FROM events WHERE EventID = " + sut.event.getID()), rs -> rs.getString("EventName")).get(0);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
             assertEquals(expected, actual);
         });
-        waitForRunLater();
     }
 
     @Test
     void disableEndDateandSave() throws InterruptedException {
-        Platform.runLater(() -> {
-            selector.eventListView.getSelectionModel().select(1);
-            selector.openEvent();
-            setOwnerLoggedIn();
-        });
-        waitForRunLater();
+        openEventFromSelector(1, true);
+
         Date expected = sut.event.getStartDate();
         assertFalse(expected.compareTo(sut.event.getEndDate()) == 0);
 
-        Platform.runLater(() -> {
+        runLater(() -> {
             sut.saveEditButton();
             sut.hasDuration.setSelected(false);
             sut.toggleHasDuration();
             sut.saveEditButton();
         });
-        waitForRunLater();
-        Platform.runLater(() -> {
+        runLater(() -> {
             DialogPane alert = getDialogPane();
             robot.clickOn(alert.lookupButton(ButtonType.OK));
         });
-        waitForRunLater();
-        Platform.runLater(() -> {
+        runLater(() -> {
             assertTrue(expected.compareTo(sut.event.getEndDate()) == 0);
         });
-        waitForRunLater();
+
     }
 
     @Test
     void ownerCanEdit() throws InterruptedException {
-        Platform.runLater(() -> {
-            selector.eventListView.getSelectionModel().select(1);
-            selector.openEvent();
-            setOwnerLoggedIn();
+        openEventFromSelector(1, true);
 
-        });
-        waitForRunLater();
-        Platform.runLater(() -> {
+        runLater(() -> {
             sut.saveEditButton();
             sut.hasDuration.setSelected(false);
             sut.toggleHasDuration();
         });
-        waitForRunLater();
-
-        Platform.runLater(() -> {
-            try {
-                Thread.sleep(10000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            assertFalse(sut.saveEditButton.isDisable());
-            assertFalse(sut.deleteButton.isDisable());
-        });
-        waitForRunLater();
+        assertFalse(sut.saveEditButton.isDisable());
+        assertFalse(sut.deleteButton.isDisable());
     }
 
     @Test
     void nonOwnerAdminCantEdit() throws InterruptedException {
-        Platform.runLater(() -> {
-            selector.eventListView.getSelectionModel().select(1);
-            selector.openEvent();
-            setAdminLoggedIn(true);
-        });
-        waitForRunLater();
-
-        Platform.runLater(() -> {
-            assertTrue(sut.saveEditButton.isDisable());
-            assertTrue(sut.deleteButton.isDisable());
-        });
-        waitForRunLater();
+        openEventFromSelector(1, false);
+        setAdminLoggedIn(true);
+        assertTrue(sut.saveEditButton.isDisable());
+        assertTrue(sut.deleteButton.isDisable());
     }
 
-/*
-@Test
-void close() {
-}
+    @Test
+    void editTextFieldsAndSave() throws InterruptedException {
+        openEventFromSelector(1, true);
 
-@Test
-void clearImage() {
-}
+        assertEquals(sut.titleInput.getText(), sut.event.getName());
+        assertEquals(sut.descriptionInput.getText(), sut.event.getDescription());
 
-*/
+        runLater(() -> {
+            sut.saveEditButton();
+            sut.titleInput.setText("testtext");
+            sut.descriptionInput.setText("testtext");
+            assertNotEquals(sut.titleInput.getText(), sut.event.getName());
+            assertNotEquals(sut.descriptionInput.getText(), sut.event.getDescription());
+        });
+        runLater(() -> sut.saveEditButton());
+        runLater(() -> robot.clickOn(getDialogPane().lookupButton(ButtonType.OK)));
+        runLater(() -> {
+            assertEquals(sut.titleInput.getText(), sut.event.getName());
+            assertEquals(sut.descriptionInput.getText(), sut.event.getDescription());
+        });
+    }
 
-    //helper method to run code that was constrained to the main thread (so something isn't called before it loads)
-    void waitForRunLater() throws InterruptedException {
+    @Test
+    void editStartDateAndSave() throws InterruptedException {
+        openEventFromSelector(1, true);
+
+        assertEquals(sut.prioritySlider.getValue(), sut.event.getEventPriority());
+
+        runLater(() -> {
+            sut.saveEditButton();
+            sut.prioritySlider.setValue(3);
+            assertNotEquals(sut.prioritySlider.getValue(), sut.event.getEventPriority());
+        });
+        runLater(() -> sut.saveEditButton());
+        runLater(() -> robot.clickOn(getDialogPane().lookupButton(ButtonType.OK)));
+        runLater(() -> assertEquals(sut.prioritySlider.getValue(), sut.event.getEventPriority()));
+    }
+
+    @Test
+    void editPriorityAndSave() throws InterruptedException {
+        openEventFromSelector(1, true);
+
+        assertEquals(sut.prioritySlider.getValue(), sut.event.getEventPriority());
+
+        runLater(() -> {
+            sut.saveEditButton();
+            sut.prioritySlider.setValue(3);
+            assertNotEquals(sut.prioritySlider.getValue(), sut.event.getEventPriority());
+        });
+        runLater(() -> sut.saveEditButton());
+        runLater(() -> robot.clickOn(getDialogPane().lookupButton(ButtonType.OK)));
+        runLater(() -> assertEquals(sut.prioritySlider.getValue(), sut.event.getEventPriority()));
+    }
+
+    /* ********** Helper Methods ****************/
+    //constrain code to main thread (so something isn't called before it loads)
+    void runLater(Runnable runnable) throws InterruptedException {
+        Platform.runLater(runnable);
         Semaphore semaphore = new Semaphore(0);
         Platform.runLater(semaphore::release);
         semaphore.acquire();
     }
 
-    //helper method returns popup windows, requires input of Title string
+    //returns popup windows so they can be interacted with
     private DialogPane getDialogPane() {
         final List<Window> allWindows = Window.getWindows();            //Get a list of windows
         for (Window w : allWindows) {                                   //if a window is a DialogPane with the correct title, return it
@@ -279,18 +302,18 @@ void clearImage() {
         return null;
     }
 
-
-    //helper methods control who is logged in
+    //control who is logged in
     void setAdminLoggedIn(boolean admin) {
         GUIManager.loggedInUser.setAdmin(admin);
     }
 
-    void setUserIDLoggedIn(int ownerID) {
-        GUIManager.loggedInUser.setID(ownerID);
-    }
-
-    void setOwnerLoggedIn() {
-        setAdminLoggedIn(true);
-        setUserIDLoggedIn(sut.event.getOwnerID());
+    //open a specific event from the Event Selector's event list
+    void openEventFromSelector(int optionNum, boolean owner) throws InterruptedException {
+        runLater(() -> {
+            selector.eventListView.getSelectionModel().select(optionNum);
+            GUIManager.loggedInUser.setID(owner ? selector.eventListView.getSelectionModel().getSelectedItem().getOwnerID() : 0);
+            GUIManager.loggedInUser.setAdmin(owner);
+            selector.openEvent();
+        });
     }
 }
