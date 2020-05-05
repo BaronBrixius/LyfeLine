@@ -23,6 +23,7 @@ import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -41,7 +42,7 @@ public class Dashboard {
 	@FXML
 	protected Button btnCreate;
 	@FXML
-	protected Button advancedSearch;
+	protected Button search;
 	@FXML
 	protected TextFlow displayInfo;
 	@FXML
@@ -398,41 +399,43 @@ public class Dashboard {
 
 	                                                 //Date start = null; Date end = null;
     public void advancedSearch() throws SQLException {
+
+
 		Date startDateSpinner = null;
 		Date endDateSpinner = null;
 		   String[] keywords = null;
 		StringBuilder dynamicParameter = new StringBuilder();
-		   if(searchKeywords.getText() != null){
+		if(searchKeywords.getText() != null){
 			 keywords = searchKeywords.getText().split(" ");
 
 			for (int i = 1; i < keywords.length; i++) {
+				System.out.println(keywords[i]);
 				dynamicParameter.append("OR  CONCAT(',', `Keywords`, ',') LIKE CONCAT('%,', COALESCE(?, '%'), ',%')");
 			}}
 
 			PreparedStatement stmt3 = DBM.conn.prepareStatement("SELECT * FROM `timelines` LEFT JOIN `users` ON users.UserID = timelines.TimelineOwner WHERE " +
-					" CONCAT(' ', `TimelineName`, ' ') LIKE CONCAT('% ', COALESCE(?, '%'), ' %') AND `UserName` = COALESCE(NULLIF(?, ''), `UserName`) AND `Rating` = COALESCE(NULLIF(?, ''), `Rating`) AND (CONCAT(',', `Keywords`, ',') LIKE CONCAT('%,', COALESCE(?, '%'), ',%') " + dynamicParameter + ")  ;");
+					" CONCAT(' ', `TimelineName`, ' ') LIKE CONCAT('% ', COALESCE(?, '%'), ' %') AND `UserName` = COALESCE(NULLIF(?, ''), `UserName`) AND `Rating` = COALESCE(NULLIF(?, ''), `Rating`)  AND (CONCAT(',', `Keywords`, ',') LIKE CONCAT('%,', COALESCE(?, '%'), ',%') " + dynamicParameter + ")  ;");
 			stmt3.setString(1, searchTimelineName.getText());
 			stmt3.setString(2, searchCreator.getText());
 			stmt3.setInt(3, (Integer) searchRating.getValue());
 			if(keywords != null)
 			for (int i = 4; i < keywords.length + 4; i++) {
 				stmt3.setString(i, keywords[i - 4]);
-				System.out.println(stmt3);
+				System.out.println( keywords[i - 4]);
 			}
 			else
-				stmt3.setString(3, searchKeywords.getText());
+				stmt3.setString(4, searchKeywords.getText());
 
 
 
-        stmt3.setString(4, searchKeywords.getText());
         //EXAMPLE OF RETURNING THE TIMELINES THAT FULFILL THE SEARCH AS TIMELINE OBJECT
         System.out.println();
         System.out.println("======SEARCH RESULTS as objects - THE TIMELINES NAMES==========");
+        System.out.println(stmt3);
         List<Timeline> list = DBM.getFromDB(stmt3, new Timeline());
         List<Timeline> tempAllList;
         List<Timeline> rightTimelines = list; //Currently the right list unless we need to update it with spinner search
         //If only searching with Range and nothing else
-
 		if(list.isEmpty() & (startDateSpinner != null || endDateSpinner != null )) {
             rightTimelines = new ArrayList<>();
             PreparedStatement out = DBM.conn.prepareStatement("SELECT * FROM timelines");

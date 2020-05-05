@@ -1,27 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.String?>
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckBox?>
-<?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.DatePicker?>
-<?import javafx.scene.control.Hyperlink?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ListView?>
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.Spinner?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Region?>
-<?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Text?>
-<?import javafx.scene.text.TextFlow?>
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<VBox minHeight="400.0" minWidth="600.0" stylesheets="@../styles/DefaultStyle.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.Dashboard">
+<VBox minHeight="400.0" minWidth="600.0" stylesheets="@../styles/DefaultStyle.css" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.Dashboard">
    <HBox fx:id="Simple" alignment="CENTER_LEFT" spacing="10.0">
       <children>
          <VBox prefHeight="192.0" prefWidth="413.0">
@@ -31,7 +16,7 @@
                      <HBox prefHeight="31.0">
                         <children>
                             <TextField fx:id="searchInput" prefHeight="31.0" prefWidth="376.0" promptText="Search here..." style="-fx-font-size: 1.3em;" />
-                           <Button fx:id="searchButton" contentDisplay="TOP" mnemonicParsing="false" prefHeight="31.0" prefWidth="90.0" styleClass="smallButton" text="Search">
+                           <Button fx:id="search" contentDisplay="TOP" mnemonicParsing="false" onAction="#advancedSearch" prefHeight="31.0" prefWidth="90.0" styleClass="smallButton" text="Search">
                               <opaqueInsets>
                                  <Insets />
                               </opaqueInsets>
@@ -168,7 +153,7 @@
                      </HBox>
                      <HBox>
                         <children>
-                           <TextField fx:id="searchInput11" alignment="CENTER" prefWidth="196.0" promptText="Keywords" style="-fx-font-size: 1.3em;" />
+                           <TextField fx:id="searchKeywords" alignment="CENTER" prefWidth="196.0" promptText="Keywords" style="-fx-font-size: 1.3em;" />
                            <Region minWidth="20.0" />
                            <ComboBox prefHeight="32.0" prefWidth="196.0" />
                            <Region minWidth="20.0" />
