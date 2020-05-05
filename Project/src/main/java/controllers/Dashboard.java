@@ -560,8 +560,18 @@ public class Dashboard {
 				}
 			}
 		}
+		if (cbOnlyViewPersonalLines.isSelected()) {
 
-
+			List<Timeline> userline = new ArrayList<>();
+			for(int i = 0; i<rightTimelines.size();i++){
+				for(int j = 0 ; j<userTimelines.size();j++){
+					if(userTimelines.get(j).getID() == rightTimelines.get(i).getID())
+						userline.add(rightTimelines.get(i));
+				}
+			}
+			this.list.setItems(FXCollections.observableArrayList(userline));
+		}
+		else
 		this.list.setItems(FXCollections.observableArrayList(rightTimelines));
 	}
 }

@@ -17,7 +17,7 @@ class Main {
         PreparedStatement stmt;
         PreparedStatement stmt2;
         try {
-            new DBM(    );
+            new DBM(   );
             DBM.setupSchema();       //destroys + remakes DB with default settings, can comment this out after first run if desired
 
             //Makes a list of events from the DB and prints it
