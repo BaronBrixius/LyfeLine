@@ -4,7 +4,9 @@ import database.User;
 import utils.Date;
 import database.Event;
 
+import javax.swing.*;
 import java.io.FileNotFoundException;
+import java.sql.Array;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -70,12 +72,12 @@ class Main {
 
 
             //THE CODE FOR ADVANCED SEARCH,JUST ADD TO IT FOR MORE SEARCH OPTIONS - NOW IT DEALS WITH TWO OF THE MORE COMPLICATED ONES - GETTING THE CREATOR NAME FROM USERS AND READING THE COMMA SPLIT KEYWORDS
-            String name = null; //IMAGEN THESE TREE ARE THE TextFields inputs from the user
-            String keyword2 = null;
+            String name = "fall"; //IMAGEN THESE TREE ARE THE TextFields inputs from the user
+            String keyword2 = "sugar rome";
             String author = null ;
-            Date startDateSpinner = new Date();
+            Date startDateSpinner = null;
             Date endDateSpinner = null;
-            startDateSpinner.setYear(10);
+
             advancedSearch(name,keyword2,author,startDateSpinner,endDateSpinner);
 
 
@@ -103,11 +105,30 @@ class Main {
     }
 
     public static List<Integer> advancedSearch(String name, String keyword2, String author, Date startDateSpinner, Date endDateSpinner) throws SQLException {
+
+
+        String[] keywords = null;
+        StringBuilder dynamicParameter = new StringBuilder();
+        if(keyword2 != null){
+            keywords = keyword2.split(" ");
+
+            for (int i = 1; i < keywords.length; i++) {
+                dynamicParameter.append("OR  CONCAT(',', `Keywords`, ',') LIKE CONCAT('%,', COALESCE(?, '%'), ',%')");
+            }}
+
         PreparedStatement stmt3 = DBM.conn.prepareStatement("SELECT * FROM `timelines` LEFT JOIN `users` ON users.UserID = timelines.TimelineOwner WHERE " +
-                " CONCAT(' ', `TimelineName`, ' ') LIKE CONCAT('% ', COALESCE(?, '%'), ' %') AND CONCAT(',', `Keywords`, ',') LIKE CONCAT('%,', COALESCE(?, '%'), ',%')  AND `UserName` = COALESCE(NULLIF(?, ''), `UserName`);") ;
+                " CONCAT(' ', `TimelineName`, ' ') LIKE CONCAT('% ', COALESCE(?, '%'), ' %') AND `UserName` = COALESCE(NULLIF(?, ''), `UserName`) AND (CONCAT(',', `Keywords`, ',') LIKE CONCAT('%,', COALESCE(?, '%'), ',%') " + dynamicParameter + ")  ;") ;
         stmt3.setString(1, name);
-        stmt3.setString(2, keyword2);
-        stmt3.setString(3, author);
+        stmt3.setString(2, author);
+        if(keywords != null)
+            for (int i = 3; i < keywords.length + 3; i++) {
+                stmt3.setString(i, keywords[i - 3]);
+                System.out.println(stmt3);
+            }
+        else
+            stmt3.setString(3, keyword2);
+
+
         //EXAMPLE OF RETURNING THE TIMELINES THAT FULFILL THE SEARCH AS TIMELINE OBJECT
         System.out.println();
         System.out.println("======SEARCH RESULTS as objects - THE TIMELINES NAMES==========");
