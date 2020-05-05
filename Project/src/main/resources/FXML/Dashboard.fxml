@@ -31,22 +31,6 @@
                      <HBox prefHeight="31.0">
                         <children>
                             <TextField fx:id="searchInput" prefHeight="31.0" prefWidth="376.0" promptText="Search here..." style="-fx-font-size: 1.3em;" />
-                           <Button fx:id="searchButton" contentDisplay="TOP" mnemonicParsing="false" prefHeight="31.0" prefWidth="90.0" styleClass="smallButton" text="Search">
-                              <opaqueInsets>
-                                 <Insets />
-                              </opaqueInsets>
-                              <HBox.margin>
-                                 <Insets left="10.0" />
-                              </HBox.margin>
-                           </Button>
-                           <Button fx:id="clearButton" contentDisplay="TOP" mnemonicParsing="false" prefHeight="31.0" prefWidth="90.0" styleClass="smallButton" text="Clear">
-                              <opaqueInsets>
-                                 <Insets />
-                              </opaqueInsets>
-                              <HBox.margin>
-                                 <Insets left="3.0" />
-                              </HBox.margin>
-                           </Button>
                         </children>
                         <HBox.margin>
                            <Insets />
@@ -82,8 +66,9 @@
                </VBox>
             </children>
          </VBox>
-         <GridPane fx:id="advancedSearchView" alignment="TOP_RIGHT" prefHeight="172.0" prefWidth="928.0">
+         <GridPane fx:id="advancedSearchView" alignment="TOP_RIGHT" prefHeight="172.0" prefWidth="928.0" visible="false">
             <columnConstraints>
+               <ColumnConstraints />
                <ColumnConstraints hgrow="SOMETIMES" maxWidth="924.0" minWidth="10.0" prefWidth="900.0" />
             </columnConstraints>
             <rowConstraints>
@@ -92,7 +77,7 @@
                <RowConstraints maxHeight="20.0" minHeight="10.0" prefHeight="20.0" vgrow="SOMETIMES" />
             </rowConstraints>
             <children>
-               <VBox prefWidth="906.0">
+               <VBox prefWidth="906.0" GridPane.columnIndex="1">
                   <children>
                      <VBox prefWidth="100.0" />
                      <HBox fx:id="TopLabels" prefHeight="32.0">
@@ -202,6 +187,26 @@
                            <Insets top="5.0" />
                         </padding>
                      </HBox>
+                  </children>
+               </VBox>
+               <VBox prefHeight="132.0" prefWidth="176.0">
+                  <children>
+                     <Button fx:id="searchButton" contentDisplay="TOP" minWidth="50.0" mnemonicParsing="false" prefHeight="32.0" prefWidth="90.0" styleClass="tinyButton" text="Search">
+                        <opaqueInsets>
+                           <Insets />
+                        </opaqueInsets>
+                        <VBox.margin>
+                           <Insets right="10.0" top="10.0" />
+                        </VBox.margin>
+                     </Button>
+                     <Button fx:id="clearButton" contentDisplay="TOP" minWidth="50.0" mnemonicParsing="false" onAction="#closeAdvancedSearch" prefHeight="31.0" prefWidth="90.0" styleClass="tinyButton" text="Clear">
+                        <opaqueInsets>
+                           <Insets />
+                        </opaqueInsets>
+                        <VBox.margin>
+                           <Insets right="10.0" top="10.0" />
+                        </VBox.margin>
+                     </Button>
                   </children>
                </VBox>
             </children>
