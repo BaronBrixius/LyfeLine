@@ -33,16 +33,15 @@
         </padding>
         <VBox prefHeight="84.0" prefWidth="206.0" spacing="10.0" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
             <HBox alignment="CENTER_LEFT" spacing="10.0">
-             <TextField fx:id="searchInput" prefHeight="42.0" prefWidth="501.0" style="-fx-font-size: 1.3em;" text="Search here..." />
-              
+             <TextField fx:id="searchInput" prefHeight="42.0" prefWidth="501.0" style="-fx-font-size: 1.3em;" text="Search here..."/>
             </HBox>
-             <ComboBox fx:id="sortBy" prefHeight="35.0" prefWidth="193.0" promptText="Sort By" style="-fx-font-size: 1.3em;" />
+             <ComboBox fx:id="sortBy" prefHeight="35.0" prefWidth="193.0" promptText="Sort By" style="-fx-font-size: 1.3em;"/>
                 <CheckBox fx:id="cbOnlyViewPersonalLines" alignment="CENTER" mnemonicParsing="false" onAction="#onlyUserTimelines" style="-fx-font-size: 1.3em;" text="Only Show My Timelines" />
          <padding>
             <Insets bottom="15.0" top="10.0" />
          </padding>
         </VBox>
-        <ListView fx:id="list" onMouseClicked="#updateDisplays" prefHeight="590.0" prefWidth="753.0" GridPane.columnSpan="2" GridPane.rowIndex="1" />
+        <ListView fx:id="list" onMouseClicked="#updateDisplays" prefHeight="590.0" prefWidth="753.0" GridPane.columnSpan="2" GridPane.rowIndex="1"/>
         <ScrollPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
             <TextFlow fx:id="displayInfo" prefHeight="564.0" prefWidth="500.0">
                 <Text fx:id="titleText" strokeType="OUTSIDE" strokeWidth="0.0" />
