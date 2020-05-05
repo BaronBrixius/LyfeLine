@@ -2,15 +2,14 @@ package controllers;
 
 import database.DBM;
 import database.Timeline;
+import database.TimelineObject;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
@@ -19,18 +18,41 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import utils.Date;
 
-import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
 public class Dashboard {
+	public Timeline timeline;
 
+	@FXML
+	protected Spinner startYY;
+	@FXML
+	protected Spinner startMO;
+	@FXML
+	protected Spinner startDD;
+	@FXML
+	protected Spinner startHH;
+	@FXML
+	protected Spinner startMM;
+	@FXML
+	protected Spinner startSS;
+	@FXML
+	protected Spinner endYY;
+	@FXML
+	protected Spinner endMO;
+	@FXML
+	protected Spinner endDD;
+	@FXML
+	protected Spinner endHH;
+	@FXML
+	protected Spinner endMM;
+	@FXML
+	protected Spinner endSS;
 	@FXML
 	protected Button eventEditorButton;
 	@FXML
@@ -86,6 +108,7 @@ public class Dashboard {
 	protected Hyperlink AdvancedSearch;
 	@FXML
 	protected Hyperlink toggleHHMMSS;
+
 
 	private List<Timeline> timelines;
 	private List<Timeline> userTimelines;
@@ -156,6 +179,7 @@ public class Dashboard {
 		titleText.setText("Select a Timeline.");
 
 	}
+
 
 	public void sortTimelines() {
 		switch (sortBy.getSelectionModel().getSelectedIndex()) {
@@ -416,9 +440,12 @@ public class Dashboard {
 	                                                 //Date start = null; Date end = null;
     public void advancedSearch() throws SQLException {
 
+		Date startDateSpinner = new Date((int) startYY.getValue(), (int) startMO.getValue(), (int) startDD.getValue(),
+				(int) startHH.getValue(), (int) startMM.getValue(), (int) startSS.getValue(),0);
 
-		Date startDateSpinner = null;
-		Date endDateSpinner = null;
+		Date endDateSpinner = new Date((int) endYY.getValue(), (int) endMO.getValue(), (int) endDD.getValue(),
+				(int) endHH.getValue(), (int) endMM.getValue(), (int) endSS.getValue(), 0);
+
 		String[] keywords = null;
 		StringBuilder dynamicParameter = new StringBuilder();
 		if(searchKeywords.getText() != null){
@@ -574,4 +601,5 @@ public class Dashboard {
 		else
 		this.list.setItems(FXCollections.observableArrayList(rightTimelines));
 	}
+
 }
