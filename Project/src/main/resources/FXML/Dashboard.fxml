@@ -65,7 +65,7 @@
                </VBox>
             </children>
          </VBox>
-         <GridPane fx:id="advancedSearchView" alignment="TOP_RIGHT" prefHeight="172.0" prefWidth="928.0">
+         <GridPane fx:id="advancedSearchView" alignment="TOP_RIGHT" prefHeight="172.0" prefWidth="928.0" visible="false">
             <columnConstraints>
                <ColumnConstraints />
                <ColumnConstraints hgrow="SOMETIMES" maxWidth="924.0" minWidth="10.0" prefWidth="900.0" />
@@ -130,6 +130,7 @@
                                  <Spinner fx:id="startYY" editable="true" prefWidth="60.0" />
                                  <Spinner fx:id="startMO" editable="true" prefWidth="60.0" GridPane.columnIndex="1" />
                                  <Spinner fx:id="startDD" editable="true" prefWidth="60.0" GridPane.columnIndex="2" />
+                                 
                               </children>
                            </GridPane>
                            <Hyperlink fx:id="toggleHHMMSS" alignment="CENTER" onAction="#toggleHHMMSS" prefHeight="23.0" prefWidth="30.0" text="(&gt;)" />

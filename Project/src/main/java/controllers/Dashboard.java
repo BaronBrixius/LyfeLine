@@ -58,10 +58,6 @@ public class Dashboard {
 	@FXML
 	protected ComboBox searchRating;
 	@FXML
-	protected DatePicker startDate;
-	@FXML
-	protected DatePicker endDate;
-	@FXML
 	protected Button clearButton;
 	@FXML
 	protected CheckBox cbOnlyViewPersonalLines;
@@ -75,6 +71,10 @@ public class Dashboard {
 	protected GridPane startHHMMSS;
 	@FXML
 	protected GridPane endHHMMSS;
+	@FXML
+	protected GridPane startYYMODD;
+	@FXML
+	protected GridPane endYYMODD;
 	@FXML
 	protected GridPane topLabels;
 	@FXML
