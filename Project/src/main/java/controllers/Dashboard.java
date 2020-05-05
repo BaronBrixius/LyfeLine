@@ -385,11 +385,25 @@ public class Dashboard {
 		}
 	}
     public  List<Integer> advancedSearch( Date startDateSpinner, Date endDateSpinner) throws SQLException {
-        PreparedStatement stmt3 = DBM.conn.prepareStatement("SELECT * FROM `timelines` LEFT JOIN `users` ON users.UserID = timelines.TimelineOwner WHERE " +
-                " CONCAT(' ', `TimelineName`, ' ') LIKE CONCAT('% ', COALESCE(?, '%'), ' %') AND `UserName` = COALESCE(NULLIF(?, ''), `UserName`) AND `Rating` = COALESCE(NULLIF(?, ''), `Rating`) AND CONCAT(',', `Keywords`, ',') LIKE CONCAT('%,', COALESCE(?, '%'), ',%')  ;") ;
-        stmt3.setString(1, searchTimelineName.getText());
-        stmt3.setString(2, searchCreator.getText());
-        stmt3.setInt(3, (Integer) searchRating.getValue());
+
+			String[] keywords = searchKeywords.getText().split(" ");
+			StringBuilder dynamicParameter = new StringBuilder();
+
+			for (int i = 1; i < keywords.length; i++) {
+				dynamicParameter.append("OR  CONCAT(',', `Keywords`, ',') LIKE CONCAT('%,', COALESCE(?, '%'), ',%')");
+			}
+
+			PreparedStatement stmt3 = DBM.conn.prepareStatement("SELECT * FROM `timelines` LEFT JOIN `users` ON users.UserID = timelines.TimelineOwner WHERE " +
+					" CONCAT(' ', `TimelineName`, ' ') LIKE CONCAT('% ', COALESCE(?, '%'), ' %') AND `UserName` = COALESCE(NULLIF(?, ''), `UserName`) AND `Rating` = COALESCE(NULLIF(?, ''), `Rating`) AND (CONCAT(',', `Keywords`, ',') LIKE CONCAT('%,', COALESCE(?, '%'), ',%') " + dynamicParameter + ")  ;");
+			stmt3.setString(1, searchTimelineName.getText());
+			stmt3.setString(2, searchCreator.getText());
+			stmt3.setInt(3, (Integer) searchRating.getValue());
+			for (int i = 4; i < keywords.length + 4; i++) {
+				stmt3.setString(i, keywords[i - 4]);
+				System.out.println(stmt3);
+			}
+
+
         stmt3.setString(4, searchKeywords.getText());
         //EXAMPLE OF RETURNING THE TIMELINES THAT FULFILL THE SEARCH AS TIMELINE OBJECT
         System.out.println();
