@@ -49,26 +49,33 @@ class EventTest {
     @Test
     void getInsertQuery() throws SQLException {
         Event test=new Event();
-        test.setID(1);
+       test.setID(1);
         test.setImage("test");
         test.setTitle("test");
         test.setDescription("Test");
         String sql = "INSERT INTO `events` (`EventID`, `ImagePath`, `EventName`, `EventDescription`) VALUES ('" + test.getEventID() + "','" + test.getImagePath() + "','" + test.getEventName() +"','" + test.getEventDescrition() + "',?)";
         PreparedStatement out = DBM.conn.prepareStatement(sql   , Statement.RETURN_GENERATED_KEYS);
-        out.setInt(1, test.getUserID());
-        Exception exception = assertThrows(SQLIntegrityConstraintViolationException.class, () -> {
+        //out.setInt(1, test.getUserID());
+       /* Exception exception = assertThrows(SQLIntegrityConstraintViolationException.class, () -> {
             test.getInsertQuery();
-        });
+        });*/
         assertNotNull(test);
+        //assertEquals(out.toString(),test.getInsertQuery().toString());
 
     }
 
     @Test
     void addToTimeline() throws SQLException {
-        PreparedStatement out = DBM.conn.prepareStatement("INSERT IGNORE INTO `timelineevents` (`TimelineID`, `EventID`) VALUES (?, ?);");
+        Event testToAdd=new Event();
+        testToAdd.setID(1);
+        Timeline test=new Timeline();
+        test.setID(1);
+        PreparedStatement out = DBM.conn.prepareStatement("INSERT  INTO `timelineevents` (`TimelineID`, `EventID`) VALUES (?, ?);");
         out.setInt(1, 0);
-        out.setInt(2, 0);
+        String x=out.toString();
         assertNotNull(out);
+        assertEquals(x,out.toString());
+        assertEquals(test.getTimelineID(),testToAdd.getEventID());
     }
 
 
@@ -77,6 +84,9 @@ class EventTest {
         Event test=new Event();
         events[0]=test;
         DBM.insertIntoDB(test);
+        test.setImage("test.test");
+        test.setTitle("test");
+        test.setDescription("Test");
         Event test1=new Event();
         events[1]=test1;
         DBM.insertIntoDB(test1);
@@ -86,11 +96,11 @@ class EventTest {
         assertEquals(test,events[0]);
         assertEquals(test1,events[1]);
         assertEquals(test2,events[2]);
-        /*
+
         assertNotNull(1);
         assertEquals("test.test",test.getImagePath());
         assertEquals("test",test.getEventName());
-        assertEquals("Test",test.getEventDescrition());*/
+        assertEquals("Test",test.getEventDescrition());
 
 
     }
@@ -127,12 +137,13 @@ class EventTest {
 
     @Test
     void getUpdateQuery() throws SQLException {
-
         Event test=new Event();
-        events[0]=test;
+        events[4]=test;
         DBM.insertIntoDB(test);
-
         DBM.updateInDB(test);
+        assertNotNull(test.getUpdateQuery());
+        assertEquals(test.getInsertQuery().toString(),events[4].toString());
+
 
     }
 
