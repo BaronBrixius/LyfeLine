@@ -166,6 +166,7 @@ public class Dashboard {
 		searchRating.setItems(ratings);
 	}
 
+
 	public void sortTimelines() {
 		switch (sortBy.getSelectionModel().getSelectedIndex()) {
 		case 0:
@@ -207,18 +208,20 @@ public class Dashboard {
 													// feature)
 						List<String> allThisTimelineKeywords = timelines.get(i).getKeywords();
 						List<String> possibleKeywords = new ArrayList<>();
+                        String[]  timlineNames = timelines.get(i).getName().trim().split("\\s++");
 						for (int k = 0; k < allThisTimelineKeywords.size(); k++) {
 							if (allThisTimelineKeywords.get(k).length() >= toFind.length()) {
 								possibleKeywords.add(allThisTimelineKeywords.get(k));
 							}
 						}
-						boolean found = Arrays.asList(possibleKeywords.toArray()).stream().anyMatch(s -> s.toString()
+						boolean keyWordfound = Arrays.asList(possibleKeywords.toArray()).stream().anyMatch(s -> s.toString()
 								.toLowerCase().substring(0, toFind.length()).equalsIgnoreCase(toFind.toLowerCase()));
+						boolean namefound = Arrays.asList(timlineNames).stream().anyMatch(s -> s.toString()
+								.toLowerCase().equalsIgnoreCase(toFind.toLowerCase()));
 
-						if (found) {
+						if (keyWordfound || namefound) {
 							if (!templist.contains(userTimelines.get(i))) // if the timline has not already been
-																			// associated with this search then add it
-																			// to the temporary timelinelist
+																			// associated with this search then add it// to the temporary timelinelist
 								templist.add(userTimelines.get(i));
 						}
 					}
@@ -239,15 +242,19 @@ public class Dashboard {
 													// feature)
 						List<String> allThisTimelineKeywords = timelines.get(i).getKeywords();
 						List<String> possibleKeywords = new ArrayList<>();
+						String[]  timlineNames = timelines.get(i).getName().trim().split("\\s++");
 						for (int k = 0; k < allThisTimelineKeywords.size(); k++) {
 							if (allThisTimelineKeywords.get(k).length() >= toFind.length()) {
 								possibleKeywords.add(allThisTimelineKeywords.get(k));
 							}
 						}
-						boolean found = Arrays.asList(possibleKeywords.toArray()).stream().anyMatch(s -> s.toString()
+						boolean keyWordfound = Arrays.asList(possibleKeywords.toArray()).stream().anyMatch(s -> s.toString()
 								.toLowerCase().substring(0, toFind.length()).equalsIgnoreCase(toFind.toLowerCase()));
 
-						if (found) {
+						boolean namefound = Arrays.asList(timlineNames).stream().anyMatch(s -> s.toString()
+								.toLowerCase().equalsIgnoreCase(toFind.toLowerCase()));
+
+						if (keyWordfound || namefound) {
 							if (!templist.contains(timelines.get(i))) // if the timline has not already been associated
 																		// with this search then add it to the temporary
 																		// timelinelist
