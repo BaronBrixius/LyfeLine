@@ -56,7 +56,8 @@ public class Dashboard {
 	protected DatePicker startDate;
 	@FXML
 	protected DatePicker endDate;
-
+	@FXML
+	protected Button clearButton;
 	@FXML
 	protected CheckBox cbOnlyViewPersonalLines;
 	@FXML

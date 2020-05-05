@@ -24,7 +24,7 @@
 <VBox minHeight="400.0" minWidth="600.0" stylesheets="@../styles/DefaultStyle.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.Dashboard">
    <HBox fx:id="Simple" alignment="CENTER_LEFT" spacing="10.0">
       <children>
-         <VBox prefHeight="192.0" prefWidth="413.0">
+         <VBox prefHeight="185.0" prefWidth="481.0">
             <children>
                <HBox prefHeight="31.0" prefWidth="346.0">
                   <children>
@@ -39,6 +39,14 @@
                                  <Insets left="10.0" />
                               </HBox.margin>
                            </Button>
+                           <Button fx:id="clearButton" contentDisplay="TOP" mnemonicParsing="false" prefHeight="31.0" prefWidth="90.0" styleClass="smallButton" text="Clear">
+                              <opaqueInsets>
+                                 <Insets />
+                              </opaqueInsets>
+                              <HBox.margin>
+                                 <Insets left="3.0" />
+                              </HBox.margin>
+                           </Button>
                         </children>
                         <HBox.margin>
                            <Insets />
@@ -46,7 +54,7 @@
                      </HBox>
                   </children>
                </HBox>
-               <HBox prefHeight="43.0" prefWidth="363.0">
+               <HBox prefHeight="43.0" prefWidth="441.0">
                   <padding>
                      <Insets top="10.0" />
                   </padding>
@@ -74,7 +82,7 @@
                </VBox>
             </children>
          </VBox>
-         <GridPane fx:id="advancedSearchView" alignment="TOP_RIGHT" prefHeight="172.0" prefWidth="928.0" visible="false">
+         <GridPane fx:id="advancedSearchView" alignment="TOP_RIGHT" prefHeight="172.0" prefWidth="928.0">
             <columnConstraints>
                <ColumnConstraints hgrow="SOMETIMES" maxWidth="924.0" minWidth="10.0" prefWidth="900.0" />
             </columnConstraints>
@@ -134,9 +142,9 @@
                                  <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                               </rowConstraints>
                               <children>
-                                 <Spinner prefWidth="60.0" />
-                                 <Spinner prefWidth="60.0" GridPane.columnIndex="1" />
-                                 <Spinner prefWidth="60.0" GridPane.columnIndex="2" />
+                                 <Spinner fx:id="startHH" editable="true" prefWidth="60.0" />
+                                 <Spinner fx:id="startMM" editable="true" prefWidth="60.0" GridPane.columnIndex="1" />
+                                 <Spinner fx:id="startSS" editable="true" prefWidth="60.0" GridPane.columnIndex="2" />
                               </children>
                            </GridPane>
                         </children>
@@ -168,9 +176,9 @@
                      </HBox>
                      <HBox>
                         <children>
-                           <TextField fx:id="searchInput11" alignment="CENTER" prefWidth="196.0" promptText="Keywords" style="-fx-font-size: 1.3em;" />
+                           <TextField fx:id="searchKeywords" alignment="CENTER" prefWidth="196.0" promptText="Keywords" style="-fx-font-size: 1.3em;" />
                            <Region minWidth="20.0" />
-                           <ComboBox prefHeight="32.0" prefWidth="196.0" />
+                           <ComboBox fx:id="searchRating" prefHeight="32.0" prefWidth="196.0" />
                            <Region minWidth="20.0" />
                            <DatePicker fx:id="endDate" prefWidth="196.0" />
                            <Region minWidth="40.0" prefWidth="40.0" />
@@ -184,9 +192,9 @@
                                  <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                               </rowConstraints>
                               <children>
-                                 <Spinner prefWidth="60.0" />
-                                 <Spinner prefWidth="60.0" GridPane.columnIndex="1" />
-                                 <Spinner prefWidth="60.0" GridPane.columnIndex="2" />
+                                 <Spinner fx:id="endHH" editable="true" prefWidth="60.0" />
+                                 <Spinner fx:id="endMM" editable="true" prefWidth="60.0" GridPane.columnIndex="1" />
+                                 <Spinner fx:id="endSS" editable="true" prefWidth="60.0" GridPane.columnIndex="2" />
                               </children>
                            </GridPane>
                         </children>
