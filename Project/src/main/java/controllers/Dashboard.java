@@ -42,7 +42,7 @@ public class Dashboard {
 	@FXML
 	protected Button btnCreate;
 	@FXML
-	protected Button search;
+	protected Button searchButton;
 	@FXML
 	protected TextFlow displayInfo;
 	@FXML
@@ -274,6 +274,11 @@ public class Dashboard {
 			endHHMMSS.setVisible(false);
 			topLabels.setVisible(false);
 			bottomLabels.setVisible(false);
+			searchTimelineName.clear();
+			searchCreator.clear();
+			searchKeywords.clear();
+
+			this.list.setItems(FXCollections.observableArrayList(timelines));
 
 		});
 
