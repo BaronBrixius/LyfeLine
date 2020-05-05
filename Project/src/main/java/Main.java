@@ -73,8 +73,8 @@ class Main {
 
             //THE CODE FOR ADVANCED SEARCH,JUST ADD TO IT FOR MORE SEARCH OPTIONS - NOW IT DEALS WITH TWO OF THE MORE COMPLICATED ONES - GETTING THE CREATOR NAME FROM USERS AND READING THE COMMA SPLIT KEYWORDS
             String name = "fall"; //IMAGEN THESE TREE ARE THE TextFields inputs from the user
-            String keyword2 = "sugar rome";
-            String author = null ;
+            String keyword2 = "rome";
+            String author = "ben" ;
             Date startDateSpinner = null;
             Date endDateSpinner = null;
 
