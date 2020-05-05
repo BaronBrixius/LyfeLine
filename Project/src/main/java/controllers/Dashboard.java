@@ -400,7 +400,6 @@ public class Dashboard {
 	                                                 //Date start = null; Date end = null;
     public void advancedSearch() throws SQLException {
 
-
 		Date startDateSpinner = null;
 		Date endDateSpinner = null;
 		   String[] keywords = null;
@@ -417,7 +416,7 @@ public class Dashboard {
 					" CONCAT(' ', `TimelineName`, ' ') LIKE CONCAT('% ', COALESCE(?, '%'), ' %') AND `UserName` = COALESCE(NULLIF(?, ''), `UserName`) AND `Rating` = COALESCE(NULLIF(?, ''), `Rating`)  AND (CONCAT(',', `Keywords`, ',') LIKE CONCAT('%,', COALESCE(?, '%'), ',%') " + dynamicParameter + ")  ;");
 			stmt3.setString(1, searchTimelineName.getText());
 			stmt3.setString(2, searchCreator.getText());
-			stmt3.setInt(3, (Integer) searchRating.getValue());
+			stmt3.setInt(3, 0); //For now untill the Rating combobox provides something
 			if(keywords != null)
 			for (int i = 4; i < keywords.length + 4; i++) {
 				stmt3.setString(i, keywords[i - 4]);
