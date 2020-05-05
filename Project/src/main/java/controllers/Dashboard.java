@@ -10,11 +10,13 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 
 import java.io.IOException;
 import java.sql.PreparedStatement;
@@ -62,17 +64,11 @@ public class Dashboard {
         } catch (SQLException e) {
             System.err.println("Could not get timelines from database.");
         }
-
-        // approach adapted from https://stackoverflow.com/a/36657553
-        list.setCellFactory(param -> new ListCell<>() {
+        
+        list.setCellFactory(new Callback<ListView<Timeline>, ListCell<Timeline>>() {
             @Override
-            protected void updateItem(Timeline item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null || item.getName() == null) {
-                    setText(null);
-                } else {
-                    setText(item.getName());
-                }
+            public ListCell<Timeline> call(ListView<Timeline> listView) {
+                return new CustomListCell();
             }
         });
 
@@ -277,6 +273,33 @@ public class Dashboard {
             btnDelete.setDisable(true);
             btnEdit.setDisable(true);
             titleText.setText("Select a Timeline.");
+        }
+    }
+    
+    private class CustomListCell extends ListCell<Timeline> {
+        private HBox content;
+        private Text name;
+        private Text id;
+
+        public CustomListCell() {
+            super();
+            name = new Text();
+            id = new Text();
+            VBox vBox = new VBox(name, id);
+            content = new HBox(new Label("[Graphic]"), vBox);
+            content.setSpacing(10);
+        }
+
+        @Override
+        protected void updateItem(Timeline item, boolean empty) {
+            super.updateItem(item, empty);
+            if (item != null && !empty) { // <== test for null item and empty parameter
+                name.setText(item.getName());
+                id.setText("ID: "+item.getID());
+                setGraphic(content);
+            } else {
+                setGraphic(null);
+            }
         }
     }
 }
