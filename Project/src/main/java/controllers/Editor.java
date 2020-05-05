@@ -153,8 +153,8 @@ public abstract class Editor {
 
             confirmDelete.showAndWait();
             return false;
-        } else
-            return true;
+        }
+        return true;
     }
 
     void setOwner(boolean owner) {
@@ -194,7 +194,7 @@ public abstract class Editor {
         endInputs.get(6).getValueFactory().setValue(itemInEditor.getEndDate().getMillisecond());
     }
 
-    void updateItem(TimelineObject itemInEditor) {
+    void updateItem(TimelineObject itemInEditor) {                  //sets object's values based on input fields' values
         itemInEditor.setName(titleInput.getText());
         itemInEditor.setDescription(descriptionInput.getText().replaceAll("([^\r])\n", "$1\r\n"));
 
@@ -207,7 +207,7 @@ public abstract class Editor {
 
     abstract boolean hasChanges();
 
-    boolean hasChanges(TimelineObject itemInEditor) {
+    boolean hasChanges(TimelineObject itemInEditor) {           //returns true if any input fields don't match the object's values
         if (!itemInEditor.getName().equals(titleInput.getText())
                 || !itemInEditor.getDescription().equals(descriptionInput.getText().replaceAll("([^\r])\n", "$1\r\n")))     //textArea tends to change the newline from \r\n to just \n which breaks some things)
             return true;
@@ -239,27 +239,27 @@ public abstract class Editor {
         return true;
     }
 
-    private void setupTimeInputStartAndEnd(String timeSpinnerLabel, int minValue, int maxValue, int index) {
+    private void setupTimeInputStartAndEnd(String timeSpinnerLabel, int minValue, int maxValue, int index) {    //applies equivalent setups to both start and end spinners
         setupTimeInput(timeSpinnerLabel, minValue, maxValue, index, startInputs, startBoxes);
         setupTimeInput(timeSpinnerLabel, minValue, maxValue, index, endInputs, endBoxes);
     }
 
+    //creates spinners to handle dates with appropriate min/max values and invalid input handling
     private void setupTimeInput(String timeSpinnerLabel, int minValue, int maxValue, int index, List<Spinner<Integer>> spinnerList, List<VBox> boxList) {
-        int initValue = (timeSpinnerLabel.equals("Year")) ? 0 : minValue;   //initial value is minimum, except for years
-        SpinnerValueFactory.IntegerSpinnerValueFactory valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(minValue, maxValue, initValue);
+        int initValue = (timeSpinnerLabel.equals("Year")) ? 0 : minValue;   //initial value is equal to minimum, except in the case of years
 
+        SpinnerValueFactory.IntegerSpinnerValueFactory valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(minValue, maxValue, initValue);
         valueFactory.setConverter(new StringConverter<>() {                 //makes spinners revert to default values in case of invalid input
             @Override
-            public String toString(Integer value) {
+            public String toString(Integer value) {     //called by spinner to update the displayed value in the box
                 if (value == null)
                     return String.valueOf(initValue);
                 return value.toString();
             }
 
             @Override
-            public Integer fromString(String string) {
+            public Integer fromString(String string) {  //called by spinner to read the value from the box and convert to int
                 try {
-                    // If the specified value is null or zero-length, return default value
                     if (string == null)
                         return initValue;
                     string = string.trim();
@@ -277,7 +277,7 @@ public abstract class Editor {
         spinnerList.get(index).setEditable(true);
         spinnerList.get(index).focusedProperty().addListener((observableValue, oldValue, newValue) -> {
             if (!newValue)                                  //the display doesn't restore if invalid info is entered repeatedly, this fixes that
-                spinnerList.get(index).cancelEdit();        //note: cancelEdit() is really more like "update display" as implemented
+                spinnerList.get(index).cancelEdit();        //note: cancelEdit() is really more like "update display" as implemented. this triggers it upon losing focus
         });                                                 //why this isn't default behavior I'll never know
 
         //adds each spinner to a VBox underneath its label, to keep the two connected as they move around
