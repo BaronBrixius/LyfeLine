@@ -42,7 +42,7 @@ public class Dashboard {
 	@FXML
 	protected Button btnCreate;
 	@FXML
-	protected Button search;
+	protected Button searchButton;
 	@FXML
 	protected TextFlow displayInfo;
 	@FXML
@@ -274,6 +274,13 @@ public class Dashboard {
 			endHHMMSS.setVisible(false);
 			topLabels.setVisible(false);
 			bottomLabels.setVisible(false);
+			searchTimelineName.clear();
+			searchCreator.clear();
+			searchKeywords.clear();
+			if (cbOnlyViewPersonalLines.isSelected()) {
+				onlyUserTimelines();}
+			else
+			this.list.setItems(FXCollections.observableArrayList(timelines));
 
 		});
 
@@ -409,6 +416,7 @@ public class Dashboard {
 	                                                 //Date start = null; Date end = null;
     public void advancedSearch() throws SQLException {
 
+
 		Date startDateSpinner = null;
 		Date endDateSpinner = null;
 		String[] keywords = null;
@@ -423,6 +431,9 @@ public class Dashboard {
 
 			PreparedStatement stmt3 = DBM.conn.prepareStatement("SELECT * FROM `timelines` LEFT JOIN `users` ON users.UserID = timelines.TimelineOwner WHERE " +
 					" CONCAT(' ', `TimelineName`, ' ') LIKE CONCAT('% ', COALESCE(?, '%'), ' %') AND `UserName` = COALESCE(NULLIF(?, ''), `UserName`) AND `Rating` = COALESCE(NULLIF(?, ''), `Rating`)  AND (CONCAT(',', `Keywords`, ',') LIKE CONCAT('%,', COALESCE(?, '%'), ',%') " + dynamicParameter + ")  ;");
+		if(searchTimelineName.getText().isEmpty())
+		    stmt3.setString(1, "%");
+		else
 			stmt3.setString(1, searchTimelineName.getText());
 			stmt3.setString(2, searchCreator.getText());
 			stmt3.setInt(3, 0); //For now untill the Rating combobox provides something
@@ -549,10 +560,18 @@ public class Dashboard {
 				}
 			}
 		}
+		if (cbOnlyViewPersonalLines.isSelected()) {
 
-		for (int i = 0; i < rightTimelines.size(); i++)
-			System.out.println(list.get(i).getName());
-
+			List<Timeline> userline = new ArrayList<>();
+			for(int i = 0; i<rightTimelines.size();i++){
+				for(int j = 0 ; j<userTimelines.size();j++){
+					if(userTimelines.get(j).getID() == rightTimelines.get(i).getID())
+						userline.add(rightTimelines.get(i));
+				}
+			}
+			this.list.setItems(FXCollections.observableArrayList(userline));
+		}
+		else
 		this.list.setItems(FXCollections.observableArrayList(rightTimelines));
 	}
 }

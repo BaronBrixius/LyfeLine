@@ -228,7 +228,7 @@
                </VBox>
                <VBox prefHeight="132.0" prefWidth="176.0">
                   <children>
-                     <Button fx:id="searchButton" contentDisplay="TOP" minWidth="50.0" mnemonicParsing="false" prefHeight="32.0" prefWidth="90.0" styleClass="tinyButton" text="Search">
+                     <Button fx:id="searchButton" contentDisplay="TOP" minWidth="50.0" mnemonicParsing="false" onAction="#advancedSearch" prefHeight="32.0" prefWidth="90.0" styleClass="tinyButton" text="Search">
                         <opaqueInsets>
                            <Insets />
                         </opaqueInsets>

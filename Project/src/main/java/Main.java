@@ -17,7 +17,7 @@ class Main {
         PreparedStatement stmt;
         PreparedStatement stmt2;
         try {
-            new DBM(     );
+            new DBM(   );
             DBM.setupSchema();       //destroys + remakes DB with default settings, can comment this out after first run if desired
 
             //Makes a list of events from the DB and prints it
@@ -72,9 +72,9 @@ class Main {
 
 
             //THE CODE FOR ADVANCED SEARCH,JUST ADD TO IT FOR MORE SEARCH OPTIONS - NOW IT DEALS WITH TWO OF THE MORE COMPLICATED ONES - GETTING THE CREATOR NAME FROM USERS AND READING THE COMMA SPLIT KEYWORDS
-            String name = "fall"; //IMAGEN THESE TREE ARE THE TextFields inputs from the user
-            String keyword2 = "rome";
-            String author = "ben" ;
+            String name = null; //IMAGEN THESE TREE ARE THE TextFields inputs from the user
+            String keyword2 = "bronze";
+            String author = null ;
             Date startDateSpinner = null;
             Date endDateSpinner = null;
 
