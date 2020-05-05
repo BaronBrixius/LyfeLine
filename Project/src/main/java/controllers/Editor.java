@@ -200,8 +200,6 @@ public abstract class Editor {
         toggleEditable(!editable);
     }
 
-    abstract boolean hasChanges();
-
     void toggleEditable(boolean editable) {
         this.editable = editable;
         inputFields.setDisable(!editable);
@@ -228,8 +226,6 @@ public abstract class Editor {
         return save();
     }
 
-    abstract boolean save();
-
     boolean validData() {
         Date newStartDate = new Date(startInputs.get(0).getValue(), startInputs.get(1).getValue(), startInputs.get(2).getValue(),
                 startInputs.get(3).getValue(), startInputs.get(4).getValue(), startInputs.get(5).getValue(), startInputs.get(6).getValue());
@@ -249,10 +245,12 @@ public abstract class Editor {
             return true;
     }
 
-    void setOwner(boolean owner) {        //Check if Owner
+    void setOwner(boolean owner) {
         saveEditButton.setDisable(!owner);
         deleteButton.setDisable(!owner);
     }
+
+    abstract boolean populateDisplay();
 
     void populateDisplay(TimelineObject itemInEditor) {
         titleInput.setText(itemInEditor.getName());
@@ -267,20 +265,22 @@ public abstract class Editor {
             startInputs.get(5).getValueFactory().setValue(itemInEditor.getStartDate().getSecond());
             startInputs.get(6).getValueFactory().setValue(itemInEditor.getStartDate().getMillisecond());
 
-            endInputs.get(0).getValueFactory().setValue(itemInEditor.getEndDate().getYear());
-            endInputs.get(1).getValueFactory().setValue(itemInEditor.getEndDate().getMonth());
-            endInputs.get(2).getValueFactory().setValue(itemInEditor.getEndDate().getDay());
-            endInputs.get(3).getValueFactory().setValue(itemInEditor.getEndDate().getHour());
-            endInputs.get(4).getValueFactory().setValue(itemInEditor.getEndDate().getMinute());
-            endInputs.get(5).getValueFactory().setValue(itemInEditor.getEndDate().getSecond());
-            endInputs.get(6).getValueFactory().setValue(itemInEditor.getEndDate().getMillisecond());
+            populateEndInputs(itemInEditor);
         }
 
         setExpansion(startPane, startBoxes, false, parentController.activeTimeline.getScale());
         setExpansion(endPane, endBoxes, false, parentController.activeTimeline.getScale());
     }
 
-    abstract boolean populateDisplay();
+    void populateEndInputs(TimelineObject itemInEditor){            //so that end dates can have their display toggled separately for events
+        endInputs.get(0).getValueFactory().setValue(itemInEditor.getEndDate().getYear());
+        endInputs.get(1).getValueFactory().setValue(itemInEditor.getEndDate().getMonth());
+        endInputs.get(2).getValueFactory().setValue(itemInEditor.getEndDate().getDay());
+        endInputs.get(3).getValueFactory().setValue(itemInEditor.getEndDate().getHour());
+        endInputs.get(4).getValueFactory().setValue(itemInEditor.getEndDate().getMinute());
+        endInputs.get(5).getValueFactory().setValue(itemInEditor.getEndDate().getSecond());
+        endInputs.get(6).getValueFactory().setValue(itemInEditor.getEndDate().getMillisecond());
+    }
 
     void updateItem(TimelineObject itemInEditor) {
         itemInEditor.setName(titleInput.getText());
@@ -293,13 +293,15 @@ public abstract class Editor {
                 endInputs.get(3).getValue(), endInputs.get(4).getValue(), endInputs.get(5).getValue(), endInputs.get(6).getValue()));
     }
 
+    abstract boolean hasChanges();
+
     boolean hasChanges(TimelineObject itemInEditor) {
         if (!itemInEditor.getName().equals(titleInput.getText())
                 || !itemInEditor.getDescription().equals(descriptionInput.getText().replaceAll("([^\r])\n", "$1\r\n")))     //textArea tends to change the newline from \r\n to just \n which breaks some things)
             return true;
 
         Date readStart = new Date(startInputs.get(0).getValue(), startInputs.get(1).getValue(), startInputs.get(2).getValue(),
-                startInputs.get(3).getValue(), startInputs.get(4).getValue(), startInputs.get(5).getValue(), startInputs.get(6).getValue());   //milliseconds not implemented yet, do we need to?
+                startInputs.get(3).getValue(), startInputs.get(4).getValue(), startInputs.get(5).getValue(), startInputs.get(6).getValue());
 
         Date readEnd = new Date(endInputs.get(0).getValue(), endInputs.get(1).getValue(), endInputs.get(2).getValue(),
                 endInputs.get(3).getValue(), endInputs.get(4).getValue(), endInputs.get(5).getValue(), endInputs.get(6).getValue());
@@ -309,6 +311,8 @@ public abstract class Editor {
                         || itemInEditor.getEndDate().compareTo(readEnd) != 0
         );
     }
+
+    abstract boolean save();
 
     boolean save(TimelineObject itemInEditor) {
         try {

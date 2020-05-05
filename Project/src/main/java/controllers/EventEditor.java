@@ -1,8 +1,6 @@
 package controllers;
 
-import database.DBM;
 import database.Event;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -83,15 +81,19 @@ public class EventEditor extends Editor {
     }
 
     @FXML
-    private void toggleHasDuration() {
+    void toggleHasDuration() {
         endPane.setDisable(!hasDuration.isSelected());
         setExpansion(endPane, endBoxes, hasDuration.isSelected() && endExpanded, parentController.activeTimeline.getScale());   //compresses if disabled, if enabled leave it as user wanted
-        if (hasDuration.isSelected())
+        if (hasDuration.isSelected()) {
+            populateEndInputs(event);
             endPane.getStyleClass().remove("DisabledAnyways");
-        else
+        } else {
+            for (int i = 0; i < 7; i++) {
+                endInputs.get(i).getValueFactory().setValue(startInputs.get(i).getValue());
+            }
             endPane.getStyleClass().add("DisabledAnyways");
+        }
     }
-
 
     @FXML
     private void uploadImage() throws IOException {    //Only working now for .jpg
@@ -227,7 +229,7 @@ public class EventEditor extends Editor {
         return false;
     }
 
-    public boolean setEvent(int eventID) {       //is this even needed? don't implement yet
+    boolean setEvent(int eventID) {       //is this even needed? don't implement yet
         /*Event newEvent = logic to find Event in database and get its info
         if (newEvent != null)
             return changeEvent(newEvent);*/
@@ -301,6 +303,8 @@ public class EventEditor extends Editor {
     }
 
     boolean hasChanges() {
+        if (!hasDuration.isSelected() && event.getStartDate().compareTo(event.getEndDate()) != 0)
+            return true;
         if (super.hasChanges(event))
             return true;
         return event.getEventPriority() != prioritySlider.getValue();
@@ -317,7 +321,7 @@ public class EventEditor extends Editor {
     }
 
     @FXML
-    void clearImage(ActionEvent actionEvent) {
+    void clearImage() {
         if (event.getImagePath() != null) {
             try {
                 Files.deleteIfExists(Paths.get(event.getImagePath()));

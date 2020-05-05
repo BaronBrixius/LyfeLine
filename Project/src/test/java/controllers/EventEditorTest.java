@@ -18,13 +18,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.ApplicationExtension;
 import org.testfx.framework.junit5.Start;
+import utils.Date;
 
 import java.sql.SQLException;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(ApplicationExtension.class)
 public class EventEditorTest {
@@ -151,14 +151,13 @@ public class EventEditorTest {
     }
 
     @Test
-    void oldEventSaved() throws SQLException, InterruptedException {
+    void oldEventSaved() throws InterruptedException {
         String expected = "test";
-
-        setOwnerLoggedIn();
 
         Platform.runLater(() -> {
             selector.eventListView.getSelectionModel().select(1);
             selector.openEvent();
+            setOwnerLoggedIn();
         });
         waitForRunLater();
         Platform.runLater(() -> {
@@ -179,16 +178,80 @@ public class EventEditorTest {
         waitForRunLater();
     }
 
-/*
-            @Test
-            void hasChangesNewEventNoChanges() {
-                sut.setEvent(new Event());
-                assertFalse(sut.hasChanges());
+    @Test
+    void disableEndDateandSave() throws InterruptedException {
+        Platform.runLater(() -> {
+            selector.eventListView.getSelectionModel().select(1);
+            selector.openEvent();
+            setOwnerLoggedIn();
+        });
+        waitForRunLater();
+        Date expected = sut.event.getStartDate();
+        assertFalse(expected.compareTo(sut.event.getEndDate()) == 0);
+
+        Platform.runLater(() -> {
+            sut.saveEditButton();
+            sut.hasDuration.setSelected(false);
+            sut.toggleHasDuration();
+            sut.saveEditButton();
+        });
+        waitForRunLater();
+        Platform.runLater(() -> {
+            DialogPane alert = getDialogPane();
+            robot.clickOn(alert.lookupButton(ButtonType.OK));
+        });
+        waitForRunLater();
+        Platform.runLater(() -> {
+            assertTrue(expected.compareTo(sut.event.getEndDate()) == 0);
+        });
+        waitForRunLater();
+    }
+
+    @Test
+    void ownerCanEdit() throws InterruptedException {
+        Platform.runLater(() -> {
+            selector.eventListView.getSelectionModel().select(1);
+            selector.openEvent();
+            setOwnerLoggedIn();
+
+        });
+        waitForRunLater();
+        Platform.runLater(() -> {
+            sut.saveEditButton();
+            sut.hasDuration.setSelected(false);
+            sut.toggleHasDuration();
+        });
+        waitForRunLater();
+
+        Platform.runLater(() -> {
+            try {
+                Thread.sleep(10000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
+            assertFalse(sut.saveEditButton.isDisable());
+            assertFalse(sut.deleteButton.isDisable());
+        });
+        waitForRunLater();
+    }
 
-private void assertFalse(boolean hasChanges) {
-}
+    @Test
+    void nonOwnerAdminCantEdit() throws InterruptedException {
+        Platform.runLater(() -> {
+            selector.eventListView.getSelectionModel().select(1);
+            selector.openEvent();
+            setAdminLoggedIn(true);
+        });
+        waitForRunLater();
 
+        Platform.runLater(() -> {
+            assertTrue(sut.saveEditButton.isDisable());
+            assertTrue(sut.deleteButton.isDisable());
+        });
+        waitForRunLater();
+    }
+
+/*
 @Test
 void close() {
 }
@@ -208,9 +271,9 @@ void clearImage() {
 
     //helper method returns popup windows, requires input of Title string
     private DialogPane getDialogPane() {
-        final List<Window> allWindows = Window.getWindows();        //Get a list of windows
-        for (Window w : allWindows) {                                //if a window is a DialogPane with the correct title, return it
-            if (w != null && w.isFocused())
+        final List<Window> allWindows = Window.getWindows();            //Get a list of windows
+        for (Window w : allWindows) {                                   //if a window is a DialogPane with the correct title, return it
+            if (w != null && w.getScene().getRoot() instanceof DialogPane)
                 return (DialogPane) w.getScene().getRoot();
         }
         return null;
@@ -228,6 +291,6 @@ void clearImage() {
 
     void setOwnerLoggedIn() {
         setAdminLoggedIn(true);
-        setUserIDLoggedIn(parent.activeTimeline.getOwnerID());
+        setUserIDLoggedIn(sut.event.getOwnerID());
     }
 }
