@@ -5,10 +5,12 @@ import database.Timeline;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
@@ -17,6 +19,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import utils.Date;
 
+import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -144,6 +147,11 @@ public class Dashboard {
 
 		});
 
+
+
+
+
+
 		list.getSelectionModel().selectedIndexProperty().addListener(e -> {
 			activeTimeline = list.getSelectionModel().getSelectedItem();
 			updateDisplays();
@@ -169,6 +177,7 @@ public class Dashboard {
 			break;
 		}
 	}
+
 
 	@FXML
 	public void adminScreen() throws IOException {
@@ -257,6 +266,7 @@ public class Dashboard {
 	public void toggleAdvancedSearch() {
 
 		AdvancedSearch.setOnMouseClicked(e -> advancedSearchView.setVisible(true));
+
 
 	}
 
@@ -385,12 +395,36 @@ public class Dashboard {
 			titleText.setText("Select a Timeline.");
 		}
 	}
-    public  List<Integer> advancedSearch( Date startDateSpinner, Date endDateSpinner) throws SQLException {
-        PreparedStatement stmt3 = DBM.conn.prepareStatement("SELECT * FROM `timelines` LEFT JOIN `users` ON users.UserID = timelines.TimelineOwner WHERE " +
-                " CONCAT(' ', `TimelineName`, ' ') LIKE CONCAT('% ', COALESCE(?, '%'), ' %') AND `UserName` = COALESCE(NULLIF(?, ''), `UserName`) AND `Rating` = COALESCE(NULLIF(?, ''), `Rating`) AND CONCAT(',', `Keywords`, ',') LIKE CONCAT('%,', COALESCE(?, '%'), ',%')  ;") ;
-        stmt3.setString(1, searchTimelineName.getText());
-        stmt3.setString(2, searchCreator.getText());
-        stmt3.setInt(3, (Integer) searchRating.getValue());
+
+
+	                                                 //Date start = null; Date end = null;
+    public void advancedSearch() throws SQLException {
+		Date startDateSpinner = null;
+		Date endDateSpinner = null;
+		   String[] keywords = null;
+		StringBuilder dynamicParameter = new StringBuilder();
+		   if(searchKeywords.getText() != null){
+			 keywords = searchKeywords.getText().split(" ");
+
+			for (int i = 1; i < keywords.length; i++) {
+				dynamicParameter.append("OR  CONCAT(',', `Keywords`, ',') LIKE CONCAT('%,', COALESCE(?, '%'), ',%')");
+			}}
+
+			PreparedStatement stmt3 = DBM.conn.prepareStatement("SELECT * FROM `timelines` LEFT JOIN `users` ON users.UserID = timelines.TimelineOwner WHERE " +
+					" CONCAT(' ', `TimelineName`, ' ') LIKE CONCAT('% ', COALESCE(?, '%'), ' %') AND `UserName` = COALESCE(NULLIF(?, ''), `UserName`) AND `Rating` = COALESCE(NULLIF(?, ''), `Rating`) AND (CONCAT(',', `Keywords`, ',') LIKE CONCAT('%,', COALESCE(?, '%'), ',%') " + dynamicParameter + ")  ;");
+			stmt3.setString(1, searchTimelineName.getText());
+			stmt3.setString(2, searchCreator.getText());
+			stmt3.setInt(3, (Integer) searchRating.getValue());
+			if(keywords != null)
+			for (int i = 4; i < keywords.length + 4; i++) {
+				stmt3.setString(i, keywords[i - 4]);
+				System.out.println(stmt3);
+			}
+			else
+				stmt3.setString(3, searchKeywords.getText());
+
+
+
         stmt3.setString(4, searchKeywords.getText());
         //EXAMPLE OF RETURNING THE TIMELINES THAT FULFILL THE SEARCH AS TIMELINE OBJECT
         System.out.println();
@@ -399,7 +433,8 @@ public class Dashboard {
         List<Timeline> tempAllList;
         List<Timeline> rightTimelines = list; //Currently the right list unless we need to update it with spinner search
         //If only searching with Range and nothing else
-        if(list.isEmpty() & (startDateSpinner != null || endDateSpinner != null )) {
+
+		if(list.isEmpty() & (startDateSpinner != null || endDateSpinner != null )) {
             rightTimelines = new ArrayList<>();
             PreparedStatement out = DBM.conn.prepareStatement("SELECT * FROM timelines");
             tempAllList = DBM.getFromDB(out, new Timeline());
@@ -470,10 +505,8 @@ public class Dashboard {
         for(int i = 0; i<rightTimelines.size();i++)
             System.out.println(list.get(i).getName());
 
-        List<Integer> timelineIDList = new ArrayList<>();
-        for(int i = 0; i< rightTimelines.size(); i++)
-            timelineIDList.add(rightTimelines.get(i).getID());
 
-        return timelineIDList;
+
+		this.list.setItems(FXCollections.observableArrayList(rightTimelines));
     }
 }
