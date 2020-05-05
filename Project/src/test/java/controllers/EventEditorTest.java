@@ -252,19 +252,91 @@ public class EventEditorTest {
     }
 
     @Test
-    void editStartDateAndSave() throws InterruptedException {
+    void strangeTextFieldsSaved() throws InterruptedException {
         openEventFromSelector(1, true);
 
-        assertEquals(sut.prioritySlider.getValue(), sut.event.getEventPriority());
+        assertEquals(sut.titleInput.getText(), sut.event.getName());
+        assertEquals(sut.descriptionInput.getText(), sut.event.getDescription());
 
         runLater(() -> {
             sut.saveEditButton();
-            sut.prioritySlider.setValue(3);
-            assertNotEquals(sut.prioritySlider.getValue(), sut.event.getEventPriority());
+            sut.titleInput.setText(null);
+            sut.descriptionInput.setText("test \t\t\t\t test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text ");
+            assertNotEquals(sut.titleInput.getText(), sut.event.getName());
+            assertNotEquals(sut.descriptionInput.getText(), sut.event.getDescription());
         });
         runLater(() -> sut.saveEditButton());
         runLater(() -> robot.clickOn(getDialogPane().lookupButton(ButtonType.OK)));
-        runLater(() -> assertEquals(sut.prioritySlider.getValue(), sut.event.getEventPriority()));
+        runLater(() -> {
+            assertEquals(sut.titleInput.getText(), sut.event.getName());
+            assertEquals(sut.descriptionInput.getText(), sut.event.getDescription());
+        });
+    }
+
+    @Test
+    void editStartDateAndSave() throws InterruptedException {
+        openEventFromSelector(1, true);
+        runLater(() -> {
+            Date readStart = new Date(sut.startInputs.get(0).getValue(), sut.startInputs.get(1).getValue(), sut.startInputs.get(2).getValue(),
+                    sut.startInputs.get(3).getValue(), sut.startInputs.get(4).getValue(), sut.startInputs.get(5).getValue(), sut.startInputs.get(6).getValue());
+            assertTrue(readStart.compareTo(sut.event.getStartDate()) == 0);
+        });
+        runLater(() -> {
+            sut.saveEditButton();
+            sut.startInputs.get(0).getValueFactory().setValue(-100000);
+            sut.startInputs.get(1).getValueFactory().setValue(1);
+            sut.startInputs.get(2).getValueFactory().setValue(25);
+            sut.startInputs.get(3).getValueFactory().setValue(0);
+            sut.startInputs.get(4).getValueFactory().setValue(59);
+            sut.startInputs.get(5).getValueFactory().setValue(59);
+            sut.startInputs.get(6).getValueFactory().setValue(880);
+
+            Date readStart = new Date(sut.startInputs.get(0).getValue(), sut.startInputs.get(1).getValue(), sut.startInputs.get(2).getValue(),
+                    sut.startInputs.get(3).getValue(), sut.startInputs.get(4).getValue(), sut.startInputs.get(5).getValue(), sut.startInputs.get(6).getValue());
+
+            assertFalse(readStart.compareTo(sut.event.getStartDate()) == 0);
+        });
+        runLater(() -> sut.saveEditButton());
+        runLater(() -> robot.clickOn(getDialogPane().lookupButton(ButtonType.OK)));
+
+        runLater(() -> {
+            Date readStart = new Date(sut.startInputs.get(0).getValue(), sut.startInputs.get(1).getValue(), sut.startInputs.get(2).getValue(),
+                    sut.startInputs.get(3).getValue(), sut.startInputs.get(4).getValue(), sut.startInputs.get(5).getValue(), sut.startInputs.get(6).getValue());
+            assertTrue(readStart.compareTo(sut.event.getStartDate()) == 0);
+        });
+    }
+
+    @Test
+    void editEndDateAndSave() throws InterruptedException {
+        openEventFromSelector(1, true);
+        runLater(() -> {
+            Date readEnd = new Date(sut.endInputs.get(0).getValue(), sut.endInputs.get(1).getValue(), sut.endInputs.get(2).getValue(),
+                    sut.endInputs.get(3).getValue(), sut.endInputs.get(4).getValue(), sut.endInputs.get(5).getValue(), sut.endInputs.get(6).getValue());
+            assertTrue(readEnd.compareTo(sut.event.getEndDate()) == 0);
+        });
+        runLater(() -> {
+            sut.saveEditButton();
+            sut.endInputs.get(0).getValueFactory().setValue(99999);
+            sut.endInputs.get(1).getValueFactory().setValue(12);
+            sut.endInputs.get(2).getValueFactory().setValue(1);
+            sut.endInputs.get(3).getValueFactory().setValue(23);
+            sut.endInputs.get(4).getValueFactory().setValue(14);
+            sut.endInputs.get(5).getValueFactory().setValue(34);
+            sut.endInputs.get(6).getValueFactory().setValue(0);
+
+            Date readEnd = new Date(sut.endInputs.get(0).getValue(), sut.endInputs.get(1).getValue(), sut.endInputs.get(2).getValue(),
+                    sut.endInputs.get(3).getValue(), sut.endInputs.get(4).getValue(), sut.endInputs.get(5).getValue(), sut.endInputs.get(6).getValue());
+
+            assertFalse(readEnd.compareTo(sut.event.getEndDate()) == 0);
+        });
+        runLater(() -> sut.saveEditButton());
+        runLater(() -> robot.clickOn(getDialogPane().lookupButton(ButtonType.OK)));
+
+        runLater(() -> {
+            Date readEnd = new Date(sut.endInputs.get(0).getValue(), sut.endInputs.get(1).getValue(), sut.endInputs.get(2).getValue(),
+                    sut.endInputs.get(3).getValue(), sut.endInputs.get(4).getValue(), sut.endInputs.get(5).getValue(), sut.endInputs.get(6).getValue());
+            assertTrue(readEnd.compareTo(sut.event.getEndDate()) == 0);
+        });
     }
 
     @Test

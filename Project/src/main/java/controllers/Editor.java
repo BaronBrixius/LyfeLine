@@ -53,102 +53,14 @@ public abstract class Editor {
     TimelineObject thing;
 
     public void initialize() {
-        setupTimeInputSpinners();
-
-    }
-
-    void setupTimeInputSpinners() {
         //Set Up the Spinners for Start/End Inputs, would have bloated the .fxml and variable list a ton if these were in fxml
-        String timeSpinnerLabel = null;
-        int maxValue = 0;
-        for (int i = 0; i < 7; i++) {
-            switch (i) {                //labels
-                case 0:
-                    timeSpinnerLabel = "Year";
-                    break;
-                case 1:
-                    timeSpinnerLabel = "Month";
-                    break;
-                case 2:
-                    timeSpinnerLabel = "Day";
-                    break;
-                case 3:
-                    timeSpinnerLabel = "Hour";
-                    break;
-                case 4:
-                    timeSpinnerLabel = "Minute";
-                    break;
-                case 5:
-                    timeSpinnerLabel = "Second";
-                    break;
-                case 6:
-                    timeSpinnerLabel = "Millisecond";
-                    break;
-            }
-
-            switch (i) {            //max values
-                case 1:
-                    maxValue = 12;
-                    break;
-                case 2:
-                    maxValue = 31;
-                    break;
-                case 3:
-                    maxValue = 23;
-                    break;
-                case 4:
-                case 5:
-                    maxValue = 59;
-                    break;
-                case 6:
-                    maxValue = 999;
-                    break;
-            }
-
-            setupTimeInputBoxes(timeSpinnerLabel, maxValue, i, startInputs, startBoxes);
-            setupTimeInputBoxes(timeSpinnerLabel, maxValue, i, endInputs, endBoxes);
-        }
-        //fix ranges for years since they're a little different
-        startInputs.get(0).setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(Integer.MIN_VALUE, Integer.MAX_VALUE, 0));
-        endInputs.get(0).setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(Integer.MIN_VALUE, Integer.MAX_VALUE, 0));
-    }
-
-    void setupTimeInputBoxes(String timeSpinnerLabel, int maxValue, int i, List<Spinner<Integer>> spinnerList, List<VBox> boxList) {
-        //startTimes.add(i, new Spinner<>(0, maxValue, 0));
-        //startBoxes.add(i, new VBox(new Label(timeSpinnerLabel), startTimes.get(i)));
-        //startBoxes.get(i).setPrefWidth(70);
-        //startBoxes.get(i).getChildren().get(0).getStyleClass().add("smallText");
-        SpinnerValueFactory.IntegerSpinnerValueFactory valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, maxValue, 0);
-        valueFactory.setConverter(new StringConverter<>() {
-            @Override
-            public String toString(Integer value) {
-                if (value == null)
-                    return "0";
-                return value.toString();
-            }
-
-            @Override
-            public Integer fromString(String string) {
-                try {
-                    // If the specified value is null or zero-length, return null
-                    if (string == null)
-                        return 0;
-                    string = string.trim();
-                    if (string.length() < 1)
-                        return null;
-                    return Integer.parseInt(string);
-
-                } catch (NumberFormatException ex) {
-                    return 0;
-                }
-            }
-        });
-        spinnerList.add(i, new Spinner<>(valueFactory));
-        spinnerList.get(i).setEditable(true);
-
-        boxList.add(i, new VBox(new Label(timeSpinnerLabel), spinnerList.get(i)));
-        boxList.get(i).setPrefWidth(70);
-        boxList.get(i).getChildren().get(0).getStyleClass().add("smallText");
+        setupTimeInputStartAndEnd("Year", Integer.MIN_VALUE, Integer.MAX_VALUE, 0);
+        setupTimeInputStartAndEnd("Month", 1, 12, 1);
+        setupTimeInputStartAndEnd("Day", 1, 31, 2);
+        setupTimeInputStartAndEnd("Hour", 0, 23, 3);
+        setupTimeInputStartAndEnd("Minute", 0, 59, 4);
+        setupTimeInputStartAndEnd("Second", 0, 59, 5);
+        setupTimeInputStartAndEnd("Millisecond", 0, 999, 6);
     }
 
     @FXML
@@ -272,7 +184,7 @@ public abstract class Editor {
         setExpansion(endPane, endBoxes, false, parentController.activeTimeline.getScale());
     }
 
-    void populateEndInputs(TimelineObject itemInEditor){            //so that end dates can have their display toggled separately for events
+    void populateEndInputs(TimelineObject itemInEditor) {            //so that end dates can have their display toggled separately for events
         endInputs.get(0).getValueFactory().setValue(itemInEditor.getEndDate().getYear());
         endInputs.get(1).getValueFactory().setValue(itemInEditor.getEndDate().getMonth());
         endInputs.get(2).getValueFactory().setValue(itemInEditor.getEndDate().getDay());
@@ -325,5 +237,45 @@ public abstract class Editor {
             e.printStackTrace();
         }
         return true;
+    }
+
+    private void setupTimeInputStartAndEnd(String timeSpinnerLabel, int minValue, int maxValue, int index) {
+        setupTimeInput(timeSpinnerLabel, minValue, maxValue, index, startInputs, startBoxes);
+        setupTimeInput(timeSpinnerLabel, minValue, maxValue, index, endInputs, endBoxes);
+    }
+
+    private void setupTimeInput(String timeSpinnerLabel, int minValue, int maxValue, int index, List<Spinner<Integer>> spinnerList, List<VBox> boxList) {
+        SpinnerValueFactory.IntegerSpinnerValueFactory valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(minValue, maxValue, minValue);
+        valueFactory.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(Integer value) {
+                if (value == null)
+                    return "1";
+                return value.toString();
+            }
+
+            @Override
+            public Integer fromString(String string) {
+                try {
+                    // If the specified value is null or zero-length, return null
+                    if (string == null)
+                        return 1;
+                    string = string.trim();
+                    if (string.length() < 1)
+                        return null;
+                    return Integer.parseInt(string);
+
+                } catch (NumberFormatException ex) {
+                    return 1;
+                }
+            }
+        });
+
+        spinnerList.add(index, new Spinner<>(valueFactory));
+        spinnerList.get(index).setEditable(true);
+
+        boxList.add(index, new VBox(new Label(timeSpinnerLabel), spinnerList.get(index)));
+        boxList.get(index).setPrefWidth(70);
+        boxList.get(index).getChildren().get(0).getStyleClass().add("smallText");
     }
 }
