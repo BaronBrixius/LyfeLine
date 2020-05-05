@@ -434,7 +434,7 @@ public class Dashboard {
 		else
 			stmt3.setString(1, searchTimelineName.getText());
 		stmt3.setString(2, searchCreator.getText());
-		stmt3.setInt(3, 0); // For now untill the Rating combobox provides something
+		stmt3.setInt(3, Integer.parseInt(searchRating.getValue())); // For now untill the Rating combobox provides something
 		if (keywords != null)
 			for (int i = 4; i < keywords.length + 4; i++) {
 				stmt3.setString(i, keywords[i - 4]);
