@@ -1,12 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.text.TextFlow?>
 
-<VBox minHeight="400.0" minWidth="600.0" stylesheets="@../styles/DefaultStyle.css" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.Dashboard">
+<VBox minHeight="400.0" minWidth="600.0" stylesheets="@../styles/DefaultStyle.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.Dashboard">
    <HBox fx:id="Simple" alignment="CENTER_LEFT" spacing="10.0">
       <children>
          <VBox prefHeight="185.0" prefWidth="481.0">
@@ -51,7 +65,7 @@
                </VBox>
             </children>
          </VBox>
-         <GridPane fx:id="advancedSearchView" alignment="TOP_RIGHT" prefHeight="172.0" prefWidth="928.0" visible="false">
+         <GridPane fx:id="advancedSearchView" alignment="TOP_RIGHT" prefHeight="172.0" prefWidth="928.0">
             <columnConstraints>
                <ColumnConstraints />
                <ColumnConstraints hgrow="SOMETIMES" maxWidth="924.0" minWidth="10.0" prefWidth="900.0" />
@@ -97,11 +111,28 @@
                      <HBox>
                         <children>
                            <TextField fx:id="searchTimelineName" alignment="CENTER" prefWidth="196.0" promptText="Timeline Name" style="-fx-font-size: 1.3em;" />
-                           <Region minWidth="20.0" />
-                           <TextField fx:id="searchCreator" alignment="CENTER" prefWidth="196.0" promptText="Name of Creator" style="-fx-font-size: 1.3em;" />
-                           <Region minWidth="20.0" />
-                           <DatePicker fx:id="startDate" prefWidth="196.0" />
-                           <Hyperlink fx:id="toggleHHMMSS" alignment="CENTER" minWidth="20.0" onAction="#toggleHHMMSS" prefWidth="40.0" text="(&gt;)" />
+                           <Region minWidth="20.0" prefWidth="20.0" />
+                           <TextField fx:id="searchCreator" alignment="CENTER" prefWidth="196.0" promptText="Name of Creator" style="-fx-font-size: 1.3em;">
+                              <HBox.margin>
+                                 <Insets />
+                              </HBox.margin></TextField>
+                           <Region minWidth="20.0" prefWidth="20.0" />
+                           <GridPane fx:id="startYYMODD">
+                              <columnConstraints>
+                                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                              </columnConstraints>
+                              <rowConstraints>
+                                 <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                              </rowConstraints>
+                              <children>
+                                 <Spinner fx:id="startYY" editable="true" prefWidth="60.0" />
+                                 <Spinner fx:id="startMO" editable="true" prefWidth="60.0" GridPane.columnIndex="1" />
+                                 <Spinner fx:id="startDD" editable="true" prefWidth="60.0" GridPane.columnIndex="2" />
+                              </children>
+                           </GridPane>
+                           <Hyperlink fx:id="toggleHHMMSS" alignment="CENTER" onAction="#toggleHHMMSS" prefHeight="23.0" prefWidth="30.0" text="(&gt;)" />
                            <GridPane fx:id="startHHMMSS" visible="false">
                               <columnConstraints>
                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
@@ -122,7 +153,7 @@
                      <HBox fx:id="BottomLabels" prefHeight="32.0" prefWidth="601.0">
                         <children>
                            <Label fx:id="KeywordLabel" alignment="CENTER" contentDisplay="CENTER" prefHeight="32.0" prefWidth="196.0" text="Keyword" wrapText="true" />
-                           <Region minWidth="0.0" prefHeight="32.0" prefWidth="22.0" />
+                           <Region minWidth="20.0" prefHeight="32.0" prefWidth="22.0" />
                            <Label fx:id="RatingLabel" alignment="CENTER" contentDisplay="CENTER" prefHeight="32.0" prefWidth="196.0" text="Rating" wrapText="true" />
                            <Region minWidth="0.0" prefHeight="32.0" prefWidth="22.0" />
                            <Label fx:id="EndLabel" alignment="CENTER" contentDisplay="CENTER" prefHeight="32.0" prefWidth="196.0" text="End" wrapText="true" />
@@ -147,11 +178,32 @@
                      <HBox>
                         <children>
                            <TextField fx:id="searchKeywords" alignment="CENTER" prefWidth="196.0" promptText="Keywords" style="-fx-font-size: 1.3em;" />
-                           <Region minWidth="20.0" />
-                           <ComboBox fx:id="searchRating" prefHeight="32.0" prefWidth="196.0" />
-                           <Region minWidth="20.0" />
-                           <DatePicker fx:id="endDate" prefWidth="196.0" />
-                           <Region minWidth="40.0" prefWidth="40.0" />
+                           <Region minWidth="20.0" prefWidth="20.0" />
+                           <ComboBox fx:id="searchRating" prefHeight="32.0" prefWidth="196.0">
+                              <HBox.margin>
+                                 <Insets />
+                              </HBox.margin></ComboBox>
+                           <Region minWidth="20.0" prefWidth="20.0" />
+                           <GridPane fx:id="endYYMODD">
+                              <columnConstraints>
+                                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                              </columnConstraints>
+                              <rowConstraints>
+                                 <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                              </rowConstraints>
+                              <children>
+                                 <Spinner fx:id="endYY" editable="true" prefWidth="60.0" />
+                                 <Spinner fx:id="endMO" editable="true" prefWidth="60.0" GridPane.columnIndex="1" />
+                                 <Spinner fx:id="endDD" editable="true" prefWidth="60.0" GridPane.columnIndex="2">
+                                    <GridPane.margin>
+                                       <Insets />
+                                    </GridPane.margin>
+                                 </Spinner>
+                              </children>
+                           </GridPane>
+                           <Region prefWidth="30.0" />
                            <GridPane fx:id="endHHMMSS" visible="false">
                               <columnConstraints>
                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
