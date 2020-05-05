@@ -56,7 +56,7 @@ public class Dashboard {
 	@FXML
 	protected TextField searchKeywords;
 	@FXML
-	protected ComboBox searchRating;
+	protected ComboBox<String> searchRating;
 	@FXML
 	protected Button clearButton;
 	@FXML
@@ -154,7 +154,10 @@ public class Dashboard {
 		});
 
 		titleText.setText("Select a Timeline.");
-
+		
+		ObservableList<String> ratings = FXCollections.observableArrayList();
+		ratings.addAll("0", "1", "2", "3", "4", "5"); 
+		searchRating.setItems(ratings);
 	}
 
 	public void sortTimelines() {
@@ -259,43 +262,34 @@ public class Dashboard {
 
 	@FXML
 	public void toggleAdvancedSearch() {
-
-		AdvancedSearch.setOnMouseClicked(e -> advancedSearchView.setVisible(true));
-
+		if (advancedSearchView.isVisible() == false)
+			advancedSearchView.setVisible(true);
+		else
+			closeAdvancedSearch();
 	}
 
 	@FXML
 	public void closeAdvancedSearch() {
-
-		clearButton.setOnMouseClicked(e -> {
-
-			advancedSearchView.setVisible(false);
-			startHHMMSS.setVisible(false);
-			endHHMMSS.setVisible(false);
-			topLabels.setVisible(false);
-			bottomLabels.setVisible(false);
-			searchTimelineName.clear();
-			searchCreator.clear();
-			searchKeywords.clear();
-			if (cbOnlyViewPersonalLines.isSelected()) {
-				onlyUserTimelines();}
-			else
+		advancedSearchView.setVisible(false);
+		startHHMMSS.setVisible(false);
+		endHHMMSS.setVisible(false);
+		topLabels.setVisible(false);
+		bottomLabels.setVisible(false);
+		searchTimelineName.clear();
+		searchCreator.clear();
+		searchKeywords.clear();
+		if (cbOnlyViewPersonalLines.isSelected()) {
+			onlyUserTimelines();}
+		else
 			this.list.setItems(FXCollections.observableArrayList(timelines));
-
-		});
-
 	}
 
 	@FXML
 	public void toggleHHMMSS() {
-		toggleHHMMSS.setOnMouseClicked(e -> {
-
-			startHHMMSS.setVisible(true);
-			endHHMMSS.setVisible(true);
-			topLabels.setVisible(true);
-			bottomLabels.setVisible(true);
-
-		});
+		startHHMMSS.setVisible(!startHHMMSS.isVisible());
+		endHHMMSS.setVisible(!endHHMMSS.isVisible());
+		topLabels.setVisible(!topLabels.isVisible());
+		bottomLabels.setVisible(!bottomLabels.isVisible());
 	}
 
 	@FXML
