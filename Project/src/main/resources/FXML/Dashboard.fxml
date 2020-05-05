@@ -9,21 +9,13 @@
 <VBox minHeight="400.0" minWidth="600.0" stylesheets="@../styles/DefaultStyle.css" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.Dashboard">
    <HBox fx:id="Simple" alignment="CENTER_LEFT" spacing="10.0">
       <children>
-         <VBox prefHeight="192.0" prefWidth="413.0">
+         <VBox prefHeight="185.0" prefWidth="481.0">
             <children>
                <HBox prefHeight="31.0" prefWidth="346.0">
                   <children>
                      <HBox prefHeight="31.0">
                         <children>
                             <TextField fx:id="searchInput" prefHeight="31.0" prefWidth="376.0" promptText="Search here..." style="-fx-font-size: 1.3em;" />
-                           <Button fx:id="search" contentDisplay="TOP" mnemonicParsing="false" onAction="#advancedSearch" prefHeight="31.0" prefWidth="90.0" styleClass="smallButton" text="Search">
-                              <opaqueInsets>
-                                 <Insets />
-                              </opaqueInsets>
-                              <HBox.margin>
-                                 <Insets left="10.0" />
-                              </HBox.margin>
-                           </Button>
                         </children>
                         <HBox.margin>
                            <Insets />
@@ -31,7 +23,7 @@
                      </HBox>
                   </children>
                </HBox>
-               <HBox prefHeight="43.0" prefWidth="363.0">
+               <HBox prefHeight="43.0" prefWidth="441.0">
                   <padding>
                      <Insets top="10.0" />
                   </padding>
@@ -61,6 +53,7 @@
          </VBox>
          <GridPane fx:id="advancedSearchView" alignment="TOP_RIGHT" prefHeight="172.0" prefWidth="928.0" visible="false">
             <columnConstraints>
+               <ColumnConstraints />
                <ColumnConstraints hgrow="SOMETIMES" maxWidth="924.0" minWidth="10.0" prefWidth="900.0" />
             </columnConstraints>
             <rowConstraints>
@@ -69,7 +62,7 @@
                <RowConstraints maxHeight="20.0" minHeight="10.0" prefHeight="20.0" vgrow="SOMETIMES" />
             </rowConstraints>
             <children>
-               <VBox prefWidth="906.0">
+               <VBox prefWidth="906.0" GridPane.columnIndex="1">
                   <children>
                      <VBox prefWidth="100.0" />
                      <HBox fx:id="TopLabels" prefHeight="32.0">
@@ -119,9 +112,9 @@
                                  <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                               </rowConstraints>
                               <children>
-                                 <Spinner prefWidth="60.0" />
-                                 <Spinner prefWidth="60.0" GridPane.columnIndex="1" />
-                                 <Spinner prefWidth="60.0" GridPane.columnIndex="2" />
+                                 <Spinner fx:id="startHH" editable="true" prefWidth="60.0" />
+                                 <Spinner fx:id="startMM" editable="true" prefWidth="60.0" GridPane.columnIndex="1" />
+                                 <Spinner fx:id="startSS" editable="true" prefWidth="60.0" GridPane.columnIndex="2" />
                               </children>
                            </GridPane>
                         </children>
@@ -155,7 +148,7 @@
                         <children>
                            <TextField fx:id="searchKeywords" alignment="CENTER" prefWidth="196.0" promptText="Keywords" style="-fx-font-size: 1.3em;" />
                            <Region minWidth="20.0" />
-                           <ComboBox prefHeight="32.0" prefWidth="196.0" />
+                           <ComboBox fx:id="searchRating" prefHeight="32.0" prefWidth="196.0" />
                            <Region minWidth="20.0" />
                            <DatePicker fx:id="endDate" prefWidth="196.0" />
                            <Region minWidth="40.0" prefWidth="40.0" />
@@ -169,9 +162,9 @@
                                  <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                               </rowConstraints>
                               <children>
-                                 <Spinner prefWidth="60.0" />
-                                 <Spinner prefWidth="60.0" GridPane.columnIndex="1" />
-                                 <Spinner prefWidth="60.0" GridPane.columnIndex="2" />
+                                 <Spinner fx:id="endHH" editable="true" prefWidth="60.0" />
+                                 <Spinner fx:id="endMM" editable="true" prefWidth="60.0" GridPane.columnIndex="1" />
+                                 <Spinner fx:id="endSS" editable="true" prefWidth="60.0" GridPane.columnIndex="2" />
                               </children>
                            </GridPane>
                         </children>
@@ -179,6 +172,26 @@
                            <Insets top="5.0" />
                         </padding>
                      </HBox>
+                  </children>
+               </VBox>
+               <VBox prefHeight="132.0" prefWidth="176.0">
+                  <children>
+                     <Button fx:id="searchButton" contentDisplay="TOP" minWidth="50.0" mnemonicParsing="false" prefHeight="32.0" prefWidth="90.0" styleClass="tinyButton" text="Search">
+                        <opaqueInsets>
+                           <Insets />
+                        </opaqueInsets>
+                        <VBox.margin>
+                           <Insets right="10.0" top="10.0" />
+                        </VBox.margin>
+                     </Button>
+                     <Button fx:id="clearButton" contentDisplay="TOP" minWidth="50.0" mnemonicParsing="false" onAction="#closeAdvancedSearch" prefHeight="31.0" prefWidth="90.0" styleClass="tinyButton" text="Clear">
+                        <opaqueInsets>
+                           <Insets />
+                        </opaqueInsets>
+                        <VBox.margin>
+                           <Insets right="10.0" top="10.0" />
+                        </VBox.margin>
+                     </Button>
                   </children>
                </VBox>
             </children>

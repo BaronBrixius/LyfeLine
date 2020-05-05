@@ -61,7 +61,8 @@ public class Dashboard {
 	protected DatePicker startDate;
 	@FXML
 	protected DatePicker endDate;
-
+	@FXML
+	protected Button clearButton;
 	@FXML
 	protected CheckBox cbOnlyViewPersonalLines;
 	@FXML
@@ -147,11 +148,6 @@ public class Dashboard {
 
 		});
 
-
-
-
-
-
 		list.getSelectionModel().selectedIndexProperty().addListener(e -> {
 			activeTimeline = list.getSelectionModel().getSelectedItem();
 			updateDisplays();
@@ -177,7 +173,6 @@ public class Dashboard {
 			break;
 		}
 	}
-
 
 	@FXML
 	public void adminScreen() throws IOException {
@@ -267,6 +262,20 @@ public class Dashboard {
 
 		AdvancedSearch.setOnMouseClicked(e -> advancedSearchView.setVisible(true));
 
+	}
+
+	@FXML
+	public void closeAdvancedSearch() {
+
+		clearButton.setOnMouseClicked(e -> {
+
+			advancedSearchView.setVisible(false);
+			startHHMMSS.setVisible(false);
+			endHHMMSS.setVisible(false);
+			topLabels.setVisible(false);
+			bottomLabels.setVisible(false);
+
+		});
 
 	}
 
@@ -402,7 +411,7 @@ public class Dashboard {
 
 		Date startDateSpinner = null;
 		Date endDateSpinner = null;
-		   String[] keywords = null;
+		String[] keywords = null;
 		StringBuilder dynamicParameter = new StringBuilder();
 		if(searchKeywords.getText() != null){
 			 keywords = searchKeywords.getText().split(" ");
@@ -506,8 +515,44 @@ public class Dashboard {
         for(int i = 0; i<rightTimelines.size();i++)
             System.out.println(list.get(i).getName());
 
+		// If searching with Range amongst else
+		if (!list.isEmpty() & (startDateSpinner != null || endDateSpinner != null)) {
+			PreparedStatement out = DBM.conn.prepareStatement("SELECT * FROM timelines");
+			rightTimelines = new ArrayList<>();
+			// If range is defined in both ends
+			if (startDateSpinner != null & endDateSpinner != null) {
+				Date start = startDateSpinner;
+				Date end = endDateSpinner;
+				for (int i = 0; i < list.size(); i++) {
+					if (list.get(i).getStartDate().compareTo(start) != -1
+							|| list.get(i).getEndDate().compareTo(end) != 1)
+						rightTimelines.add(list.get(i));
+				}
 
+			}
+			// If range is defined in start
+			else if (startDateSpinner != null) {
+				Date start = startDateSpinner;
+				Date end = endDateSpinner;
+				for (int i = 0; i < list.size(); i++) {
+					if (list.get(i).getStartDate().compareTo(start) != -1)
+						rightTimelines.add(list.get(i));
+				}
+			}
+			// If range is defined in end
+			else {
+				Date start = startDateSpinner;
+				Date end = endDateSpinner;
+				for (int i = 0; i < list.size(); i++) {
+					if (list.get(i).getEndDate().compareTo(end) != 1)
+						rightTimelines.add(list.get(i));
+				}
+			}
+		}
+
+		for (int i = 0; i < rightTimelines.size(); i++)
+			System.out.println(list.get(i).getName());
 
 		this.list.setItems(FXCollections.observableArrayList(rightTimelines));
-    }
+	}
 }
