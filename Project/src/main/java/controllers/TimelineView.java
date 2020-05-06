@@ -164,9 +164,8 @@ public class TimelineView {
             columnSpan += startColumn;
             startColumn = 0;
         }
-        if (startColumn + columnSpan > timelineGrid.getColumnCount())   // if node goes past the timeline's end, cut the
-            // end
-            columnSpan = timelineGrid.getColumnCount() - startColumn;
+        if (startColumn + columnSpan > timelineGrid.getColumnCount())   // if node goes past the timeline's end, cut the end
+            columnSpan = timelineGrid.getColumnCount() - startColumn - 1;
         if (columnSpan < 1)                                             // if, after cutting, nothing remains, don't display it at all
             return;
 
@@ -175,6 +174,8 @@ public class TimelineView {
             if (eventList.get(i).getStartColumn() <= newNode.getStartColumn() + newNode.getColumnSpan()                     // if a previous node starts before the new one would end
                     && eventList.get(i).getStartColumn() + eventList.get(i).getColumnSpan() >= newNode.getStartColumn())    // and it ends after the new one starts
                 row++;                                                                                                      // try next row
+            else
+                break;                                                                                                      //otherwise, we found an empty spot
         }
         timelineGrid.add(newNode.getDisplayPane(), startColumn, row, columnSpan, 1);
     }

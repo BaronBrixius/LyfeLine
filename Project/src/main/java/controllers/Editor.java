@@ -83,17 +83,17 @@ public abstract class Editor {
         } else {                        //if contracting, add based on scale
             if (scale == 1)             //don't try to convert to switch statement unless you're a genius, the overlaps made it ugly when I tried
                 expandPane.getChildren().add(0, boxesToAddFrom.get(6)); //milliseconds
-            if (scale <= 3)
+            if (scale <= 2)
                 expandPane.getChildren().add(0, boxesToAddFrom.get(5)); //seconds
-            if (scale >= 3 && scale <= 5)
+            if (scale <= 3)
                 expandPane.getChildren().add(0, boxesToAddFrom.get(4)); //minutes
-            if (scale >= 4 && scale <= 6)
+            if (scale >= 2 && scale <= 4)
                 expandPane.getChildren().add(0, boxesToAddFrom.get(3)); //hours
-            if (scale >= 5 && scale <= 8)
+            if (scale >= 3 && scale <= 7)
                 expandPane.getChildren().add(0, boxesToAddFrom.get(2)); //days
-            if (scale >= 7)
+            if (scale >= 4 && scale <= 8)
                 expandPane.getChildren().add(0, boxesToAddFrom.get(1)); //months
-            if (scale >= 8)
+            if (scale >= 5)
                 expandPane.getChildren().add(0, boxesToAddFrom.get(0)); //years
         }
         return expandPane.getChildren().size();
