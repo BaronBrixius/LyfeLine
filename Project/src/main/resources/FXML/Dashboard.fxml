@@ -79,19 +79,19 @@
                 <Insets />
             </opaqueInsets>
          <children>
-                 <Label alignment="CENTER" contentDisplay="CENTER" prefWidth="265.0" text="Timeline Name" wrapText="true" GridPane.columnIndex="1" />
+                 <Label alignment="CENTER" contentDisplay="CENTER" prefWidth="265.0" text="Name" wrapText="true" GridPane.columnIndex="1" />
                  <TextField fx:id="searchTimelineName" alignment="CENTER" prefWidth="196.0" promptText="Timeline Name" style="-fx-font-size: 1.3em;" GridPane.columnIndex="1" GridPane.rowIndex="1">
                <GridPane.margin>
                   <Insets />
                </GridPane.margin>
             </TextField>
-                 <Label alignment="CENTER" contentDisplay="CENTER" prefWidth="252.0" text="Name of Creator" wrapText="true" GridPane.columnIndex="2" />
-                 <TextField fx:id="searchCreator" alignment="CENTER" prefWidth="196.0" promptText="Name of Creator" style="-fx-font-size: 1.3em;" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                 <Label alignment="CENTER" contentDisplay="CENTER" prefWidth="252.0" text="Author" wrapText="true" GridPane.columnIndex="2" />
+                 <TextField fx:id="searchCreator" alignment="CENTER" prefWidth="196.0" promptText="Author of Timeline" style="-fx-font-size: 1.3em;" GridPane.columnIndex="2" GridPane.rowIndex="1">
                <GridPane.margin>
                   <Insets />
                </GridPane.margin>
                  </TextField>
-                 <Label fx:id="KeywordLabel" alignment="CENTER" contentDisplay="CENTER" prefWidth="128.0" text="Keyword" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                 <Label fx:id="KeywordLabel" alignment="CENTER" contentDisplay="CENTER" prefWidth="128.0" text="Keywords" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                  <TextField fx:id="searchKeywords" alignment="CENTER" prefWidth="196.0" promptText="Keywords" style="-fx-font-size: 1.3em;" GridPane.columnIndex="1" GridPane.rowIndex="3">
                <GridPane.margin>
                   <Insets />
