@@ -8,6 +8,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import utils.Date;
@@ -37,12 +38,7 @@ public class Dashboard {
 	@FXML protected ComboBox<String> sortBy;
 	@FXML protected GridPane gridButtons;
 	@FXML protected GridPane advancedSearchView;
-	@FXML protected GridPane startHHMMSS;
-	@FXML protected GridPane endHHMMSS;
-	@FXML protected GridPane startYYMODD;
-	@FXML protected GridPane endYYMODD;
-	@FXML protected GridPane topLabels;
-	@FXML protected GridPane bottomLabels;
+	@FXML protected HBox advancedSearchViewButtons;
 	@FXML protected Text titleText;
 	@FXML protected Hyperlink AdvancedSearch;
 	@FXML protected Hyperlink toggleHHMMSS;
@@ -66,14 +62,7 @@ public class Dashboard {
 		adminGUI.setVisible(GUIManager.loggedInUser.getAdmin());
 		adminGUI.setDisable(!GUIManager.loggedInUser.getAdmin());
 		timelineViewButton.setDisable(true);
-
-		toggleHHMMSS.setTooltip(new Tooltip("Toggles more precise view to set hours, minutes and seconds for range."));
-		AdvancedSearch.setTooltip(new Tooltip(
-				"Toggles the Advanced Search view, allowing to search a timeline by it's name, keywords, creator, range or rating"));
-		searchButton.setTooltip(new Tooltip("Searches for a timeline corresponding to the advanced search criteria."));
-		searchInput.setTooltip(new Tooltip("Instant search for keywords."));
-		clearButton.setTooltip(new Tooltip("Clear the Advanced Search view and search results."));
-
+		
 		// Fill ListView with the timelines
 		try {
 			PreparedStatement stmt = DBM.conn.prepareStatement("SELECT * FROM timelines");
@@ -234,11 +223,14 @@ public class Dashboard {
 
 	@FXML
 	public void toggleAdvancedSearch() {
-		if (advancedSearchView.isVisible() == false)
+		if (advancedSearchView.isVisible() == false) {
 			advancedSearchView.setVisible(true);
+			advancedSearchViewButtons.setVisible(true);
+		}
 		else {
 			clearAdvancedSearch();
 			advancedSearchView.setVisible(false);
+			advancedSearchViewButtons.setVisible(false);
 		}
 	}
 
@@ -251,14 +243,6 @@ public class Dashboard {
 			onlyUserTimelines();}
 		else
 			this.list.setItems(FXCollections.observableArrayList(timelines));
-	}
-
-	@FXML
-	public void toggleHHMMSS() {
-		startHHMMSS.setVisible(!startHHMMSS.isVisible());
-		endHHMMSS.setVisible(!endHHMMSS.isVisible());
-		topLabels.setVisible(!topLabels.isVisible());
-		bottomLabels.setVisible(!bottomLabels.isVisible());
 	}
 
 	@FXML
