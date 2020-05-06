@@ -5,17 +5,11 @@ import database.Event;
 import database.Timeline;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.sql.PreparedStatement;
@@ -25,7 +19,7 @@ import java.util.*;
 public class Dashboard {
 
 
-    @FXML protected Button eventEditorButton;
+    @FXML protected Button timelineViewButton;
     @FXML protected Button adminGUI;
     @FXML protected Button btnDelete;
     @FXML protected Button btnEdit;
@@ -53,6 +47,7 @@ public class Dashboard {
                 || list.getSelectionModel().getSelectedItem().getOwnerID() != GUIManager.loggedInUser.getUserID());
         adminGUI.setVisible(GUIManager.loggedInUser.getAdmin());
         adminGUI.setDisable(!GUIManager.loggedInUser.getAdmin());
+        timelineViewButton.setDisable(true);
 
         // Fill ListView with the timelines
         try {
@@ -189,31 +184,33 @@ public class Dashboard {
     }
 
     @FXML
-    public void createTimeline() {
+    public TimelineView createTimeline() {
         Timeline t = new Timeline();
         t.setOwnerID(GUIManager.loggedInUser.getUserID());
-        openTimelineView(t);
+        try {
+            TimelineView timelineView = GUIManager.swapScene("TimelineView");
+            timelineView.setActiveTimeline(t);
+            timelineView.timelineEditorController.toggleEditable(true);
+            return timelineView;
+        } catch (IOException e) {e.printStackTrace(); return null;}
     }
 
     @FXML
-    public void editTimeline() {
-        if (activeTimeline != null) {
-            openTimelineView(this.activeTimeline);
-        }
+    public TimelineView editTimeline() {
+        return(openTimelineView(this.activeTimeline));
     }
 
     @FXML
-    public void openTimeline() {
-        openTimelineView(list.getSelectionModel().getSelectedItem());
+    public TimelineView openTimeline() {
+        return(openTimelineView(list.getSelectionModel().getSelectedItem()));
     }
 
-    private void openTimelineView(Timeline newActiveTimeline) {
+    private TimelineView openTimelineView(Timeline newActiveTimeline) {
         try {
             TimelineView timelineView = GUIManager.swapScene("TimelineView");
             timelineView.setActiveTimeline(newActiveTimeline);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+            return timelineView;
+        } catch (IOException e) {e.printStackTrace(); return null;}
     }
 
     // open DeletePopUp
@@ -287,6 +284,7 @@ public class Dashboard {
                 btnDelete.setDisable(true);
                 btnEdit.setDisable(true);
             }
+            timelineViewButton.setDisable(false);
 
             Timeline timeline = list.getSelectionModel().getSelectedItem();
 
@@ -305,6 +303,7 @@ public class Dashboard {
                     + "\nKeywords: " + keyWords);
 
         } else {
+            timelineViewButton.setDisable(true);
             btnDelete.setDisable(true);
             btnEdit.setDisable(true);
             titleText.setText("Select a Timeline.");

@@ -1,6 +1,7 @@
 package controllers;
 
 import database.DBM;
+import database.Event;
 import database.Timeline;
 import database.User;
 import javafx.application.Platform;
@@ -19,13 +20,13 @@ import org.testfx.framework.junit5.ApplicationExtension;
 import org.testfx.framework.junit5.Start;
 
 import java.io.IOException;
+import java.security.Guard;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(ApplicationExtension.class)
 public class DashboardTest {
@@ -387,7 +388,7 @@ public class DashboardTest {
         reinitializeDashboard();
 
         //Select the first timeline in the list that has an owner ID of -1
-        sut.list.getSelectionModel().select(sut.list.getItems().stream().findFirst().filter(t -> t.getOwnerID() == -1).get());
+        sut.list.getSelectionModel().select(sut.list.getItems().stream().filter(t -> t.getOwnerID() == -1).findFirst().get());
         int initialListSize = sut.list.getItems().size();
 
         Platform.runLater(() -> robot.clickOn("#btnDelete"));
@@ -411,7 +412,7 @@ public class DashboardTest {
         reinitializeDashboard();
 
         //Select the first timeline in the list that has an owner ID of -1
-        sut.list.getSelectionModel().select(sut.list.getItems().stream().findFirst().filter(t -> t.getOwnerID() == -1).get());
+        sut.list.getSelectionModel().select(sut.list.getItems().stream().filter(t -> t.getOwnerID() == -1).findFirst().get());
         int initialListSize = sut.list.getItems().size();
 
         Platform.runLater(() -> robot.clickOn("#btnDelete"));
@@ -426,6 +427,113 @@ public class DashboardTest {
         int expected = initialListSize; //Check that the timeline is still in the list
         int actual = sut.list.getItems().size();
         assertEquals(expected, actual);
+    }
+
+    @Test
+    void testCreateTimelineButton() throws InterruptedException {
+        GUIManager.main = new BorderPane(); //Avoids a null pointer
+        setAdminLoggedIn(true);
+        addNewTimelineToDBByOwnerId(-1);
+        reinitializeDashboard();
+        //Select the first timeline in the list that has an owner ID of -1 to ensure that the new timeline doesn't get overridden in edit mode
+        sut.list.getSelectionModel().select(sut.list.getItems().stream().filter(t -> t.getOwnerID() == -1).findFirst().get());
+
+
+        Platform.runLater(() -> {
+            TimelineView testView = sut.createTimeline();
+            assertTrue(testView.timelineEditorController.editable); //Makes sure that the create timeline screen starts in edit mode.
+
+
+            //Check all timeline attributes to make sure that it is a blank timeline
+            String actualString = testView.activeTimeline.getName();
+            String expectedString = "";
+            assertEquals(expectedString, actualString);
+
+            actualString = testView.activeTimeline.getDescription();
+            expectedString = "";
+            assertEquals(expectedString, actualString);
+
+            int actualInt = testView.activeTimeline.getOwnerID();
+            int expectedInt = -1;
+            assertEquals(expectedInt, actualInt);
+
+            actualInt = testView.activeTimeline.getKeywords().size();
+            expectedInt = 0;
+            assertEquals(expectedInt, actualInt);
+
+            actualInt = testView.activeTimeline.getScale();
+            expectedInt = 0;
+            assertEquals(expectedInt, actualInt);
+
+            actualInt = testView.activeTimeline.getEventList().size();
+            expectedInt = 0;
+            assertEquals(expectedInt, actualInt);
+
+            assertNull(testView.activeTimeline.getTheme());
+        });
+        waitForRunLater();
+
+    }
+
+    @Test
+    void testEditTimelineButton() throws InterruptedException {
+        GUIManager.main = new BorderPane(); //Avoids a null pointer
+        setAdminLoggedIn(true);
+
+        Timeline newTimeline = new Timeline();
+        newTimeline.setOwnerID(-1);
+        newTimeline.setName("Name");
+        newTimeline.setDescription("Description");
+        newTimeline.getKeywords().add("Keyword");
+        newTimeline.setScale(3);
+        newTimeline.setTheme("None");
+        try {DBM.insertIntoDB(newTimeline);} catch (SQLException e) {e.printStackTrace();}
+
+        Event testEvent = new Event();
+        testEvent.setOwnerID(-1);
+        try {DBM.insertIntoDB(testEvent);} catch (SQLException e) {e.printStackTrace();}
+        try {testEvent.addToTimeline(newTimeline.getID());} catch (SQLException e) {e.printStackTrace();}
+
+        reinitializeDashboard();
+
+        //Select the first timeline in the list that has an owner ID of -1
+        sut.list.getSelectionModel().select(sut.list.getItems().stream().filter(t -> t.getOwnerID() == -1).findFirst().get());
+
+        Platform.runLater(() -> {
+            TimelineView testView = sut.editTimeline();
+            assertFalse(testView.timelineEditorController.editable); //Makes sure that the edit timeline screen doesn't start in edit mode.
+
+            //Check all timeline attributes to make sure that it is the proper timeline
+            String actualString = testView.activeTimeline.getName();
+            String expectedString = "Name";
+            assertEquals(expectedString, actualString);
+
+            actualString = testView.activeTimeline.getDescription();
+            expectedString = "Description";
+            assertEquals(expectedString, actualString);
+
+            int actualInt = testView.activeTimeline.getOwnerID();
+            int expectedInt = -1;
+            assertEquals(expectedInt, actualInt);
+
+            actualInt = testView.activeTimeline.getKeywords().size();
+            expectedInt = 1;
+            assertEquals(expectedInt, actualInt);
+
+            actualInt = testView.activeTimeline.getScale();
+            expectedInt = 3;
+            assertEquals(expectedInt, actualInt);
+
+            actualInt = testView.activeTimeline.getEventList().size();
+            expectedInt = 1;
+            assertEquals(expectedInt, actualInt);
+
+            actualString = testView.activeTimeline.getTheme();
+            expectedString = "None";
+            assertEquals(expectedString, actualString);
+        });
+        waitForRunLater();
+
     }
 
     //Helper methods to make changing GUI elements possible
@@ -474,8 +582,6 @@ public class DashboardTest {
             if (w != null && w.isFocused())
                 return (DialogPane) w.getScene().getRoot();
         }
-
-
         return null;
     }
 

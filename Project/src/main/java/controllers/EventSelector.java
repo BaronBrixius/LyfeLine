@@ -5,6 +5,7 @@ import database.Event;
 import database.Timeline;
 import javafx.collections.FXCollections;
 import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
@@ -37,12 +38,13 @@ public class EventSelector {
     Button addToTimelineButton;
     private TimelineView parentController;
     private FilteredList<Event> filterableEventList;
+    private SortedList<Event> sortableEventList;
     private List<List<Integer>> timelineEventLinks;
 
     public void initialize() {
         populateTimelineList();
 
-        sortBy.getItems().addAll("Alphabetic", "Reverse Alphabetic", "Creation Date", "Reverse Creation Date");
+        sortBy.getItems().addAll("Alphabetic", "Reverse Alphabetic", "Creation Date", "Reverse Creation Date", "Priority");
         sortBy.getSelectionModel().selectedIndexProperty().addListener(ov -> sortEvents(sortBy.getSelectionModel().getSelectedIndex()));
 
         if (!GUIManager.loggedInUser.getAdmin()) {
@@ -182,6 +184,7 @@ public class EventSelector {
         try {
             Timeline currentSelection = timelineComboBox.getSelectionModel().getSelectedItem();
             PreparedStatement stmt = DBM.conn.prepareStatement("SELECT * FROM timelines");
+            timelineComboBox.getItems().clear();
             timelineComboBox.getItems().addAll(FXCollections.observableArrayList(DBM.getFromDB(stmt, new Timeline())));
             setTimelineSelected(currentSelection);
         } catch (SQLException e) {
@@ -205,7 +208,8 @@ public class EventSelector {
     void populateEventList() {
         try {
             filterableEventList = new FilteredList<>(FXCollections.observableArrayList(DBM.getFromDB(DBM.conn.prepareStatement("SELECT * FROM events"), new Event())));
-            eventListView.setItems(filterableEventList);
+            sortableEventList = new SortedList<>(filterableEventList);
+            eventListView.setItems(sortableEventList);
             timelineEventLinks = DBM.getFromDB(DBM.conn.prepareStatement("SELECT * FROM timelineevents"),
                     rs -> Arrays.asList(rs.getInt("TimelineID"), rs.getInt("EventID")));
             eventListView.getSelectionModel().select(-1);
@@ -217,16 +221,19 @@ public class EventSelector {
     public void sortEvents(int selection) {
         switch (selection) {
             case 0:
-                eventListView.getItems().sort(Comparator.comparing(Event::getName));
+                sortableEventList.setComparator(Comparator.comparing(Event::getName));
                 break;
             case 1:
-                eventListView.getItems().sort((t1, t2) -> (t2.getName().compareTo(t1.getName())));
+                sortableEventList.setComparator((e1, e2) -> (e2.getName().compareTo(e1.getName())));
                 break;
             case 2:
-                eventListView.getItems().sort((t1, t2) -> (t2.getCreationDate().compareTo(t1.getCreationDate())));
+                sortableEventList.setComparator((e1, e2) -> (e2.getCreationDate().compareTo(e1.getCreationDate())));
                 break;
             case 3:
-                eventListView.getItems().sort(Comparator.comparing(Event::getCreationDate));
+                sortableEventList.setComparator(Comparator.comparing(Event::getCreationDate));
+                break;
+            case 4:
+                sortableEventList.setComparator((e1, e2) -> (Integer.compare(e2.getEventPriority(), e1.getEventPriority())));
                 break;
         }
     }
