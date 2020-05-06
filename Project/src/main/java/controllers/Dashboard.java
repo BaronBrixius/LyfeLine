@@ -88,7 +88,7 @@ public class Dashboard {
 
     public void initialize() {
         //Set Up the Spinners for Start/End Inputs, would have bloated the .fxml and variable list a ton if these were in fxml
-        setupTimeInputStartAndEnd("Year", Integer.MIN_VALUE + 1, Integer.MAX_VALUE, 0);
+        setupTimeInputStartAndEnd("Year", Integer.MIN_VALUE, Integer.MAX_VALUE, 0);
         setupTimeInputStartAndEnd("Month", 0, 12, 1);
         setupTimeInputStartAndEnd("Day", 0, 31, 2);
         setupTimeInputStartAndEnd("Hour", -1, 23, 3);
@@ -590,7 +590,18 @@ public class Dashboard {
 
     //creates spinners to handle dates with appropriate min/max values and invalid input handling
     private void setupTimeInput(String timeSpinnerLabel, int minValue, int maxValue, int index, List<Spinner<Integer>> spinnerList, GridPane spinnerDates) {
-        SpinnerValueFactory.IntegerSpinnerValueFactory valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(minValue, maxValue, minValue);
+        SpinnerValueFactory.IntegerSpinnerValueFactory valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(minValue, maxValue, minValue){
+            @Override public void increment(int steps) {
+                super.increment(steps);                         //makes blank years pretend to be 0 when using buttons, by incrementing to 1 and decrementing to -1
+                if (getValue() == Integer.MIN_VALUE + 1)
+                    setValue(1);
+            }
+            @Override public void decrement(int steps) {
+                super.decrement(steps);
+                if (getValue() == Integer.MAX_VALUE)
+                    setValue(-1);
+            }
+        };
         valueFactory.setConverter(new StringConverter<>() {                 //makes spinners revert to default values in case of invalid input
             @Override
             public String toString(Integer value) {     //called by spinner to update the displayed value in the box
@@ -610,7 +621,6 @@ public class Dashboard {
                     if (string.length() < 1)
                         return minValue;
                     return Integer.parseInt(string);
-
                 } catch (NumberFormatException ex) {
                     return minValue;
                 }
