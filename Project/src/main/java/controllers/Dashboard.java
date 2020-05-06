@@ -421,6 +421,8 @@ public class Dashboard {
 
 		Date startDateSpinner = null;
 		Date endDateSpinner = null;
+		if(searchRating.getValue() == null)
+			searchRating.setValue("0");
 		String[] keywords = null;
 		StringBuilder dynamicParameter = new StringBuilder();
 		if (searchKeywords.getText() != null) {
