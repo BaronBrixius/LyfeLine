@@ -21,6 +21,7 @@ import utils.Date;
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -441,11 +442,48 @@ public class Dashboard {
             endDateSpinner.setDay(0);
         System.out.println(endDateSpinner.toString());
 
+        List<Timeline> tempAllList;
+        List<Timeline> rightTimelines =  new ArrayList<>(); //Currently the right list unless we need to update it with spinner search
+        //If only searching with Range and nothing else
+        //If searching with Range amongst else
+        if ((startDateSpinner != null || endDateSpinner != null)) {
+            PreparedStatement out = DBM.conn.prepareStatement("SELECT * FROM timelines");
+            tempAllList = DBM.getFromDB(out, new Timeline());
+            //If range is defined in both ends
+            if (startDateSpinner != null & endDateSpinner != null) {
+                Date start = startDateSpinner;
+                Date end = endDateSpinner;
+                for (int i = 0; i < tempAllList.size(); i++) {
+                    if (tempAllList.get(i).getStartDate().compareTo(start) != -1 & tempAllList.get(i).getEndDate().compareTo(end) != 1)
+                        rightTimelines.add(tempAllList.get(i));
+                }
+
+            }
+            //If range is defined in start
+            else if (startDateSpinner != null) {
+                Date start = startDateSpinner;
+                Date end = endDateSpinner;
+                for (int i = 0; i < tempAllList.size(); i++) {
+                    if (tempAllList.get(i).getStartDate().compareTo(start) != -1)
+                        rightTimelines.add(tempAllList.get(i));
+                }
+            }
+            //If range is defined in end
+            else {
+                Date start = startDateSpinner;
+                Date end = endDateSpinner;
+                for (int i = 0; i < tempAllList.size(); i++) {
+                    if (tempAllList.get(i).getEndDate().compareTo(end) != 1)
+                        rightTimelines.add(tempAllList.get(i));
+                }
+            }
+        }
+
 
         String[] keywords = null;
         StringBuilder dynamicParameter = new StringBuilder();
         if (searchKeywords.getText() != null) {
-            keywords = searchKeywords.getText().split(" ");
+            keywords = searchKeywords.getText().trim().split(" ");
 
             for (int i = 1; i < keywords.length; i++) {
                 System.out.println(keywords[i]);
@@ -475,45 +513,35 @@ public class Dashboard {
         System.out.println("======SEARCH RESULTS as objects - THE TIMELINES NAMES==========");
         System.out.println(stmt3);
         List<Timeline> list = DBM.getFromDB(stmt3, new Timeline());
-        List<Timeline> tempAllList;
-        List<Timeline> rightTimelines = list; //Currently the right list unless we need to update it with spinner search
-        //If only searching with Range and nothing else
+        System.out.println(startInputs.toString());
 
+        if(startDateSpinner.toString().equals("0-100000") & endDateSpinner.toString().equals("0-100000")){
+            rightTimelines=list;
+            System.out.println("Spinner not used print result from SQL ");}
 
-        //If searching with Range amongst else
-        if ((startDateSpinner != null || endDateSpinner != null)) {
-            PreparedStatement out = DBM.conn.prepareStatement("SELECT * FROM timelines");
-            tempAllList = DBM.getFromDB(out, new Timeline());
-            rightTimelines = new ArrayList<>();
-            //If range is defined in both ends
-            if (startDateSpinner != null & endDateSpinner != null) {
-                Date start = startDateSpinner;
-                Date end = endDateSpinner;
-                for (int i = 0; i < list.size(); i++) {
-                    if (list.get(i).getStartDate().compareTo(start) != -1 & list.get(i).getEndDate().compareTo(end) != 1)
-                        rightTimelines.add(list.get(i));
-                }
+         else if(rightTimelines.isEmpty())
+            System.out.println("Spinner used but no match so ignore sql result");
 
-            }
-            //If range is defined in start
-            else if (startDateSpinner != null) {
-                Date start = startDateSpinner;
-                Date end = endDateSpinner;
-                for (int i = 0; i < list.size(); i++) {
-                    if (list.get(i).getStartDate().compareTo(start) != -1)
-                        rightTimelines.add(list.get(i));
+         else if(!rightTimelines.isEmpty() & list.isEmpty()) {
+             rightTimelines = new ArrayList<>();
+             System.out.println("Spinner used but AND match but sql no match");
+         }
+
+        else if(!rightTimelines.isEmpty() & !list.isEmpty()) {
+            List<Timeline> temp = new ArrayList<>();
+            for(int i= 0; i<rightTimelines.size(); i++){
+                for(int j= 0; j<list.size(); j++){
+                   if (rightTimelines.get(i).getID() == list.get(j).getID())
+                       temp.add(rightTimelines.get(i));
                 }
             }
-            //If range is defined in end
-            else {
-                Date start = startDateSpinner;
-                Date end = endDateSpinner;
-                for (int i = 0; i < list.size(); i++) {
-                    if (list.get(i).getEndDate().compareTo(end) != 1)
-                        rightTimelines.add(list.get(i));
-                }
-            }
+            rightTimelines=temp;
+            System.out.println("have matches");
         }
+
+
+
+
 
         //for (int i = 0; i < rightTimelines.size(); i++)
             //System.out.println(list.get(i).getName());
