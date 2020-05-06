@@ -172,7 +172,7 @@ public class TimelineView {
 
         int row = 1;
         for (int i = 0; i < eventsPlacedCount; i++) { // check previous nodes to see if they occupy desired columns
-            if (eventList.get(i).getStartColumn() <= newNode.getStartColumn() + newNode.getColumnSpan()                     // if a previous node starts before the new one wouldend
+            if (eventList.get(i).getStartColumn() <= newNode.getStartColumn() + newNode.getColumnSpan()                     // if a previous node starts before the new one would end
                     && eventList.get(i).getStartColumn() + eventList.get(i).getColumnSpan() >= newNode.getStartColumn())    // and it ends after the new one starts
                 row++;                                                                                                      // try next row
         }

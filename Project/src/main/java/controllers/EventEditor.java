@@ -94,7 +94,7 @@ public class EventEditor extends Editor {
         }
 
         if (confirm) {
-            FileChooser chooser = new FileChooser(); //For the filedirectory
+            FileChooser chooser = new FileChooser(); //For the file directory
             chooser.setTitle("Upload image");
 
             //All the image formats supported by java.imageio https://docs.oracle.com/javase/7/docs/api/javax/imageio/package-summary.html
@@ -130,12 +130,12 @@ public class EventEditor extends Editor {
 
     @FXML
     private boolean ImageSaveConfirm() {
-        Alert confirmsaveimage = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmsaveimage.setTitle("Confirm Change");
-        confirmsaveimage.setHeaderText("Replacing or removing an image will permanently delete it from the system.");
-        confirmsaveimage.setContentText("Would you like to make the change?");
+        Alert confirmSaveImage = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmSaveImage.setTitle("Confirm Change");
+        confirmSaveImage.setHeaderText("Replacing or removing an image will permanently delete it from the system.");
+        confirmSaveImage.setContentText("Would you like to make the change?");
 
-        Optional<ButtonType> result = confirmsaveimage.showAndWait();
+        Optional<ButtonType> result = confirmSaveImage.showAndWait();
 
         return result.get() == ButtonType.OK;
     }

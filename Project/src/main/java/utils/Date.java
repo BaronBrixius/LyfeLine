@@ -121,46 +121,39 @@ public class Date implements Comparable<Date> {
             return 1;
         else if (year < o.year)
             return -1;
-        else if (year == o.year) {
+        else {
             if (month > o.month)
                 return 1;
             else if (month < o.month)
                 return -1;
-            else if (month == o.month) {
+            else {
                 if (day > o.day)
                     return 1;
                 else if (day < o.day)
                     return -1;
-                else if (day == o.day) {
+                else {
                     if (hour > o.hour)
                         return 1;
                     else if (hour < o.hour)
                         return -1;
-                    else if (hour == o.hour) {
+                    else {
                         if (minute > o.minute)
                             return 1;
                         else if (minute < o.minute)
                             return -1;
-                        else if (minute == o.minute) {
+                        else {
                             if (second > o.second)
                                 return 1;
                             else if (second < o.second)
                                 return -1;
-                            else if (second == o.second) {
-                                if (millisecond > o.millisecond)
-                                    return 1;
-                                else if (millisecond < o.millisecond)
-                                    return -1;
-                                else if (millisecond == o.millisecond) {
-                                    return 0;
-                                }
+                            else {
+                                return Integer.compare(millisecond, o.millisecond);
                             }
                         }
                     }
                 }
             }
         }
-        return 0;
     }
 
     public int getYear() {

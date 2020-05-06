@@ -1,27 +1,19 @@
 package database;
 
-import database.DBM;
-import database.Timeline;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
-import utils.Date;
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import controllers.Dashboard;
-import controllers.GUIManager;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import java.sql.*;
-import java.util.ArrayList;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 
-class TimelineTest {/*
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+
+class TimelineTest {
 	static private DBM sut;
 
 	static Timeline[] timelines = new Timeline[4];
@@ -38,23 +30,23 @@ class TimelineTest {/*
 
 	static void createTestDB() throws SQLException {
 		Timeline TL1 = new Timeline();
-		TL1.setTimelineName("Normal Name");
-		TL1.setTimelineDescription("Normal Timeline Description with normal stuff in it.");
+		TL1.setName("Normal Name");
+		TL1.setDescription("Normal Timeline Description with normal stuff in it.");
 		TL1.setID(1);
-		TL1.setTimelineOwner(1);
+		TL1.setOwnerID(1);
 		TL1.setScale(1);
 		Timeline TL2 = new Timeline();
-		TL2.setTimelineName("");
-		TL2.setTimelineDescription("d");
+		TL2.setName("");
+		TL2.setDescription("d");
 		TL2.setID(2);
 		TL2.setScale(3);
 		Timeline TL3 = new Timeline();
-		TL3.setTimelineName("SW chars in name ÄÖÅ");
-		TL3.setTimelineDescription("SW chars in Description ÄÖÅ");
+		TL3.setName("SW chars in name ÄÖÅ");
+		TL3.setDescription("SW chars in Description ÄÖÅ");
 		TL3.setID(3);
 		Timeline TL4 = new Timeline();
-		TL4.setTimelineName("Supper long name and description test");
-		TL4.setTimelineDescription(
+		TL4.setName("Supper long name and description test");
+		TL4.setDescription(
 				"Lorem ipsum dolor sit amet, simul senserit consulatu ut his, autem legimus eum at. In labitur reformidans per. Vis quidam facilisi accusamus no, dolor verterem quaestio sed te, erant civibus intellegam vis cu. Vix ex pertinacia definitionem, et nam purto dignissim reformidans. Nec eu veniam maiestatis dissentiet, fierent nominavi probatus ex quo. Mel in error tamquam ceteros.\r\n"
 						+ "Affert quidam copiosae an pro, vel ne quas nullam inermis. Velit laudem eos ut, labitur necessitatibus duo ex. Etiam viderer volumus his ex, perpetua similique inciderint est et. Mea te quidam copiosae scribentur, munere torquatos definitionem et per. Per id nobis nostro. Te maiorum mandamus interpretaris sea, ne vis discere voluptatibus. Et nec nibh appellantur, est tractatos dignissim moderatius ad.\r\n"
 						+ "Sed ne inani mucius sensibus. Eos nullam melius et, et epicurei delectus usu, an has ferri semper definiebas. Voluptaria conclusionemque nam ad, ne est cibo oportere. Apeirian eleifend duo ne, putent dolores sadipscing has ad.\r\n"
@@ -130,8 +122,8 @@ class TimelineTest {/*
 		PreparedStatement stmt1 = DBM.conn.prepareStatement("SELECT * FROM timelines");
 		List<Timeline> TimelineList = DBM.getFromDB(stmt1, new Timeline());
 		for (int i = 0; i < timelines.length; i++) {
-			assertEquals(timelines[i].getTimelineName(), TimelineList.get(i).getTimelineName());
-			assertEquals(timelines[i].getTimelineDescription(), TimelineList.get(i).getTimelineDescription());
+			assertEquals(timelines[i].getName(), TimelineList.get(i).getName());
+			assertEquals(timelines[i].getDescription(), TimelineList.get(i).getDescription());
 		}
 	}
 
@@ -140,8 +132,8 @@ class TimelineTest {/*
 		// "Name: " + timelineName + " Description: " + timelineDescription
 		for (int i = 0; i < timelines.length; i++) {
 			String Actual = timelines[i].toString();
-			String Expected = "Name: " + timelines[i].getTimelineName() + " Description: "
-					+ timelines[i].getTimelineDescription();
+			String Expected = "Name: " + timelines[i].getName() + " Description: "
+					+ timelines[i].getDescription();
 			assertEquals(Actual, Expected);
 		}
 	}
@@ -150,8 +142,8 @@ class TimelineTest {/*
 	void setTimelineNameTest() {
 		for (int i = 0; i < timelines.length; i++) {
 			String oldName = timelines[i].getName();
-			timelines[i].setTimelineName("A Different name");
-			assertFalse(oldName.equals(timelines[i].getTimelineName()));
+			timelines[i].setName("A Different name");
+			assertFalse(oldName.equals(timelines[i].getName()));
 		}
 	}
 
@@ -166,7 +158,7 @@ class TimelineTest {/*
 	@Test
 	void getTimelineIDTest() {
 		for (int i = 0; i < timelines.length; i++) {
-			int IDGot = timelines[i].getTimelineID();
+			int IDGot = timelines[i].getID();
 			assertEquals(IDGot, (i + 1));
 		}
 	}
@@ -175,11 +167,11 @@ class TimelineTest {/*
 	void getNameTest() {
 		for (int i = 0; i < timelines.length; i++) {
 			String NewTestingName = "New Testing Name";
-			timelines[i].setTimelineName(NewTestingName);
-			assertEquals(timelines[i].getTimelineName(), NewTestingName);
+			timelines[i].setName(NewTestingName);
+			assertEquals(timelines[i].getName(), NewTestingName);
 		}
 	}
-	
+
 	@Test
 	void getScaleTest() {
 		for (int i = 0; i < timelines.length; i++) {

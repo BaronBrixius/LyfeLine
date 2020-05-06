@@ -125,12 +125,12 @@ public abstract class Editor {
 
     @FXML
     boolean saveConfirm() {
-        Alert confirmsave = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmsave.setTitle("Confirm Save");
-        confirmsave.setHeaderText("This will make permanent changes!"); //TODO change text
-        confirmsave.setContentText("Would you like to save?");
+        Alert confirmSave = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmSave.setTitle("Confirm Save");
+        confirmSave.setHeaderText("This will make permanent changes!"); //TODO change text
+        confirmSave.setContentText("Would you like to save?");
 
-        Optional<ButtonType> result = confirmsave.showAndWait();
+        Optional<ButtonType> result = confirmSave.showAndWait();
 
         if (result.get() == ButtonType.CANCEL)
             return false;
