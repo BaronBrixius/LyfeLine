@@ -104,7 +104,7 @@ for example:      buttonName.getStyleClass().add("smallButton");                
 }
 
 .eventNode {
-	-fx-font-size: 1em;
+    -fx-font-size: 1em;
     -fx-font-weight: bold;
     -fx-text-fill: white;
     -fx-background-color: black;
@@ -119,11 +119,11 @@ for example:      buttonName.getStyleClass().add("smallButton");                
 }
 
 .timeline {
-	-fx-background-color: #000000;
+    -fx-background-color: #000000;
 }
 
 .tooltip {
-	-fx-background-color: #000000;
+    -fx-background-color: #000000;
 }
 
 .scroll-bar:horizontal.track,
@@ -155,12 +155,12 @@ for example:      buttonName.getStyleClass().add("smallButton");                
 .scroll-bar:vertical .decrement-button:pressed {
 }
 
- .scroll-bar .increment-arrow,
- .scroll-bar .decrement-arrow{
+.scroll-bar .increment-arrow,
+.scroll-bar .decrement-arrow{
 }
 
- .scroll-bar:vertical .increment-arrow,
- .scroll-bar:vertical .decrement-arrow{
+.scroll-bar:vertical .increment-arrow,
+.scroll-bar:vertical .decrement-arrow{
 }
 
 .scroll-bar:horizontal .thumb,

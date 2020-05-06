@@ -21,7 +21,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-class TimelineTest {
+class TimelineTest {/*
 	static private DBM sut;
 
 	static Timeline[] timelines = new Timeline[4];
