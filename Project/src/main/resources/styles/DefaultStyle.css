@@ -137,6 +137,7 @@ for example:      buttonName.getStyleClass().add("smallButton");                
 .mediumText{
     -fx-font-size: 1.5em;
 }
+
 .date-picker .label {
     -fx-padding: 0 0 0 0;
     -fx-pref-width: 5px;
