@@ -229,7 +229,7 @@ public class Timeline implements DBObject<Timeline> {
     // This method takes the new timeline name and the userID that is creating the
     // line and checks if the name is already in the DB, in relation with this user
 
-    private boolean validName(String name, int user) throws SQLException {
+    public boolean validName(String name, int user) throws SQLException {
         PreparedStatement stmt = DBM.conn.prepareStatement("SELECT * FROM timelines WHERE TimelineOwner = ?");
         stmt.setInt(1, user);
         List<String> timelineNameList = DBM.getFromDB(stmt, rs -> rs.getString("TimelineName"));
