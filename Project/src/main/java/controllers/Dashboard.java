@@ -236,28 +236,6 @@ public class Dashboard {
             list.getSelectionModel().select(null);
             return true;
         }
-
-        //Stage delConfirm = new Stage();
-        //delConfirm.setTitle("Confirm Deletion");
-        //delConfirm.initOwner(GUIManager.mainStage);
-//
-        //delConfirm.initModality(Modality.WINDOW_MODAL);
-        //delConfirm.setResizable(false);
-//
-        //FXMLLoader popupDeletion = new FXMLLoader(GUIManager.class.getResource("../FXML/Popup.fxml"));
-        //VBox popup = popupDeletion.load();
-        //popup.getStylesheets().add(GUIManager.mainStage.getScene().getStylesheets().get(0));
-        //delConfirm.setScene(new Scene(popup));
-//
-        //Popup deletionPopup = popupDeletion.getController();
-        //deletionPopup.setMode(1);
-        //if (list.getSelectionModel().getSelectedItem() != null && list.getSelectionModel().getSelectedItem().getOwnerID() == GUIManager.loggedInUser.getUserID()) {
-        //    titleText.setText("");
-        //    deletionPopup.setList(list);
-        //    deletionPopup.setDisplayTxt(
-        //            "Are you sure you want to delete " + list.getSelectionModel().getSelectedItem().getName() + "?");
-        //    delConfirm.show();
-        //}
     }
 
     public void deleteOrphans(Timeline timeline) throws SQLException {
