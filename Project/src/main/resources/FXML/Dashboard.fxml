@@ -22,261 +22,60 @@
 <?import javafx.scene.text.TextFlow?>
 
 <VBox minHeight="400.0" minWidth="600.0" stylesheets="@../styles/DefaultStyle.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.Dashboard">
-   <HBox fx:id="Simple" alignment="CENTER_LEFT" spacing="10.0">
-      <children>
-         <VBox prefHeight="185.0" prefWidth="481.0">
-            <children>
-               <HBox prefHeight="43.0" prefWidth="441.0">
-                  <padding>
-                     <Insets top="10.0" />
-                  </padding>
-                  <children>
-                     <HBox />
-                      <TextField fx:id="searchInput" prefHeight="31.0" prefWidth="376.0" promptText="Search here..." style="-fx-font-size: 1.3em;" />
-                     <Hyperlink fx:id="AdvancedSearch" onAction="#toggleAdvancedSearch" prefHeight="31.0" prefWidth="109.0" text="Advanced Search">
-                        <HBox.margin>
-                           <Insets right="10.0" />
-                        </HBox.margin>
-                     </Hyperlink>
-                  </children>
-                  <VBox.margin>
-                     <Insets left="5.0" />
-                  </VBox.margin>
-               </HBox>
-               <HBox prefHeight="67.0" prefWidth="502.0" spacing="50.0">
-                  <children>
-                         <ComboBox fx:id="sortBy" prefHeight="35.0" promptText="Sort By" style="-fx-font-size: 1.3em;" />
-                            <CheckBox fx:id="cbOnlyViewPersonalLines" alignment="CENTER" mnemonicParsing="false" onAction="#onlyUserTimelines" style="-fx-font-size: 1.3em;" text="Only Show My Timelines">
-                        <padding>
-                           <Insets top="10.0" />
-                        </padding>
-                     </CheckBox>
-                  </children>
-                  <VBox.margin>
-                     <Insets top="5.0" />
-                  </VBox.margin>
-                  <padding>
-                     <Insets bottom="10.0" left="5.0" right="10.0" top="10.0" />
-                  </padding>
-               </HBox>
-            </children>
-         </VBox>
-         <GridPane fx:id="advancedSearchView" alignment="TOP_RIGHT" prefHeight="172.0" prefWidth="928.0" visible="false">
+    <HBox fx:id="Simple" alignment="CENTER_LEFT" spacing="10.0">
+        <VBox prefHeight="185.0" prefWidth="481.0">
+            <HBox prefHeight="43.0" prefWidth="441.0">
+                <padding>
+                    <Insets top="10.0"/>
+                </padding>
+                <VBox.margin>
+                    <Insets left="5.0"/>
+                </VBox.margin>
+                <HBox/>
+                <TextField fx:id="searchInput" prefHeight="31.0" prefWidth="376.0" promptText="Search here..."
+                           style="-fx-font-size: 1.3em;"/>
+                <Hyperlink fx:id="AdvancedSearch" onAction="#toggleAdvancedSearch" prefHeight="31.0"
+                           prefWidth="109.0" text="Advanced Search">
+                    <HBox.margin>
+                        <Insets right="10.0"/>
+                    </HBox.margin>
+                </Hyperlink>
+            </HBox>
+            <HBox prefHeight="67.0" prefWidth="502.0" spacing="50.0">
+                <VBox.margin>
+                    <Insets top="5.0"/>
+                </VBox.margin>
+                <padding>
+                    <Insets bottom="10.0" left="5.0" right="10.0" top="10.0"/>
+                </padding>
+                <ComboBox fx:id="sortBy" prefHeight="35.0" promptText="Sort By" style="-fx-font-size: 1.3em;"/>
+                <CheckBox fx:id="cbOnlyViewPersonalLines" alignment="CENTER" mnemonicParsing="false"
+                          onAction="#onlyUserTimelines" style="-fx-font-size: 1.3em;"
+                          text="Only Show My Timelines">
+                    <padding>
+                        <Insets top="10.0"/>
+                    </padding>
+                </CheckBox>
+            </HBox>
+        </VBox>
+        <GridPane fx:id="advancedSearchView" alignment="TOP_RIGHT" prefHeight="172.0" prefWidth="928.0" visible="false">
             <columnConstraints>
-               <ColumnConstraints />
-               <ColumnConstraints hgrow="SOMETIMES" maxWidth="924.0" minWidth="10.0" prefWidth="900.0" />
+                <ColumnConstraints/>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="924.0" minWidth="10.0" prefWidth="900.0"/>
             </columnConstraints>
             <rowConstraints>
-               <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-               <RowConstraints maxHeight="5.0" minHeight="0.0" prefHeight="0.0" vgrow="SOMETIMES" />
-               <RowConstraints maxHeight="20.0" minHeight="10.0" prefHeight="20.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
+                <RowConstraints maxHeight="5.0" minHeight="0.0" prefHeight="0.0" vgrow="SOMETIMES"/>
+                <RowConstraints maxHeight="20.0" minHeight="10.0" prefHeight="20.0" vgrow="SOMETIMES"/>
             </rowConstraints>
-            <children>
-               <VBox prefWidth="906.0" GridPane.columnIndex="1">
-                  <children>
-                     <VBox prefWidth="100.0" />
-                     <HBox fx:id="TopLabels" prefHeight="32.0">
-                        <children>
-                           <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="32.0" prefWidth="196.0" text="Timeline name" wrapText="true">
-                              <HBox.margin>
-                                 <Insets />
-                              </HBox.margin>
-                           </Label>
-                           <Region minWidth="0.0" prefHeight="32.0" prefWidth="22.0" />
-                           <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="32.0" prefWidth="196.0" text="Name of Creator" wrapText="true" />
-                           <Region minWidth="0.0" prefHeight="32.0" prefWidth="22.0" />
-                           <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="32.0" prefWidth="196.0" text="Start" wrapText="true" />
-                           <Region minWidth="0.0" prefHeight="32.0" prefWidth="22.0" />
-                           <GridPane fx:id="topLabels" visible="false">
-                              <columnConstraints>
-                                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
-                                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
-                                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
-                              </columnConstraints>
-                              <rowConstraints>
-                                 <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                              </rowConstraints>
-                              <children>
-                                 <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="32.0" prefWidth="60.0" styleClass="smallText" text="Hours" wrapText="true">
-                                    <font>
-                                       <Font size="4.0" />
-                                    </font>
-                                 </Label>
-                                 <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="32.0" prefWidth="60.0" styleClass="smallText" text="Minutes" wrapText="true" GridPane.columnIndex="1">
-                                    <font>
-                                       <Font size="10.0" />
-                                    </font>
-                                 </Label>
-                                 <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="32.0" prefWidth="60.0" styleClass="smallText" text="Seconds" wrapText="true" GridPane.columnIndex="2">
-                                    <font>
-                                       <Font size="10.0" />
-                                    </font>
-                                 </Label>
-                              </children>
-                           </GridPane>
-                        </children>
-                     </HBox>
-                     <HBox>
-                        <children>
-                           <TextField fx:id="searchTimelineName" alignment="CENTER" prefWidth="196.0" promptText="Timeline Name" style="-fx-font-size: 1.3em;" />
-                           <Region minWidth="20.0" prefWidth="20.0" />
-                           <TextField fx:id="searchCreator" alignment="CENTER" prefWidth="196.0" promptText="Name of Creator" style="-fx-font-size: 1.3em;">
-                              <HBox.margin>
-                                 <Insets />
-                              </HBox.margin>
-                           </TextField>
-                           <Region minWidth="20.0" prefWidth="20.0" />
-                           <GridPane fx:id="startYYMODD">
-                              <columnConstraints>
-                                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
-                                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
-                                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
-                              </columnConstraints>
-                              <rowConstraints>
-                                 <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                              </rowConstraints>
-                              <children>
-                                 <Spinner fx:id="startYY" accessibleHelp="YY" accessibleText="YY" editable="true" prefWidth="60.0" />
-                                 <Spinner fx:id="startMO" editable="true" prefWidth="60.0" GridPane.columnIndex="1" />
-                                 <Spinner fx:id="startDD" editable="true" prefWidth="60.0" GridPane.columnIndex="2" />
-                                 
-                                    </children>
-                           </GridPane>
-                           <Hyperlink fx:id="toggleHHMMSS" accessibleHelp="Test" alignment="CENTER" minWidth="30.0" onAction="#toggleHHMMSS" prefHeight="23.0" prefWidth="30.0" text="(&gt;)" />
-                           <GridPane fx:id="startHHMMSS" visible="false">
-                              <columnConstraints>
-                                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
-                                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
-                                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
-                              </columnConstraints>
-                              <rowConstraints>
-                                 <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                              </rowConstraints>
-                              <children>
-                                 <Spinner fx:id="startHH" editable="true" prefWidth="60.0" />
-                                 <Spinner fx:id="startMM" editable="true" prefWidth="60.0" GridPane.columnIndex="1" />
-                                 <Spinner fx:id="startSS" editable="true" prefWidth="60.0" GridPane.columnIndex="2" />
-                              </children>
-                           </GridPane>
-                        </children>
-                     </HBox>
-                     <HBox fx:id="BottomLabels" prefHeight="32.0" prefWidth="601.0">
-                        <children>
-                           <Label fx:id="KeywordLabel" alignment="CENTER" contentDisplay="CENTER" prefHeight="32.0" prefWidth="196.0" text="Keyword" wrapText="true" />
-                           <Region minWidth="20.0" prefHeight="32.0" prefWidth="22.0" />
-                           <Label fx:id="RatingLabel" alignment="CENTER" contentDisplay="CENTER" prefHeight="32.0" prefWidth="196.0" text="Rating" wrapText="true" />
-                           <Region minWidth="0.0" prefHeight="32.0" prefWidth="22.0" />
-                           <Label fx:id="EndLabel" alignment="CENTER" contentDisplay="CENTER" prefHeight="32.0" prefWidth="196.0" text="End" wrapText="true" />
-                           <Region minWidth="0.0" prefHeight="32.0" prefWidth="22.0" />
-                           <GridPane fx:id="bottomLabels" visible="false">
-                              <columnConstraints>
-                                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
-                                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
-                                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
-                              </columnConstraints>
-                              <rowConstraints>
-                                 <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                              </rowConstraints>
-                              <children>
-                                 <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="32.0" prefWidth="60.0" styleClass="smallText" text="Hours" wrapText="true">
-                                    <font>
-                                       <Font size="10.0" />
-                                    </font>
-                                 </Label>
-                                 <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="32.0" prefWidth="60.0" styleClass="smallText" text="Minutes" wrapText="true" GridPane.columnIndex="1">
-                                    <font>
-                                       <Font size="10.0" />
-                                    </font>
-                                 </Label>
-                                 <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="32.0" prefWidth="60.0" styleClass="smallText" text="Seconds" wrapText="true" GridPane.columnIndex="2">
-                                    <font>
-                                       <Font size="10.0" />
-                                    </font>
-                                 </Label>
-                              </children>
-                           </GridPane>
-                        </children>
-                     </HBox>
-                     <HBox>
-                        <children>
-                           <TextField fx:id="searchKeywords" alignment="CENTER" prefWidth="196.0" promptText="Keywords" style="-fx-font-size: 1.3em;" />
-                           <Region minWidth="20.0" prefWidth="20.0" />
-                           <ComboBox fx:id="searchRating" prefHeight="32.0" prefWidth="196.0">
-                              <HBox.margin>
-                                 <Insets />
-                              </HBox.margin></ComboBox>
-                           <Region minWidth="20.0" prefWidth="20.0" />
-                           <GridPane fx:id="endYYMODD">
-                              <columnConstraints>
-                                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
-                                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
-                                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
-                              </columnConstraints>
-                              <rowConstraints>
-                                 <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                              </rowConstraints>
-                              <children>
-                                 <Spinner fx:id="endYY" editable="true" prefWidth="60.0" />
-                                 <Spinner fx:id="endMO" editable="true" prefWidth="60.0" GridPane.columnIndex="1" />
-                                 <Spinner fx:id="endDD" editable="true" prefWidth="60.0" GridPane.columnIndex="2">
-                                    <GridPane.margin>
-                                       <Insets />
-                                    </GridPane.margin>
-                                 </Spinner>
-                              </children>
-                           </GridPane>
-                           <Region minWidth="30.0" prefWidth="30.0" />
-                           <GridPane fx:id="endHHMMSS" visible="false">
-                              <columnConstraints>
-                                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
-                                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
-                                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
-                              </columnConstraints>
-                              <rowConstraints>
-                                 <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                              </rowConstraints>
-                              <children>
-                                 <Spinner fx:id="endHH" editable="true" prefWidth="60.0" />
-                                 <Spinner fx:id="endMM" editable="true" prefWidth="60.0" GridPane.columnIndex="1" />
-                                 <Spinner fx:id="endSS" editable="true" prefWidth="60.0" GridPane.columnIndex="2" />
-                              </children>
-                           </GridPane>
-                        </children>
-                        <padding>
-                           <Insets top="5.0" />
-                        </padding>
-                     </HBox>
-                  </children>
-               </VBox>
-               <VBox prefHeight="132.0" prefWidth="176.0" spacing="10.0">
-                  <children>
-                     <Button fx:id="searchButton" contentDisplay="TOP" minWidth="50.0" mnemonicParsing="false" onAction="#advancedSearch" prefHeight="32.0" prefWidth="90.0" styleClass="smallButton" text="Search">
-                        <opaqueInsets>
-                           <Insets />
-                        </opaqueInsets>
-                        <VBox.margin>
-                           <Insets right="10.0" top="10.0" />
-                        </VBox.margin>
-                     </Button>
-                     <Button fx:id="clearButton" contentDisplay="TOP" minWidth="50.0" mnemonicParsing="false" onAction="#clearAdvancedSearch" prefHeight="31.0" prefWidth="90.0" styleClass="smallButton" text="Clear">
-                        <opaqueInsets>
-                           <Insets />
-                        </opaqueInsets>
-                        <VBox.margin>
-                           <Insets right="10.0" top="10.0" />
-                        </VBox.margin>
-                     </Button>
-                  </children>
-               </VBox>
-            </children>
             <padding>
-               <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
             </padding>
             <HBox.margin>
-               <Insets bottom="10.0" right="10.0" top="10.0" />
+                <Insets bottom="10.0" right="10.0" top="10.0"/>
             </HBox.margin>
             <opaqueInsets>
-               <Insets />
+                <Insets/>
             </opaqueInsets>
          </GridPane>
          <VBox>
@@ -339,27 +138,27 @@
                    </styleClass>
                </Button>
             <GridPane fx:id="gridButtons" hgap="15.0" prefHeight="85.0" prefWidth="515.0">
-               <columnConstraints>
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
-               </columnConstraints>
-               <rowConstraints>
-                  <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-               </rowConstraints>
-               <children>
-                     <Button fx:id="adminGUI" alignment="CENTER" mnemonicParsing="false" onAction="#adminScreen" prefWidth="297.0" styleClass="dashBoard" text="Admin Manager" textAlignment="CENTER">
-                     <GridPane.margin>
-                        <Insets />
-                     </GridPane.margin>
-                     <opaqueInsets>
-                        <Insets />
-                     </opaqueInsets>
-                  </Button>
-                     <Button fx:id="eventEditorButton" mnemonicParsing="false" onAction="#openTimeline" styleClass="dashBoard" text="View Timeline" GridPane.columnIndex="1" />
-               </children>
-               <HBox.margin>
-                  <Insets />
-               </HBox.margin>
+                <columnConstraints>
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0"/>
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0"/>
+                </columnConstraints>
+                <rowConstraints>
+                    <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
+                </rowConstraints>
+                <HBox.margin>
+                    <Insets/>
+                </HBox.margin>
+                <Button fx:id="adminGUI" alignment="CENTER" mnemonicParsing="false" onAction="#adminScreen"
+                        prefWidth="297.0" styleClass="dashBoard" text="Admin Manager" textAlignment="CENTER">
+                    <GridPane.margin>
+                        <Insets/>
+                    </GridPane.margin>
+                    <opaqueInsets>
+                        <Insets/>
+                    </opaqueInsets>
+                </Button>
+                <Button fx:id="timelineViewButton" mnemonicParsing="false" onAction="#openTimeline"
+                        styleClass="dashBoard" text="View Timeline" GridPane.columnIndex="1"/>
             </GridPane>
            </HBox>
       </children>
