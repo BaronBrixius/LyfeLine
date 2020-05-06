@@ -4,6 +4,8 @@
 
 *:disabled, *:disabled > * {
     -fx-opacity: 1;
+    /*-fx-background-color: #f4f4f4;
+    -fx-font-size: 120%; */
 }
 
 .text-field, .text-area {

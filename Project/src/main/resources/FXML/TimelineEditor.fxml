@@ -61,15 +61,23 @@
                   <HBox spacing="5.0" GridPane.columnSpan="2" GridPane.rowIndex="6">
                      <children>
                         <TextField fx:id="keywordInput" HBox.hgrow="SOMETIMES" />
-                        <Button fx:id="addKeywordButton" maxWidth="47.0" mnemonicParsing="false" onAction="#addKeyword" prefWidth="47.0" styleClass="tinyButton" text="Add">
+                        <Button fx:id="addKeywordButton" maxWidth="47.0" mnemonicParsing="false" onAction="#addKeyword" prefWidth="47.0" text="Add">
                            <font>
                               <Font size="10.0" />
                            </font>
+                           <styleClass>
+                              <String fx:value="tinyButton" />
+                              <String fx:value="DisabledInvisible" />
+                           </styleClass>
                         </Button>
-                        <Button fx:id="removeKeywordButton" maxWidth="67.0" mnemonicParsing="false" onAction="#removeKeyword" prefWidth="67.0" styleClass="tinyButton" text="Remove">
+                        <Button fx:id="removeKeywordButton" maxWidth="67.0" mnemonicParsing="false" onAction="#removeKeyword" prefWidth="67.0" text="Remove">
                            <font>
                               <Font size="10.0" />
                            </font>
+                           <styleClass>
+                              <String fx:value="tinyButton" />
+                              <String fx:value="DisabledInvisible" />
+                           </styleClass>
                         </Button>
                      </children>
                   </HBox>
