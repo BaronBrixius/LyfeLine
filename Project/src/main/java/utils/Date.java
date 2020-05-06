@@ -3,7 +3,7 @@ package utils;
 //Custom datetime class because "official" datetime classes we found don't have the range we need (e.g. billions of years and also milliseconds)
 public class Date implements Comparable<Date> {
 
-    private int year = 1;
+    private int year;
     private int month = 1;
     private int day = 1;
     private int hour;
