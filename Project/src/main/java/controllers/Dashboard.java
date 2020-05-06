@@ -4,25 +4,32 @@ import database.DBM;
 import database.Timeline;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
+import javafx.util.StringConverter;
 import utils.Date;
 
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
 
 public class Dashboard {
     final List<Spinner<Integer>> startInputs = new ArrayList<>();
     final List<Spinner<Integer>> endInputs = new ArrayList<>();
     public Timeline timeline;
+    public Label KeywordLabel;
+    public Label RatingLabel;
+    public Button timelineViewButton;
+    public StackPane stack;
     @FXML
     protected Button eventEditorButton;
     @FXML
@@ -81,16 +88,17 @@ public class Dashboard {
 
     public void initialize() {
         //Set Up the Spinners for Start/End Inputs, would have bloated the .fxml and variable list a ton if these were in fxml
-        setupTimeInputStartAndEnd("Year", Integer.MIN_VALUE, Integer.MAX_VALUE, 0);
-        setupTimeInputStartAndEnd("Month", 0, 12, 1);
-        setupTimeInputStartAndEnd("Day", 0, 31, 2);
-        setupTimeInputStartAndEnd("Hour", -1, 23, 3);
-        setupTimeInputStartAndEnd("Minute", -1, 59, 4);
-        setupTimeInputStartAndEnd("Second", -1, 59, 5);
-        setupTimeInputStartAndEnd("Millisecond", -1, 999, 6);
+        setupTimeInputStartAndEnd("Year", Integer.MIN_VALUE, Integer.MAX_VALUE, 0, 0);
+        setupTimeInputStartAndEnd("Month", 0, 12, 1, 0);
+        setupTimeInputStartAndEnd("Day", 0, 31, 2, 0);
+        setupTimeInputStartAndEnd("Hour", -1, 23, 3, 0);
+        setupTimeInputStartAndEnd("Minute", -1, 59, 0, 2);
+        setupTimeInputStartAndEnd("Second", -1, 59, 1, 2);
+        setupTimeInputStartAndEnd("Millisecond", -1, 999, 2, 2);
         // TODO fix this to be cleaner, I did it as a last second thing because it used
         // to prevent nonadmins from even viewing anything
         //
+        stack.getChildren().remove(advancedSearchView);
         btnCreate.setVisible(GUIManager.loggedInUser.getAdmin());
         btnCreate.setDisable(!GUIManager.loggedInUser.getAdmin());
         btnEdit.setVisible(GUIManager.loggedInUser.getAdmin());
@@ -153,6 +161,138 @@ public class Dashboard {
 
     }
 
+    @FXML
+    public void searchTimelines() {
+        searchInput.setOnKeyReleased(keyEvent -> {// Each time new key is pressed
+            String[] inputs = searchInput.getText().trim().split("\\s++"); // String is updated by the newest textfield
+            // read, if spaces the strings are split up
+            // into "string keywords" for search l
+            List<Timeline> templist = new ArrayList<>(); // List of timelines that fullfill the textfield input string -
+            // used to fill the ListView of timelines
+
+            //only the logged in user timelines
+            if (cbOnlyViewPersonalLines.isSelected()) {
+                onlyUserTimelines(); // If only search user's timelines
+                for (int i = 0; i < userTimelines.size(); i++) { // go trough all the current user's timelines in the
+                    // database
+                    for (int j = 0; j < inputs.length; j++) {// No check all the search words used if they are to be
+                        // found anywhere as keywords
+                        String toFind = inputs[j]; // while a keyword is just one letter i.e. "f" if a keyword in
+                        // timeline has that letter then it will be shown (instant search
+                        // feature)
+                        List<String> allThisTimelineKeywords = timelines.get(i).getKeywords();
+                        List<String> possibleKeywords = new ArrayList<>();
+                        String[] timlineNames = timelines.get(i).getName().trim().split("\\s++");
+                        for (int k = 0; k < allThisTimelineKeywords.size(); k++) {
+                            if (allThisTimelineKeywords.get(k).length() >= toFind.length()) {
+                                possibleKeywords.add(allThisTimelineKeywords.get(k));
+                            }
+                        }
+                        boolean keyWordfound = Arrays.asList(possibleKeywords.toArray()).stream().anyMatch(s -> s.toString().substring(0, toFind.length()).equalsIgnoreCase(toFind));
+                        boolean namefound = Arrays.asList(timlineNames).stream().anyMatch(s -> s.toLowerCase().equalsIgnoreCase(toFind));
+
+                        if (keyWordfound || namefound) {
+                            if (!templist.contains(userTimelines.get(i))) // if the timline has not already been
+                                // associated with this search then add it// to the temporary timelinelist
+                                templist.add(userTimelines.get(i));
+                        }
+                    }
+                    list.setItems(FXCollections.observableArrayList(templist)); // populate the ListView with the
+                    // timelines that fulfill the search
+                    // criteria at given point in
+                    // time(instant)
+                    if (searchInput.getText().equalsIgnoreCase("")) // When everything is erased from search box, return
+                        // all the user's timelines back to the ListView
+                        list.setItems(FXCollections.observableArrayList(userTimelines));
+                }
+            }
+            // Search all timelines
+            else {
+                for (int i = 0; i < timelines.size(); i++) { // go trough all the current timelines in the database
+                    for (int j = 0; j < inputs.length; j++) {// No check all the search words used if they are to be
+                        // found anywhere as keywords
+                        String toFind = inputs[j]; // while a keyword is just one letter i.e. "f" if a keyword in
+                        // timeline has that letter then it will be shown (instant search
+                        // feature)
+                        List<String> allThisTimelineKeywords = timelines.get(i).getKeywords();
+                        List<String> possibleKeywords = new ArrayList<>();
+                        String[] timlineNames = timelines.get(i).getName().trim().split("\\s++");
+                        for (int k = 0; k < allThisTimelineKeywords.size(); k++) {
+                            if (allThisTimelineKeywords.get(k).length() >= toFind.length()) {
+                                possibleKeywords.add(allThisTimelineKeywords.get(k));
+                            }
+                        }
+
+
+                        boolean keyWordfound = Arrays.asList(possibleKeywords.toArray()).stream().anyMatch(s -> s.toString().substring(0, toFind.length()).equalsIgnoreCase(toFind));
+
+                        boolean namefound = Arrays.asList(timlineNames).stream().anyMatch(s -> s.equalsIgnoreCase(toFind));
+
+                        if (keyWordfound || namefound) {
+                            if (!templist.contains(timelines.get(i))) // if the timline has not already been associated
+                                // with this search then add it to the temporary
+                                // timelinelist
+                                templist.add(timelines.get(i));
+                        }
+                    }
+                    list.setItems(FXCollections.observableArrayList(templist)); // populate the ListView with the
+                    // timelines that fulfill the search
+                    // criteria at given point in
+                    // time(instant)
+                    if (searchInput.getText().equalsIgnoreCase("")) // When everything is erased from search box, return
+                        // all the timelines back to the ListView
+                        list.setItems(FXCollections.observableArrayList(timelines));
+                }
+            }
+        });
+    }
+
+    @FXML
+    public void toggleAdvancedSearch() {
+        if (stack.getChildren().size() > 0)
+            stack.getChildren().remove(advancedSearchView);
+        else {
+            clearAdvancedSearch();
+            stack.getChildren().add(advancedSearchView);
+        }
+    }
+
+    @FXML
+    public void clearAdvancedSearch() {
+        searchTimelineName.clear();
+        searchCreator.clear();
+        searchKeywords.clear();
+        if (cbOnlyViewPersonalLines.isSelected()) {
+            onlyUserTimelines();
+        } else
+            this.list.setItems(FXCollections.observableArrayList(timelines));
+    }
+
+    @FXML
+    public void onlyUserTimelines() {
+
+        if (cbOnlyViewPersonalLines.isSelected()) {
+            try {
+                PreparedStatement stmt = DBM.conn.prepareStatement("SELECT * FROM timelines WHERE TimelineOwner = ?");
+                stmt.setInt(1, GUIManager.loggedInUser.getUserID()); // GUIManager.loggedInUser.getUserID() uncomment
+                // this for real version
+                this.userTimelines = DBM.getFromDB(stmt, new Timeline());
+                list.setItems(FXCollections.observableArrayList(userTimelines));
+            } catch (SQLException e) {
+                System.err.println("Could not get timelines from database.");
+            }
+        } else {
+            try {
+                PreparedStatement stmt = DBM.conn.prepareStatement("SELECT * FROM timelines");
+                list.setItems(FXCollections.observableArrayList(DBM.getFromDB(stmt, new Timeline())));
+                sortTimelines();
+            } catch (SQLException e) {
+                System.err.println("Could not get timelines from database.");
+            }
+        }
+
+    }
+
 
     public void sortTimelines() {
         switch (sortBy.getSelectionModel().getSelectedIndex()) {
@@ -169,79 +309,9 @@ public class Dashboard {
                 list.getItems().sort(Comparator.comparing(Timeline::getCreationDate));
                 break;
         }
+
     }
 
-			}
-			// If range is defined in start
-			else if (startDateSpinner != null) {
-				Date start = startDateSpinner;
-				Date end = endDateSpinner;
-				for (int i = 0; i < list.size(); i++) {
-					if (list.get(i).getStartDate().compareTo(start) != -1)
-						rightTimelines.add(list.get(i));
-				}
-			}
-			// If range is defined in end
-			else {
-				Date start = startDateSpinner;
-				Date end = endDateSpinner;
-				for (int i = 0; i < list.size(); i++) {
-					if (list.get(i).getEndDate().compareTo(end) != 1)
-						rightTimelines.add(list.get(i));
-				}
-			}
-		}
-
-		for (int i = 0; i < rightTimelines.size(); i++)
-			System.out.println(list.get(i).getName());
-
-		// If searching with Range amongst else
-		if (!list.isEmpty() & (startDateSpinner != null || endDateSpinner != null)) {
-			PreparedStatement out = DBM.conn.prepareStatement("SELECT * FROM timelines");
-			rightTimelines = new ArrayList<>();
-			// If range is defined in both ends
-			if (startDateSpinner != null & endDateSpinner != null) {
-				Date start = startDateSpinner;
-				Date end = endDateSpinner;
-				for (int i = 0; i < list.size(); i++) {
-					if (list.get(i).getStartDate().compareTo(start) != -1
-							|| list.get(i).getEndDate().compareTo(end) != 1)
-						rightTimelines.add(list.get(i));
-				}
-
-			}
-			// If range is defined in start
-			else if (startDateSpinner != null) {
-				Date start = startDateSpinner;
-				Date end = endDateSpinner;
-				for (int i = 0; i < list.size(); i++) {
-					if (list.get(i).getStartDate().compareTo(start) != -1)
-						rightTimelines.add(list.get(i));
-				}
-			}
-			// If range is defined in end
-			else {
-				Date start = startDateSpinner;
-				Date end = endDateSpinner;
-				for (int i = 0; i < list.size(); i++) {
-					if (list.get(i).getEndDate().compareTo(end) != 1)
-						rightTimelines.add(list.get(i));
-				}
-			}
-		}
-		if (cbOnlyViewPersonalLines.isSelected()) {
-
-			List<Timeline> userline = new ArrayList<>();
-			for (int i = 0; i < rightTimelines.size(); i++) {
-				for (int j = 0; j < userTimelines.size(); j++) {
-					if (userTimelines.get(j).getID() == rightTimelines.get(i).getID())
-						userline.add(rightTimelines.get(i));
-				}
-			}
-			this.list.setItems(FXCollections.observableArrayList(userline));
-		} else
-			this.list.setItems(FXCollections.observableArrayList(rightTimelines));
-	}
 
     @FXML
     public void adminScreen() throws IOException {
@@ -275,35 +345,6 @@ public class Dashboard {
             timelineView.setActiveTimeline(newActiveTimeline);
         } catch (IOException e) {
             e.printStackTrace();
-        }
-    }
-
-    // open DeletePopUp
-    @FXML
-    public void deleteConfirmation(ActionEvent event) throws IOException {
-
-        Stage delConfirm = new Stage();
-        delConfirm.setTitle("Confirm Deletion");
-        delConfirm.initOwner(GUIManager.mainStage);
-
-        delConfirm.initModality(Modality.WINDOW_MODAL);
-        delConfirm.setResizable(false);
-
-        FXMLLoader popupDeletion = new FXMLLoader(GUIManager.class.getResource("../FXML/Popup.fxml"));
-        VBox popup = popupDeletion.load();
-        popup.getStylesheets().add(GUIManager.mainStage.getScene().getStylesheets().get(0));
-        delConfirm.setScene(new Scene(popup));
-
-        Popup deletionPopup = popupDeletion.getController();
-        deletionPopup.setMode(1);
-        if (list.getSelectionModel().getSelectedItem() != null
-                && list.getSelectionModel().getSelectedItem().getOwnerID() == GUIManager.loggedInUser.getUserID()) {
-            titleText.setText("");
-            deletionPopup.setList(list);
-            deletionPopup.setDisplayTxt(
-                    "Are you sure you want to delete " + list.getSelectionModel().getSelectedItem().getName() + "?");
-            delConfirm.show();
-
         }
     }
 
@@ -508,20 +549,23 @@ public class Dashboard {
             this.list.setItems(FXCollections.observableArrayList(rightTimelines));
     }
 
-    private void setupTimeInputStartAndEnd(String timeSpinnerLabel, int minValue, int maxValue, int index) {    //applies equivalent setups to both start and end spinners
-        setupTimeInput(timeSpinnerLabel, minValue, maxValue, index, startInputs, startDates);
-        setupTimeInput(timeSpinnerLabel, minValue, maxValue, index, endInputs, endDates);
+    private void setupTimeInputStartAndEnd(String timeSpinnerLabel, int minValue, int maxValue, int column, int row) {    //applies equivalent setups to both start and end spinners
+        setupTimeInput(timeSpinnerLabel, minValue, maxValue, column, row, startInputs, startDates);
+        setupTimeInput(timeSpinnerLabel, minValue, maxValue, column, row, endInputs, endDates);
     }
 
     //creates spinners to handle dates with appropriate min/max values and invalid input handling
-    private void setupTimeInput(String timeSpinnerLabel, int minValue, int maxValue, int index, List<Spinner<Integer>> spinnerList, GridPane spinnerDates) {
-        SpinnerValueFactory.IntegerSpinnerValueFactory valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(minValue, maxValue, minValue){
-            @Override public void increment(int steps) {
+    private void setupTimeInput(String timeSpinnerLabel, int minValue, int maxValue, int column, int row, List<Spinner<Integer>> spinnerList, GridPane spinnerDates) {
+        SpinnerValueFactory.IntegerSpinnerValueFactory valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(minValue, maxValue, minValue) {
+            @Override
+            public void increment(int steps) {
                 super.increment(steps);                         //makes blank years pretend to be 0 when using buttons, by incrementing to 1 and decrementing to -1
                 if (getValue() == Integer.MIN_VALUE + 1)
                     setValue(1);
             }
-            @Override public void decrement(int steps) {
+
+            @Override
+            public void decrement(int steps) {
                 super.decrement(steps);
                 if (getValue() == Integer.MAX_VALUE)
                     setValue(-1);
@@ -552,19 +596,25 @@ public class Dashboard {
             }
         });
 
-        spinnerList.add(index, new Spinner<>(valueFactory));
-        spinnerList.get(index).setEditable(true);
+        spinnerList.add(column, new Spinner<>(valueFactory));
+        spinnerList.get(column).setEditable(true);
 
-        spinnerList.get(index).focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+        spinnerList.get(column).focusedProperty().addListener((observableValue, oldValue, newValue) -> {
             if (!newValue)                                  //the display doesn't restore if invalid info is entered repeatedly, this fixes that
-                spinnerList.get(index).cancelEdit();        //note: cancelEdit() is really more like "update display" as implemented. this triggers it upon losing focus
+                spinnerList.get(column).cancelEdit();        //note: cancelEdit() is really more like "update display" as implemented. this triggers it upon losing focus
         });                                                 //why this isn't default behavior I'll never know
 
         //adds each spinner to a VBox underneath its label, to keep the two connected as they move around
         Label spinnerHeader = new Label(timeSpinnerLabel);
         spinnerHeader.getStyleClass().add("smallText");
-        spinnerDates.add(spinnerHeader, index, 0);
-        spinnerDates.add(spinnerList.get(index), index, 1);
-        spinnerList.get(index).setPrefWidth(70);
+        if (column == 2 && row == 2)
+            spinnerDates.add(spinnerHeader, column, row, 2, 1);
+        else
+            spinnerDates.add(spinnerHeader, column, row);
+        spinnerDates.add(spinnerList.get(column), column, row + 1);
+
+    }
+
+    public void deleteConfirmation(ActionEvent actionEvent) {
     }
 }
