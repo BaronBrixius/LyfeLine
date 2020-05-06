@@ -1,6 +1,6 @@
 package database;
 
-import org.junit.Assert;
+import org.junit.*;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -70,7 +70,7 @@ class EventTest {
         Event test1 = new Event();
         test1.setID(0);
         test1.setImage("فراس");
-        test1.setTitle("الحطيب");
+        test1.setName("الحطيب");
         test1.setDescription("With a culture that values creativity and technology, Google is used to decorating our " +
                 "homepage for national holidays and historical figures.  When Ira Glass, of This American Life, slammed his hand on the conference table and smiled," +
                 " “Why can’t we feature a random person?” the doodlers and I thought he was crazy.  I believe we laughed and moved the conversation on quickly-- none of" +
@@ -79,7 +79,7 @@ class EventTest {
         Event test2 = new Event();
         test2.setID(0);
         test2.setImage("alsdlöasmdklamdasmdkasmdas");
-        test2.setTitle("الحطيب");
+        test2.setName("الحطيب");
         test2.setDescription("With a culture that values creativity and technology, Google is used to decorating our " +
                 "homepage for national holidays and historical figures.  When Ira Glass, of This American Life, slammed his hand on the conference table and smiled," +
                 " “Why can’t we feature a random person?” the doodlers and I thought he was crazy.  I believe we laughed and moved the conversation on quickly-- none of" +
@@ -168,8 +168,8 @@ class EventTest {
         rs = stmt1.executeQuery();
         rs.next();
         int actual1 = rs.getInt(1);
-        assertEquals( testToAdd.getEventID(),actual1);
-        
+        assertEquals( testToAdd.getID(),actual1);
+
     }
 
 
@@ -194,7 +194,7 @@ class EventTest {
         DBM.insertIntoDB(test);
         DBM.deleteFromDB(test);
         PreparedStatement out = DBM.conn.prepareStatement("DELETE FROM `events` WHERE (`EventID` = ?)");
-        out.setInt(1, test.getEventID());
+        out.setInt(1, test.getID());
         assertEquals(out.toString(), test.getDeleteQuery().toString());
         DBM.deleteFromDB(events[0]);
         ResultSet rs;
@@ -214,7 +214,7 @@ class EventTest {
 
     @Test
     void setUserID() {
-        test.setUserID(1);
+        test.setOwnerID(1);
         assertEquals(1, 1);
     }
 
