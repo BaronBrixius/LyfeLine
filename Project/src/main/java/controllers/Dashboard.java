@@ -337,35 +337,142 @@ public class Dashboard {
 			rightTimelines = new ArrayList<>();
 			PreparedStatement out = DBM.conn.prepareStatement("SELECT * FROM timelines");
 			tempAllList = DBM.getFromDB(out, new Timeline());
-			// If range is defined in both ends
-			if (startDateSpinner != null & endDateSpinner != null) {
+			// If range is defined in both end
+		if (startDateSpinner != null & endDateSpinner != null) {
 				Date start = startDateSpinner;
 				Date end = endDateSpinner;
+				//Going from most narrowed restriction to the widest to catch cases in order
+				if(start.getYear()==0 & end.getYear() ==0 & start.getMonth()==0 & end.getMonth() ==0 & start.getDay()==0 & end.getDay() ==0 & start.getHour()==0 & end.getHour() ==0 & start.getMinute()==0 & end.getMinute() ==0 & start.getSecond()==0 & end.getSecond() ==0)
+				for (int i = 0; i < tempAllList.size(); i++) {
+					if (tempAllList.get(i).getStartDate().getMillisecond()>=(start.getMillisecond())
+							& tempAllList.get(i).getEndDate().getMillisecond()<=(end.getMillisecond()))
+						rightTimelines.add(tempAllList.get(i));
+				}
+				else if(start.getYear()==0 & end.getYear() ==0 & start.getMonth()==0 & end.getMonth() ==0 & start.getDay()==0 & end.getDay() ==0 & start.getHour()==0 & end.getHour() ==0 & start.getMinute()==0 & end.getMinute() ==0)
+					for (int i = 0; i < tempAllList.size(); i++) {
+						if ((tempAllList.get(i).getStartDate().getSecond()>=(start.getSecond())
+								& tempAllList.get(i).getEndDate().getSecond()<=(end.getSecond())))
+							rightTimelines.add(tempAllList.get(i));
+					}
+				else if(start.getYear()==0 & end.getYear() ==0 & start.getMonth()==0 & end.getMonth() ==0 & start.getDay()==0 & end.getDay() ==0 & start.getHour()==0 & end.getHour() ==0 )
+						for (int i = 0; i < tempAllList.size(); i++) {
+							if ((tempAllList.get(i).getStartDate().getMinute()>=(start.getMinute())
+									& tempAllList.get(i).getEndDate().getMinute()<=(end.getMinute())))
+								rightTimelines.add(tempAllList.get(i));
+						}
+					else	if(start.getYear()==0 & end.getYear() ==0 & start.getMonth()==0 & end.getMonth() ==0 & start.getDay()==0 & end.getDay() ==0)
+							for (int i = 0; i < tempAllList.size(); i++) {
+								if ((tempAllList.get(i).getStartDate().getHour()>=(start.getHour())
+										& tempAllList.get(i).getEndDate().getHour()<=(end.getHour())))
+									rightTimelines.add(tempAllList.get(i));
+							}
+						else	if(start.getYear()==0 & end.getYear() ==0 & start.getMonth()==0 & end.getMonth() ==0)
+								for (int i = 0; i < tempAllList.size(); i++) {
+									if ((tempAllList.get(i).getStartDate().getDay()>=(start.getDay())
+											& tempAllList.get(i).getEndDate().getDay()<=(end.getDay())))
+										rightTimelines.add(tempAllList.get(i));
+								}
+							else	if(start.getYear()==0 & end.getYear() ==0)
+									for (int i = 0; i < tempAllList.size(); i++) {
+										if ((tempAllList.get(i).getStartDate().getMonth()>=(start.getMonth())
+												& tempAllList.get(i).getEndDate().getMonth()<=(end.getMonth())))
+											rightTimelines.add(tempAllList.get(i));
+									}
+				else //Just compare whole date
+					for (int i = 0; i < tempAllList.size(); i++) {
+										if (tempAllList.get(i).getStartDate().compareTo(start) != -1
+												|| tempAllList.get(i).getEndDate().compareTo(end) != 1)
+											rightTimelines.add(tempAllList.get(i));
+									}
+
+
+			}
+			// If range is defined in start
+			else if (startDateSpinner != null) {
+				Date start = startDateSpinner;
+				Date end = endDateSpinner;
+			//Going from most narrowed restriction to the widest to catch cases in order
+			if(start.getYear()==0  & start.getMonth()==0  & start.getDay()==0  & start.getHour()==0  & start.getMinute()==0 & start.getSecond()==0 )
+				for (int i = 0; i < tempAllList.size(); i++) {
+					if (tempAllList.get(i).getStartDate().getMillisecond()>=(start.getMillisecond()))
+						rightTimelines.add(tempAllList.get(i));
+				}
+			else if(start.getYear()==0 & start.getMonth()==0 & start.getDay()==0  & start.getHour()==0 & start.getMinute()==0 )
+				for (int i = 0; i < tempAllList.size(); i++) {
+					if ((tempAllList.get(i).getStartDate().getSecond()>=(start.getSecond())))
+						rightTimelines.add(tempAllList.get(i));
+				}
+			else if(start.getYear()==0  & start.getMonth()==0 & start.getDay()==0 & start.getHour()==0)
+				for (int i = 0; i < tempAllList.size(); i++) {
+					if ((tempAllList.get(i).getStartDate().getMinute()>=(start.getMinute())))
+						rightTimelines.add(tempAllList.get(i));
+				}
+			else	if(start.getYear()==0 & start.getMonth()==0  & start.getDay()==0 )
+				for (int i = 0; i < tempAllList.size(); i++) {
+					if ((tempAllList.get(i).getStartDate().getHour()>=(start.getHour())))
+						rightTimelines.add(tempAllList.get(i));
+				}
+			else	if(start.getYear()==0  & start.getMonth()==0 )
+				for (int i = 0; i < tempAllList.size(); i++) {
+					if ((tempAllList.get(i).getStartDate().getDay()>=(start.getDay())))
+						rightTimelines.add(tempAllList.get(i));
+				}
+			else	if(start.getYear()==0)
+				for (int i = 0; i < tempAllList.size(); i++) {
+					if ((tempAllList.get(i).getStartDate().getMonth()>=(start.getMonth())))
+						rightTimelines.add(tempAllList.get(i));
+				}
+			else //Just compare whole date
 				for (int i = 0; i < tempAllList.size(); i++) {
 					if (tempAllList.get(i).getStartDate().compareTo(start) != -1
 							|| tempAllList.get(i).getEndDate().compareTo(end) != 1)
 						rightTimelines.add(tempAllList.get(i));
 				}
 
-			}
-			// If range is defined in start
-			else if (startDateSpinner != null) {
-				Date start = startDateSpinner;
-				Date end = endDateSpinner;
-				for (int i = 0; i < tempAllList.size(); i++) {
-					if (tempAllList.get(i).getStartDate().compareTo(start) != -1)
-						rightTimelines.add(tempAllList.get(i));
-				}
-			}
+		}
 			// If range is defined in end
 			else {
 				Date start = startDateSpinner;
 				Date end = endDateSpinner;
+			//Going from most narrowed restriction to the widest to catch cases in order
+			if(end.getYear() ==0 & end.getMonth() ==0 & end.getDay() ==0  & end.getHour() ==0 & end.getMinute() ==0  & end.getSecond() ==0)
 				for (int i = 0; i < tempAllList.size(); i++) {
-					if (tempAllList.get(i).getEndDate().compareTo(end) != 1)
+					if (tempAllList.get(i).getEndDate().getMillisecond()<=(end.getMillisecond()))
 						rightTimelines.add(tempAllList.get(i));
 				}
-			}
+			else if( end.getYear() ==0 & end.getMonth() ==0 & end.getDay() ==0  & end.getHour() ==0 & end.getMinute() ==0)
+				for (int i = 0; i < tempAllList.size(); i++) {
+					if ( tempAllList.get(i).getEndDate().getSecond()<=(end.getSecond()))
+						rightTimelines.add(tempAllList.get(i));
+				}
+			else if( end.getYear() ==0 & end.getMonth() ==0 & end.getDay() ==0 & end.getHour() ==0 )
+				for (int i = 0; i < tempAllList.size(); i++) {
+					if ((tempAllList.get(i).getEndDate().getMinute()<=(end.getMinute())))
+						rightTimelines.add(tempAllList.get(i));
+				}
+			else	if( end.getYear() ==0 & end.getMonth() ==0  & end.getDay() ==0)
+				for (int i = 0; i < tempAllList.size(); i++) {
+					if ((tempAllList.get(i).getEndDate().getHour()<=(end.getHour())))
+						rightTimelines.add(tempAllList.get(i));
+				}
+			else	if( end.getYear() ==0 & end.getMonth() ==0)
+				for (int i = 0; i < tempAllList.size(); i++) {
+					if ((tempAllList.get(i).getEndDate().getDay()<=(end.getDay())))
+						rightTimelines.add(tempAllList.get(i));
+				}
+			else	if(end.getYear() ==0)
+				for (int i = 0; i < tempAllList.size(); i++) {
+					if (( tempAllList.get(i).getEndDate().getMonth()<=(end.getMonth())))
+						rightTimelines.add(tempAllList.get(i));
+				}
+			else //Just compare whole date
+				for (int i = 0; i < tempAllList.size(); i++) {
+					if (tempAllList.get(i).getStartDate().compareTo(start) != -1
+							|| tempAllList.get(i).getEndDate().compareTo(end) != 1)
+						rightTimelines.add(tempAllList.get(i));
+				}
+
+		}
 		}
 
 		// If searching with Range amongst else
@@ -376,70 +483,139 @@ public class Dashboard {
 			if (startDateSpinner != null & endDateSpinner != null) {
 				Date start = startDateSpinner;
 				Date end = endDateSpinner;
-				for (int i = 0; i < list.size(); i++) {
-					if (list.get(i).getStartDate().compareTo(start) != -1
-							|| list.get(i).getEndDate().compareTo(end) != 1)
-						rightTimelines.add(list.get(i));
-				}
+				//Going from most narrowed restriction to the widest to catch cases in order
+				if(start.getYear()==0 & end.getYear() ==0 & start.getMonth()==0 & end.getMonth() ==0 & start.getDay()==0 & end.getDay() ==0 & start.getHour()==0 & end.getHour() ==0 & start.getMinute()==0 & end.getMinute() ==0 & start.getSecond()==0 & end.getSecond() ==0)
+					for (int i = 0; i < list.size(); i++) {
+						if (list.get(i).getStartDate().getMillisecond()>=(start.getMillisecond())
+								& list.get(i).getEndDate().getMillisecond()<=(end.getMillisecond()))
+							rightTimelines.add(list.get(i));
+					}
+				else if(start.getYear()==0 & end.getYear() ==0 & start.getMonth()==0 & end.getMonth() ==0 & start.getDay()==0 & end.getDay() ==0 & start.getHour()==0 & end.getHour() ==0 & start.getMinute()==0 & end.getMinute() ==0)
+					for (int i = 0; i < list.size(); i++) {
+						if ((list.get(i).getStartDate().getSecond()>=(start.getSecond())
+								& list.get(i).getEndDate().getSecond()<=(end.getSecond())))
+							rightTimelines.add(list.get(i));
+					}
+				else if(start.getYear()==0 & end.getYear() ==0 & start.getMonth()==0 & end.getMonth() ==0 & start.getDay()==0 & end.getDay() ==0 & start.getHour()==0 & end.getHour() ==0 )
+					for (int i = 0; i < list.size(); i++) {
+						if ((list.get(i).getStartDate().getMinute()>=(start.getMinute())
+								& list.get(i).getEndDate().getMinute()<=(end.getMinute())))
+							rightTimelines.add(list.get(i));
+					}
+				else	if(start.getYear()==0 & end.getYear() ==0 & start.getMonth()==0 & end.getMonth() ==0 & start.getDay()==0 & end.getDay() ==0)
+					for (int i = 0; i < list.size(); i++) {
+						if ((list.get(i).getStartDate().getHour()>=(start.getHour())
+								& list.get(i).getEndDate().getHour()<=(end.getHour())))
+							rightTimelines.add(list.get(i));
+					}
+				else	if(start.getYear()==0 & end.getYear() ==0 & start.getMonth()==0 & end.getMonth() ==0)
+					for (int i = 0; i < list.size(); i++) {
+						if ((list.get(i).getStartDate().getDay()>=(start.getDay())
+								& list.get(i).getEndDate().getDay()<=(end.getDay())))
+							rightTimelines.add(list.get(i));
+					}
+				else	if(start.getYear()==0 & end.getYear() ==0)
+					for (int i = 0; i < list.size(); i++) {
+						if ((list.get(i).getStartDate().getMonth()>=(start.getMonth())
+								& list.get(i).getEndDate().getMonth()<=(end.getMonth())))
+							rightTimelines.add(list.get(i));
+					}
+				else //Just compare whole date
+					for (int i = 0; i < list.size(); i++) {
+						if (list.get(i).getStartDate().compareTo(start) != -1
+								|| list.get(i).getEndDate().compareTo(end) != 1)
+							rightTimelines.add(list.get(i));
+					}
 
 			}
 			// If range is defined in start
 			else if (startDateSpinner != null) {
 				Date start = startDateSpinner;
 				Date end = endDateSpinner;
-				for (int i = 0; i < list.size(); i++) {
-					if (list.get(i).getStartDate().compareTo(start) != -1)
-						rightTimelines.add(list.get(i));
-				}
+				if(start.getYear()==0  & start.getMonth()==0  & start.getDay()==0  & start.getHour()==0  & start.getMinute()==0  & start.getSecond()==0 )
+					for (int i = 0; i < list.size(); i++) {
+						if (list.get(i).getStartDate().getMillisecond()>=(start.getMillisecond()))
+							rightTimelines.add(list.get(i));
+					}
+				else if(start.getYear()==0  & start.getMonth()==0  & start.getDay()==0 & start.getHour()==0  & start.getMinute()==0 )
+					for (int i = 0; i < list.size(); i++) {
+						if ((list.get(i).getStartDate().getSecond()>=(start.getSecond())))
+							rightTimelines.add(list.get(i));
+					}
+				else if(start.getYear()==0 & start.getMonth()==0  & start.getDay()==0 & start.getHour()==0  )
+					for (int i = 0; i < list.size(); i++) {
+						if ((list.get(i).getStartDate().getMinute()>=(start.getMinute())))
+							rightTimelines.add(list.get(i));
+					}
+				else	if(start.getYear()==0  & start.getMonth()==0 & start.getDay()==0 )
+					for (int i = 0; i < list.size(); i++) {
+						if ((list.get(i).getStartDate().getHour()>=(start.getHour())))
+							rightTimelines.add(list.get(i));
+					}
+				else	if(start.getYear()==0 & start.getMonth()==0 )
+					for (int i = 0; i < list.size(); i++) {
+						if ((list.get(i).getStartDate().getDay()>=(start.getDay())))
+							rightTimelines.add(list.get(i));
+					}
+				else	if(start.getYear()==0 )
+					for (int i = 0; i < list.size(); i++) {
+						if ((list.get(i).getStartDate().getMonth()>=(start.getMonth())))
+							rightTimelines.add(list.get(i));
+					}
+				else //Just compare whole date
+					for (int i = 0; i < list.size(); i++) {
+						if (list.get(i).getStartDate().compareTo(start) != -1
+								|| list.get(i).getEndDate().compareTo(end) != 1)
+							rightTimelines.add(list.get(i));
+					}
 			}
 			// If range is defined in end
 			else {
 				Date start = startDateSpinner;
 				Date end = endDateSpinner;
-				for (int i = 0; i < list.size(); i++) {
-					if (list.get(i).getEndDate().compareTo(end) != 1)
-						rightTimelines.add(list.get(i));
-				}
+				if( end.getYear() ==0  & end.getMonth() ==0  & end.getDay() ==0 & end.getHour() ==0  & end.getMinute() ==0  & end.getSecond() ==0)
+					for (int i = 0; i < list.size(); i++) {
+						if ( list.get(i).getEndDate().getMillisecond()<=(end.getMillisecond()))
+							rightTimelines.add(list.get(i));
+					}
+				else if( end.getYear() ==0  & end.getMonth() ==0  & end.getDay() ==0  & end.getHour() ==0  & end.getMinute() ==0)
+					for (int i = 0; i < list.size(); i++) {
+						if (list.get(i).getEndDate().getSecond()<=(end.getSecond()))
+							rightTimelines.add(list.get(i));
+					}
+				else if( end.getYear() ==0  & end.getMonth() ==0 & end.getDay() ==0  & end.getHour() ==0 )
+					for (int i = 0; i < list.size(); i++) {
+						if (( list.get(i).getEndDate().getMinute()<=(end.getMinute())))
+							rightTimelines.add(list.get(i));
+					}
+				else	if(end.getYear() ==0  & end.getMonth() ==0  & end.getDay() ==0)
+					for (int i = 0; i < list.size(); i++) {
+						if (( list.get(i).getEndDate().getHour()<=(end.getHour())))
+							rightTimelines.add(list.get(i));
+					}
+				else	if( end.getYear() ==0  & end.getMonth() ==0)
+					for (int i = 0; i < list.size(); i++) {
+						if (( list.get(i).getEndDate().getDay()<=(end.getDay())))
+							rightTimelines.add(list.get(i));
+					}
+				else	if( end.getYear() ==0)
+					for (int i = 0; i < list.size(); i++) {
+						if ((list.get(i).getEndDate().getMonth()<=(end.getMonth())))
+							rightTimelines.add(list.get(i));
+					}
+				else //Just compare whole date
+					for (int i = 0; i < list.size(); i++) {
+						if (list.get(i).getStartDate().compareTo(start) != -1
+								|| list.get(i).getEndDate().compareTo(end) != 1)
+							rightTimelines.add(list.get(i));
+					}
 			}
 		}
 
 		for (int i = 0; i < rightTimelines.size(); i++)
 			System.out.println(list.get(i).getName());
 
-		// If searching with Range amongst else
-		if (!list.isEmpty() & (startDateSpinner != null || endDateSpinner != null)) {
-			PreparedStatement out = DBM.conn.prepareStatement("SELECT * FROM timelines");
-			rightTimelines = new ArrayList<>();
-			// If range is defined in both ends
-			if (startDateSpinner != null & endDateSpinner != null) {
-				Date start = startDateSpinner;
-				Date end = endDateSpinner;
-				for (int i = 0; i < list.size(); i++) {
-					if (list.get(i).getStartDate().compareTo(start) != -1
-							|| list.get(i).getEndDate().compareTo(end) != 1)
-						rightTimelines.add(list.get(i));
-				}
 
-			}
-			// If range is defined in start
-			else if (startDateSpinner != null) {
-				Date start = startDateSpinner;
-				Date end = endDateSpinner;
-				for (int i = 0; i < list.size(); i++) {
-					if (list.get(i).getStartDate().compareTo(start) != -1)
-						rightTimelines.add(list.get(i));
-				}
-			}
-			// If range is defined in end
-			else {
-				Date start = startDateSpinner;
-				Date end = endDateSpinner;
-				for (int i = 0; i < list.size(); i++) {
-					if (list.get(i).getEndDate().compareTo(end) != 1)
-						rightTimelines.add(list.get(i));
-				}
-			}
-		}
 		//====================DATE COMPARISON FINISHED====================================================
 
 		//Now showing timelines search results depending on if they are for only logged in user or all timelines
