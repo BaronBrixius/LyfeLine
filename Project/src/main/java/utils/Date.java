@@ -19,13 +19,13 @@ public class Date implements Comparable<Date> {
     }
 
     public Date(int year, int month, int day, int hour, int minute, int second, int millisecond) {
-        this.year = year;
-        this.month = month;
-        this.day = day;
-        this.hour = hour;
-        this.minute = minute;
-        this.second = second;
-        this.millisecond = millisecond;
+        this.year = (year == Integer.MIN_VALUE) ? 0 : year;
+        this.month = Math.max(month, 1);
+        this.day = Math.max(day, 1);
+        this.hour = Math.max(hour, 0);
+        this.minute = Math.max(minute, 0);
+        this.second = Math.max(second, 0);
+        this.millisecond = Math.max(millisecond, 0);
     }
 
     //maybe this could have been done with an imported library, but I made leap years work for fun/practice in spare time so might as well leave it in

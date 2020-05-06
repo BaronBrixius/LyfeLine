@@ -53,7 +53,7 @@ public abstract class Editor {
 
     public void initialize() {
         //Set Up the Spinners for Start/End Inputs, would have bloated the .fxml and variable list a ton if these were in fxml
-        setupTimeInputStartAndEnd("Year", Integer.MIN_VALUE, Integer.MAX_VALUE, 0);
+        setupTimeInputStartAndEnd("Year", Integer.MIN_VALUE + 1, Integer.MAX_VALUE, 0);
         setupTimeInputStartAndEnd("Month", 1, 12, 1);
         setupTimeInputStartAndEnd("Day", 1, 31, 2);
         setupTimeInputStartAndEnd("Hour", 0, 23, 3);

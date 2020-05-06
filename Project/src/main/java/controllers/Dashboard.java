@@ -27,9 +27,9 @@ import java.util.Comparator;
 import java.util.List;
 
 public class Dashboard {
-    public Timeline timeline;
     final List<Spinner<Integer>> startInputs = new ArrayList<>();
     final List<Spinner<Integer>> endInputs = new ArrayList<>();
+    public Timeline timeline;
     @FXML
     protected Button eventEditorButton;
     @FXML
@@ -88,7 +88,7 @@ public class Dashboard {
 
     public void initialize() {
         //Set Up the Spinners for Start/End Inputs, would have bloated the .fxml and variable list a ton if these were in fxml
-        setupTimeInputStartAndEnd("Year", Integer.MIN_VALUE, Integer.MAX_VALUE, 0);
+        setupTimeInputStartAndEnd("Year", Integer.MIN_VALUE + 1, Integer.MAX_VALUE, 0);
         setupTimeInputStartAndEnd("Month", 0, 12, 1);
         setupTimeInputStartAndEnd("Day", 0, 31, 2);
         setupTimeInputStartAndEnd("Hour", -1, 23, 3);
@@ -293,12 +293,8 @@ public class Dashboard {
     @FXML
     public void toggleHHMMSS() {
         toggleHHMMSS.setOnMouseClicked(e -> {
-
             startDates.setVisible(true);
             endDates.setVisible(true);
-            topLabels.setVisible(true);
-            bottomLabels.setVisible(true);
-
         });
     }
 
@@ -421,9 +417,10 @@ public class Dashboard {
     public void advancedSearch() throws SQLException {
 
         Date startDateSpinner = new Date(startInputs.get(0).getValue(), startInputs.get(1).getValue(), startInputs.get(2).getValue(),
-                        startInputs.get(3).getValue(), startInputs.get(4).getValue(), startInputs.get(5).getValue(), startInputs.get(6).getValue());
+                startInputs.get(3).getValue(), startInputs.get(4).getValue(), startInputs.get(5).getValue(), startInputs.get(6).getValue());
         if (startDateSpinner.compareTo(new Date()) == 0)
             startDateSpinner = null;
+
 
         Date endDateSpinner = new Date(endInputs.get(0).getValue(), endInputs.get(1).getValue(), endInputs.get(2).getValue(),
                 endInputs.get(3).getValue(), endInputs.get(4).getValue(), endInputs.get(5).getValue(), endInputs.get(6).getValue());
@@ -586,7 +583,6 @@ public class Dashboard {
             this.list.setItems(FXCollections.observableArrayList(rightTimelines));
     }
 
-
     private void setupTimeInputStartAndEnd(String timeSpinnerLabel, int minValue, int maxValue, int index) {    //applies equivalent setups to both start and end spinners
         setupTimeInput(timeSpinnerLabel, minValue, maxValue, index, startInputs, startDates);
         setupTimeInput(timeSpinnerLabel, minValue, maxValue, index, endInputs, endDates);
@@ -594,15 +590,13 @@ public class Dashboard {
 
     //creates spinners to handle dates with appropriate min/max values and invalid input handling
     private void setupTimeInput(String timeSpinnerLabel, int minValue, int maxValue, int index, List<Spinner<Integer>> spinnerList, GridPane spinnerDates) {
-        int initValue = (timeSpinnerLabel.equals("Year")) ? -1 : minValue;   //initial value is equal to minimum, except in the case of years
-
-        SpinnerValueFactory.IntegerSpinnerValueFactory valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(minValue, maxValue, initValue);
+        SpinnerValueFactory.IntegerSpinnerValueFactory valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(minValue, maxValue, minValue);
         valueFactory.setConverter(new StringConverter<>() {                 //makes spinners revert to default values in case of invalid input
             @Override
             public String toString(Integer value) {     //called by spinner to update the displayed value in the box
                 if (value == null)
                     return "";
-                if (value == initValue)
+                if (value == minValue)
                     return "";
                 return value.toString();
             }
@@ -611,20 +605,21 @@ public class Dashboard {
             public Integer fromString(String string) {  //called by spinner to read the value from the box and convert to int
                 try {
                     if (string == null)
-                        return initValue;
+                        return minValue;
                     string = string.trim();
                     if (string.length() < 1)
-                        return initValue;
+                        return minValue;
                     return Integer.parseInt(string);
 
                 } catch (NumberFormatException ex) {
-                    return initValue;
+                    return minValue;
                 }
             }
         });
 
         spinnerList.add(index, new Spinner<>(valueFactory));
         spinnerList.get(index).setEditable(true);
+
         spinnerList.get(index).focusedProperty().addListener((observableValue, oldValue, newValue) -> {
             if (!newValue)                                  //the display doesn't restore if invalid info is entered repeatedly, this fixes that
                 spinnerList.get(index).cancelEdit();        //note: cancelEdit() is really more like "update display" as implemented. this triggers it upon losing focus
@@ -636,6 +631,5 @@ public class Dashboard {
         spinnerDates.add(spinnerHeader, index, 0);
         spinnerDates.add(spinnerList.get(index), index, 1);
         spinnerList.get(index).setPrefWidth(70);
-
     }
 }
