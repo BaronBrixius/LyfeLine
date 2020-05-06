@@ -21,7 +21,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-class TimelineTest {
+class TimelineTest {/*
 	static private DBM sut;
 
 	static Timeline[] timelines = new Timeline[4];
@@ -41,10 +41,13 @@ class TimelineTest {
 		TL1.setTimelineName("Normal Name");
 		TL1.setTimelineDescription("Normal Timeline Description with normal stuff in it.");
 		TL1.setID(1);
+		TL1.setTimelineOwner(1);
+		TL1.setScale(1);
 		Timeline TL2 = new Timeline();
 		TL2.setTimelineName("");
 		TL2.setTimelineDescription("d");
 		TL2.setID(2);
+		TL2.setScale(3);
 		Timeline TL3 = new Timeline();
 		TL3.setTimelineName("SW chars in name ÄÖÅ");
 		TL3.setTimelineDescription("SW chars in Description ÄÖÅ");
@@ -59,6 +62,7 @@ class TimelineTest {
 						+ "\r\n"
 						+ "Qui ei sale copiosae, fugit quodsi scaevola cu mel. Vix no quem aeterno labitur. Vis vero aliquam incorrupte te. Sit nullam luptatum forensibus ne, ne nec facilis posidonium. Ne vix perpetua mediocritatem, ea mea utinam mnesarchum, debet viderer recusabo no eos. Detracto conceptam te eum, ad duo sale dolorem, ignota consequat suscipiantur ei vel. Eu est noster timeam.");
 		TL4.setID(4);
+		TL4.setScale(4);
 		timelines[0] = TL1;
 		timelines[1] = TL2;
 		timelines[2] = TL3;
@@ -101,9 +105,15 @@ class TimelineTest {
 
 	}
 
-	void getDeleteQueryTest() {
-
+	@Test
+	void getDeleteQueryTest() throws SQLException {
+		String sql = "DELETE FROM `timelines` WHERE (`TimelineID` = ?)";
+		PreparedStatement out = DBM.conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+		for (int i = 0; i < timelines.length; i++) {
+			assertEquals(out.toString(), timelines[i].getDeleteQuery().toString());
+		}
 	}
+
 	@Test
 	void createFromDBTest() throws SQLException {
 		// Create objects from the DB and see if they are 4(cause I inserted 4)
@@ -112,7 +122,7 @@ class TimelineTest {
 		rs = stmt.executeQuery();
 		rs.next();
 		int actual = rs.getInt(1);
-		//assertEquals(timelines.length, actual);
+		assertEquals(timelines.length, actual);
 
 		// See if the database objects are the same as the ones I pushed
 		PreparedStatement stmt1 = DBM.conn.prepareStatement("SELECT * FROM timelines");
@@ -143,9 +153,12 @@ class TimelineTest {
 		}
 	}
 
-	void validNameTest() {
+	@Test
+	void validNameTest() throws SQLException {
 		// validName is private in timeline, need to see if can be public and refactord
 		// to validTimelineName
+		Boolean actual = timelines[0].validName("Normal name", 1);
+		assertFalse(actual);
 	}
 
 	@Test
@@ -156,11 +169,20 @@ class TimelineTest {
 		}
 	}
 
+	@Test
 	void getNameTest() {
 		for (int i = 0; i < timelines.length; i++) {
 			String NewTestingName = "New Testing Name";
 			timelines[i].setTimelineName(NewTestingName);
 			assertEquals(timelines[i].getTimelineName(), NewTestingName);
+		}
+	}
+	
+	@Test
+	void getScaleTest() {
+		for (int i = 0; i < timelines.length; i++) {
+			int actual = timelines[i].getScale();
+			assertEquals(actual,i);
 		}
 	}
 

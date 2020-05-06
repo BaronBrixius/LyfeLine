@@ -56,7 +56,7 @@ public class TimelineViewTest {
 
         for (int i = 1; i < totalTimelines; i++) {
             assertTrue(sut.setActiveTimeline(i));   //Tests that only one timeline is in the pulled list
-            actual = sut.activeTimeline.getTimelineID();
+            actual = sut.activeTimeline.getID();
             expected = i;
             assertEquals(expected, actual);         //Tests that the timeline was properly changed.
         }
