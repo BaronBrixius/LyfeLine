@@ -259,7 +259,7 @@ VALUES ('1', 'Ben', 'Ben@gmail.com',
         'hXEFj6Yy9hanXVOUyACANrUi1eZs4f', '1'),
        ('2', 'Max', 'Max@gmail.com',
         'bXKyPFQD//MW1XtOlVrgEDvEXIm9xzT+z4wBrMKR7DTHeETUPFlYpcuvanM/I2dPZSa5fQEnKc4E2D6ZD7sOiA==',
-        'Q48XUaFIG4LITasAYZzSNUHskubTw5', '0'),
+        'Q48XUaFIG4LITasAYZzSNUHskubTw5', '1'),
        ('3', 'Dillon', 'Dillon@gmail.com',
         'a62/l7UcPfNOvlPLDwhy1AYocxnvmFQImNFQDbb+encq/FoV7OOYykxivMleq95EZw88wkG0H46XPS3kW6u3ag==',
         'xerSaGrjebBz0IET7x7vJr1ra9w0RX', '0'),
@@ -323,8 +323,19 @@ VALUES (01, 8, 'Fall of Rome', 'Out with a wimper, not a bang', 'dark', 45, 5, 2
         32, 213, default, 5, 'basillus,life,'),
        (08, 5, 'Decay of Ununoctium', 'Radioactive decay - a study', 'dark', 2000, 4, 20, 4, 43, 32, 213, 2000, 5, 20,
         4, 43, 32, 213, 1550, 5, 20, 4, 43,
-        32, 213, default, 6, 'decay,long,')
-;
+        32, 213, default, 6, 'decay,long,'),
+        (09, 8, 'Owner: Max - Dummy timeline 9', 'A timeline meant for testing years', 'dark', 50, 4, 20, 4, 43, 32, 213, 100, 5, 20,
+        4, 43, 32, 213, 1550, 5, 20, 4, 43,
+        32, 213, default, 2, 'testing, Max, fifty'),
+        (10, 2, 'Owner: Max - Dummy timeline 10', 'A timeline meant for testing seconds', 'dark', 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,
+        0, 0, 59, 0, 1550, 5, 20, 4, 43,
+        32, 213, default, 2, 'testing, Max, sixty'),
+        (11, 2, 'Owner: Max - Dummy timeline 11', 'A timeline meant for testing the upper bounds of seconds (1 min 10 sec)', 'dark', 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,
+        0, 1, 10, 0, 1550, 5, 20, 4, 43,
+        32, 213, default, 2, 'testing, Max, sixty'),
+        (12, 6, 'Owner: Max - Dummy timeline 12', 'A timeline meant for testing weeks', 'dark', 50, 4, 20, 4, 43, 32, 213, 50, 8, 20,
+        4, 43, 32, 213, 1550, 5, 20, 4, 43,
+        32, 213, default, 2, 'testing, Max, fifty');
 
 
 INSERT INTO `events` (`EventOwner`, `EventPriority`, `EventName`, `EventDescription`, `StartYear`, `StartMonth`,
@@ -354,7 +365,104 @@ VALUES ( '1', '1', 'Crossing the Rubicon', 'Julius Caesar''s crossing the Rubico
         Rome''s greatest orators and prose stylists.[4][5] A leading political figure in the final years of the Roman Republic,
         Cicero vainly tried to uphold the republican system''s integrity during the instability that led to the establishment of
         the Roman Empire.[6] He came from a wealthy municipal family of the Roman equestrian order, and served as consul in the
-        year 63 BC.', '56', '8', '8', '9', '20', '20', '25', '59', '10', '30', '22', '50', '45', '40');
+        year 63 BC.', '56', '8', '8', '9', '20', '20', '25', '59', '10', '30', '22', '50', '45', '40'),
+        ('2', '0', 'dummyEvent5', 'This event breaks the upper bound of dummy timeline 9',
+        '52', '2', '14', '18', '45', '30', '28', '115', '9', '28', '21', '48', '46', '11'),
+       ('2', '1', 'dummyEvent6', 'This event breaks the lower bound of dummy timeline 9',
+        '45', '2', '14', '18', '45', '30', '28', '61', '9', '28', '21', '48', '46', '11'),
+       ('2', '3', 'dummyEvent7', 'This event breaks the lower and upper bounds of dummy timeline 9',
+        '49', '2', '14', '18', '45', '30', '28', '110', '9', '28', '21', '48', '46', '11'),
+       ('2', '2', 'dummyEvent8', 'Owner: Max - Testing overlapping events on dummy timeline 9',
+        '55', '2', '14', '18', '45', '30', '28', '63', '9', '28', '21', '48', '46', '11'),
+       ('2', '0', 'dummyEvent9', 'Owner: Max - Testing overlapping events on dummy timeline 9',
+        '56', '2', '14', '18', '45', '30', '28', '64', '9', '28', '21', '48', '46', '11'),
+       ('2', '0', 'dummyEvent10', 'Owner: Max - Testing overlapping events on dummy timeline 9',
+        '57', '2', '14', '18', '45', '30', '28', '65', '9', '28', '21', '48', '46', '11'),
+       ('2', '0', 'dummyEvent11', 'Owner: Max - Testing overlapping events on dummy timeline 9',
+        '58', '2', '14', '18', '45', '30', '28', '60', '9', '28', '21', '48', '46', '11'),
+        ('2', '2', 'dummyEvent12', 'Owner: Max - Testing overlapping events on dummy timeline 9',
+        '55', '2', '14', '18', '45', '30', '28', '63', '9', '28', '21', '48', '46', '11'),  
+		('2', '2', 'dummyEvent13', 'Owner: Max - Testing overlapping events on dummy timeline12',
+        '50', '4', '20', '0', '0', '0', '0', '50', '5', '12', '0', '0', '0', '0'),
+       ('2', '2', 'dummyEvent14', 'Owner: Max - Testing overlapping events on dummy timeline12',
+        '50', '4', '20', '0', '0', '0', '0', '50', '6', '12', '0', '0', '0', '0'),
+       ('2', '2', 'dummyEvent15', 'Owner: Max - Testing overlapping events on dummy timeline12',
+        '50', '4', '20', '0', '0', '0', '0', '50', '7', '12', '0', '0', '0', '0'),
+      ('2', '2', 'dummyEvent16', 'Owner: Max - Testing overlapping events on dummy timeline12',
+        '50', '4', '20', '0', '0', '0', '0', '50', '6', '20', '0', '0', '0', '0'),
+      ('2', '2', 'dummyEvent17', 'Owner: Max - Testing overlapping events on dummy timeline12',
+        '50', '6', '20', '0', '0', '0', '0', '50', '7', '12', '0', '0', '0', '0'),
+      ('2', '2', 'dummyEvent18', 'Owner: Max - Testing overlapping events on dummy timeline12',
+        '50', '7', '20', '0', '0', '0', '0', '50', '7', '30', '0', '0', '0', '0'),
+      ('2', '2', 'dummyEvent19', 'Owner: Max - Testing overlapping events on dummy timeline12',
+        '50', '5', '2', '0', '0', '0', '0', '50', '5', '12', '0', '0', '0', '0'),
+      ('2', '2', 'dummyEvent20', 'Owner: Max - Testing overlapping events on dummy timeline12',
+        '50', '4', '30', '0', '0', '0', '0', '50', '6', '30', '0', '0', '0', '0'),
+      ('2', '2', 'dummyEvent21', 'Owner: Max - Testing overlapping events on dummy timeline12',
+        '50', '5', '25', '0', '0', '0', '0', '50', '5', '30', '0', '0', '0', '0'),
+      ('2', '2', 'dummyEvent22', 'Owner: Max - Testing overlapping events on dummy timeline12',
+        '50', '4', '1', '0', '0', '0', '0', '50', '7', '15', '0', '0', '0', '0'),
+      ('2', '2', 'dummyEvent23', 'Owner: Max - Testing overlapping events on dummy timeline12',
+        '50', '6', '5', '0', '0', '0', '0', '50', '6', '15', '0', '0', '0', '0'),
+      ('2', '2', 'dummyEvent24', 'Owner: Max - Testing upper bounds of dummy timeline12',
+        '50', '4', '20', '0', '0', '0', '0', '50', '9', '1', '0', '0', '0', '0'),
+       ('2', '2', 'dummyEvent25', 'Owner: Max - Testing lower bounds of dummy timeline12',
+        '50', '3', '20', '0', '0', '0', '0', '50', '5', '12', '0', '0', '0', '0'),
+       ('2', '2', 'dummyEvent26', 'Owner: Max - Testing upper and lower bounds of dummy timeline12',
+        '50', '3', '15', '0', '0', '0', '0', '50', '9', '1', '0', '0', '0', '0'),
+       /*
+            dummyEvent(ID)27-37
+
+        Events varying in Seconds / Minutes / Milliseconds
+            
+        Note: Not linked in the junction table.
+                
+        Owner:              Max(ID2)
+        Priority:           0
+
+        StartYear:          10        ==        EndYear:            10
+        StartMonth:          2        ==        EndMonth:            2
+        StartDay:           14        ==        EndDay:             14
+        StartHour:          18        ==        EndHour:            18
+        StartMinute:        45      ------>     EndMinute:          45+
+        StartSecond:        30      ------>     EndSecond:          30+
+        StartMillisecond:   28      ------>     EndMillisecond:     28+
+
+        */
+       
+       /* Events varying in Seconds */
+       
+       ('2', '0', 'dummyEvent27', '1 Second',
+        '10', '2', '14', '18', '45', '30', '28', '10', '2', '14', '18', '45', '31', '28'),
+       ('2', '0', 'dummyEvent28', '10 Seconds',
+        '10', '2', '14', '18', '45', '30', '28', '10', '2', '14', '18', '45', '40', '28'),
+       ('2', '0', 'dummyEvent29', '29 Seconds',
+        '10', '2', '14', '18', '45', '30', '28', '10', '2', '14', '18', '45', '59', '28'),
+       
+       /* Events varying in Minutes */
+       
+       ('2', '0', 'dummyEvent30', '1 Minute',
+        '10', '2', '14', '18', '45', '30', '28', '10', '2', '14', '18', '46', '30', '28'),
+       ('2', '2', 'dummyEvent31', '2 Minutes',
+        '10', '2', '14', '18', '45', '30', '28', '10', '2', '14', '18', '47', '30', '28'),
+       ('2', '2', 'dummyEvent32', '5 Minutes',
+        '10', '2', '14', '18', '45', '30', '28', '10', '2', '14', '18', '50', '30', '28'),
+       
+       /* Events varying in Minutes + Seconds (+) Milliseconds */
+       
+       ('2', '2', 'dummyEvent33', '1 Minute 1 Second',
+        '10', '2', '14', '18', '45', '30', '28', '10', '2', '14', '18', '46', '31', '28'),
+       ('2', '0', 'dummyEvent34', '1 Minute 2 Seconds',
+        '10', '2', '14', '18', '45', '30', '28', '10', '2', '14', '18', '46', '32', '28'),
+       ('2', '0', 'dummyEvent35', '1 Minute 1 Second 1 Millisecond',
+        '10', '2', '14', '18', '45', '30', '28', '10', '2', '14', '18', '46', '31', '29'),
+
+       /* Events that break the upper limit of minutes and seconds */
+
+       ('2', '0', 'dummyEvent36', '200 seconds (breaks the 59 second barrier)',
+        '10', '2', '14', '18', '45', '30', '28', '10', '2', '14', '18', '45', '230', '28'),
+       ('2', '0', 'dummyEvent37', '200 Minutes (breaks the 59 Minute barrier)',
+        '10', '2', '14', '18', '45', '30', '28', '10', '2', '14', '18', '45', '230', '28');
 
 
 INSERT INTO `timelineevents` (`TimelineID`, `EventID`)
@@ -368,5 +476,28 @@ VALUES ('1', '1'),
        ('5', '1'),
        ('6', '1'),
        ('7', '1'),
-       ('8', '1');
+       ('8', '1'),
+       ('9', '5'),
+       ('9', '6'),
+       ('9', '7'),
+       ('9', '8'),
+       ('9', '9'),
+       ('9', '10'),
+       ('9', '11'),
+       ('9', '12'),
+       ('12', '13'),
+       ('12', '14'),
+       ('12', '15'),
+       ('12', '16'),
+       ('12', '17'),
+       ('12', '18'),
+       ('12', '19'),
+       ('12', '20'),
+       ('12', '21'),
+       ('12', '22'),
+       ('12', '23'),
+       ('12', '24'),
+       ('12', '25'),
+       ('12', '26');
+       
 
