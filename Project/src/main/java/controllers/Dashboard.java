@@ -4,27 +4,20 @@ import database.DBM;
 import database.Timeline;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.util.StringConverter;
 import utils.Date;
 
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 public class Dashboard {
     final List<Spinner<Integer>> startInputs = new ArrayList<>();
@@ -178,149 +171,81 @@ public class Dashboard {
         }
     }
 
+			}
+			// If range is defined in start
+			else if (startDateSpinner != null) {
+				Date start = startDateSpinner;
+				Date end = endDateSpinner;
+				for (int i = 0; i < list.size(); i++) {
+					if (list.get(i).getStartDate().compareTo(start) != -1)
+						rightTimelines.add(list.get(i));
+				}
+			}
+			// If range is defined in end
+			else {
+				Date start = startDateSpinner;
+				Date end = endDateSpinner;
+				for (int i = 0; i < list.size(); i++) {
+					if (list.get(i).getEndDate().compareTo(end) != 1)
+						rightTimelines.add(list.get(i));
+				}
+			}
+		}
+
+		for (int i = 0; i < rightTimelines.size(); i++)
+			System.out.println(list.get(i).getName());
+
+		// If searching with Range amongst else
+		if (!list.isEmpty() & (startDateSpinner != null || endDateSpinner != null)) {
+			PreparedStatement out = DBM.conn.prepareStatement("SELECT * FROM timelines");
+			rightTimelines = new ArrayList<>();
+			// If range is defined in both ends
+			if (startDateSpinner != null & endDateSpinner != null) {
+				Date start = startDateSpinner;
+				Date end = endDateSpinner;
+				for (int i = 0; i < list.size(); i++) {
+					if (list.get(i).getStartDate().compareTo(start) != -1
+							|| list.get(i).getEndDate().compareTo(end) != 1)
+						rightTimelines.add(list.get(i));
+				}
+
+			}
+			// If range is defined in start
+			else if (startDateSpinner != null) {
+				Date start = startDateSpinner;
+				Date end = endDateSpinner;
+				for (int i = 0; i < list.size(); i++) {
+					if (list.get(i).getStartDate().compareTo(start) != -1)
+						rightTimelines.add(list.get(i));
+				}
+			}
+			// If range is defined in end
+			else {
+				Date start = startDateSpinner;
+				Date end = endDateSpinner;
+				for (int i = 0; i < list.size(); i++) {
+					if (list.get(i).getEndDate().compareTo(end) != 1)
+						rightTimelines.add(list.get(i));
+				}
+			}
+		}
+		if (cbOnlyViewPersonalLines.isSelected()) {
+
+			List<Timeline> userline = new ArrayList<>();
+			for (int i = 0; i < rightTimelines.size(); i++) {
+				for (int j = 0; j < userTimelines.size(); j++) {
+					if (userTimelines.get(j).getID() == rightTimelines.get(i).getID())
+						userline.add(rightTimelines.get(i));
+				}
+			}
+			this.list.setItems(FXCollections.observableArrayList(userline));
+		} else
+			this.list.setItems(FXCollections.observableArrayList(rightTimelines));
+	}
+
     @FXML
     public void adminScreen() throws IOException {
         GUIManager.swapScene("AdminRoleManager");
-    }
-
-    @FXML
-    public void searchTimelines() {
-        searchInput.setOnKeyReleased(keyEvent -> {// Each time new key is pressed
-            String[] inputs = searchInput.getText().trim().split("\\s++"); // String is updated by the newest textfield
-            // read, if spaces the strings are split up
-            // into "string keywords" for search l
-            List<Timeline> templist = new ArrayList<>(); // List of timelines that fullfill the textfield input string -
-            // used to fill the ListView of timelines
-            if (cbOnlyViewPersonalLines.isSelected()) {
-                onlyUserTimelines(); // If only search user's timelines
-                for (int i = 0; i < userTimelines.size(); i++) { // go trough all the current user's timelines in the
-                    // database
-                    for (int j = 0; j < inputs.length; j++) {// No check all the search words used if they are to be
-                        // found anywhere as keywords
-                        String toFind = inputs[j]; // while a keyword is just one letter i.e. "f" if a keyword in
-                        // timeline has that letter then it will be shown (instant search
-                        // feature)
-                        List<String> allThisTimelineKeywords = timelines.get(i).getKeywords();
-                        List<String> possibleKeywords = new ArrayList<>();
-                        for (int k = 0; k < allThisTimelineKeywords.size(); k++) {
-                            if (allThisTimelineKeywords.get(k).length() >= toFind.length()) {
-                                possibleKeywords.add(allThisTimelineKeywords.get(k));
-                            }
-                        }
-                        boolean found = Arrays.asList(possibleKeywords.toArray()).stream().anyMatch(s -> s.toString()
-                                .toLowerCase().substring(0, toFind.length()).equalsIgnoreCase(toFind.toLowerCase()));
-
-                        if (found) {
-                            if (!templist.contains(userTimelines.get(i))) // if the timline has not already been
-                                // associated with this search then add it
-                                // to the temporary timelinelist
-                                templist.add(userTimelines.get(i));
-                        }
-                    }
-                    list.setItems(FXCollections.observableArrayList(templist)); // populate the ListView with the
-                    // timelines that fulfill the search
-                    // criteria at given point in
-                    // time(instant)
-                    if (searchInput.getText().equalsIgnoreCase("")) // When everything is erased from search box, return
-                        // all the user's timelines back to the ListView
-                        list.setItems(FXCollections.observableArrayList(userTimelines));
-                }
-            } else { // Search all timelines
-                for (int i = 0; i < timelines.size(); i++) { // go trough all the current timelines in the database
-                    for (int j = 0; j < inputs.length; j++) {// No check all the search words used if they are to be
-                        // found anywhere as keywords
-                        String toFind = inputs[j]; // while a keyword is just one letter i.e. "f" if a keyword in
-                        // timeline has that letter then it will be shown (instant search
-                        // feature)
-                        List<String> allThisTimelineKeywords = timelines.get(i).getKeywords();
-                        List<String> possibleKeywords = new ArrayList<>();
-                        for (int k = 0; k < allThisTimelineKeywords.size(); k++) {
-                            if (allThisTimelineKeywords.get(k).length() >= toFind.length()) {
-                                possibleKeywords.add(allThisTimelineKeywords.get(k));
-                            }
-                        }
-                        boolean found = Arrays.asList(possibleKeywords.toArray()).stream().anyMatch(s -> s.toString()
-                                .toLowerCase().substring(0, toFind.length()).equalsIgnoreCase(toFind.toLowerCase()));
-
-                        if (found) {
-                            if (!templist.contains(timelines.get(i))) // if the timline has not already been associated
-                                // with this search then add it to the temporary
-                                // timelinelist
-                                templist.add(timelines.get(i));
-                        }
-                    }
-                    list.setItems(FXCollections.observableArrayList(templist)); // populate the ListView with the
-                    // timelines that fulfill the search
-                    // criteria at given point in
-                    // time(instant)
-                    if (searchInput.getText().equalsIgnoreCase("")) // When everything is erased from search box, return
-                        // all the timelines back to the ListView
-                        list.setItems(FXCollections.observableArrayList(timelines));
-                }
-            }
-        });
-    }
-
-    @FXML
-    public void toggleAdvancedSearch() {
-
-        AdvancedSearch.setOnMouseClicked(e -> advancedSearchView.setVisible(true));
-
-    }
-
-    @FXML
-    public void closeAdvancedSearch() {
-
-        clearButton.setOnMouseClicked(e -> {
-
-            advancedSearchView.setVisible(false);
-            startDates.setVisible(false);
-            endDates.setVisible(false);
-            topLabels.setVisible(false);
-            bottomLabels.setVisible(false);
-            searchTimelineName.clear();
-            searchCreator.clear();
-            searchKeywords.clear();
-            if (cbOnlyViewPersonalLines.isSelected()) {
-                onlyUserTimelines();
-            } else
-                this.list.setItems(FXCollections.observableArrayList(timelines));
-
-        });
-
-    }
-
-    @FXML
-    public void toggleHHMMSS() {
-        toggleHHMMSS.setOnMouseClicked(e -> {
-            startDates.setVisible(true);
-            endDates.setVisible(true);
-        });
-    }
-
-    @FXML
-    public void onlyUserTimelines() {
-
-        if (cbOnlyViewPersonalLines.isSelected()) {
-            try {
-                PreparedStatement stmt = DBM.conn.prepareStatement("SELECT * FROM timelines WHERE TimelineOwner = ?");
-                stmt.setInt(1, GUIManager.loggedInUser.getUserID()); // GUIManager.loggedInUser.getUserID() uncomment
-                // this for real version
-                this.userTimelines = DBM.getFromDB(stmt, new Timeline());
-                list.setItems(FXCollections.observableArrayList(userTimelines));
-            } catch (SQLException e) {
-                System.err.println("Could not get timelines from database.");
-            }
-        } else {
-            try {
-                PreparedStatement stmt = DBM.conn.prepareStatement("SELECT * FROM timelines");
-                list.setItems(FXCollections.observableArrayList(DBM.getFromDB(stmt, new Timeline())));
-                sortTimelines();
-            } catch (SQLException e) {
-                System.err.println("Could not get timelines from database.");
-            }
-        }
-
     }
 
     @FXML
