@@ -33,7 +33,7 @@ class TimelineTest {/*
 				"project");
 		DBM.setupSchema();
 		createTestDB(); // Adds some rows to the database tables and exports them to .xml, don't need to
-						// run this often
+		// run this often
 	}
 
 	static void createTestDB() throws SQLException {
