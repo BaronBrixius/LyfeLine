@@ -18,6 +18,7 @@ import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import utils.Date;
 
+import javax.xml.stream.events.StartDocument;
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -416,41 +417,45 @@ public class Dashboard {
     }
 
     public void advancedSearch() throws SQLException {
-
+        boolean startDate= true;
+        boolean endDate= true;
         Date startDateSpinner = new Date(startInputs.get(0).getValue(), startInputs.get(1).getValue(), startInputs.get(2).getValue(),
                 startInputs.get(3).getValue(), startInputs.get(4).getValue(), startInputs.get(5).getValue(), startInputs.get(6).getValue());
-        if (startDateSpinner.compareTo(new Date()) == 0)
-            startDateSpinner = null;
+        System.out.println(startDateSpinner.toString());
         if(startDateSpinner.getYear() == -2147483647)
             startDateSpinner.setYear(0);
-        if(startDateSpinner.getMonth() == -1)
+        if(startDateSpinner.getMonth() == 1)
             startDateSpinner.setMonth(0);
         if(startDateSpinner.getDay() == 1)
             startDateSpinner.setDay(0);
         System.out.println(startDateSpinner.toString());
+        if (startDateSpinner.toString().equals("0-000000"))
+            startDate = false;
 
 
         Date endDateSpinner = new Date(endInputs.get(0).getValue(), endInputs.get(1).getValue(), endInputs.get(2).getValue(),
                 endInputs.get(3).getValue(), endInputs.get(4).getValue(), endInputs.get(5).getValue(), endInputs.get(6).getValue());
-        if (endDateSpinner.compareTo(new Date()) == 0)
-            endDateSpinner = null;
+        System.out.println(endDateSpinner.toString());
+
         if(endDateSpinner.getYear() == -2147483647)
             endDateSpinner.setYear(0);
-        if(endDateSpinner.getMonth() == -1)
+        if(endDateSpinner.getMonth() == 1)
             endDateSpinner.setMonth(0);
         if(endDateSpinner.getDay() == 1)
             endDateSpinner.setDay(0);
+        if (endDateSpinner.toString().equals("0-000000"))
+            endDate = false;
         System.out.println(endDateSpinner.toString());
 
         List<Timeline> tempAllList;
         List<Timeline> rightTimelines =  new ArrayList<>(); //Currently the right list unless we need to update it with spinner search
         //If only searching with Range and nothing else
         //If searching with Range amongst else
-        if ((startDateSpinner != null || endDateSpinner != null)) {
+        if ((startDate || endDate)) {
             PreparedStatement out = DBM.conn.prepareStatement("SELECT * FROM timelines");
             tempAllList = DBM.getFromDB(out, new Timeline());
             //If range is defined in both ends
-            if (startDateSpinner != null & endDateSpinner != null) {
+            if (startDate  & endDate) {
                 Date start = startDateSpinner;
                 Date end = endDateSpinner;
                 for (int i = 0; i < tempAllList.size(); i++) {
@@ -460,7 +465,7 @@ public class Dashboard {
 
             }
             //If range is defined in start
-            else if (startDateSpinner != null) {
+            else if (startDate) {
                 Date start = startDateSpinner;
                 Date end = endDateSpinner;
                 for (int i = 0; i < tempAllList.size(); i++) {
@@ -513,9 +518,9 @@ public class Dashboard {
         System.out.println("======SEARCH RESULTS as objects - THE TIMELINES NAMES==========");
         System.out.println(stmt3);
         List<Timeline> list = DBM.getFromDB(stmt3, new Timeline());
-        System.out.println(startInputs.toString());
+        System.out.println(startInputs.toString() + "what the startINput says");
 
-        if(startDateSpinner.toString().equals("0-100000") & endDateSpinner.toString().equals("0-100000")){
+        if(!startDate & !endDate){
             rightTimelines=list;
             System.out.println("Spinner not used print result from SQL ");}
 
@@ -538,10 +543,6 @@ public class Dashboard {
             rightTimelines=temp;
             System.out.println("have matches");
         }
-
-
-
-
 
         //for (int i = 0; i < rightTimelines.size(); i++)
             //System.out.println(list.get(i).getName());
