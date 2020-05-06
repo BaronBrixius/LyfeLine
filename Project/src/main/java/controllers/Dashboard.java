@@ -189,7 +189,8 @@ public class Dashboard {
 		GUIManager.swapScene("AdminRoleManager");
 	}
 
-	@FXML
+	//Method for the instant search - two copies of a code that is run either through the user timelines or all timelines (depending on if tick box status)
+	@FXML  //It is instant for key release (for keywords each letter update)(for names it is partial full words like "rome" or "full")
 	public void searchTimelines() {
 		searchInput.setOnKeyReleased(keyEvent -> {// Each time new key is pressed
 			String[] inputs = searchInput.getText().trim().split("\\s++"); // String is updated by the newest textfield
@@ -197,6 +198,8 @@ public class Dashboard {
 																			// into "string keywords" for search l
 			List<Timeline> templist = new ArrayList<>(); // List of timelines that fullfill the textfield input string -
 															// used to fill the ListView of timelines
+
+			//only the logged in user timelines
 			if (cbOnlyViewPersonalLines.isSelected()) {
 				onlyUserTimelines(); // If only search user's timelines
 				for (int i = 0; i < userTimelines.size(); i++) { // go trough all the current user's timelines in the
@@ -214,10 +217,8 @@ public class Dashboard {
 								possibleKeywords.add(allThisTimelineKeywords.get(k));
 							}
 						}
-						boolean keyWordfound = Arrays.asList(possibleKeywords.toArray()).stream().anyMatch(s -> s.toString()
-								.toLowerCase().substring(0, toFind.length()).equalsIgnoreCase(toFind.toLowerCase()));
-						boolean namefound = Arrays.asList(timlineNames).stream().anyMatch(s -> s.toString()
-								.toLowerCase().equalsIgnoreCase(toFind.toLowerCase()));
+						boolean keyWordfound = Arrays.asList(possibleKeywords.toArray()).stream().anyMatch(s -> s.toString().substring(0, toFind.length()).equalsIgnoreCase(toFind));
+						boolean namefound = Arrays.asList(timlineNames).stream().anyMatch(s -> s.toLowerCase().equalsIgnoreCase(toFind));
 
 						if (keyWordfound || namefound) {
 							if (!templist.contains(userTimelines.get(i))) // if the timline has not already been
@@ -233,7 +234,9 @@ public class Dashboard {
 																	// all the user's timelines back to the ListView
 						list.setItems(FXCollections.observableArrayList(userTimelines));
 				}
-			} else { // Search all timelines
+			}
+			// Search all timelines
+			else {
 				for (int i = 0; i < timelines.size(); i++) { // go trough all the current timelines in the database
 					for (int j = 0; j < inputs.length; j++) {// No check all the search words used if they are to be
 																// found anywhere as keywords
@@ -248,11 +251,11 @@ public class Dashboard {
 								possibleKeywords.add(allThisTimelineKeywords.get(k));
 							}
 						}
-						boolean keyWordfound = Arrays.asList(possibleKeywords.toArray()).stream().anyMatch(s -> s.toString()
-								.toLowerCase().substring(0, toFind.length()).equalsIgnoreCase(toFind.toLowerCase()));
 
-						boolean namefound = Arrays.asList(timlineNames).stream().anyMatch(s -> s.toString()
-								.toLowerCase().equalsIgnoreCase(toFind.toLowerCase()));
+
+						boolean keyWordfound = Arrays.asList(possibleKeywords.toArray()).stream().anyMatch(s -> s.toString().substring(0, toFind.length()).equalsIgnoreCase(toFind));
+
+						boolean namefound = Arrays.asList(timlineNames).stream().anyMatch(s -> s.equalsIgnoreCase(toFind));
 
 						if (keyWordfound || namefound) {
 							if (!templist.contains(timelines.get(i))) // if the timline has not already been associated
@@ -433,7 +436,6 @@ public class Dashboard {
 				dynamicParameter.append("OR  CONCAT(',', `Keywords`, ',') LIKE CONCAT('%,', COALESCE(?, '%'), ',%')");
 			}
 		}
-
 		PreparedStatement stmt3 = DBM.conn.prepareStatement(
 				"SELECT * FROM `timelines` LEFT JOIN `users` ON users.UserID = timelines.TimelineOwner WHERE "
 						+ " CONCAT(' ', `TimelineName`, ' ') LIKE CONCAT('% ', COALESCE(?, '%'), ' %') AND `UserName` = COALESCE(NULLIF(?, ''), `UserName`) AND `Rating` = COALESCE(NULLIF(?, ''), `Rating`)  AND (CONCAT(',', `Keywords`, ',') LIKE CONCAT('%,', COALESCE(?, '%'), ',%') "
@@ -458,8 +460,9 @@ public class Dashboard {
 		System.out.println(stmt3);
 		List<Timeline> list = DBM.getFromDB(stmt3, new Timeline());
 		List<Timeline> tempAllList;
-		List<Timeline> rightTimelines = list; // Currently the right list unless we need to update it with spinner
-												// search
+		List<Timeline> rightTimelines = list; // Currently the right list unless we need to update it with spinner // search
+
+		//==================SQL search is finished, here below starts Java date search of the spinners - different combinations, depending on if it has to take SQL search into account or not and if start only, end only or both
 		// If only searching with Range and nothing else
 		if (list.isEmpty() & (startDateSpinner != null || endDateSpinner != null)) {
 			rightTimelines = new ArrayList<>();
@@ -568,6 +571,10 @@ public class Dashboard {
 				}
 			}
 		}
+		//====================DATE COMPARISON FINISHED====================================================
+
+		//Now showing timelines search results depending on if they are for only logged in user or all timelines
+
 		if (cbOnlyViewPersonalLines.isSelected()) {
 
 			List<Timeline> userline = new ArrayList<>();
