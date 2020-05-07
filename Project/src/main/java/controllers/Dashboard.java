@@ -206,7 +206,7 @@ public class Dashboard {
         boolean addToList = true;
 
         while (data.next()) {
-            addToList = true;
+            //if the search box is filled, but doesn't match DB contents, don't add to list. check for each box
             if (!searchTimelineName.getText().isEmpty() && !data.getString("TimelineName").toLowerCase().contains(searchTimelineName.getText().toLowerCase())) {
                 addToList = false;
             }
@@ -216,7 +216,7 @@ public class Dashboard {
 
             Predicate<String> keywordMatches = k -> {
                 try {
-                    return data.getString("Keywords").contains(k.toLowerCase());
+                    return data.getString("Keywords").toLowerCase().contains(k.toLowerCase());
                 } catch (SQLException e) {
                     e.printStackTrace();
                     return false;
@@ -240,15 +240,16 @@ public class Dashboard {
             Date endDateInDB = new Date(data.getInt("EndYear"), data.getInt("EndMonth"), data.getInt("EndDay"),
                     data.getInt("EndHour"), data.getInt("EndMinute"), data.getInt("EndSecond"), data.getInt("EndMillisecond"));
 
-            if (dateSearchedBy(endInputs) && endDateInDB.compareTo(endDateSpinner) < 0) {
+            if (dateSearchedBy(endInputs) && endDateInDB.compareTo(endDateSpinner) > 0) {
                 addToList = false;
             }
 
-            //if (searchRating isn't empty and rating >= searchRating)
+            //if (searchRating isn't empty and rating >= searchRating)      //TODO implement after ratings
             //    addToList = false;
+
             if (addToList)
                 out.add(data.getInt("TimelineID"));
-            addToList = false;
+            addToList = true;           //reset for next line of resultset
         }
 
         return out;
