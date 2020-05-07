@@ -289,10 +289,9 @@ public class Dashboard {
         searchTimelineName.clear();
         searchCreator.clear();
         searchKeywords.clear();
-        if (cbOnlyViewPersonalLines.isSelected()) {
-            onlyUserTimelines();
-        } else
-            this.list.setItems(FXCollections.observableArrayList(filteredTimelines));
+        searchInput.clear();
+        cbOnlyViewPersonalLines.setSelected(false);
+        filteredTimelines.setPredicate(t->true);
     }
 
     @FXML
