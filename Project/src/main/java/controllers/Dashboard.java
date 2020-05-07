@@ -1,8 +1,8 @@
 package controllers;
 
 import database.*;
+import javafx.beans.Observable;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
@@ -127,108 +127,95 @@ public class Dashboard {
 
     @FXML
     public void searchTimelines() {
-        searchInput.textProperty().addListener(obs->{
-            String searchText = searchInput.getText();
-            if (searchText == null || searchText.length() == 0)
-                filteredTimelines.setPredicate(timeline -> true);
-            else
-                filteredTimelines.setPredicate(timeline -> timeline.getName().toLowerCase().contains(searchText.toLowerCase())
-                || timeline.getKeywords().stream().anyMatch(k->k.toLowerCase().contains(searchText.toLowerCase())));
-
-            Predicate<Timeline> foo = timeline-> timeline.getID()==GUIManager.loggedInUser.getUserID();
-
-            if(cbOnlyViewPersonalLines.isSelected())
-                filteredTimelines.setPredicate(foo.and(filteredTimelines.getPredicate()));
-            //else
-            //    filteredTimelines.setPredicate(foo.and(filteredTimelines.getPredicate()));
-        });
+        cbOnlyViewPersonalLines.selectedProperty().addListener(this::simpleSearch);
+        searchInput.textProperty().addListener(this::simpleSearch);
     }
 
-    @FXML
-    public void searchTimelines1() {
-        searchInput.setOnKeyReleased(keyEvent -> {// Each time new key is pressed
-            String[] inputs = searchInput.getText().trim().split("\\s++"); // String is updated by the newest textfield
-            // read, if spaces the strings are split up
-            // into "string keywords" for search l
-            List<Timeline> templist = new ArrayList<>(); // List of timelines that fulfill the textfield input string -
-            // used to fill the ListView of timelines
-
-            //only the logged in user timelines
-            if (cbOnlyViewPersonalLines.isSelected()) {
-                onlyUserTimelines(); // If only search user's timelines
-                for (int i = 0; i < userTimelines.size(); i++) { // go trough all the current user's timelines in the
-                    // database
-                    for (int j = 0; j < inputs.length; j++) {// No check all the search words used if they are to be
-                        // found anywhere as keywords
-                        String toFind = inputs[j]; // while a keyword is just one letter i.e. "f" if a keyword in
-                        // timeline has that letter then it will be shown (instant search
-                        // feature)
-                        List<String> allThisTimelineKeywords = filteredTimelines.get(i).getKeywords();
-                        List<String> possibleKeywords = new ArrayList<>();
-                        String[] timelineNames = filteredTimelines.get(i).getName().trim().split("\\s++");
-                        for (int k = 0; k < allThisTimelineKeywords.size(); k++) {
-                            if (allThisTimelineKeywords.get(k).length() >= toFind.length()) {
-                                possibleKeywords.add(allThisTimelineKeywords.get(k));
-                            }
-                        }
-                        boolean keyWordfound = Arrays.stream(possibleKeywords.toArray()).anyMatch(s -> s.toString().substring(0, toFind.length()).equalsIgnoreCase(toFind));
-                        boolean namefound = Arrays.stream(timelineNames).anyMatch(s -> s.toLowerCase().equalsIgnoreCase(toFind));
-
-                        if (keyWordfound || namefound) {
-                            if (!templist.contains(userTimelines.get(i))) // if the timeline has not already been
-                                // associated with this search then add it// to the temporary timelinelist
-                                templist.add(userTimelines.get(i));
-                        }
-                    }
-                    list.setItems(FXCollections.observableArrayList(templist)); // populate the ListView with the
-                    // timelines that fulfill the search
-                    // criteria at given point in
-                    // time(instant)
-                    if (searchInput.getText().equalsIgnoreCase("")) // When everything is erased from search box, return
-                        // all the user's timelines back to the ListView
-                        list.setItems(FXCollections.observableArrayList(userTimelines));
-                }
-            }
-            // Search all timelines
-            else {
-                for (int i = 0; i < filteredTimelines.size(); i++) { // go trough all the current timelines in the database
-                    for (int j = 0; j < inputs.length; j++) {// No check all the search words used if they are to be
-                        // found anywhere as keywords
-                        String toFind = inputs[j]; // while a keyword is just one letter i.e. "f" if a keyword in
-                        // timeline has that letter then it will be shown (instant search
-                        // feature)
-                        List<String> allThisTimelineKeywords = filteredTimelines.get(i).getKeywords();
-                        List<String> possibleKeywords = new ArrayList<>();
-                        String[] timelineNames = filteredTimelines.get(i).getName().trim().split("\\s++");
-                        for (int k = 0; k < allThisTimelineKeywords.size(); k++) {
-                            if (allThisTimelineKeywords.get(k).length() >= toFind.length()) {
-                                possibleKeywords.add(allThisTimelineKeywords.get(k));
-                            }
-                        }
-
-
-                        boolean keyWordfound = Arrays.stream(possibleKeywords.toArray()).anyMatch(s -> s.toString().substring(0, toFind.length()).equalsIgnoreCase(toFind));
-
-                        boolean namefound = Arrays.stream(timelineNames).anyMatch(s -> s.equalsIgnoreCase(toFind));
-
-                        if (keyWordfound || namefound) {
-                            if (!templist.contains(filteredTimelines.get(i))) // if the timeline has not already been associated
-                                // with this search then add it to the temporary
-                                // timelinelist
-                                templist.add(filteredTimelines.get(i));
-                        }
-                    }
-                    list.setItems(FXCollections.observableArrayList(templist)); // populate the ListView with the
-                    // timelines that fulfill the search
-                    // criteria at given point in
-                    // time(instant)
-                    if (searchInput.getText().equalsIgnoreCase("")) // When everything is erased from search box, return
-                        // all the timelines back to the ListView
-                        list.setItems(FXCollections.observableArrayList(filteredTimelines));
-                }
-            }
-        });
-    }
+    //@FXML
+    //public void searchTimelines1() {
+    //    searchInput.setOnKeyReleased(keyEvent -> {// Each time new key is pressed
+    //        String[] inputs = searchInput.getText().trim().split("\\s++"); // String is updated by the newest textfield
+    //        // read, if spaces the strings are split up
+    //        // into "string keywords" for search l
+    //        List<Timeline> templist = new ArrayList<>(); // List of timelines that fulfill the textfield input string -
+    //        // used to fill the ListView of timelines
+//
+    //        //only the logged in user timelines
+    //        if (cbOnlyViewPersonalLines.isSelected()) {
+    //            onlyUserTimelines(); // If only search user's timelines
+    //            for (int i = 0; i < userTimelines.size(); i++) { // go trough all the current user's timelines in the
+    //                // database
+    //                for (int j = 0; j < inputs.length; j++) {// No check all the search words used if they are to be
+    //                    // found anywhere as keywords
+    //                    String toFind = inputs[j]; // while a keyword is just one letter i.e. "f" if a keyword in
+    //                    // timeline has that letter then it will be shown (instant search
+    //                    // feature)
+    //                    List<String> allThisTimelineKeywords = filteredTimelines.get(i).getKeywords();
+    //                    List<String> possibleKeywords = new ArrayList<>();
+    //                    String[] timelineNames = filteredTimelines.get(i).getName().trim().split("\\s++");
+    //                    for (int k = 0; k < allThisTimelineKeywords.size(); k++) {
+    //                        if (allThisTimelineKeywords.get(k).length() >= toFind.length()) {
+    //                            possibleKeywords.add(allThisTimelineKeywords.get(k));
+    //                        }
+    //                    }
+    //                    boolean keyWordfound = Arrays.stream(possibleKeywords.toArray()).anyMatch(s -> s.toString().substring(0, toFind.length()).equalsIgnoreCase(toFind));
+    //                    boolean namefound = Arrays.stream(timelineNames).anyMatch(s -> s.toLowerCase().equalsIgnoreCase(toFind));
+//
+    //                    if (keyWordfound || namefound) {
+    //                        if (!templist.contains(userTimelines.get(i))) // if the timeline has not already been
+    //                            // associated with this search then add it// to the temporary timelinelist
+    //                            templist.add(userTimelines.get(i));
+    //                    }
+    //                }
+    //                list.setItems(FXCollections.observableArrayList(templist)); // populate the ListView with the
+    //                // timelines that fulfill the search
+    //                // criteria at given point in
+    //                // time(instant)
+    //                if (searchInput.getText().equalsIgnoreCase("")) // When everything is erased from search box, return
+    //                    // all the user's timelines back to the ListView
+    //                    list.setItems(FXCollections.observableArrayList(userTimelines));
+    //            }
+    //        }
+    //        // Search all timelines
+    //        else {
+    //            for (int i = 0; i < filteredTimelines.size(); i++) { // go trough all the current timelines in the database
+    //                for (int j = 0; j < inputs.length; j++) {// No check all the search words used if they are to be
+    //                    // found anywhere as keywords
+    //                    String toFind = inputs[j]; // while a keyword is just one letter i.e. "f" if a keyword in
+    //                    // timeline has that letter then it will be shown (instant search
+    //                    // feature)
+    //                    List<String> allThisTimelineKeywords = filteredTimelines.get(i).getKeywords();
+    //                    List<String> possibleKeywords = new ArrayList<>();
+    //                    String[] timelineNames = filteredTimelines.get(i).getName().trim().split("\\s++");
+    //                    for (int k = 0; k < allThisTimelineKeywords.size(); k++) {
+    //                        if (allThisTimelineKeywords.get(k).length() >= toFind.length()) {
+    //                            possibleKeywords.add(allThisTimelineKeywords.get(k));
+    //                        }
+    //                    }
+//
+//
+    //                    boolean keyWordfound = Arrays.stream(possibleKeywords.toArray()).anyMatch(s -> s.toString().substring(0, toFind.length()).equalsIgnoreCase(toFind));
+//
+    //                    boolean namefound = Arrays.stream(timelineNames).anyMatch(s -> s.equalsIgnoreCase(toFind));
+//
+    //                    if (keyWordfound || namefound) {
+    //                        if (!templist.contains(filteredTimelines.get(i))) // if the timeline has not already been associated
+    //                            // with this search then add it to the temporary
+    //                            // timelinelist
+    //                            templist.add(filteredTimelines.get(i));
+    //                    }
+    //                }
+    //                list.setItems(FXCollections.observableArrayList(templist)); // populate the ListView with the
+    //                // timelines that fulfill the search
+    //                // criteria at given point in
+    //                // time(instant)
+    //                if (searchInput.getText().equalsIgnoreCase("")) // When everything is erased from search box, return
+    //                    // all the timelines back to the ListView
+    //                    list.setItems(FXCollections.observableArrayList(filteredTimelines));
+    //            }
+    //        }
+    //    });
+    //}
 
     @FXML
     public void toggleAdvancedSearch() {
@@ -253,26 +240,6 @@ public class Dashboard {
 
     @FXML
     public void onlyUserTimelines() {
-
-        if (cbOnlyViewPersonalLines.isSelected()) {
-            try {
-                PreparedStatement stmt = DBM.conn.prepareStatement("SELECT * FROM timelines WHERE TimelineOwner = ?");
-                stmt.setInt(1, GUIManager.loggedInUser.getUserID()); // GUIManager.loggedInUser.getUserID() uncomment
-                // this for real version
-                this.userTimelines = DBM.getFromDB(stmt, new Timeline());
-                list.setItems(FXCollections.observableArrayList(userTimelines));
-            } catch (SQLException e) {
-                System.err.println("Could not get timelines from database.");
-            }
-        } else {
-            try {
-                PreparedStatement stmt = DBM.conn.prepareStatement("SELECT * FROM timelines");
-                list.setItems(FXCollections.observableArrayList(DBM.getFromDB(stmt, new Timeline())));
-                sortTimelines();
-            } catch (SQLException e) {
-                System.err.println("Could not get timelines from database.");
-            }
-        }
 
     }
 
@@ -607,5 +574,19 @@ public class Dashboard {
         out.setInt(2, timeline.getID());
 
         DBM.deleteFromDB(DBM.getFromDB(out, new Event()));
+    }
+
+    private void simpleSearch(Observable obs) {
+        String searchText = searchInput.getText();
+        if (searchText == null || searchText.length() == 0)
+            filteredTimelines.setPredicate(timeline -> true);
+        else
+            filteredTimelines.setPredicate(timeline -> timeline.getName().toLowerCase().contains(searchText.toLowerCase())
+                    || timeline.getKeywords().stream().anyMatch(k -> k.toLowerCase().contains(searchText.toLowerCase())));
+
+        Predicate<Timeline> foo = timeline -> timeline.getOwnerID() == GUIManager.loggedInUser.getUserID();
+
+        if (cbOnlyViewPersonalLines.isSelected())
+            filteredTimelines.setPredicate(foo.and(filteredTimelines.getPredicate()));
     }
 }
