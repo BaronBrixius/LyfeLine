@@ -213,6 +213,7 @@ public class EventSelector {
             timelineEventLinks = DBM.getFromDB(DBM.conn.prepareStatement("SELECT * FROM timelineevents"),
                     rs -> Arrays.asList(rs.getInt("TimelineID"), rs.getInt("EventID")));
             eventListView.getSelectionModel().select(-1);
+            sortEvents(sortBy.getSelectionModel().getSelectedIndex());
         } catch (SQLException e) {
             System.out.println("Could not access events in database.");
         }
