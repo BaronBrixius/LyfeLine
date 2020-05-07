@@ -2,6 +2,7 @@ package controllers;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Comparator;
 import java.util.List;
 
 import database.*;
@@ -17,7 +18,7 @@ import javafx.scene.text.Text;
 public class AdminRoleManager {
 
 	@FXML private Text userText;
-	@FXML private Text userSatus;
+	@FXML private Text userStatus;
 	@FXML private ListView<User> listView;
 	@FXML private CheckBox toggle;
 	@FXML private ComboBox <String> sortBy;
@@ -68,13 +69,13 @@ public class AdminRoleManager {
 		sortBy.getSelectionModel().selectedIndexProperty().addListener(ov -> {
 			switch (sortBy.getSelectionModel().getSelectedIndex()) {
 			case 0:
-				userList.sort((t1, t2) -> (t1.getUserName().compareTo(t2.getUserName())));
+				userList.sort(Comparator.comparing(User::getUserName));
 				break;
 			case 1:
 				userList.sort((t1, t2) -> (t2.getUserName().compareTo(t1.getUserName())));
 				break;
 			case 2:
-				userList.sort((t1, t2) -> (Integer.compare(t1.getUserID(), t2.getUserID())));
+				userList.sort(Comparator.comparingInt(User::getUserID));
 				break;
 			case 3:
 				userList.sort((t1, t2) -> (Integer.compare(t2.getUserID(), t1.getUserID())));

@@ -83,17 +83,17 @@ public abstract class Editor {
         } else {                        //if contracting, add based on scale
             if (scale == 1)             //don't try to convert to switch statement unless you're a genius, the overlaps made it ugly when I tried
                 expandPane.getChildren().add(0, boxesToAddFrom.get(6)); //milliseconds
-            if (scale <= 3)
+            if (scale <= 2)
                 expandPane.getChildren().add(0, boxesToAddFrom.get(5)); //seconds
-            if (scale >= 3 && scale <= 5)
+            if (scale <= 3)
                 expandPane.getChildren().add(0, boxesToAddFrom.get(4)); //minutes
-            if (scale >= 4 && scale <= 6)
+            if (scale >= 2 && scale <= 4)
                 expandPane.getChildren().add(0, boxesToAddFrom.get(3)); //hours
-            if (scale >= 5 && scale <= 8)
+            if (scale >= 3 && scale <= 7)
                 expandPane.getChildren().add(0, boxesToAddFrom.get(2)); //days
-            if (scale >= 7)
+            if (scale >= 4 && scale <= 8)
                 expandPane.getChildren().add(0, boxesToAddFrom.get(1)); //months
-            if (scale >= 8)
+            if (scale >= 5)
                 expandPane.getChildren().add(0, boxesToAddFrom.get(0)); //years
         }
         return expandPane.getChildren().size();
@@ -125,12 +125,12 @@ public abstract class Editor {
 
     @FXML
     boolean saveConfirm() {
-        Alert confirmsave = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmsave.setTitle("Confirm Save");
-        confirmsave.setHeaderText("This will make permanent changes!"); //TODO change text
-        confirmsave.setContentText("Would you like to save?");
+        Alert confirmSave = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmSave.setTitle("Confirm Save");
+        confirmSave.setHeaderText("This will make permanent changes!"); //TODO change text
+        confirmSave.setContentText("Would you like to save?");
 
-        Optional<ButtonType> result = confirmsave.showAndWait();
+        Optional<ButtonType> result = confirmSave.showAndWait();
 
         if (result.get() == ButtonType.CANCEL)
             return false;

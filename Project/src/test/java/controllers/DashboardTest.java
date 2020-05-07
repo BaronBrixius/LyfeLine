@@ -7,7 +7,6 @@ import database.User;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.DialogPane;
 import javafx.scene.layout.BorderPane;
@@ -19,8 +18,6 @@ import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.ApplicationExtension;
 import org.testfx.framework.junit5.Start;
 
-import java.io.IOException;
-import java.security.Guard;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -101,7 +98,7 @@ public class DashboardTest {
         Timeline higherTimelineOnList;
         Timeline lowerTimelineOnList;
 
-        int intitialListSize = sut.list.getItems().size();
+        int initialListSize = sut.list.getItems().size();
 
         addNewTimelineToDBByName("", "abcd", "ABCD", "1234", "!@#$", "åöäå§");
 
@@ -120,7 +117,7 @@ public class DashboardTest {
         }
 
         int expected = 6;
-        int actual = finalListSize - intitialListSize;
+        int actual = finalListSize - initialListSize;
         assertEquals(expected, actual); //Checks to make sure that the Timelines were actually added to the list.
 
         for (Timeline t : timelinesList)
@@ -132,7 +129,7 @@ public class DashboardTest {
         Timeline higherTimelineOnList;
         Timeline lowerTimelineOnList;
 
-        int intitialListSize = sut.list.getItems().size();
+        int initialListSize = sut.list.getItems().size();
 
         try {
             DBM.deleteFromDB(sut.list.getItems().get(0));
@@ -157,7 +154,7 @@ public class DashboardTest {
         }
 
         int expected = -4;
-        int actual = finalListSize - intitialListSize;
+        int actual = finalListSize - initialListSize;
         assertEquals(expected, actual);         //Makes sure that the Timelines were removed
 
         for (Timeline t : timelinesList)
@@ -169,7 +166,7 @@ public class DashboardTest {
         Timeline higherTimelineOnList;
         Timeline lowerTimelineOnList;
 
-        //int intitialListSize = sut.list.getItems().size();
+        //int initialListSize = sut.list.getItems().size();
 
         try {
             for (Timeline t : sut.list.getItems())
@@ -200,7 +197,7 @@ public class DashboardTest {
         Timeline higherTimelineOnList;
         Timeline lowerTimelineOnList;
 
-        int intitialListSize = sut.list.getItems().size();
+        int initialListSize = sut.list.getItems().size();
 
         addNewTimelineToDBByName("", "abcd", "ABCD", "1234", "!@#$", "åöäå§");
 
@@ -235,7 +232,7 @@ public class DashboardTest {
         }
 
         int expected = 5;
-        int actual = finalListSize - intitialListSize;
+        int actual = finalListSize - initialListSize;
         assertEquals(expected, actual);         //Makes sure that the Timelines were added and removed
 
         for (Timeline t : timelinesList)

@@ -23,10 +23,6 @@ public class Popup {
     private ListView<Event> events;
     private int mode;
 
-    public void initialize() {
-
-    }
-
     public void setMode(int mode) {
         this.mode = mode;
     }

@@ -10,10 +10,12 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import javax.sound.sampled.Line;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.sql.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -64,7 +66,7 @@ class EventTest {
         assertNotNull(1);
         assertEquals("test.test",test.getImagePath());
         assertEquals("test",test.getEventName());
-        assertEquals("Test",test.getEventDescrition());*/
+        assertEquals("Test",test.getEventDescription());*/
 
         /*Test number 2*/
         Event test1 = new Event();

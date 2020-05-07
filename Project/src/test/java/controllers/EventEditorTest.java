@@ -186,7 +186,7 @@ public class EventEditorTest {
     }
 
     @Test
-    void disableEndDateandSave() throws InterruptedException {
+    void disableEndDateAndSave() throws InterruptedException {
         openEventFromSelector(1, true);
 
         Date expected = sut.event.getStartDate();
@@ -285,7 +285,7 @@ public class EventEditorTest {
             sut.saveEditButton();
             sut.startInputs.get(0).getValueFactory().setValue(-100000);
             sut.startInputs.get(1).getValueFactory().setValue(1);
-            sut.startInputs.get(2).getValueFactory().setValue(null);
+            sut.startInputs.get(2).getValueFactory().setValue(6);
             sut.startInputs.get(3).getValueFactory().setValue(0);
             sut.startInputs.get(4).getValueFactory().setValue(59);
             sut.startInputs.get(5).getValueFactory().setValue(59);
@@ -319,7 +319,7 @@ public class EventEditorTest {
             sut.endInputs.get(0).getValueFactory().setValue(99999);
             sut.endInputs.get(1).getValueFactory().setValue(12);
             sut.endInputs.get(2).getValueFactory().setValue(1);
-            sut.endInputs.get(3).getValueFactory().setValue(null);
+            sut.endInputs.get(3).getValueFactory().setValue(2);
             sut.endInputs.get(4).getValueFactory().setValue(14);
             sut.endInputs.get(5).getValueFactory().setValue(34);
             sut.endInputs.get(6).getValueFactory().setValue(0);

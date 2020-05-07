@@ -4,16 +4,12 @@ import database.DBM;
 import database.User;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
-	import javafx.stage.Stage;
+import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.Stack;
 
 public class GUIManager extends Application {
 
@@ -41,8 +37,8 @@ public class GUIManager extends Application {
     //}
 
     public static void applyStyle(String style) {
-    	mainStage.getScene().getStylesheets().remove(0);
-    	mainStage.getScene().getStylesheets().add("File:src/main/resources/styles/" + style + ".css");
+        mainStage.getScene().getStylesheets().remove(0);
+        mainStage.getScene().getStylesheets().add("File:src/main/resources/styles/" + style + ".css");
     }
 
     //default window set up
