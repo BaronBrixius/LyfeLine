@@ -19,22 +19,22 @@ public class Timeline extends TimelineObject<Timeline> {
     }
 
     //Do we need this? We mostly create blank timelines and then use setters called from GUI fields for new timelines
-    public Timeline(String TimelineName, String TimelineDescription, int Scale, String Theme, Date StartDate,
-                    Date Enddate, List<String> keywords) {
-        this(0, TimelineName, TimelineDescription, Scale, Theme, StartDate, Enddate, null, 0, keywords, null);
+    public Timeline(String timelineName, String timelineDescription, int scale, String theme, Date startDate,
+                    Date endDate, List<String> keywords) {
+        this(0, timelineName, timelineDescription, scale, theme, startDate, endDate, null, 0, keywords, null);
     }
 
-    private Timeline(int TimeLineID, String TimelineName, String TimelineDescription, int Scale, String Theme,
-                     Date StartDate, Date Enddate, Date DateCreated, int TimelineOwner, List<String> keywords, List<Event> eventList) {
-        this.timelineID = TimeLineID;
-        this.timelineName = TimelineName;
-        this.scale = Scale;
-        this.timelineDescription = TimelineDescription;
-        this.theme = Theme;
-        this.startDate = StartDate;
-        this.endDate = Enddate;
-        this.creationDate = DateCreated;
-        this.ownerID = TimelineOwner;
+    private Timeline(int timelineID, String timelineName, String timelineDescription, int scale, String theme,
+                     Date startDate, Date endDate, Date dateCreated, int timelineOwner, List<String> keywords, List<Event> eventList) {
+        this.timelineID = timelineID;
+        this.timelineName = timelineName;
+        this.scale = scale;
+        this.timelineDescription = timelineDescription;
+        this.theme = theme;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.creationDate = dateCreated;
+        this.ownerID = timelineOwner;
         this.keywords = keywords;
         this.eventList = eventList;
     }
@@ -127,7 +127,7 @@ public class Timeline extends TimelineObject<Timeline> {
 
         DBM.deleteFromDB(DBM.getFromDB(out, new Event()));
     }
-
+    
     @Override
     public PreparedStatement getDeleteQuery() throws SQLException {
         PreparedStatement out = DBM.conn.prepareStatement("DELETE FROM `timelines` WHERE (`TimelineID` = ?)");
@@ -137,33 +137,33 @@ public class Timeline extends TimelineObject<Timeline> {
 
     @Override
     public Timeline createFromDB(ResultSet rs) throws SQLException {
-        int TimelineID = rs.getInt("TimelineID");
-        int Scale = rs.getInt("Scale");
-        String TimelineName = rs.getString("TimelineName");
-        String TimelineDesription = rs.getString("TimelineDescription");
-        String Theme = rs.getString("Theme");
-        int StartYear = rs.getInt("StartYear");
-        int StartMonth = rs.getInt("StartMonth");
-        int StartDay = rs.getInt("StartDay");
-        int StartHour = rs.getInt("StartHour");
-        int StartMinute = rs.getInt("StartMinute");
-        int StartSecond = rs.getInt("StartSecond");
-        int StartMillisecond = rs.getInt("StartMillisecond");
-        int EndYear = rs.getInt("EndYear");
-        int EndMonth = rs.getInt("EndMonth");
-        int EndDay = rs.getInt("EndDay");
-        int EndHour = rs.getInt("EndHour");
-        int EndMinute = rs.getInt("EndMinute");
-        int EndSecond = rs.getInt("EndSecond");
-        int EndMillisecond = rs.getInt("EndMillisecond");
-        int CreatedYear = rs.getInt("CreatedYear");
-        int CreatedMonth = rs.getInt("CreatedMonth");
-        int CreatedDay = rs.getInt("CreatedDay");
-        int CreatedHour = rs.getInt("CreatedHour");
-        int CreatedMinute = rs.getInt("CreatedMinute");
-        int CreatedSecond = rs.getInt("CreatedSecond");
-        int CreatedMillisecond = rs.getInt("CreatedMillisecond");
-        int TimelineOwner = rs.getInt("TimelineOwner");
+        int timelineID = rs.getInt("TimelineID");
+        int scale = rs.getInt("Scale");
+        String timelineName = rs.getString("TimelineName");
+        String timelineDescription = rs.getString("TimelineDescription");
+        String theme = rs.getString("Theme");
+        int startYear = rs.getInt("StartYear");
+        int startMonth = rs.getInt("StartMonth");
+        int startDay = rs.getInt("StartDay");
+        int startHour = rs.getInt("StartHour");
+        int startMinute = rs.getInt("StartMinute");
+        int startSecond = rs.getInt("StartSecond");
+        int startMillisecond = rs.getInt("StartMillisecond");
+        int endYear = rs.getInt("EndYear");
+        int endMonth = rs.getInt("EndMonth");
+        int endDay = rs.getInt("EndDay");
+        int endHour = rs.getInt("EndHour");
+        int endMinute = rs.getInt("EndMinute");
+        int endSecond = rs.getInt("EndSecond");
+        int endMillisecond = rs.getInt("EndMillisecond");
+        int createdYear = rs.getInt("CreatedYear");
+        int createdMonth = rs.getInt("CreatedMonth");
+        int createdDay = rs.getInt("CreatedDay");
+        int createdHour = rs.getInt("CreatedHour");
+        int createdMinute = rs.getInt("CreatedMinute");
+        int createdSecond = rs.getInt("CreatedSecond");
+        int createdMillisecond = rs.getInt("CreatedMillisecond");
+        int timelineOwner = rs.getInt("TimelineOwner");
         String keywordString = rs.getString("Keywords");
 
         // keyword list generation from comma string
@@ -177,15 +177,15 @@ public class Timeline extends TimelineObject<Timeline> {
                 "INNER JOIN timelineevents t " +
                 "ON e.EventID = t.EventID " +
                 "WHERE t.TimelineID = ?")) {
-            stmt.setInt(1, TimelineID);
+            stmt.setInt(1, timelineID);
             eventList = DBM.getFromDB(stmt, new Event());
         }
-        return new Timeline(TimelineID, TimelineName, TimelineDesription, Scale, Theme,
-                new Date(StartYear, StartMonth, StartDay, StartHour, StartMinute, StartSecond, StartMillisecond),
-                new Date(EndYear, EndMonth, EndDay, EndHour, EndMinute, EndSecond, EndMillisecond),
-                new Date(CreatedYear, CreatedMonth, CreatedDay, CreatedHour, CreatedMinute, CreatedSecond,
-                        CreatedMillisecond),
-                TimelineOwner, keywords, eventList);
+        return new Timeline(timelineID, timelineName, timelineDescription, scale, theme,
+                new Date(startYear, startMonth, startDay, startHour, startMinute, startSecond, startMillisecond),
+                new Date(endYear, endMonth, endDay, endHour, endMinute, endSecond, endMillisecond),
+                new Date(createdYear, createdMonth, createdDay, createdHour, createdMinute, createdSecond,
+                        createdMillisecond),
+                timelineOwner, keywords, eventList);
     }
 
     @Override
@@ -205,7 +205,7 @@ public class Timeline extends TimelineObject<Timeline> {
     // This method takes the new timeline name and the userID that is creating the
     // line and checks if the name is already in the DB, in relation with this user
 
-    private boolean validName(String name, int user) throws SQLException {
+    boolean validName(String name, int user) throws SQLException {
         PreparedStatement stmt = DBM.conn.prepareStatement("SELECT * FROM timelines WHERE TimelineOwner = ?");
         stmt.setInt(1, user);
         List<String> timelineNameList = DBM.getFromDB(stmt, rs -> rs.getString("TimelineName"));

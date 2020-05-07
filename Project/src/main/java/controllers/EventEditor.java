@@ -1,8 +1,6 @@
 package controllers;
 
-import database.DBM;
 import database.Event;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -36,22 +34,11 @@ public class EventEditor extends Editor {
     ImageView image;
     @FXML
     Slider prioritySlider;
-    private Event event;
+    Event event;
     private String tempLocation;
 
     public void initialize() {
         super.initialize();
-
-//        image.setOnMouseEntered(e -> {
-////            image.setScaleX(8);
-////            image.setScaleY(8);
-////            image.setScaleZ(8);
-//        });
-//        image.setOnMouseExited(e -> {
-//            image.setScaleX(1);
-//            image.setScaleY(1);
-//            image.setScaleZ(1);
-//        });
 
         //set up priority slider labels
         prioritySlider.setLabelFormatter(new StringConverter<>() {
@@ -83,15 +70,20 @@ public class EventEditor extends Editor {
     }
 
     @FXML
-    private void toggleHasDuration() {
+    void toggleHasDuration() {              //toggles whether the event has a distinct end date, as opposed to being instant
         endPane.setDisable(!hasDuration.isSelected());
-        setExpansion(endPane, endBoxes, hasDuration.isSelected() && endExpanded, parentController.activeTimeline.getScale());   //compresses if disabled, if enabled leave it as user wanted
-        if (hasDuration.isSelected())
-            endPane.getStyleClass().remove("DisabledAnyways");
-        else
-            endPane.getStyleClass().add("DisabledAnyways");
-    }
+        setExpansion(endPane, endBoxes, hasDuration.isSelected() && endExpanded, parentController.activeTimeline.getScale());   //compresses if duration is disabled, if enabled leave it as user wanted
 
+        if (hasDuration.isSelected()) {
+            populateEndInputs(event);
+            endPane.getStyleClass().remove("DisabledAnyways");
+        } else {
+            for (int i = 0; i < 7; i++) {
+                endInputs.get(i).getValueFactory().setValue(startInputs.get(i).getValue());
+            }
+            endPane.getStyleClass().add("DisabledAnyways");
+        }
+    }
 
     @FXML
     private void uploadImage() throws IOException {    //Only working now for .jpg
@@ -102,7 +94,7 @@ public class EventEditor extends Editor {
         }
 
         if (confirm) {
-            FileChooser chooser = new FileChooser(); //For the filedirectory
+            FileChooser chooser = new FileChooser(); //For the file directory
             chooser.setTitle("Upload image");
 
             //All the image formats supported by java.imageio https://docs.oracle.com/javase/7/docs/api/javax/imageio/package-summary.html
@@ -138,17 +130,14 @@ public class EventEditor extends Editor {
 
     @FXML
     private boolean ImageSaveConfirm() {
-        Alert confirmsaveimage = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmsaveimage.setTitle("Confirm Change");
-        confirmsaveimage.setHeaderText("Replacing or removing an image will permanently delete it from the system.");
-        confirmsaveimage.setContentText("Would you like to make the change?");
+        Alert confirmSaveImage = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmSaveImage.setTitle("Confirm Change");
+        confirmSaveImage.setHeaderText("Replacing or removing an image will permanently delete it from the system.");
+        confirmSaveImage.setContentText("Would you like to make the change?");
 
-        Optional<ButtonType> result = confirmsaveimage.showAndWait();
+        Optional<ButtonType> result = confirmSaveImage.showAndWait();
 
-        if (result.get() == ButtonType.CANCEL)
-            return false;
-        else
-            return true;
+        return result.get() == ButtonType.OK;
     }
 
     //Method that returns the image format as a string i.e sun.png == "png"
@@ -209,7 +198,7 @@ public class EventEditor extends Editor {
         return outPath + imageName;
     }
 
-    //Method to check if the image folder has this name already to avoid if two are copied with same name the latter will just override the firs
+    //Method to check if the image folder has this name already to avoid duplicates overriding earlier uploads
     private boolean folderHasImage(String path) {
         File folder = new File("src/main/resources/images/");
         File[] listOfFiles = folder.listFiles();
@@ -224,13 +213,6 @@ public class EventEditor extends Editor {
             if (path.equalsIgnoreCase(s))
                 return true;
         }
-        return false;
-    }
-
-    public boolean setEvent(int eventID) {       //is this even needed? don't implement yet
-        /*Event newEvent = logic to find Event in database and get its info
-        if (newEvent != null)
-            return changeEvent(newEvent);*/
         return false;
     }
 
@@ -263,7 +245,7 @@ public class EventEditor extends Editor {
         return true;
     }
 
-    void updateItem() {
+    void updateItem() {                 //sets object's values based on input fields' values
         super.updateItem(event);        //update variables common to TimelineObjects
         event.setEventPriority((int) prioritySlider.getValue());
     }
@@ -272,12 +254,13 @@ public class EventEditor extends Editor {
         updateItem();
         boolean newEvent = event.getID() == 0;
 
-        super.save(event);
+        super.save(event);          //adds to database
 
         if (newEvent)
             addToTimeline();        //new event is automatically added to active timeline when saved
         parentController.eventSelectorController.populateTimelineList();
         parentController.eventSelectorController.populateEventList();
+        parentController.populateDisplay();
         return true;
     }
 
@@ -300,6 +283,8 @@ public class EventEditor extends Editor {
     }
 
     boolean hasChanges() {
+        if (!hasDuration.isSelected() && event.getStartDate().compareTo(event.getEndDate()) != 0)
+            return true;
         if (super.hasChanges(event))
             return true;
         return event.getEventPriority() != prioritySlider.getValue();
@@ -316,7 +301,7 @@ public class EventEditor extends Editor {
     }
 
     @FXML
-    void clearImage(ActionEvent actionEvent) {
+    void clearImage() {
         if (event.getImagePath() != null) {
             try {
                 Files.deleteIfExists(Paths.get(event.getImagePath()));

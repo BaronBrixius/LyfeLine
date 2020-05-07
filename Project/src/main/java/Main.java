@@ -1,33 +1,52 @@
+import com.google.gson.Gson;
 import database.DBM;
 import database.Timeline;
 import database.User;
 import utils.Date;
 import database.Event;
 
+import javax.swing.*;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.sql.Array;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
+import java.util.Scanner;
 
 class Main {
     public static void main(String[] args) {
         PreparedStatement stmt;
         PreparedStatement stmt2;
         try {
-            new DBM(     );
+            new DBM();
             DBM.setupSchema();       //destroys + remakes DB with default settings, can comment this out after first run if desired
+
+
 
             //Makes a list of events from the DB and prints it
             stmt = DBM.conn.prepareStatement("SELECT * FROM events");
             List<Event> eventList = DBM.getFromDB(stmt, new Event());           //blank object so functional interface method can be accessed
-            System.out.println("\nEvent List:");
-            for (Event e : eventList)
-                System.out.println(e);
 
 
 
+            Gson json = new Gson();
+            String out = json.toJson(eventList.get(0));
+            System.out.println(out + "\n");
+            File file = new File("jsonTest.json");
+            PrintWriter outFile = new PrintWriter(file);
+            outFile.println(out);
+            outFile.close();
 
+            Scanner inFile = new Scanner(file);
+            Event readJson = json.fromJson(inFile.nextLine(), Event.class);
+            System.out.println(readJson + "\n");
+            System.out.println("Year: " + readJson.getStartDate().getYear());
+            inFile.close();
+/*
             //Makes a list of event years from the DB and prints it
             //note: you can just prepare a statement right in the method parameters if there aren't any field values that need to be set
             System.out.println("\nYear List:");
@@ -71,11 +90,11 @@ class Main {
 
             //THE CODE FOR ADVANCED SEARCH,JUST ADD TO IT FOR MORE SEARCH OPTIONS - NOW IT DEALS WITH TWO OF THE MORE COMPLICATED ONES - GETTING THE CREATOR NAME FROM USERS AND READING THE COMMA SPLIT KEYWORDS
             String name = null; //IMAGEN THESE TREE ARE THE TextFields inputs from the user
-            String keyword2 = null;
+            String keyword2 = "bronze";
             String author = null ;
-            Date startDateSpinner = new Date();
+            Date startDateSpinner = null;
             Date endDateSpinner = null;
-            startDateSpinner.setYear(10);
+
             advancedSearch(name,keyword2,author,startDateSpinner,endDateSpinner);
 
 
@@ -103,11 +122,30 @@ class Main {
     }
 
     public static List<Integer> advancedSearch(String name, String keyword2, String author, Date startDateSpinner, Date endDateSpinner) throws SQLException {
+
+
+        String[] keywords = null;
+        StringBuilder dynamicParameter = new StringBuilder();
+        if(keyword2 != null){
+            keywords = keyword2.split(" ");
+
+            for (int i = 1; i < keywords.length; i++) {
+                dynamicParameter.append("OR  CONCAT(',', `Keywords`, ',') LIKE CONCAT('%,', COALESCE(?, '%'), ',%')");
+            }}
+
         PreparedStatement stmt3 = DBM.conn.prepareStatement("SELECT * FROM `timelines` LEFT JOIN `users` ON users.UserID = timelines.TimelineOwner WHERE " +
-                " CONCAT(' ', `TimelineName`, ' ') LIKE CONCAT('% ', COALESCE(?, '%'), ' %') AND CONCAT(',', `Keywords`, ',') LIKE CONCAT('%,', COALESCE(?, '%'), ',%')  AND `UserName` = COALESCE(NULLIF(?, ''), `UserName`);") ;
+                " CONCAT(' ', `TimelineName`, ' ') LIKE CONCAT('% ', COALESCE(?, '%'), ' %') AND `UserName` = COALESCE(NULLIF(?, ''), `UserName`) AND (CONCAT(',', `Keywords`, ',') LIKE CONCAT('%,', COALESCE(?, '%'), ',%') " + dynamicParameter + ")  ;") ;
         stmt3.setString(1, name);
-        stmt3.setString(2, keyword2);
-        stmt3.setString(3, author);
+        stmt3.setString(2, author);
+        if(keywords != null)
+            for (int i = 3; i < keywords.length + 3; i++) {
+                stmt3.setString(i, keywords[i - 3]);
+                System.out.println(stmt3);
+            }
+        else
+            stmt3.setString(3, keyword2);
+
+
         //EXAMPLE OF RETURNING THE TIMELINES THAT FULFILL THE SEARCH AS TIMELINE OBJECT
         System.out.println();
         System.out.println("======SEARCH RESULTS as objects - THE TIMELINES NAMES==========");

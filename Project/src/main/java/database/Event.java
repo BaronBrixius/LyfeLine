@@ -96,7 +96,9 @@ public class Event extends TimelineObject<Event> {
     }
 
     public boolean removeFromTimeline(int timelineID) throws SQLException {
-        PreparedStatement out = DBM.conn.prepareStatement("DELETE FROM `timelineevents` WHERE EventID = " + this.eventID + " AND TimelineID = " + timelineID + ";");
+        PreparedStatement out = DBM.conn.prepareStatement("DELETE FROM `timelineevents` WHERE EventID = ? AND TimelineID = ?");
+        out.setInt(1, eventID);
+        out.setInt(2, timelineID);
         return out.executeUpdate() > 0;
     }
 

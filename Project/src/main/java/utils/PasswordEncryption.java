@@ -46,7 +46,7 @@ public class PasswordEncryption {
     }
     //The method that creates the actual encrypted password by hashing the password and salt together
     public static String generateSecurePassword(String password, String salt) {
-        String returnValue = null;
+        String returnValue;
         byte[] securePassword = hash(password.toCharArray(), salt.getBytes());
         //Using Base64 byte encoding to return the byte array as string, more info https://en.wikipedia.org/wiki/Base64
         returnValue = Base64.getEncoder().encodeToString(securePassword);//Since using 512 hash, Base64 gives 88 byte long string - less column size needing in the database vs. hex encoding
@@ -58,7 +58,7 @@ public class PasswordEncryption {
     // the encrypted password in the DB - then it is legit
     public static boolean verifyUserPassword(String providedPassword,String securedPassword, String salt)
     {
-        boolean returnValue = false;
+        boolean returnValue;
 
         // Generate New secure password with the same salt
         String newSecurePassword = generateSecurePassword(providedPassword, salt);

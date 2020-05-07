@@ -50,105 +50,16 @@ public abstract class Editor {
     boolean startExpanded;
     boolean endExpanded;
     TimelineView parentController;
-    TimelineObject thing;
 
     public void initialize() {
-        setupTimeInputSpinners();
-
-    }
-
-    void setupTimeInputSpinners() {
         //Set Up the Spinners for Start/End Inputs, would have bloated the .fxml and variable list a ton if these were in fxml
-        String timeSpinnerLabel = null;
-        int maxValue = 0;
-        for (int i = 0; i < 7; i++) {
-            switch (i) {                //labels
-                case 0:
-                    timeSpinnerLabel = "Year";
-                    break;
-                case 1:
-                    timeSpinnerLabel = "Month";
-                    break;
-                case 2:
-                    timeSpinnerLabel = "Day";
-                    break;
-                case 3:
-                    timeSpinnerLabel = "Hour";
-                    break;
-                case 4:
-                    timeSpinnerLabel = "Minute";
-                    break;
-                case 5:
-                    timeSpinnerLabel = "Second";
-                    break;
-                case 6:
-                    timeSpinnerLabel = "Millisecond";
-                    break;
-            }
-
-            switch (i) {            //max values
-                case 1:
-                    maxValue = 12;
-                    break;
-                case 2:
-                    maxValue = 31;
-                    break;
-                case 3:
-                    maxValue = 23;
-                    break;
-                case 4:
-                case 5:
-                    maxValue = 59;
-                    break;
-                case 6:
-                    maxValue = 999;
-                    break;
-            }
-
-            setupTimeInputBoxes(timeSpinnerLabel, maxValue, i, startInputs, startBoxes);
-            setupTimeInputBoxes(timeSpinnerLabel, maxValue, i, endInputs, endBoxes);
-        }
-        //fix ranges for years since they're a little different
-        startInputs.get(0).setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(Integer.MIN_VALUE, Integer.MAX_VALUE, 0));
-        endInputs.get(0).setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(Integer.MIN_VALUE, Integer.MAX_VALUE, 0));
-    }
-
-    void setupTimeInputBoxes(String timeSpinnerLabel, int maxValue, int i, List<Spinner<Integer>> spinnerList, List<VBox> boxList) {
-        //startTimes.add(i, new Spinner<>(0, maxValue, 0));
-        //startBoxes.add(i, new VBox(new Label(timeSpinnerLabel), startTimes.get(i)));
-        //startBoxes.get(i).setPrefWidth(70);
-        //startBoxes.get(i).getChildren().get(0).getStyleClass().add("smallText");
-        SpinnerValueFactory.IntegerSpinnerValueFactory valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, maxValue, 0);
-        valueFactory.setConverter(new StringConverter<>() {
-            @Override
-            public String toString(Integer value) {
-                if (value == null)
-                    return "0";
-                return value.toString();
-            }
-
-            @Override
-            public Integer fromString(String string) {
-                try {
-                    // If the specified value is null or zero-length, return null
-                    if (string == null)
-                        return 0;
-                    string = string.trim();
-                    if (string.length() < 1)
-                        return null;
-                    return Integer.parseInt(string);
-
-                } catch (NumberFormatException ex) {
-                    return 0;
-                }
-            }
-        });
-        spinnerList.add(i, new Spinner<>(valueFactory));
-        spinnerList.get(i).setEditable(true);
-
-        boxList.add(i, new VBox(new Label(timeSpinnerLabel), spinnerList.get(i)));
-        boxList.get(i).setPrefWidth(70);
-        boxList.get(i).getChildren().get(0).getStyleClass().add("smallText");
+        setupTimeInputStartAndEnd("Year", Integer.MIN_VALUE + 1, Integer.MAX_VALUE, 0);
+        setupTimeInputStartAndEnd("Month", 1, 12, 1);
+        setupTimeInputStartAndEnd("Day", 1, 31, 2);
+        setupTimeInputStartAndEnd("Hour", 0, 23, 3);
+        setupTimeInputStartAndEnd("Minute", 0, 59, 4);
+        setupTimeInputStartAndEnd("Second", 0, 59, 5);
+        setupTimeInputStartAndEnd("Millisecond", 0, 999, 6);
     }
 
     @FXML
@@ -172,17 +83,17 @@ public abstract class Editor {
         } else {                        //if contracting, add based on scale
             if (scale == 1)             //don't try to convert to switch statement unless you're a genius, the overlaps made it ugly when I tried
                 expandPane.getChildren().add(0, boxesToAddFrom.get(6)); //milliseconds
-            if (scale <= 3)
+            if (scale <= 2)
                 expandPane.getChildren().add(0, boxesToAddFrom.get(5)); //seconds
-            if (scale >= 3 && scale <= 5)
+            if (scale <= 3)
                 expandPane.getChildren().add(0, boxesToAddFrom.get(4)); //minutes
-            if (scale >= 4 && scale <= 6)
+            if (scale >= 2 && scale <= 4)
                 expandPane.getChildren().add(0, boxesToAddFrom.get(3)); //hours
-            if (scale >= 5 && scale <= 8)
+            if (scale >= 3 && scale <= 7)
                 expandPane.getChildren().add(0, boxesToAddFrom.get(2)); //days
-            if (scale >= 7)
+            if (scale >= 4 && scale <= 8)
                 expandPane.getChildren().add(0, boxesToAddFrom.get(1)); //months
-            if (scale >= 8)
+            if (scale >= 5)
                 expandPane.getChildren().add(0, boxesToAddFrom.get(0)); //years
         }
         return expandPane.getChildren().size();
@@ -200,8 +111,6 @@ public abstract class Editor {
         toggleEditable(!editable);
     }
 
-    abstract boolean hasChanges();
-
     void toggleEditable(boolean editable) {
         this.editable = editable;
         inputFields.setDisable(!editable);
@@ -216,19 +125,17 @@ public abstract class Editor {
 
     @FXML
     boolean saveConfirm() {
-        Alert confirmsave = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmsave.setTitle("Confirm Save");
-        confirmsave.setHeaderText("This will make permanent changes!"); //TODO change text
-        confirmsave.setContentText("Would you like to save?");
+        Alert confirmSave = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmSave.setTitle("Confirm Save");
+        confirmSave.setHeaderText("This will make permanent changes!"); //TODO change text
+        confirmSave.setContentText("Would you like to save?");
 
-        Optional<ButtonType> result = confirmsave.showAndWait();
+        Optional<ButtonType> result = confirmSave.showAndWait();
 
         if (result.get() == ButtonType.CANCEL)
             return false;
         return save();
     }
-
-    abstract boolean save();
 
     boolean validData() {
         Date newStartDate = new Date(startInputs.get(0).getValue(), startInputs.get(1).getValue(), startInputs.get(2).getValue(),
@@ -245,14 +152,16 @@ public abstract class Editor {
 
             confirmDelete.showAndWait();
             return false;
-        } else
-            return true;
+        }
+        return true;
     }
 
-    void setOwner(boolean owner) {        //Check if Owner
+    void setOwner(boolean owner) {
         saveEditButton.setDisable(!owner);
         deleteButton.setDisable(!owner);
     }
+
+    abstract boolean populateDisplay();
 
     void populateDisplay(TimelineObject itemInEditor) {
         titleInput.setText(itemInEditor.getName());
@@ -267,22 +176,24 @@ public abstract class Editor {
             startInputs.get(5).getValueFactory().setValue(itemInEditor.getStartDate().getSecond());
             startInputs.get(6).getValueFactory().setValue(itemInEditor.getStartDate().getMillisecond());
 
-            endInputs.get(0).getValueFactory().setValue(itemInEditor.getEndDate().getYear());
-            endInputs.get(1).getValueFactory().setValue(itemInEditor.getEndDate().getMonth());
-            endInputs.get(2).getValueFactory().setValue(itemInEditor.getEndDate().getDay());
-            endInputs.get(3).getValueFactory().setValue(itemInEditor.getEndDate().getHour());
-            endInputs.get(4).getValueFactory().setValue(itemInEditor.getEndDate().getMinute());
-            endInputs.get(5).getValueFactory().setValue(itemInEditor.getEndDate().getSecond());
-            endInputs.get(6).getValueFactory().setValue(itemInEditor.getEndDate().getMillisecond());
+            populateEndInputs(itemInEditor);
         }
 
         setExpansion(startPane, startBoxes, false, parentController.activeTimeline.getScale());
         setExpansion(endPane, endBoxes, false, parentController.activeTimeline.getScale());
     }
 
-    abstract boolean populateDisplay();
+    void populateEndInputs(TimelineObject itemInEditor) {            //so that end dates can have their display toggled separately for events
+        endInputs.get(0).getValueFactory().setValue(itemInEditor.getEndDate().getYear());
+        endInputs.get(1).getValueFactory().setValue(itemInEditor.getEndDate().getMonth());
+        endInputs.get(2).getValueFactory().setValue(itemInEditor.getEndDate().getDay());
+        endInputs.get(3).getValueFactory().setValue(itemInEditor.getEndDate().getHour());
+        endInputs.get(4).getValueFactory().setValue(itemInEditor.getEndDate().getMinute());
+        endInputs.get(5).getValueFactory().setValue(itemInEditor.getEndDate().getSecond());
+        endInputs.get(6).getValueFactory().setValue(itemInEditor.getEndDate().getMillisecond());
+    }
 
-    void updateItem(TimelineObject itemInEditor) {
+    void updateItem(TimelineObject itemInEditor) {                  //sets object's values based on input fields' values
         itemInEditor.setName(titleInput.getText());
         itemInEditor.setDescription(descriptionInput.getText().replaceAll("([^\r])\n", "$1\r\n"));
 
@@ -293,13 +204,15 @@ public abstract class Editor {
                 endInputs.get(3).getValue(), endInputs.get(4).getValue(), endInputs.get(5).getValue(), endInputs.get(6).getValue()));
     }
 
-    boolean hasChanges(TimelineObject itemInEditor) {
+    abstract boolean hasChanges();
+
+    boolean hasChanges(TimelineObject itemInEditor) {           //returns true if any input fields don't match the object's values
         if (!itemInEditor.getName().equals(titleInput.getText())
                 || !itemInEditor.getDescription().equals(descriptionInput.getText().replaceAll("([^\r])\n", "$1\r\n")))     //textArea tends to change the newline from \r\n to just \n which breaks some things)
             return true;
 
         Date readStart = new Date(startInputs.get(0).getValue(), startInputs.get(1).getValue(), startInputs.get(2).getValue(),
-                startInputs.get(3).getValue(), startInputs.get(4).getValue(), startInputs.get(5).getValue(), startInputs.get(6).getValue());   //milliseconds not implemented yet, do we need to?
+                startInputs.get(3).getValue(), startInputs.get(4).getValue(), startInputs.get(5).getValue(), startInputs.get(6).getValue());
 
         Date readEnd = new Date(endInputs.get(0).getValue(), endInputs.get(1).getValue(), endInputs.get(2).getValue(),
                 endInputs.get(3).getValue(), endInputs.get(4).getValue(), endInputs.get(5).getValue(), endInputs.get(6).getValue());
@@ -309,6 +222,8 @@ public abstract class Editor {
                         || itemInEditor.getEndDate().compareTo(readEnd) != 0
         );
     }
+
+    abstract boolean save();
 
     boolean save(TimelineObject itemInEditor) {
         try {
@@ -321,5 +236,52 @@ public abstract class Editor {
             e.printStackTrace();
         }
         return true;
+    }
+
+    private void setupTimeInputStartAndEnd(String timeSpinnerLabel, int minValue, int maxValue, int index) {    //applies equivalent setups to both start and end spinners
+        setupTimeInput(timeSpinnerLabel, minValue, maxValue, index, startInputs, startBoxes);
+        setupTimeInput(timeSpinnerLabel, minValue, maxValue, index, endInputs, endBoxes);
+    }
+
+    //creates spinners to handle dates with appropriate min/max values and invalid input handling
+    private void setupTimeInput(String timeSpinnerLabel, int minValue, int maxValue, int index, List<Spinner<Integer>> spinnerList, List<VBox> boxList) {
+        int initValue = (timeSpinnerLabel.equals("Year")) ? 0 : minValue;   //initial value is equal to minimum, except in the case of years
+
+        SpinnerValueFactory.IntegerSpinnerValueFactory valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(minValue, maxValue, initValue);
+        valueFactory.setConverter(new StringConverter<>() {                 //makes spinners revert to default values in case of invalid input
+            @Override
+            public String toString(Integer value) {     //called by spinner to update the displayed value in the box
+                if (value == null)
+                    return String.valueOf(initValue);
+                return value.toString();
+            }
+
+            @Override
+            public Integer fromString(String string) {  //called by spinner to read the value from the box and convert to int
+                try {
+                    if (string == null)
+                        return initValue;
+                    string = string.trim();
+                    if (string.length() < 1)
+                        return initValue;
+                    return Integer.parseInt(string);
+
+                } catch (NumberFormatException ex) {
+                    return initValue;
+                }
+            }
+        });
+
+        spinnerList.add(index, new Spinner<>(valueFactory));
+        spinnerList.get(index).setEditable(true);
+        spinnerList.get(index).focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if (!newValue)                                  //the display doesn't restore if invalid info is entered repeatedly, this fixes that
+                spinnerList.get(index).cancelEdit();        //note: cancelEdit() is really more like "update display" as implemented. this triggers it upon losing focus
+        });                                                 //why this isn't default behavior I'll never know
+
+        //adds each spinner to a VBox underneath its label, to keep the two connected as they move around
+        boxList.add(index, new VBox(new Label(timeSpinnerLabel), spinnerList.get(index)));
+        boxList.get(index).setPrefWidth(70);
+        boxList.get(index).getChildren().get(0).getStyleClass().add("smallText");
     }
 }
