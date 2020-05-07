@@ -326,16 +326,16 @@ VALUES (01, 8, 'Fall of Rome', 'Out with a wimper, not a bang', 'dark', 45, 5, 2
         32, 213, default, 6, 'decay,long,'),
         (09, 8, 'Owner: Max - Dummy timeline 9', 'A timeline meant for testing years', 'dark', 50, 4, 20, 4, 43, 32, 213, 100, 5, 20,
         4, 43, 32, 213, 1550, 5, 20, 4, 43,
-        32, 213, default, 2, 'testing, Max, fifty'),
+        32, 213, default, 2, 'testing, 2, fifty'),
         (10, 2, 'Owner: Max - Dummy timeline 10', 'A timeline meant for testing seconds', 'dark', 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,
         0, 0, 59, 0, 1550, 5, 20, 4, 43,
-        32, 213, default, 2, 'testing, Max, sixty'),
+        32, 213, default, 2, 'testing, 2, sixty'),
         (11, 2, 'Owner: Max - Dummy timeline 11', 'A timeline meant for testing the upper bounds of seconds (1 min 10 sec)', 'dark', 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,
         0, 1, 10, 0, 1550, 5, 20, 4, 43,
-        32, 213, default, 2, 'testing, Max, sixty'),
+        32, 213, default, 2, 'testing, 2, sixty'),
         (12, 6, 'Owner: Max - Dummy timeline 12', 'A timeline meant for testing weeks', 'dark', 50, 4, 20, 4, 43, 32, 213, 50, 8, 20,
         4, 43, 32, 213, 1550, 5, 20, 4, 43,
-        32, 213, default, 2, 'testing, Max, fifty');
+        32, 213, default, 2, 'testing, 2, fifty');
 
 
 INSERT INTO `events` (`EventOwner`, `EventPriority`, `EventName`, `EventDescription`, `StartYear`, `StartMonth`,
@@ -472,7 +472,6 @@ VALUES ('1', '1'),
        ('1', '4'),
        ('2', '2'),
        ('3', '2'),
-       ('4', '1'),
        ('5', '1'),
        ('6', '1'),
        ('7', '1'),

@@ -347,21 +347,21 @@ public class Dashboard {
         boolean endDate= true;
         Date startDateSpinner = new Date(startInputs.get(0).getValue(), startInputs.get(1).getValue(), startInputs.get(2).getValue(),
                 startInputs.get(3).getValue(), startInputs.get(4).getValue(), startInputs.get(5).getValue(), startInputs.get(6).getValue());
-        System.out.println(startDateSpinner.toString());
+        //System.out.println(startDateSpinner.toString());
         if(startDateSpinner.getYear() == -2147483647)
             startDateSpinner.setYear(0);
         if(startDateSpinner.getMonth() == 1)
             startDateSpinner.setMonth(0);
         if(startDateSpinner.getDay() == 1)
             startDateSpinner.setDay(0);
-        System.out.println(startDateSpinner.toString());
+        //System.out.println(startDateSpinner.toString());
         if (startDateSpinner.toString().equals("0-000000"))
             startDate = false;
 
 
         Date endDateSpinner = new Date(endInputs.get(0).getValue(), endInputs.get(1).getValue(), endInputs.get(2).getValue(),
                 endInputs.get(3).getValue(), endInputs.get(4).getValue(), endInputs.get(5).getValue(), endInputs.get(6).getValue());
-        System.out.println(endDateSpinner.toString());
+        //System.out.println(endDateSpinner.toString());
 
         if(endDateSpinner.getYear() == -2147483647)
             endDateSpinner.setYear(0);
@@ -371,7 +371,7 @@ public class Dashboard {
             endDateSpinner.setDay(0);
         if (endDateSpinner.toString().equals("0-000000"))
             endDate = false;
-        System.out.println(endDateSpinner.toString());
+        //System.out.println(endDateSpinner.toString());
 
         List<Timeline> tempAllList;
         List<Timeline> rightTimelines =  new ArrayList<>(); //Currently the right list unless we need to update it with spinner search
@@ -417,7 +417,7 @@ public class Dashboard {
             keywords = searchKeywords.getText().trim().split(" ");
 
             for (int i = 1; i < keywords.length; i++) {
-                System.out.println(keywords[i]);
+                //System.out.println(keywords[i]);
                 dynamicParameter.append("OR  CONCAT(',', `Keywords`, ',') LIKE CONCAT('%,', COALESCE(?, '%'), ',%')");
             }
         }
@@ -429,33 +429,35 @@ public class Dashboard {
         else
             stmt3.setString(1, searchTimelineName.getText());
         stmt3.setString(2, searchCreator.getText());
-        stmt3.setInt(3, 0); //For now untill the Rating combobox provides something
+        stmt3.setInt(3, 0); //For now until the Rating combobox provides something
         if (keywords != null)
             for (int i = 4; i < keywords.length + 4; i++) {
                 stmt3.setString(i, keywords[i - 4]);
-                System.out.println(keywords[i - 4]);
+                //System.out.println(keywords[i - 4]);
             }
         else
             stmt3.setString(4, searchKeywords.getText());
 
 
         //EXAMPLE OF RETURNING THE TIMELINES THAT FULFILL THE SEARCH AS TIMELINE OBJECT
-        System.out.println();
-        System.out.println("======SEARCH RESULTS as objects - THE TIMELINES NAMES==========");
-        System.out.println(stmt3);
+        //System.out.println();
+        //System.out.println("======SEARCH RESULTS as objects - THE TIMELINES NAMES==========");
+        //System.out.println(stmt3);
         List<Timeline> list = DBM.getFromDB(stmt3, new Timeline());
-        System.out.println(startInputs.toString() + "what the startINput says");
+        //System.out.println(startInputs.toString() + "what the startINput says");
 
         if(!startDate & !endDate){
             rightTimelines=list;
-            System.out.println("Spinner not used print result from SQL ");}
+            //System.out.println("Spinner not used print result from SQL ");
+            }
 
          else if(rightTimelines.isEmpty())
-            System.out.println("Spinner used but no match so ignore sql result");
+            //System.out.println("Spinner used but no match so ignore sql result")
+             ;
 
          else if(!rightTimelines.isEmpty() & list.isEmpty()) {
              rightTimelines = new ArrayList<>();
-             System.out.println("Spinner used but AND match but sql no match");
+             //System.out.println("Spinner used but AND match but sql no match");
          }
 
         else if(!rightTimelines.isEmpty() & !list.isEmpty()) {
@@ -467,7 +469,7 @@ public class Dashboard {
                 }
             }
             rightTimelines=temp;
-            System.out.println("have matches");
+            //System.out.println("have matches");
         }
 
         //for (int i = 0; i < rightTimelines.size(); i++)
