@@ -1,33 +1,36 @@
 package controllers;
 
-import database.*;
+import database.DBM;
+import database.User;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.*;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-import java.sql.PreparedStatement;
-
 import java.io.IOException;
-
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 
 public class LoginAndRegistration {
 
-    @FXML private TextField usernameInput;
-    @FXML private PasswordField passwordInput;
-    @FXML private Text errorMessage;
-    @FXML private TextField emailInput;
-    @FXML public PasswordField confirmPasswordInput;
+    @FXML
+    public PasswordField confirmPasswordInput;
+    @FXML
+    private TextField usernameInput;
+    @FXML
+    private PasswordField passwordInput;
+    @FXML
+    private Text errorMessage;
+    @FXML
+    private TextField emailInput;
 
 
     public LoginAndRegistration() {
@@ -129,7 +132,7 @@ public class LoginAndRegistration {
                     } else { // log in!!!
                         GUIManager.loggedInUser = user;
 
-                        //update menubar text for loggedin status and enable menu item
+                        //update menubar text for logged-in status and enable menu item
                         GUIManager.menu.updateLoggedInStatus();
 
                         //hide login window
