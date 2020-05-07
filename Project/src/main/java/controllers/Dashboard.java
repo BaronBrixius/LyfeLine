@@ -276,9 +276,7 @@ public class Dashboard {
                 list.getItems().sort(Comparator.comparing(Timeline::getCreationDate));
                 break;
         }
-
     }
-
 
     @FXML
     public void adminScreen() throws IOException {
@@ -289,29 +287,24 @@ public class Dashboard {
     public TimelineView createTimeline() {
         Timeline t = new Timeline();
         t.setOwnerID(GUIManager.loggedInUser.getUserID());
-        try {
-            TimelineView timelineView = GUIManager.swapScene("TimelineView");
-            timelineView.setActiveTimeline(t);
-            timelineView.timelineEditorController.toggleEditable(true);
-            return timelineView;
-        } catch (IOException e) {e.printStackTrace(); return null;}
-
+        return openTimelineView(t, true);
     }
 
     @FXML
     public TimelineView editTimeline() {
-        return(openTimelineView(this.activeTimeline));
+        return openTimelineView(this.activeTimeline, true);
     }
 
     @FXML
     public TimelineView openTimeline() {
-        return openTimelineView(list.getSelectionModel().getSelectedItem());
+        return openTimelineView(list.getSelectionModel().getSelectedItem(), false);
     }
 
-    private TimelineView openTimelineView(Timeline newActiveTimeline) {
+    private TimelineView openTimelineView(Timeline newActiveTimeline, boolean editable) {
         try {
             TimelineView timelineView = GUIManager.swapScene("TimelineView");
             timelineView.setActiveTimeline(newActiveTimeline);
+            timelineView.timelineEditorController.toggleEditable(editable);
             return timelineView;
         } catch (IOException e) {e.printStackTrace(); return null;}
     }
