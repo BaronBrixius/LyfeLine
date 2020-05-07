@@ -498,7 +498,7 @@ public class DashboardTest {
 
         Platform.runLater(() -> {
             TimelineView testView = sut.editTimeline();
-            assertFalse(testView.timelineEditorController.editable); //Makes sure that the edit timeline screen doesn't start in edit mode.
+            assertTrue(testView.timelineEditorController.editable); //Makes sure that the edit timeline screen starts in edit mode.
 
             //Check all timeline attributes to make sure that it is the proper timeline
             String actualString = testView.activeTimeline.getName();
