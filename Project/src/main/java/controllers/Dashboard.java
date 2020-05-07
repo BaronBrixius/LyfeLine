@@ -120,6 +120,7 @@ public class Dashboard {
         sortBy.getItems().setAll("Alphabetically", "Reverse-Alphabetically", "Most Recent", "Oldest");
         // Sort order selection events
         sortBy.getSelectionModel().selectedIndexProperty().addListener(ov -> sortTimelines());
+        sortBy.getSelectionModel().select(0);
 
         // Search field
         searchTimelines();
@@ -277,10 +278,16 @@ public class Dashboard {
     @FXML
     public void toggleAdvancedSearch() {
         if (stack.getChildren().size() > 0)
+        {
             stack.getChildren().remove(advancedSearchView);
+            searchInput.setDisable(false);
+            cbOnlyViewPersonalLines.setDisable(false);
+        }
         else {
             clearAdvancedSearch();
             stack.getChildren().add(advancedSearchView);
+            searchInput.setDisable(true);
+            cbOnlyViewPersonalLines.setDisable(true);
         }
     }
 
@@ -593,7 +600,6 @@ public class Dashboard {
         else
             spinnerDates.add(spinnerHeader, column, row);
         spinnerDates.add(spinnerList.get(index), column, row + 1);
-
     }
 
     // open DeletePopUp
@@ -615,10 +621,7 @@ public class Dashboard {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-
-            populateTimelineList();
-
-            //list.getItems().remove(list.getSelectionModel().getSelectedIndex());
+            filteredTimelines.getSource().remove(list.getSelectionModel().getSelectedItem());
             list.getSelectionModel().select(null);
             return true;
         }
