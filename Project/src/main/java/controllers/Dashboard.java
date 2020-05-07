@@ -90,13 +90,13 @@ public class Dashboard {
 
     public void initialize() {
         //Set Up the Spinners for Start/End Inputs, would have bloated the .fxml and variable list a ton if these were in fxml
-        setupTimeInputStartAndEnd("Year", Integer.MIN_VALUE, Integer.MAX_VALUE, 0, 0);
-        setupTimeInputStartAndEnd("Month", 0, 12, 1, 0);
-        setupTimeInputStartAndEnd("Day", 0, 31, 2, 0);
-        setupTimeInputStartAndEnd("Hour", -1, 23, 3, 0);
-        setupTimeInputStartAndEnd("Minute", -1, 59, 0, 2);
-        setupTimeInputStartAndEnd("Second", -1, 59, 1, 2);
-        setupTimeInputStartAndEnd("Millisecond", -1, 999, 2, 2);
+        setupTimeInputStartAndEnd("Year", Integer.MIN_VALUE, Integer.MAX_VALUE, 0, 0, 0);
+        setupTimeInputStartAndEnd("Month", 0, 12, 1, 0, 1);
+        setupTimeInputStartAndEnd("Day", 0, 31, 2, 0, 2);
+        setupTimeInputStartAndEnd("Hour", -1, 23, 3, 0, 3);
+        setupTimeInputStartAndEnd("Minute", -1, 59, 0, 2, 4);
+        setupTimeInputStartAndEnd("Second", -1, 59, 1, 2, 5);
+        setupTimeInputStartAndEnd("Millisecond", -1, 999, 2, 2, 6);
         // TODO fix this to be cleaner, I did it as a last second thing because it used
         // to prevent nonadmins from even viewing anything
         //
@@ -524,13 +524,13 @@ public class Dashboard {
             this.list.setItems(FXCollections.observableArrayList(rightTimelines));
     }
 
-    private void setupTimeInputStartAndEnd(String timeSpinnerLabel, int minValue, int maxValue, int column, int row) {    //applies equivalent setups to both start and end spinners
-        setupTimeInput(timeSpinnerLabel, minValue, maxValue, column, row, startInputs, startDates);
-        setupTimeInput(timeSpinnerLabel, minValue, maxValue, column, row, endInputs, endDates);
+    private void setupTimeInputStartAndEnd(String timeSpinnerLabel, int minValue, int maxValue, int column, int row, int index) {    //applies equivalent setups to both start and end spinners
+        setupTimeInput(timeSpinnerLabel, minValue, maxValue, column, row, startInputs, startDates, index);
+        setupTimeInput(timeSpinnerLabel, minValue, maxValue, column, row, endInputs, endDates, index);
     }
 
     //creates spinners to handle dates with appropriate min/max values and invalid input handling
-    private void setupTimeInput(String timeSpinnerLabel, int minValue, int maxValue, int column, int row, List<Spinner<Integer>> spinnerList, GridPane spinnerDates) {
+    private void setupTimeInput(String timeSpinnerLabel, int minValue, int maxValue, int column, int row, List<Spinner<Integer>> spinnerList, GridPane spinnerDates, int index) {
         SpinnerValueFactory.IntegerSpinnerValueFactory valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(minValue, maxValue, minValue) {
             @Override
             public void increment(int steps) {
@@ -571,10 +571,10 @@ public class Dashboard {
             }
         });
 
-        spinnerList.add(column, new Spinner<>(valueFactory));
-        spinnerList.get(column).setEditable(true);
+        spinnerList.add(index, new Spinner<>(valueFactory));
+        spinnerList.get(index).setEditable(true);
 
-        spinnerList.get(column).focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+        spinnerList.get(index).focusedProperty().addListener((observableValue, oldValue, newValue) -> {
             if (!newValue)                                  //the display doesn't restore if invalid info is entered repeatedly, this fixes that
                 spinnerList.get(column).cancelEdit();        //note: cancelEdit() is really more like "update display" as implemented. this triggers it upon losing focus
         });                                                 //why this isn't default behavior I'll never know
@@ -586,7 +586,7 @@ public class Dashboard {
             spinnerDates.add(spinnerHeader, column, row, 2, 1);
         else
             spinnerDates.add(spinnerHeader, column, row);
-        spinnerDates.add(spinnerList.get(column), column, row + 1);
+        spinnerDates.add(spinnerList.get(index), column, row + 1);
 
     }
 
