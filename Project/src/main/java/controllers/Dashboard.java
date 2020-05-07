@@ -81,6 +81,8 @@ public class Dashboard {
     private List<Timeline> timelines;
     private List<Timeline> userTimelines;
     private Timeline activeTimeline;
+    private FilteredList<Timeline> filteredTimelines;
+    private SortedList<Timeline> sortedTimelines;
 
     public void initialize() {
         //Set Up the Spinners for Start/End Inputs, would have bloated the .fxml and variable list a ton if these were in fxml
@@ -177,11 +179,13 @@ public class Dashboard {
         ResultSet data = advancedResultSet();
         try {
             List<Integer> listOfIDs = parseResultsForAdvancedSearch(data);
+            filteredTimelines.setPredicate(timeline -> listOfIDs.contains(timeline.getID()));
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-        
+        Predicate<Timeline> onlyPersonal = timeline -> timeline.getOwnerID() == GUIManager.loggedInUser.getUserID();
+        if (cbOnlyViewPersonalLines.isSelected())
+            filteredTimelines.setPredicate(onlyPersonal.and(filteredTimelines.getPredicate()));
     }
 
     ResultSet advancedResultSet() {
