@@ -24,7 +24,6 @@ public class Dashboard {
     public Label RatingLabel;
     public StackPane stack;
     @FXML protected Button timelineViewButton;
-    //@FXML protected Button eventEditorButton;
     @FXML protected Button adminGUI;
     @FXML protected Button btnDelete;
     @FXML protected Button btnEdit;
