@@ -469,7 +469,6 @@ public class DashboardTest {
             assertNull(testView.activeTimeline.getTheme());
         });
         waitForRunLater();
-
     }
 
     @Test
@@ -527,6 +526,51 @@ public class DashboardTest {
 
             actualString = testView.activeTimeline.getTheme();
             expectedString = "None";
+            assertEquals(expectedString, actualString);
+        });
+        waitForRunLater();
+    }
+
+    @Test
+    void testViewTimelineButton() throws InterruptedException {
+        GUIManager.main = new BorderPane(); //Avoids a null pointer
+        setAdminLoggedIn(false);    //Makes sure that non admins can still view timelines
+        reinitializeDashboard();
+        //Select the first timeline in the list
+        sut.list.getSelectionModel().select(0);
+        Timeline timelineSelected = sut.list.getSelectionModel().getSelectedItem();
+
+        Platform.runLater(() -> {
+            TimelineView testView = sut.openTimeline();
+            assertFalse(testView.timelineEditorController.editable); //Makes sure that the view timeline screen doesn't start in edit mode.
+
+            //Check all timeline attributes to make sure that it is a blank timeline
+            String actualString = testView.activeTimeline.getName();
+            String expectedString = timelineSelected.getName();
+            assertEquals(expectedString, actualString);
+
+            actualString = testView.activeTimeline.getDescription();
+            expectedString = timelineSelected.getDescription();
+            assertEquals(expectedString, actualString);
+
+            int actualInt = testView.activeTimeline.getOwnerID();
+            int expectedInt = timelineSelected.getOwnerID();
+            assertEquals(expectedInt, actualInt);
+
+            actualInt = testView.activeTimeline.getKeywords().size();
+            expectedInt = timelineSelected.getKeywords().size();
+            assertEquals(expectedInt, actualInt);
+
+            actualInt = testView.activeTimeline.getScale();
+            expectedInt = timelineSelected.getScale();
+            assertEquals(expectedInt, actualInt);
+
+            actualInt = testView.activeTimeline.getEventList().size();
+            expectedInt = timelineSelected.getEventList().size();
+            assertEquals(expectedInt, actualInt);
+
+            actualString = testView.activeTimeline.getTheme();
+            expectedString = timelineSelected.getTheme();
             assertEquals(expectedString, actualString);
         });
         waitForRunLater();
