@@ -1,6 +1,8 @@
 package controllers;
 
-import database.*;
+import database.DBM;
+import database.Event;
+import database.Timeline;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -11,10 +13,13 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.util.StringConverter;
 import utils.Date;
+
 import java.io.IOException;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.function.Predicate;
 
 public class Dashboard {
     final List<Spinner<Integer>> startInputs = new ArrayList<>();
@@ -23,31 +28,56 @@ public class Dashboard {
     public Label KeywordLabel;
     public Label RatingLabel;
     public StackPane stack;
-    @FXML protected Button timelineViewButton;
-    @FXML protected Button adminGUI;
-    @FXML protected Button btnDelete;
-    @FXML protected Button btnEdit;
-    @FXML protected Button btnCreate;
-    @FXML protected Button searchButton;
-    @FXML protected TextFlow displayInfo;
-    @FXML protected ListView<Timeline> list;
-    @FXML protected TextField searchInput;
-    @FXML protected TextField searchTimelineName;
-    @FXML protected TextField searchCreator;
-    @FXML protected TextField searchKeywords;
-    @FXML protected ComboBox searchRating;
-    @FXML protected Button clearButton;
-    @FXML protected CheckBox cbOnlyViewPersonalLines;
-    @FXML protected ComboBox<String> sortBy;
-    @FXML protected GridPane gridButtons;
-    @FXML protected GridPane advancedSearchView;
-    @FXML protected GridPane startDates;
-    @FXML protected GridPane endDates;
-    @FXML protected GridPane topLabels;
-    @FXML protected GridPane bottomLabels;
-    @FXML protected Text titleText;
-    @FXML protected Hyperlink AdvancedSearch;
-    @FXML protected Hyperlink toggleHHMMSS;
+    @FXML
+    protected Button timelineViewButton;
+    @FXML
+    protected Button adminGUI;
+    @FXML
+    protected Button btnDelete;
+    @FXML
+    protected Button btnEdit;
+    @FXML
+    protected Button btnCreate;
+    @FXML
+    protected Button searchButton;
+    @FXML
+    protected TextFlow displayInfo;
+    @FXML
+    protected ListView<Timeline> list;
+    @FXML
+    protected TextField searchInput;
+    @FXML
+    protected TextField searchTimelineName;
+    @FXML
+    protected TextField searchCreator;
+    @FXML
+    protected TextField searchKeywords;
+    @FXML
+    protected ComboBox searchRating;
+    @FXML
+    protected Button clearButton;
+    @FXML
+    protected CheckBox cbOnlyViewPersonalLines;
+    @FXML
+    protected ComboBox<String> sortBy;
+    @FXML
+    protected GridPane gridButtons;
+    @FXML
+    protected GridPane advancedSearchView;
+    @FXML
+    protected GridPane startDates;
+    @FXML
+    protected GridPane endDates;
+    @FXML
+    protected GridPane topLabels;
+    @FXML
+    protected GridPane bottomLabels;
+    @FXML
+    protected Text titleText;
+    @FXML
+    protected Hyperlink AdvancedSearch;
+    @FXML
+    protected Hyperlink toggleHHMMSS;
     private List<Timeline> timelines;
     private List<Timeline> userTimelines;
     private Timeline activeTimeline;
@@ -61,6 +91,7 @@ public class Dashboard {
         setupTimeInputStartAndEnd("Minute", -1, 59, 0, 2, 4);
         setupTimeInputStartAndEnd("Second", -1, 59, 1, 2, 5);
         setupTimeInputStartAndEnd("Millisecond", -1, 999, 2, 2, 6);
+
         // TODO fix this to be cleaner, I did it as a last second thing because it used
         // to prevent nonadmins from even viewing anything
         //
@@ -213,6 +244,101 @@ public class Dashboard {
         });
     }
 
+    void searchAdvanced() {
+        ResultSet data = advancedResultSet();
+        try {
+            List<Integer> listOfIDs = parseResultsForAdvancedSearch(data);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        
+    }
+
+    ResultSet advancedResultSet() {
+        try {
+            PreparedStatement stmt = DBM.conn.prepareStatement("SELECT t.*, u.UserName FROM timelines t " +
+                    "INNER JOIN users u " +
+                    "ON t.TimelineOwner = u.UserID");
+            return stmt.executeQuery();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    List<Integer> parseResultsForAdvancedSearch(ResultSet data) throws SQLException {
+        List<Integer> out = new ArrayList<>();
+        boolean addToList = true;
+
+        while (data.next()) {
+            if (!searchTimelineName.getText().isEmpty() && !data.getString("TimelineName").toLowerCase().contains(searchTimelineName.getText().toLowerCase())) {
+                addToList = false;
+            }
+            if (!searchCreator.getText().isEmpty() && !data.getString("UserName").toLowerCase().contains(searchCreator.getText().toLowerCase())) {
+                addToList = false;
+            }
+
+            Predicate<String> keywordMatches = k -> {
+                try {
+                    return data.getString("Keywords").contains(k.toLowerCase());
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    return false;
+                }
+            };
+            if (!searchKeywords.getText().isEmpty() && !Arrays.stream(searchKeywords.getText().toLowerCase().split(" ")).allMatch(keywordMatches)) {
+                addToList = false;
+            }
+
+            Date startDateSpinner = new Date(startInputs.get(0).getValue(), startInputs.get(1).getValue(), startInputs.get(2).getValue(),
+                    startInputs.get(3).getValue(), startInputs.get(4).getValue(), startInputs.get(5).getValue(), startInputs.get(6).getValue());
+            Date startDateInDB = new Date(data.getInt("StartYear"), data.getInt("StartMonth"), data.getInt("StartDay"),
+                    data.getInt("StartHour"), data.getInt("StartMinute"), data.getInt("StartSecond"), data.getInt("StartMillisecond"));
+
+            if (dateSearchedBy(startInputs) && startDateInDB.compareTo(startDateSpinner) < 0) {
+                addToList = false;
+            }
+
+            Date endDateSpinner = new Date(endInputs.get(0).getValue(), endInputs.get(1).getValue(), endInputs.get(2).getValue(),
+                    endInputs.get(3).getValue(), endInputs.get(4).getValue(), endInputs.get(5).getValue(), endInputs.get(6).getValue());
+            Date endDateInDB = new Date(data.getInt("EndYear"), data.getInt("EndMonth"), data.getInt("EndDay"),
+                    data.getInt("EndHour"), data.getInt("EndMinute"), data.getInt("EndSecond"), data.getInt("EndMillisecond"));
+
+            if (dateSearchedBy(endInputs) && endDateInDB.compareTo(endDateSpinner) < 0) {
+                addToList = false;
+            }
+
+            //if (searchRating isn't empty and rating >= searchRating)
+            //    addToList = false;
+            if (addToList)
+                out.add(data.getInt("TimelineID"));
+            addToList = false;
+        }
+
+        return out;
+    }
+
+    boolean dateSearchedBy(List<Spinner<Integer>> inputs) {
+        boolean searchedBy = false;
+        if (inputs.get(0).getValue() != Integer.MIN_VALUE)
+            searchedBy = true;
+        else if (inputs.get(1).getValue() != 0)
+            searchedBy = true;
+        else if (inputs.get(2).getValue() != 0)
+            searchedBy = true;
+        else if (inputs.get(3).getValue() != -1)
+            searchedBy = true;
+        else if (inputs.get(4).getValue() != -1)
+            searchedBy = true;
+        else if (inputs.get(5).getValue() != -1)
+            searchedBy = true;
+        else if (inputs.get(6).getValue() != -1)
+            searchedBy = true;
+        return searchedBy;
+    }
+
+
     @FXML
     public void toggleAdvancedSearch() {
         if (stack.getChildren().size() > 0)
@@ -305,7 +431,10 @@ public class Dashboard {
             timelineView.setActiveTimeline(newActiveTimeline);
             timelineView.timelineEditorController.toggleEditable(editable);
             return timelineView;
-        } catch (IOException e) {e.printStackTrace(); return null;}
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @FXML
@@ -343,16 +472,16 @@ public class Dashboard {
     }
 
     public void advancedSearch() throws SQLException {
-        boolean startDate= true;
-        boolean endDate= true;
+        boolean startDate = true;
+        boolean endDate = true;
         Date startDateSpinner = new Date(startInputs.get(0).getValue(), startInputs.get(1).getValue(), startInputs.get(2).getValue(),
                 startInputs.get(3).getValue(), startInputs.get(4).getValue(), startInputs.get(5).getValue(), startInputs.get(6).getValue());
         //System.out.println(startDateSpinner.toString());
-        if(startDateSpinner.getYear() == -2147483647)
+        if (startDateSpinner.getYear() == -2147483647)
             startDateSpinner.setYear(0);
-        if(startDateSpinner.getMonth() == 1)
+        if (startDateSpinner.getMonth() == 1)
             startDateSpinner.setMonth(0);
-        if(startDateSpinner.getDay() == 1)
+        if (startDateSpinner.getDay() == 1)
             startDateSpinner.setDay(0);
         //System.out.println(startDateSpinner.toString());
         if (startDateSpinner.toString().equals("0-000000"))
@@ -363,25 +492,25 @@ public class Dashboard {
                 endInputs.get(3).getValue(), endInputs.get(4).getValue(), endInputs.get(5).getValue(), endInputs.get(6).getValue());
         //System.out.println(endDateSpinner.toString());
 
-        if(endDateSpinner.getYear() == -2147483647)
+        if (endDateSpinner.getYear() == -2147483647)
             endDateSpinner.setYear(0);
-        if(endDateSpinner.getMonth() == 1)
+        if (endDateSpinner.getMonth() == 1)
             endDateSpinner.setMonth(0);
-        if(endDateSpinner.getDay() == 1)
+        if (endDateSpinner.getDay() == 1)
             endDateSpinner.setDay(0);
         if (endDateSpinner.toString().equals("0-000000"))
             endDate = false;
         //System.out.println(endDateSpinner.toString());
 
         List<Timeline> tempAllList;
-        List<Timeline> rightTimelines =  new ArrayList<>(); //Currently the right list unless we need to update it with spinner search
+        List<Timeline> rightTimelines = new ArrayList<>(); //Currently the right list unless we need to update it with spinner search
         //If only searching with Range and nothing else
         //If searching with Range amongst else
         if ((startDate || endDate)) {
             PreparedStatement out = DBM.conn.prepareStatement("SELECT * FROM timelines");
             tempAllList = DBM.getFromDB(out, new Timeline());
             //If range is defined in both ends
-            if (startDate  & endDate) {
+            if (startDate & endDate) {
                 Date start = startDateSpinner;
                 Date end = endDateSpinner;
                 for (int i = 0; i < tempAllList.size(); i++) {
@@ -446,34 +575,30 @@ public class Dashboard {
         List<Timeline> list = DBM.getFromDB(stmt3, new Timeline());
         //System.out.println(startInputs.toString() + "what the startINput says");
 
-        if(!startDate & !endDate){
-            rightTimelines=list;
+        if (!startDate & !endDate) {
+            rightTimelines = list;
             //System.out.println("Spinner not used print result from SQL ");
-            }
-
-         else if(rightTimelines.isEmpty())
+        } else if (rightTimelines.isEmpty())
             //System.out.println("Spinner used but no match so ignore sql result")
-             ;
+            ;
 
-         else if(!rightTimelines.isEmpty() & list.isEmpty()) {
-             rightTimelines = new ArrayList<>();
-             //System.out.println("Spinner used but AND match but sql no match");
-         }
-
-        else if(!rightTimelines.isEmpty() & !list.isEmpty()) {
+        else if (!rightTimelines.isEmpty() & list.isEmpty()) {
+            rightTimelines = new ArrayList<>();
+            //System.out.println("Spinner used but AND match but sql no match");
+        } else if (!rightTimelines.isEmpty() & !list.isEmpty()) {
             List<Timeline> temp = new ArrayList<>();
-            for(int i= 0; i<rightTimelines.size(); i++){
-                for(int j= 0; j<list.size(); j++){
-                   if (rightTimelines.get(i).getID() == list.get(j).getID())
-                       temp.add(rightTimelines.get(i));
+            for (int i = 0; i < rightTimelines.size(); i++) {
+                for (int j = 0; j < list.size(); j++) {
+                    if (rightTimelines.get(i).getID() == list.get(j).getID())
+                        temp.add(rightTimelines.get(i));
                 }
             }
-            rightTimelines=temp;
+            rightTimelines = temp;
             //System.out.println("have matches");
         }
 
         //for (int i = 0; i < rightTimelines.size(); i++)
-            //System.out.println(list.get(i).getName());
+        //System.out.println(list.get(i).getName());
 
         if (cbOnlyViewPersonalLines.isSelected()) {
 
@@ -489,13 +614,15 @@ public class Dashboard {
             this.list.setItems(FXCollections.observableArrayList(rightTimelines));
     }
 
-    private void setupTimeInputStartAndEnd(String timeSpinnerLabel, int minValue, int maxValue, int column, int row, int index) {    //applies equivalent setups to both start and end spinners
+    private void setupTimeInputStartAndEnd(String timeSpinnerLabel, int minValue, int maxValue, int column, int row,
+                                           int index) {    //applies equivalent setups to both start and end spinners
         setupTimeInput(timeSpinnerLabel, minValue, maxValue, column, row, startInputs, startDates, index);
         setupTimeInput(timeSpinnerLabel, minValue, maxValue, column, row, endInputs, endDates, index);
     }
 
     //creates spinners to handle dates with appropriate min/max values and invalid input handling
-    private void setupTimeInput(String timeSpinnerLabel, int minValue, int maxValue, int column, int row, List<Spinner<Integer>> spinnerList, GridPane spinnerDates, int index) {
+    private void setupTimeInput(String timeSpinnerLabel, int minValue, int maxValue, int column, int row, List<
+            Spinner<Integer>> spinnerList, GridPane spinnerDates, int index) {
         SpinnerValueFactory.IntegerSpinnerValueFactory valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(minValue, maxValue, minValue) {
             @Override
             public void increment(int steps) {
@@ -568,11 +695,13 @@ public class Dashboard {
 
         if (result.get() == ButtonType.CANCEL)
             return false;
-        else
-        {
-            try {deleteOrphans(list.getSelectionModel().getSelectedItem());
+        else {
+            try {
+                deleteOrphans(list.getSelectionModel().getSelectedItem());
                 DBM.deleteFromDB(list.getSelectionModel().getSelectedItem());
-            } catch (SQLException e) {e.printStackTrace();}
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
 
             list.getItems().remove(list.getSelectionModel().getSelectedIndex());
             list.getSelectionModel().select(null);
