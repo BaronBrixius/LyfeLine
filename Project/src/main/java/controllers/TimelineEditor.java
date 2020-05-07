@@ -57,6 +57,12 @@ public class TimelineEditor extends Editor {
         return populateDisplay();
     }
 
+    void toggleEditable(boolean editable) {
+        super.toggleEditable(editable);
+        keywordInput.setEditable(editable);
+        timeInput.setDisable(!editable);
+    }
+
     boolean populateDisplay() {
         super.populateDisplay(timeline);    //populate inputs common to editors
 

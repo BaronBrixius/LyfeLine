@@ -85,6 +85,14 @@ public class EventEditor extends Editor {
         }
     }
 
+    void toggleEditable(boolean editable) {
+        super.toggleEditable(editable);
+        uploadImageButton.setDisable(!editable);
+        deleteImageButton.setDisable(!editable);
+        hasDuration.setDisable(!editable);
+        prioritySlider.setDisable(!editable);
+    }
+
     @FXML
     private void uploadImage() throws IOException {    //Only working now for .jpg
         boolean confirm = true;

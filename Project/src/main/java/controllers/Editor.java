@@ -113,7 +113,13 @@ public abstract class Editor {
 
     void toggleEditable(boolean editable) {
         this.editable = editable;
-        inputFields.setDisable(!editable);
+
+        titleInput.setEditable(editable);
+        descriptionInput.setEditable(editable);
+        for (Spinner<Integer> s: startInputs)
+            s.setDisable(!editable);
+        for (Spinner<Integer> s: endInputs)
+            s.setDisable(!editable);
 
         if (editable)
             editor.getStylesheets().remove("styles/DisabledViewable.css");
