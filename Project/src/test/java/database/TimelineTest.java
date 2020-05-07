@@ -89,14 +89,12 @@ class TimelineTest {
 
 	@Test
 	void getUpdateQueryTest() throws SQLException {
-		String sql = "UPDATE `timelines` SET `Scale` = ?, `TimelineName` = ?, `TimelineDescription` = ?,  `Theme` = ?,   "
-				+ "`StartYear` = ?,  `StartMonth` = ?,  `StartDay` = ?,  `StartHour` = ?,  `StartMinute` = ?,  `StartSecond` = ?,  "
-				+ "`StartMillisecond` = ?,    `EndYear` = ?,  `EndMonth` = ?,  `EndDay` = ?,  `EndHour` = ?,  `EndMinute` = ?,  "
-				+ "`EndSecond` = ?,  `EndMillisecond` = ?, `Private` = ?, `Keywords` = ? WHERE (`TimelineID` = ?)";
+		String sql = "DELETE FROM `timelines` WHERE (`TimelineID` = ?)";
 		PreparedStatement out = DBM.conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 		for (int i = 0; i < timelines.length; i++) {
-			assertEquals(out.toString(), timelines[i].getInsertQuery().toString());
+			assertEquals(out.toString(), timelines[i].getDeleteQuery().toString());
 		}
+
 	}
 
 	@Test
@@ -179,5 +177,6 @@ class TimelineTest {
 			assertEquals(actual,i);
 		}
 	}
+
 
 }

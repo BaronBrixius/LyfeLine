@@ -1,5 +1,10 @@
 package database;
 
+import org.junit.*;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
+
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -166,7 +171,7 @@ class EventTest {
         rs.next();
         int actual1 = rs.getInt(1);
         assertEquals( testToAdd.getID(),actual1);
-        
+
     }
 
 
@@ -200,6 +205,13 @@ class EventTest {
         rs.next();
         int actual = rs.getInt(1);
         assertEquals(4, actual);
+        String sql="DELETE FROM `events` WHERE (`EventID` = ?)";
+        PreparedStatement out1 = DBM.conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        for (int i = 0; i < events.length; i++) {
+            assertEquals(out1.toString(), events[i].getDeleteQuery().toString());
+        }
+
+
     }
 
     @Test
