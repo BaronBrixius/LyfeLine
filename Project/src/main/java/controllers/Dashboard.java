@@ -175,6 +175,7 @@ public class Dashboard {
             filteredTimelines.setPredicate(onlyPersonal.and(filteredTimelines.getPredicate()));
     }
 
+    @FXML
     void searchAdvanced() {
         ResultSet data = advancedResultSet();
         try {
@@ -205,6 +206,7 @@ public class Dashboard {
         boolean addToList = true;
 
         while (data.next()) {
+            addToList = true;
             if (!searchTimelineName.getText().isEmpty() && !data.getString("TimelineName").toLowerCase().contains(searchTimelineName.getText().toLowerCase())) {
                 addToList = false;
             }
