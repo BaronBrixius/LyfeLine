@@ -206,6 +206,7 @@ public class Dashboard {
         boolean addToList = true;
 
         while (data.next()) {
+            addToList = true;
             if (!searchTimelineName.getText().isEmpty() && !data.getString("TimelineName").toLowerCase().contains(searchTimelineName.getText().toLowerCase())) {
                 addToList = false;
             }
