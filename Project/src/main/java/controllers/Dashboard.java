@@ -3,6 +3,8 @@ package controllers;
 import database.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
@@ -15,6 +17,7 @@ import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.function.Predicate;
 
 public class Dashboard {
     final List<Spinner<Integer>> startInputs = new ArrayList<>();
@@ -48,7 +51,8 @@ public class Dashboard {
     @FXML protected Text titleText;
     @FXML protected Hyperlink AdvancedSearch;
     @FXML protected Hyperlink toggleHHMMSS;
-    private List<Timeline> timelines;
+    private FilteredList<Timeline> filteredTimelines;
+    private SortedList<Timeline> sortedTimelines;
     private List<Timeline> userTimelines;
     private Timeline activeTimeline;
 
@@ -80,8 +84,9 @@ public class Dashboard {
         // Fill ListView with the timelines
         try {
             PreparedStatement stmt = DBM.conn.prepareStatement("SELECT * FROM timelines");
-            timelines = DBM.getFromDB(stmt, new Timeline());
-            list.setItems(FXCollections.observableArrayList(timelines));
+            filteredTimelines = new FilteredList<>(FXCollections.observableList(DBM.getFromDB(stmt, new Timeline())));
+            sortedTimelines = new SortedList<>(filteredTimelines);
+            list.setItems(sortedTimelines);
         } catch (SQLException e) {
             System.err.println("Could not get timelines from database.");
         }
@@ -102,12 +107,7 @@ public class Dashboard {
         // login.setOnAction(e -> browse.setVisible(true));
 
         // Add sorting options
-        ObservableList<String> sortOptions = FXCollections.observableArrayList();
-        sortOptions.add("Alphabetically");
-        sortOptions.add("Reverse-Alphabetically");
-        sortOptions.add("Most Recent");
-        sortOptions.add("Oldest");
-        sortBy.setItems(sortOptions);
+        sortBy.getItems().setAll("Alphabetically", "Reverse-Alphabetically", "Most Recent", "Oldest");
 
         // Sort order selection events
         sortBy.getSelectionModel().selectedIndexProperty().addListener(ov -> sortTimelines());
@@ -116,19 +116,36 @@ public class Dashboard {
         sortBy.getSelectionModel().select(0);
 
         // Search field
-        searchInput.focusedProperty().addListener(ov -> searchTimelines());
+        searchTimelines();
 
         list.getSelectionModel().selectedIndexProperty().addListener(e -> {
             activeTimeline = list.getSelectionModel().getSelectedItem();
             updateDisplays();
         });
-
         titleText.setText("Select a Timeline.");
-
     }
 
     @FXML
     public void searchTimelines() {
+        searchInput.textProperty().addListener(obs->{
+            String searchText = searchInput.getText();
+            if (searchText == null || searchText.length() == 0)
+                filteredTimelines.setPredicate(timeline -> true);
+            else
+                filteredTimelines.setPredicate(timeline -> timeline.getName().toLowerCase().contains(searchText.toLowerCase())
+                || timeline.getKeywords().stream().anyMatch(k->k.toLowerCase().contains(searchText.toLowerCase())));
+
+            Predicate<Timeline> foo = timeline-> timeline.getID()==GUIManager.loggedInUser.getUserID();
+
+            if(cbOnlyViewPersonalLines.isSelected())
+                filteredTimelines.setPredicate(foo.and(filteredTimelines.getPredicate()));
+            //else
+            //    filteredTimelines.setPredicate(foo.and(filteredTimelines.getPredicate()));
+        });
+    }
+
+    @FXML
+    public void searchTimelines1() {
         searchInput.setOnKeyReleased(keyEvent -> {// Each time new key is pressed
             String[] inputs = searchInput.getText().trim().split("\\s++"); // String is updated by the newest textfield
             // read, if spaces the strings are split up
@@ -146,16 +163,16 @@ public class Dashboard {
                         String toFind = inputs[j]; // while a keyword is just one letter i.e. "f" if a keyword in
                         // timeline has that letter then it will be shown (instant search
                         // feature)
-                        List<String> allThisTimelineKeywords = timelines.get(i).getKeywords();
+                        List<String> allThisTimelineKeywords = filteredTimelines.get(i).getKeywords();
                         List<String> possibleKeywords = new ArrayList<>();
-                        String[] timelineNames = timelines.get(i).getName().trim().split("\\s++");
+                        String[] timelineNames = filteredTimelines.get(i).getName().trim().split("\\s++");
                         for (int k = 0; k < allThisTimelineKeywords.size(); k++) {
                             if (allThisTimelineKeywords.get(k).length() >= toFind.length()) {
                                 possibleKeywords.add(allThisTimelineKeywords.get(k));
                             }
                         }
-                        boolean keyWordfound = Arrays.asList(possibleKeywords.toArray()).stream().anyMatch(s -> s.toString().substring(0, toFind.length()).equalsIgnoreCase(toFind));
-                        boolean namefound = Arrays.asList(timelineNames).stream().anyMatch(s -> s.toLowerCase().equalsIgnoreCase(toFind));
+                        boolean keyWordfound = Arrays.stream(possibleKeywords.toArray()).anyMatch(s -> s.toString().substring(0, toFind.length()).equalsIgnoreCase(toFind));
+                        boolean namefound = Arrays.stream(timelineNames).anyMatch(s -> s.toLowerCase().equalsIgnoreCase(toFind));
 
                         if (keyWordfound || namefound) {
                             if (!templist.contains(userTimelines.get(i))) // if the timeline has not already been
@@ -174,15 +191,15 @@ public class Dashboard {
             }
             // Search all timelines
             else {
-                for (int i = 0; i < timelines.size(); i++) { // go trough all the current timelines in the database
+                for (int i = 0; i < filteredTimelines.size(); i++) { // go trough all the current timelines in the database
                     for (int j = 0; j < inputs.length; j++) {// No check all the search words used if they are to be
                         // found anywhere as keywords
                         String toFind = inputs[j]; // while a keyword is just one letter i.e. "f" if a keyword in
                         // timeline has that letter then it will be shown (instant search
                         // feature)
-                        List<String> allThisTimelineKeywords = timelines.get(i).getKeywords();
+                        List<String> allThisTimelineKeywords = filteredTimelines.get(i).getKeywords();
                         List<String> possibleKeywords = new ArrayList<>();
-                        String[] timelineNames = timelines.get(i).getName().trim().split("\\s++");
+                        String[] timelineNames = filteredTimelines.get(i).getName().trim().split("\\s++");
                         for (int k = 0; k < allThisTimelineKeywords.size(); k++) {
                             if (allThisTimelineKeywords.get(k).length() >= toFind.length()) {
                                 possibleKeywords.add(allThisTimelineKeywords.get(k));
@@ -190,15 +207,15 @@ public class Dashboard {
                         }
 
 
-                        boolean keyWordfound = Arrays.asList(possibleKeywords.toArray()).stream().anyMatch(s -> s.toString().substring(0, toFind.length()).equalsIgnoreCase(toFind));
+                        boolean keyWordfound = Arrays.stream(possibleKeywords.toArray()).anyMatch(s -> s.toString().substring(0, toFind.length()).equalsIgnoreCase(toFind));
 
-                        boolean namefound = Arrays.asList(timelineNames).stream().anyMatch(s -> s.equalsIgnoreCase(toFind));
+                        boolean namefound = Arrays.stream(timelineNames).anyMatch(s -> s.equalsIgnoreCase(toFind));
 
                         if (keyWordfound || namefound) {
-                            if (!templist.contains(timelines.get(i))) // if the timeline has not already been associated
+                            if (!templist.contains(filteredTimelines.get(i))) // if the timeline has not already been associated
                                 // with this search then add it to the temporary
                                 // timelinelist
-                                templist.add(timelines.get(i));
+                                templist.add(filteredTimelines.get(i));
                         }
                     }
                     list.setItems(FXCollections.observableArrayList(templist)); // populate the ListView with the
@@ -207,7 +224,7 @@ public class Dashboard {
                     // time(instant)
                     if (searchInput.getText().equalsIgnoreCase("")) // When everything is erased from search box, return
                         // all the timelines back to the ListView
-                        list.setItems(FXCollections.observableArrayList(timelines));
+                        list.setItems(FXCollections.observableArrayList(filteredTimelines));
                 }
             }
         });
@@ -231,7 +248,7 @@ public class Dashboard {
         if (cbOnlyViewPersonalLines.isSelected()) {
             onlyUserTimelines();
         } else
-            this.list.setItems(FXCollections.observableArrayList(timelines));
+            this.list.setItems(FXCollections.observableArrayList(filteredTimelines));
     }
 
     @FXML
@@ -263,16 +280,16 @@ public class Dashboard {
     public void sortTimelines() {
         switch (sortBy.getSelectionModel().getSelectedIndex()) {
             case 0:
-                list.getItems().sort((t1, t2) -> (t1.getName().compareToIgnoreCase(t2.getName())));
+                sortedTimelines.setComparator((t1, t2) -> (t1.getName().compareToIgnoreCase(t2.getName())));
                 break;
             case 1:
-                list.getItems().sort((t1, t2) -> (t2.getName().compareToIgnoreCase(t1.getName())));
+                sortedTimelines.setComparator((t1, t2) -> (t2.getName().compareToIgnoreCase(t1.getName())));
                 break;
             case 2:
-                list.getItems().sort((t1, t2) -> (t2.getCreationDate().compareTo(t1.getCreationDate())));
+                sortedTimelines.setComparator((t1, t2) -> (t2.getCreationDate().compareTo(t1.getCreationDate())));
                 break;
             case 3:
-                list.getItems().sort(Comparator.comparing(Timeline::getCreationDate));
+                sortedTimelines.setComparator(Comparator.comparing(Timeline::getCreationDate));
                 break;
         }
     }
