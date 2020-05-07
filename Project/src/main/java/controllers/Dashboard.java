@@ -1,10 +1,8 @@
 package controllers;
 
-import database.DBM;
-import database.Timeline;
+import database.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
@@ -13,16 +11,10 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.util.StringConverter;
 import utils.Date;
-
-import javax.xml.stream.events.StartDocument;
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.SQLOutput;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 public class Dashboard {
     final List<Spinner<Integer>> startInputs = new ArrayList<>();
@@ -30,60 +22,33 @@ public class Dashboard {
     public Timeline timeline;
     public Label KeywordLabel;
     public Label RatingLabel;
-    public Button timelineViewButton;
     public StackPane stack;
-    @FXML
-    protected Button eventEditorButton;
-    @FXML
-    protected Button adminGUI;
-    @FXML
-    protected Button btnDelete;
-    @FXML
-    protected Button btnEdit;
-    @FXML
-    protected Button btnCreate;
-    @FXML
-    protected Button searchButton;
-    @FXML
-    protected TextFlow displayInfo;
-    @FXML
-    protected ListView<Timeline> list;
-    @FXML
-    protected TextField searchInput;
-    @FXML
-    protected TextField searchTimelineName;
-    @FXML
-    protected TextField searchCreator;
-    @FXML
-    protected TextField searchKeywords;
-    @FXML
-    protected ComboBox searchRating;
-    @FXML
-    protected Button clearButton;
-    @FXML
-    protected CheckBox cbOnlyViewPersonalLines;
-    @FXML
-    protected ComboBox<String> sortBy;
-    @FXML
-    protected GridPane gridButtons;
-    @FXML
-    protected GridPane advancedSearchView;
-    @FXML
-    protected GridPane startDates;
-    @FXML
-    protected GridPane endDates;
-    @FXML
-    protected GridPane topLabels;
-    @FXML
-    protected GridPane bottomLabels;
-
-    @FXML
-    protected Text titleText;
-    @FXML
-    protected Hyperlink AdvancedSearch;
-    @FXML
-    protected Hyperlink toggleHHMMSS;
-
+    @FXML protected Button timelineViewButton;
+    //@FXML protected Button eventEditorButton;
+    @FXML protected Button adminGUI;
+    @FXML protected Button btnDelete;
+    @FXML protected Button btnEdit;
+    @FXML protected Button btnCreate;
+    @FXML protected Button searchButton;
+    @FXML protected TextFlow displayInfo;
+    @FXML protected ListView<Timeline> list;
+    @FXML protected TextField searchInput;
+    @FXML protected TextField searchTimelineName;
+    @FXML protected TextField searchCreator;
+    @FXML protected TextField searchKeywords;
+    @FXML protected ComboBox searchRating;
+    @FXML protected Button clearButton;
+    @FXML protected CheckBox cbOnlyViewPersonalLines;
+    @FXML protected ComboBox<String> sortBy;
+    @FXML protected GridPane gridButtons;
+    @FXML protected GridPane advancedSearchView;
+    @FXML protected GridPane startDates;
+    @FXML protected GridPane endDates;
+    @FXML protected GridPane topLabels;
+    @FXML protected GridPane bottomLabels;
+    @FXML protected Text titleText;
+    @FXML protected Hyperlink AdvancedSearch;
+    @FXML protected Hyperlink toggleHHMMSS;
     private List<Timeline> timelines;
     private List<Timeline> userTimelines;
     private Timeline activeTimeline;
@@ -104,11 +69,14 @@ public class Dashboard {
         btnCreate.setVisible(GUIManager.loggedInUser.getAdmin());
         btnCreate.setDisable(!GUIManager.loggedInUser.getAdmin());
         btnEdit.setVisible(GUIManager.loggedInUser.getAdmin());
-        btnEdit.setDisable(!GUIManager.loggedInUser.getAdmin());
+        btnEdit.setDisable(list.getSelectionModel().isEmpty()
+                || list.getSelectionModel().getSelectedItem().getOwnerID() != GUIManager.loggedInUser.getUserID());
         btnDelete.setVisible(GUIManager.loggedInUser.getAdmin());
-        btnDelete.setDisable(!GUIManager.loggedInUser.getAdmin());
+        btnDelete.setDisable(list.getSelectionModel().isEmpty()
+                || list.getSelectionModel().getSelectedItem().getOwnerID() != GUIManager.loggedInUser.getUserID());
         adminGUI.setVisible(GUIManager.loggedInUser.getAdmin());
         adminGUI.setDisable(!GUIManager.loggedInUser.getAdmin());
+        timelineViewButton.setDisable(list.getSelectionModel().getSelectedItem() == null);
 
         // Fill ListView with the timelines
         try {
@@ -321,30 +289,31 @@ public class Dashboard {
     public TimelineView createTimeline() {
         Timeline t = new Timeline();
         t.setOwnerID(GUIManager.loggedInUser.getUserID());
-        openTimelineView(t);
-        return null;
+        try {
+            TimelineView timelineView = GUIManager.swapScene("TimelineView");
+            timelineView.setActiveTimeline(t);
+            timelineView.timelineEditorController.toggleEditable(true);
+            return timelineView;
+        } catch (IOException e) {e.printStackTrace(); return null;}
+
     }
 
     @FXML
     public TimelineView editTimeline() {
-        if (activeTimeline != null) {
-            openTimelineView(this.activeTimeline);
-        }
-        return null;
+        return(openTimelineView(this.activeTimeline));
     }
 
     @FXML
-    public void openTimeline() {
-        openTimelineView(list.getSelectionModel().getSelectedItem());
+    public TimelineView openTimeline() {
+        return openTimelineView(list.getSelectionModel().getSelectedItem());
     }
 
-    private void openTimelineView(Timeline newActiveTimeline) {
+    private TimelineView openTimelineView(Timeline newActiveTimeline) {
         try {
             TimelineView timelineView = GUIManager.swapScene("TimelineView");
             timelineView.setActiveTimeline(newActiveTimeline);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+            return timelineView;
+        } catch (IOException e) {e.printStackTrace(); return null;}
     }
 
     @FXML
@@ -357,6 +326,7 @@ public class Dashboard {
                 btnDelete.setDisable(true);
                 btnEdit.setDisable(true);
             }
+            timelineViewButton.setDisable(false);
 
             Timeline timeline = list.getSelectionModel().getSelectedItem();
 
@@ -373,6 +343,7 @@ public class Dashboard {
                     + "\nDate Created: " + year + "/" + month + "/" + day + "\nKeywords: " + keyWords);
 
         } else {
+            timelineViewButton.setDisable(true);
             btnDelete.setDisable(true);
             btnEdit.setDisable(true);
             titleText.setText("Select a Timeline.");
@@ -590,6 +561,42 @@ public class Dashboard {
 
     }
 
-    public void deleteConfirmation(ActionEvent actionEvent) {
+    // open DeletePopUp
+    @FXML
+    public boolean deleteConfirmation() throws IOException {
+
+        Alert confirmDeleteTimeline = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmDeleteTimeline.setTitle("Confirm Deletion");
+        confirmDeleteTimeline.setHeaderText("Are you sure you want to delete " + list.getSelectionModel().getSelectedItem().getName() + "?");
+        confirmDeleteTimeline.setContentText("This can not be undone.");
+
+        Optional<ButtonType> result = confirmDeleteTimeline.showAndWait();
+
+        if (result.get() == ButtonType.CANCEL)
+            return false;
+        else
+        {
+            try {deleteOrphans(list.getSelectionModel().getSelectedItem());
+                DBM.deleteFromDB(list.getSelectionModel().getSelectedItem());
+            } catch (SQLException e) {e.printStackTrace();}
+
+            list.getItems().remove(list.getSelectionModel().getSelectedIndex());
+            list.getSelectionModel().select(null);
+            return true;
+        }
+    }
+
+    public void deleteOrphans(Timeline timeline) throws SQLException {
+        PreparedStatement out = DBM.conn.prepareStatement("SELECT e.* FROM `timelines` t " +
+                "LEFT JOIN timelineevents te " +
+                "ON t.TimelineID = te.TimelineID " +            //destroys orphaned events (i.e. events where there are no
+                "LEFT JOIN events e " +                            //junction table records for them with a different TimelineID
+                "ON te.EventID = e.EventID AND e.EventID NOT IN (SELECT EventID FROM timelineevents WHERE TimelineID != ?) " +
+                "WHERE t.TimelineID = ? ");
+
+        out.setInt(1, timeline.getID());
+        out.setInt(2, timeline.getID());
+
+        DBM.deleteFromDB(DBM.getFromDB(out, new Event()));
     }
 }
