@@ -81,7 +81,7 @@ public class TimelineCell {
 		if (timeline != null) {
 			title.setText(timeline.getName());
 			author.setText("By "+user.getUserName());
-			setBGImage();
+			setBGImage(width);
 			colorStarsByRating((int) Math.ceil(timeline.getRating()));
 		}
 	}
