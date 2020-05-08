@@ -7,15 +7,13 @@ import database.Timeline;
 import database.User;
 import javafx.fxml.FXML;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import javafx.scene.shape.*;
 
 public class TimelineCell {
 
 	@FXML
-	private Region imageRegion;
+	private GridPane pane;
 	@FXML
 	private Text title;
 	@FXML
@@ -64,7 +62,7 @@ public class TimelineCell {
 	
 	public void setBGImage() {
 		String imageURL = "'file:src/main/resources/images/image5.png'";
-		imageRegion.setStyle("-fx-background-image: url("+imageURL+")");
+		pane.setStyle("-fx-background-image: url("+imageURL+")");
 	}
 	
 }
