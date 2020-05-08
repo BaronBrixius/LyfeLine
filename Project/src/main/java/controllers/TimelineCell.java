@@ -20,6 +20,7 @@ import javafx.scene.shape.*;
 public class TimelineCell {
 
 	public HBox ratingBox;
+	public Region imageRegion;
 	@FXML
 	private GridPane pane;
 	@FXML
