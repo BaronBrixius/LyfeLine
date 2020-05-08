@@ -21,7 +21,7 @@ public class TimelineCell {
 
 	public HBox ratingBox;
 	@FXML
-	private Region imageRegion;
+	private GridPane pane;
 	@FXML
 	private Text title;
 	@FXML
@@ -76,7 +76,7 @@ public class TimelineCell {
 		}
 	}
 
-	public void update() {
+	public void update(double width) {
 		if (timeline != null) {
 			title.setText(timeline.getName());
 			author.setText("By "+user.getUserName());
@@ -89,18 +89,19 @@ public class TimelineCell {
 		return timeline;
 	}
 
-	public void setTimeline(Timeline timeline) {
+	public void setTimeline(Timeline timeline,double width) {
 		this.timeline = timeline;
 		try {
 			PreparedStatement stat = DBM.conn.prepareStatement("SELECT * FROM Users WHERE UserID=?");
 			stat.setInt(1, timeline.getOwnerID());
 			user = DBM.getFromDB(stat, new User()).get(0);
 		} catch (SQLException e) {}
-		this.update();
+		pane.setPrefWidth(width);
+		this.update(width);
 	}
 	
-	public void setBGImage() {
-		String imageURL = "'file:src/main/resources/images/image5.png'";
-		imageRegion.setStyle("-fx-background-image: url("+imageURL+")");
+	public void setBGImage(double width) {
+		String imageURL = "'file:src/main/resources/images/image4.png'";
+		pane.setStyle("-fx-background-image: url("+imageURL+"); -fx-background-size: "+((int)(width+0.5))+"px;");
 	}
 }
