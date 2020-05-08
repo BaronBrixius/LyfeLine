@@ -279,7 +279,7 @@ for example:      buttonName.getStyleClass().add("smallButton");                
     -fx-font-size: 7;
 }
 
-.paneBGImage{
+.regionBG{
 	-fx-background-position: center;
 	-fx-background-size: cover;
 	
