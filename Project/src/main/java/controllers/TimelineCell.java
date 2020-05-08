@@ -20,8 +20,9 @@ import javafx.scene.shape.*;
 public class TimelineCell {
 
 	public HBox ratingBox;
+	public Region imageRegion;
 	@FXML
-	private Region imageRegion;
+	private GridPane pane;
 	@FXML
 	private Text title;
 	@FXML
@@ -101,6 +102,6 @@ public class TimelineCell {
 	
 	public void setBGImage() {
 		String imageURL = "'file:src/main/resources/images/image5.png'";
-		imageRegion.setStyle("-fx-background-image: url("+imageURL+")");
+		pane.setStyle("-fx-background-image: url("+imageURL+")");
 	}
 }

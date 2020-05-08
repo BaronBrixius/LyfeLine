@@ -4,16 +4,16 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.shape.Polygon?>
 <?import javafx.scene.text.Text?>
 
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.Region?>
 <StackPane stylesheets="@../styles/DefaultStyle.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.TimelineCell">
    <children>
       <Region fx:id="imageRegion" styleClass="regionBG" />
-      <GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="693.0">
+      <GridPane fx:id="pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="693.0">
         <columnConstraints>
           <ColumnConstraints />
             <ColumnConstraints hgrow="SOMETIMES" />
