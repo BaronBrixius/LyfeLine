@@ -6,15 +6,22 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Polygon;
 import javafx.scene.text.Text;
 
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public class TimelineEditor extends Editor {
+    private final ObservableList<String> keywords = FXCollections.observableArrayList();
     public Timeline timeline;
+    public HBox ratingBox;
     @FXML
     ComboBox<String> timeInput;
     @FXML
@@ -25,9 +32,9 @@ public class TimelineEditor extends Editor {
     ListView<String> keywordView;
     @FXML
     Text feedbackText;
+    List<Polygon> ratingButtons;
     @FXML
     private TextField keywordInput;
-    private final ObservableList<String> keywords = FXCollections.observableArrayList();
 
     public void initialize() {
         super.initialize();
@@ -48,7 +55,51 @@ public class TimelineEditor extends Editor {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
+
+        //Ratings
+        ratingButtons = new ArrayList<>(5);
+        for (int i = 0; i < 5; i++) {
+            ratingButtons.add((Polygon) ratingBox.getChildren().get(i));
+            setupRatingButton(ratingButtons.get(i), i);
+        }
+
+        ratingBox.setOnMouseMoved(e ->
+                colorStarsByRating((int) Math.floor(e.getX() * 5 / ratingBox.getWidth())));
+        ratingBox.setOnMouseExited(e -> colorStarsByRating(timeline.getRating()));
     }
+
+    private void setupRatingButton(Polygon button, int index) {
+        double starSize = 40;
+        int numPoints = 5;
+
+        button.getPoints().clear();
+        double angle = 0;
+        double distance;
+        for (int i = 0; i < numPoints * 2; i++) {
+            if (i % 2 == 0)
+                distance = starSize;
+            else
+                distance = starSize / 2;
+
+            button.getPoints().addAll(Math.sin(angle) * distance,           //easier to implement/adjust than manual point placement
+                    Math.cos(angle) * distance * -1);
+
+            angle += Math.PI / numPoints;       //simplified 2*PI / numPoints*2
+        }
+
+        button.setOnMouseClicked(e -> timeline.addRating(GUIManager.loggedInUser.getUserID(), index));
+    }
+
+    private void colorStarsByRating(int rating) {
+        for (int i = 0; i < 5; i++) {
+            if (i <= rating)
+                ratingButtons.get(i).setFill(Color.YELLOW);
+            else
+                ratingButtons.get(i).setFill(Color.GREY);
+        }
+    }
+
 
     boolean setTimeline(Timeline timeline) {
         this.timeline = timeline;
