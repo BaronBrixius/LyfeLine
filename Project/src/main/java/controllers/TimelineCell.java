@@ -1,39 +1,48 @@
 package controllers;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import database.DBM;
 import database.Timeline;
-import javafx.event.ActionEvent;
+import database.User;
 import javafx.fxml.FXML;
-import javafx.geometry.Insets;
-import javafx.scene.control.Button;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.GridPane;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import javafx.scene.shape.*;
 
-public class TimelineCell extends GridPane{
+public class TimelineCell {
 
 	@FXML
-	private Text timelineName;
+	private GridPane pane;
 	@FXML
-	private Button timelineID;
+	private Text title;
+	@FXML
+	private Text author;
+	@FXML
+	private Polygon star1;
+	@FXML
+	private Polygon star2;
+	@FXML
+	private Polygon star3;
+	@FXML
+	private Polygon star4;
+	@FXML
+	private Polygon star5;
 
 	public Timeline timeline;
+	public User user;
 
 	public void initialize() {
-
-	}
-
-	@FXML
-	public void buttonTest(ActionEvent event) {
-		timelineID.setText("0");
+		
 	}
 
 	public void update() {
 		if (timeline != null) {
-			timelineName.setText(timeline.getName());
-			timelineID.setText("ID: "+timeline.getID());
+			title.setText(timeline.getName());
+			author.setText("By "+user.getUserName());
+			setBGImage();
+			//stuff for rating here
+			
 		}
 	}
 
@@ -43,6 +52,17 @@ public class TimelineCell extends GridPane{
 
 	public void setTimeline(Timeline timeline) {
 		this.timeline = timeline;
+		try {
+			PreparedStatement stat = DBM.conn.prepareStatement("SELECT * FROM Users WHERE UserID=?");
+			stat.setInt(1, timeline.getOwnerID());
+			user = DBM.getFromDB(stat, new User()).get(0);
+		} catch (SQLException e) {}
+		this.update();
 	}
-
+	
+	public void setBGImage() {
+		String imageURL = "'file:src/main/resources/images/image5.png'";
+		pane.setStyle("-fx-background-image: url("+imageURL+")");
+	}
+	
 }

@@ -648,7 +648,7 @@ public class Dashboard {
   				setGraphic(cellNode);
   				if (!(cell == null)) {
   					cell.setTimeline(item);
-  					cell.update();
+  					
   				}
   			} else {
   				setGraphic(null);
