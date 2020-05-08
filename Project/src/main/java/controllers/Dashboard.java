@@ -7,11 +7,14 @@ import javafx.collections.FXCollections;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
+import javafx.util.Callback;
 import javafx.util.StringConverter;
 import utils.Date;
 
@@ -104,18 +107,12 @@ public class Dashboard {
         // Fill ListView with the timelines
         populateTimelineList();
 
-        // approach adapted from https://stackoverflow.com/a/36657553
-        list.setCellFactory(param -> new ListCell<>() {
-            @Override
-            protected void updateItem(Timeline item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null || item.getName() == null) {
-                    setText(null);
-                } else {
-                    setText(item.getName());
-                }
-            }
-        });
+        list.setCellFactory(new Callback<ListView<Timeline>, ListCell<Timeline>>() {
+			@Override
+			public ListCell<Timeline> call(ListView<Timeline> listView) {
+				return new CustomListCell();
+			}
+		});
 
         // Add sorting options
         sortBy.getItems().setAll("Alphabetically", "Reverse-Alphabetically", "Most Recent", "Oldest");
@@ -626,4 +623,36 @@ public class Dashboard {
             return true;
         }
     }
+    
+  //approach from https://stackoverflow.com/a/27439026
+  	private class CustomListCell extends ListCell<Timeline> {
+  		private Node cellNode;
+  		private TimelineCell cell;
+  		private FXMLLoader loader;
+
+  		public CustomListCell() {
+  			super();
+  			loader = new FXMLLoader(getClass().getResource("../FXML/TimelineCell.fxml"));
+  			try {
+  				cellNode = loader.load();
+  				cell = loader.getController();
+  			
+  			} catch (IOException e) {
+  			}
+  		}
+
+  		@Override
+  		protected void updateItem(Timeline item, boolean empty) {
+  			super.updateItem(item, empty);
+  			if (item != null && !empty) { // <== test for null item and empty parameter
+  				setGraphic(cellNode);
+  				if (!(cell == null)) {
+  					cell.setTimeline(item);
+  					
+  				}
+  			} else {
+  				setGraphic(null);
+  			}
+  		}
+  	}
 }
