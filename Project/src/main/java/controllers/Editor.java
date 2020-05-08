@@ -32,6 +32,7 @@ public abstract class Editor {
     final List<Spinner<Integer>> startInputs = new ArrayList<>();
     final List<VBox> endBoxes = new ArrayList<>();
     final List<Spinner<Integer>> endInputs = new ArrayList<>();
+
     @FXML
     Button deleteImageButton;
     @FXML
@@ -66,6 +67,7 @@ public abstract class Editor {
     boolean startExpanded;
     boolean endExpanded;
     TimelineView parentController;
+    String filename;
 
     public void initialize() {
         //Set Up the Spinners for Start/End Inputs, would have bloated the .fxml and variable list a ton if these were in fxml
@@ -193,15 +195,11 @@ public abstract class Editor {
             image.setImage(new Image("File:" + itemInEditor.getImagePath()));
             //When event is saved the path to the image in resource folder is sent here (the one we can use to send to DB)
             String fullOutPath = itemInEditor.getImagePath();
-        } else
+        }
+        else
             image.setImage(null);
 
-        if (itemInEditor.getImagePath() != null) {
-            image.setImage(new Image("File:" + itemInEditor.getImagePath()));
-            //When event is saved the path to the image in resource folder is sent here (the one we can use to send to DB)
-            String fullOutPath = itemInEditor.getImagePath();
-        } else
-            image.setImage(null);
+
 
         if (itemInEditor.getStartDate() != null) {
             startInputs.get(0).getValueFactory().setValue(itemInEditor.getStartDate().getYear());
@@ -232,7 +230,7 @@ public abstract class Editor {
     void updateItem(TimelineObject itemInEditor) {                  //sets object's values based on input fields' values
         itemInEditor.setName(titleInput.getText());
         itemInEditor.setDescription(descriptionInput.getText().replaceAll("([^\r])\n", "$1\r\n"));
-
+        itemInEditor.setImage(filename);
 
         itemInEditor.setStartDate(new Date(startInputs.get(0).getValue(), startInputs.get(1).getValue(), startInputs.get(2).getValue(),
                 startInputs.get(3).getValue(), startInputs.get(4).getValue(), startInputs.get(5).getValue(), startInputs.get(6).getValue()));
@@ -244,7 +242,7 @@ public abstract class Editor {
     abstract boolean hasChanges();
 
     boolean hasChanges(TimelineObject itemInEditor) {           //returns true if any input fields don't match the object's values
-        if (!itemInEditor.getName().equals(titleInput.getText())
+        if (!itemInEditor.getName().equals(titleInput.getText()) || !itemInEditor.getImagePath().equals(filename)
                 || !itemInEditor.getDescription().equals(descriptionInput.getText().replaceAll("([^\r])\n", "$1\r\n")))     //textArea tends to change the newline from \r\n to just \n which breaks some things)
             return true;
 
@@ -351,20 +349,16 @@ public abstract class Editor {
             File imageChosen = chooser.showOpenDialog(GUIManager.mainStage);
             if (imageChosen != null) {
 
-                image.setImage(new Image("File:" + imageChosen.getAbsolutePath()));
-
-                //THis is to take the name of the image chosen to add it to the copied version
-                String filename = copyImage(imageChosen, imageChosen.getName());
-
-                if (e.getImagePath() != null) {
+                 filename = copyImage(imageChosen, imageChosen.getName());
+                 if (e.getImagePath() != null) {
                     try {
                         Files.deleteIfExists(Paths.get(e.getImagePath()));
                     } catch (IOException er) {
                         er.printStackTrace();
                     }
                 }
-
                 e.setImage(filename);
+                populateDisplay();
             }
         }
     }

@@ -103,7 +103,6 @@ public class EventEditor extends Editor {
     boolean populateDisplay() {
         super.populateDisplay(event);    //populate inputs common to editors
 
-
         if (event.getStartDate().compareTo(event.getEndDate()) != 0) {
             hasDuration.setSelected(true);
             toggleHasDuration();
@@ -178,6 +177,7 @@ public class EventEditor extends Editor {
                 e.printStackTrace();
             }
             event.setImage(null);
+            filename = null; /////Maybe - because of updateitem call
             image.setImage(null);
             updateItem();
         }

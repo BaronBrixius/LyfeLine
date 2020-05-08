@@ -135,7 +135,7 @@ public class TimelineEditor extends Editor {
     }
 
     @Override
-    void uploadImage() throws IOException {super.uploadImage(this.timeline);
+    void uploadImage() throws IOException {
 
     }
 
