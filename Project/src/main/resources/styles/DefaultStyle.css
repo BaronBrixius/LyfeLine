@@ -280,8 +280,7 @@ for example:      buttonName.getStyleClass().add("smallButton");                
 }
 
 .paneBG{
-	-fx-background-size: cover;
-	-fx-background-position: top 50%;	
+	-fx-background-position: center;	
 	-fx-background-repeat: no-repeat;
 }
 

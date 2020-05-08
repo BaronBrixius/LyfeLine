@@ -11,8 +11,6 @@ import database.User;
 import javafx.fxml.FXML;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.shape.*;
@@ -20,7 +18,6 @@ import javafx.scene.shape.*;
 public class TimelineCell {
 
 	public HBox ratingBox;
-	public Region imageRegion;
 	@FXML
 	private GridPane pane;
 	@FXML
