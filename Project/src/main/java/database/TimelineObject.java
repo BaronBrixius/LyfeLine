@@ -7,6 +7,7 @@ public abstract class TimelineObject<T> implements DBObject<T> {
     Date startDate = new Date();
     Date endDate = new Date();
     Date creationDate;
+    String imagePath = null;
 
     public abstract int getID();
 
@@ -37,6 +38,15 @@ public abstract class TimelineObject<T> implements DBObject<T> {
     public Date getCreationDate() {
         return creationDate;
     }
+
+    public void setImage(String path){
+
+        this.imagePath = path;}
+
+    public String getImagePath(){
+
+        return this.imagePath;
+   }
 
     public abstract String getName();
 

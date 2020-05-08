@@ -4,16 +4,26 @@ import database.DBM;
 import database.TimelineObject;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
 import javafx.util.StringConverter;
 import utils.Date;
 
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,6 +32,12 @@ public abstract class Editor {
     final List<Spinner<Integer>> startInputs = new ArrayList<>();
     final List<VBox> endBoxes = new ArrayList<>();
     final List<Spinner<Integer>> endInputs = new ArrayList<>();
+    @FXML
+    Button deleteImageButton;
+    @FXML
+    Button uploadImageButton;
+    @FXML
+    ImageView image;
     @FXML
     HBox editor;
     @FXML
@@ -173,6 +189,20 @@ public abstract class Editor {
         titleInput.setText(itemInEditor.getName());
         descriptionInput.setText(itemInEditor.getDescription());
 
+        if (itemInEditor.getImagePath() != null) {
+            image.setImage(new Image("File:" + itemInEditor.getImagePath()));
+            //When event is saved the path to the image in resource folder is sent here (the one we can use to send to DB)
+            String fullOutPath = itemInEditor.getImagePath();
+        } else
+            image.setImage(null);
+
+        if (itemInEditor.getImagePath() != null) {
+            image.setImage(new Image("File:" + itemInEditor.getImagePath()));
+            //When event is saved the path to the image in resource folder is sent here (the one we can use to send to DB)
+            String fullOutPath = itemInEditor.getImagePath();
+        } else
+            image.setImage(null);
+
         if (itemInEditor.getStartDate() != null) {
             startInputs.get(0).getValueFactory().setValue(itemInEditor.getStartDate().getYear());
             startInputs.get(1).getValueFactory().setValue(itemInEditor.getStartDate().getMonth());
@@ -202,6 +232,7 @@ public abstract class Editor {
     void updateItem(TimelineObject itemInEditor) {                  //sets object's values based on input fields' values
         itemInEditor.setName(titleInput.getText());
         itemInEditor.setDescription(descriptionInput.getText().replaceAll("([^\r])\n", "$1\r\n"));
+
 
         itemInEditor.setStartDate(new Date(startInputs.get(0).getValue(), startInputs.get(1).getValue(), startInputs.get(2).getValue(),
                 startInputs.get(3).getValue(), startInputs.get(4).getValue(), startInputs.get(5).getValue(), startInputs.get(6).getValue()));
@@ -290,4 +321,142 @@ public abstract class Editor {
         boxList.get(index).setPrefWidth(70);
         boxList.get(index).getChildren().get(0).getStyleClass().add("smallText");
     }
+    ////////////////////==================================Common image handling========================================////////////////////
+
+    abstract void uploadImage() throws IOException;
+
+    @FXML
+    protected void uploadImage(TimelineObject e) throws IOException {
+        boolean confirm = true;
+
+        if (e.getImagePath() != null) {
+            confirm = ImageSaveConfirm();
+        }
+
+        if (confirm) {
+            FileChooser chooser = new FileChooser(); //For the file directory
+            chooser.setTitle("Upload image");
+
+            //All the image formats supported by java.imageio https://docs.oracle.com/javase/7/docs/api/javax/imageio/package-summary.html
+            chooser.getExtensionFilters().addAll(
+                    new FileChooser.ExtensionFilter("All Images", "*.jpg", "*.jpeg", "*.png", "*.bmp", "*.gif", "*.wbmp"),
+                    new FileChooser.ExtensionFilter("JPG", "*.jpg"),
+                    new FileChooser.ExtensionFilter("JPEG", "*.jpeg"),
+                    new FileChooser.ExtensionFilter("PNG", "*.png"),
+                    new FileChooser.ExtensionFilter("BMP", "*.bmp"),
+                    new FileChooser.ExtensionFilter("GIF", "*.gif"),
+                    new FileChooser.ExtensionFilter("WBMP", "*.wbmp")
+            );
+            //The current image chosen by FileChooser
+            File imageChosen = chooser.showOpenDialog(GUIManager.mainStage);
+            if (imageChosen != null) {
+
+                image.setImage(new Image("File:" + imageChosen.getAbsolutePath()));
+
+                //THis is to take the name of the image chosen to add it to the copied version
+                String filename = copyImage(imageChosen, imageChosen.getName());
+
+                if (e.getImagePath() != null) {
+                    try {
+                        Files.deleteIfExists(Paths.get(e.getImagePath()));
+                    } catch (IOException er) {
+                        er.printStackTrace();
+                    }
+                }
+
+                e.setImage(filename);
+            }
+        }
+    }
+
+    @FXML
+    private boolean ImageSaveConfirm() {
+        Alert confirmSaveImage = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmSaveImage.setTitle("Confirm Change");
+        confirmSaveImage.setHeaderText("Replacing or removing an image will permanently delete it from the system.");
+        confirmSaveImage.setContentText("Would you like to make the change?");
+
+        Optional<ButtonType> result = confirmSaveImage.showAndWait();
+
+        return result.get() == ButtonType.OK;
+    }
+
+    //Method that returns the image format as a string i.e sun.png == "png"
+    private String getFormat(File f) throws IOException {
+        ImageInputStream iis = ImageIO.createImageInputStream(f);
+        Iterator<ImageReader> imageReaders = ImageIO.getImageReaders(iis);
+        String type = "png";
+        while (imageReaders.hasNext()) {
+            ImageReader reader = imageReaders.next();
+            type = reader.getFormatName();
+        }
+        return type;
+    }
+
+    private String copyImage(File image, String filename) throws IOException { //Takes the file chosen and the name of it
+        String outPath = "src/main/resources/images/";
+        String imageName = filename;
+        InputStream is = null;
+        OutputStream os = null;
+
+        try {
+            is = new FileInputStream(image);
+            System.out.println("reading complete.");
+            //Path for saving, have special events folder now so if timeline guys are doing something they don't override copies
+            int duplicateDigit = 2;
+
+            while (folderHasImage(imageName)) {
+                int indexOfDot = filename.lastIndexOf(".");
+                if (imageName.matches(".*\\s\\(\\d\\)\\..*")) {
+                    int indexOfBrackets = imageName.lastIndexOf("(");
+                    imageName = imageName.substring(0, indexOfBrackets + 1) + duplicateDigit + ")" + "." + getFormat(image);
+
+                } else {
+                    imageName = imageName.substring(0, indexOfDot) + " (" + duplicateDigit + ")" + "." + getFormat(image);
+                }
+                duplicateDigit++;
+            }
+
+
+            os = new FileOutputStream(new File(outPath + imageName));
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = is.read(buffer)) > 0) {
+                os.write(buffer, 0, length);
+            }
+
+            System.out.println("Writing complete.");
+        } catch (IOException e) {
+            System.out.println("Error: " + e);
+
+        } finally {
+            if (is != null)
+                is.close();
+            if (os != null)
+                os.close();
+        }
+        return outPath + imageName;
+    }
+
+    //Method to check if the image folder has this name already to avoid duplicates overriding earlier uploads
+    private boolean folderHasImage(String path) {
+        File folder = new File("src/main/resources/images/");
+        File[] listOfFiles = folder.listFiles();
+        List<String> images = new ArrayList<>();
+
+        for (int i = 0; i < listOfFiles.length; i++) {
+            if (listOfFiles[i].isFile()) {
+                images.add(listOfFiles[i].getName());
+            }
+        }
+        for (String s : images) {
+            if (path.equalsIgnoreCase(s))
+                return true;
+        }
+        return false;
+    }
+
+
+
+
 }

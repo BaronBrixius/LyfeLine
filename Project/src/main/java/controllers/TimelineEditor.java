@@ -134,6 +134,13 @@ public class TimelineEditor extends Editor {
         return true;
     }
 
+    @Override
+    void uploadImage() throws IOException {super.uploadImage(this.timeline);
+
+    }
+
+
+
     boolean isUniqueKeyword(String k) {
         for (String s : keywords) {
             if (k.equalsIgnoreCase(s)) return false;

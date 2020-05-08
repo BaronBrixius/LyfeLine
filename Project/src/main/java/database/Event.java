@@ -13,7 +13,7 @@ public class Event extends TimelineObject<Event> {
     private int eventPriority = 0;
     private String eventName = "";
     private String eventDescription = "";
-    private String imagePath = null;
+
 
     public Event() {
     }
@@ -39,18 +39,14 @@ public class Event extends TimelineObject<Event> {
         return DBM.getFromDB(DBM.conn.prepareStatement("SELECT StartYear FROM events"), rs -> rs.getInt("StartYear"));
     }
 
-    public String imagePath() {
-        return imagePath;
-    }
+
 
     //Some examples of working with the database
     /*static List<Event> getAll() throws SQLException {
         return DBM.getFromDB(DBM.conn.prepareStatement("SELECT * FROM events"), new Event());     //blank object so functional interface method can be accessed
     }*/
 
-    public String getImagePath() {
-        return this.imagePath;
-    }
+
 
     @Override
     public PreparedStatement getInsertQuery() throws SQLException, RuntimeException {
@@ -77,10 +73,10 @@ public class Event extends TimelineObject<Event> {
         out.setInt(15, endDate.getSecond());
         out.setInt(16, endDate.getMillisecond());
         out.setInt(17, ownerID);
-        if (imagePath == null)
+        if (this.imagePath == null)
             out.setNull(18, Types.INTEGER);
         else
-            out.setString(18, imagePath);
+            out.setString(18, this.imagePath);
 
         out.setInt(19, eventPriority);
 
@@ -143,9 +139,7 @@ public class Event extends TimelineObject<Event> {
         this.eventID = id;
     }
 
-    public void setImage(String image) {
-        this.imagePath = image;
-    }
+
 
     public int getID() {
         return this.eventID;
@@ -175,7 +169,7 @@ public class Event extends TimelineObject<Event> {
                 "`StartSecond` = ?,  `StartMillisecond` = ?,    `EndYear` = ?,  `EndMonth` = ?,  `EndDay` = ?,  `EndHour` = ?,  `EndMinute` = ?,  `EndSecond` = ?,  `EndMillisecond` = ?, `EventOwner` = ?, `EventPriority` = ?  WHERE (`EventID` = ?);");
         out.setString(1, eventName);
         out.setString(2, eventDescription);
-        out.setString(3, imagePath);
+        out.setString(3, this.imagePath);
         out.setInt(4, startDate.getYear());
         out.setInt(5, startDate.getMonth());
         out.setInt(6, startDate.getDay());
