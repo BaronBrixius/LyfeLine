@@ -64,7 +64,8 @@ public class GUIManager extends Application {
         //TimelineView systemUnderDevelopment = swapScene("TimelineView");        //delete when merging to dev
         //systemUnderDevelopment.setActiveTimeline(1);
 
-        mainStage.getScene().getStylesheets().add("File:src/main/resources/styles/DefaultStyle.css");
+        mainStage.getScene().getStylesheets().add("File:src/main/resources/styles/GeneralConfig.css");
+        mainStage.getScene().getStylesheets().add("File:src/main/resources/styles/DarkTheme.css");
         mainStage.show();
     }
 

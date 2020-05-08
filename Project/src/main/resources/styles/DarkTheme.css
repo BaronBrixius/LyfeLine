@@ -1,18 +1,24 @@
-/*This File holds all the CSS Style commands that are applied to all Nodes in a Scene*/
-
-/*.root applies to everything in a scene and overrides all other commands in this file. Use carefully.*/
 .root,
 GridPane{                   /* .root was applying "weakly", causing gridpanes to be semi-transparent*/
-    -fx-background-color: #f4f4f4;
+    -fx-background-color: black;
 }
 
-/*The following apply to any object of the corresponding name.*/
+Text{
+    -fx-fill: whitesmoke;
+}
+.label{
+    -fx-fill: whitesmoke;
+}
+.text-field,
+.text-area{
+    -fx-background-color: dimgrey;
+}
+
 .button, .toggle-button{
     -fx-text-fill: white;
     -fx-background-color: #1aa9cd;
 }
 
-/*This is what the button looks like when you hover over it*/
 .button:hover, .toggle-button:hover, .toggle-button:selected,
 .smallButton:hover ,
 .popupButton:hover {
@@ -36,14 +42,6 @@ GridPane{                   /* .root was applying "weakly", causing gridpanes to
 
 .eventNode:pressed {
     -fx-background-color: #1795b5;
-}
-
-.tooltip {
-    -fx-background-color: #0E5E72;
-}
-
-.timeline {
-    -fx-background-color: #6C54F2;
 }
 
 .scroll-bar:horizontal.track,

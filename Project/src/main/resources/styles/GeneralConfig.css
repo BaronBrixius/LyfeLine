@@ -1,0 +1,164 @@
+/*Text applies to any free floating text (inc. TextField), does not apply to text in Buttons, etc.
+"-fx-text-fill" does not work here, use "fx-fill" to color the text instead.*/
+Text{
+    -fx-font-size: 1.75em;
+}
+
+.label{
+     -fx-padding: 5 0 0 0;
+     -fx-font-size: 1.5em;
+     -fx-font-weight: bold;
+ }
+
+/*The following apply to any object of the corresponding name.*/
+.button, .toggle-button{
+    -fx-font-size: 2em;
+    -fx-font-weight: bold;
+    -fx-pref-width: 250px;
+    -fx-pref-height: 100px;
+    -fx-background-radius: 222px;
+}
+
+/*This is what the button looks like when you hover over it*/
+.button:hover, .toggle-button:hover, .toggle-button:selected{
+    -fx-scale-y: 1.1;
+}
+
+.DisabledInvisible:disabled, .DisabledInvisible:disabled > * {
+    -fx-opacity: 0 !important;
+}
+
+.text-field{
+    -fx-pref-height: 30px;
+}
+
+.text-area{
+    -fx-wrap-text: true;
+    -fx-font-size: 15px;
+}
+
+.menu-item{
+
+}
+
+.menu-bar{
+    -fx-font-size: .6em;
+    -fx-font-weight: lighter;
+}
+
+/*The following are custom made presets, and must be applied in the actual code to apply.
+for example:      buttonName.getStyleClass().add("smallButton");                         */
+.smallButton{
+    -fx-font-size: 1.3em;
+    -fx-font-weight: bold;
+    -fx-pref-height: 50px;
+    -fx-pref-width: 150px;
+}
+
+.dashBoard{
+    -fx-pref-height: 75px;
+}
+
+.tinyButton{
+    -fx-pref-width: 90px;
+    -fx-pref-height: 25px;
+    -fx-font-size: 12;
+}
+
+.smallButton:hover ,
+.logOutButton:hover,
+.hoverRed:hover {
+    -fx-scale-y: 1.1;
+}
+
+.headertext{
+    -fx-font-size: 24;
+}
+
+.smallText{
+    -fx-font-size: 1em;
+}
+
+.popupButton{
+    -fx-font-size: 1.3em;
+    -fx-font-weight: bold;
+    -fx-pref-height: 35px;
+    -fx-pref-width: 90px;
+}
+.popupButton:hover {
+    -fx-scale-y: 1.1;
+}
+
+
+.mediumText{
+    -fx-font-size: 1.5em;
+}
+
+.eventNode {
+    -fx-font-size: 1em;
+    -fx-font-weight: bold;
+    -fx-pref-width: 150px;
+    -fx-pref-height: 60px;
+}
+
+.timeline {
+    -fx-effect: dropshadow(one-pass-box, #1AA9CD, 10, 0, 0, 0);
+}
+
+.scroll-bar:horizontal.track,
+.scroll-bar:vertical.track{
+    -fx-background-radius: 1.0em;
+    -fx-border-radius: 1.5em;
+}
+
+.scroll-bar:horizontal .increment-button ,
+.scroll-bar:horizontal .decrement-button {
+    -fx-pref-width: 18px;
+    -fx-pref-height: 18px;
+    -fx-background-radius: 10px;
+}
+
+
+.scroll-bar:vertical .increment-button ,
+.scroll-bar:vertical .decrement-button {
+    -fx-pref-width: 15px;
+    -fx-pref-height: 15px;
+}
+
+.scroll-bar:horizontal .thumb,
+.scroll-bar:vertical .thumb,
+.scroll-bar:horizontal .thumb:hover,
+.scroll-bar:vertical .thumb:hover {
+    -fx-background-insets: 2.0, 0.0, 0.0;
+    -fx-background-radius: 2.0em;
+}
+
+.spinner .increment-arrow-button,
+.spinner .decrement-arrow-button {
+    -fx-padding: 2 4 2 4;
+}
+
+.spinner .increment-arrow-button .increment-arrow ,
+.spinner .decrement-arrow-button .decrement-arrow {
+    -fx-padding: 2 3 2 3;
+}
+.slider .axis{
+    -fx-font-size: 7;
+}
+.regionBG{
+    -fx-background-position: center;
+    -fx-background-size: cover;
+}
+
+/*Here is a list of useful CSS commands:
+-fx-text-fill: black; (sets text color)
+-fx-font-size: 1.5em; (sets text size)
+-fx-font-family: serif; (sets text font)
+-fx-font-weight: bold; (sets hold bold the text is)
+-fx-font-style: italic; (sets text to be italic)
+-fx-background-color: black; (sets background color)
+-fx-border-color: black; (sets the color of the border for that object)
+-fx-border-width: 2em; (sets the width of the border)
+-fx-border-style: dotted; (makes neat little patterns for the border)
+-fx-focus-color: #000000; (sets the color that highlights the object when it has focus)
+*/

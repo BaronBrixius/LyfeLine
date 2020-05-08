@@ -141,6 +141,7 @@ public class TimelineView {
         if (numberOfCol >= 1)                               // if the start date is later than the end date, numberOfCol would be negative,
             timelineGrid.add(mainLine, 0, 0, numberOfCol, 1);   // which does not work for the amount of columns
         GridPane.setMargin(mainLine, new Insets(25, 0, -25, 0));
+        mainLine.getStyleClass().add("mainLine");
         return mainLine;
     }
 
