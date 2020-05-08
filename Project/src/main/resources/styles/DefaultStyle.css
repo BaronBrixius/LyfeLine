@@ -279,10 +279,10 @@ for example:      buttonName.getStyleClass().add("smallButton");                
     -fx-font-size: 7;
 }
 
-.regionBG{
-	-fx-background-position: center;
+.paneBG{
 	-fx-background-size: cover;
-	
+	-fx-background-position: top 50%;	
+	-fx-background-repeat: no-repeat;
 }
 
 /*Here is a list of useful CSS commands:
