@@ -32,7 +32,6 @@ public class TimelineEditor extends Editor {
     ListView<String> keywordView;
     @FXML
     Text feedbackText;
-    List<Polygon> ratingButtons;
     @FXML
     private TextField keywordInput;
 
@@ -54,49 +53,6 @@ public class TimelineEditor extends Editor {
             timeInput.setItems(FXCollections.observableArrayList(DBM.getFromDB(state, rs -> rs.getString("unit"))));
         } catch (SQLException e) {
             e.printStackTrace();
-        }
-
-
-        //Ratings
-        ratingButtons = new ArrayList<>(5);
-        for (int i = 0; i < 5; i++) {
-            ratingButtons.add((Polygon) ratingBox.getChildren().get(i));
-            setupRatingButton(ratingButtons.get(i), i);
-        }
-
-        ratingBox.setOnMouseMoved(e ->
-                colorStarsByRating((int) Math.floor(e.getX() * 5 / ratingBox.getWidth())));
-        ratingBox.setOnMouseExited(e -> colorStarsByRating(timeline.getRating()));
-    }
-
-    private void setupRatingButton(Polygon button, int index) {
-        double starSize = 40;
-        int numPoints = 5;
-
-        button.getPoints().clear();
-        double angle = 0;
-        double distance;
-        for (int i = 0; i < numPoints * 2; i++) {
-            if (i % 2 == 0)
-                distance = starSize;
-            else
-                distance = starSize / 2;
-
-            button.getPoints().addAll(Math.sin(angle) * distance,           //easier to implement/adjust than manual point placement
-                    Math.cos(angle) * distance * -1);
-
-            angle += Math.PI / numPoints;       //simplified 2*PI / numPoints*2
-        }
-
-        button.setOnMouseClicked(e -> timeline.addRating(GUIManager.loggedInUser.getUserID(), index));
-    }
-
-    private void colorStarsByRating(int rating) {
-        for (int i = 0; i < 5; i++) {
-            if (i <= rating)
-                ratingButtons.get(i).setFill(Color.YELLOW);
-            else
-                ratingButtons.get(i).setFill(Color.GREY);
         }
     }
 

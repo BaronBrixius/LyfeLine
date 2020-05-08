@@ -647,7 +647,8 @@ public class Dashboard {
   			if (item != null && !empty) { // <== test for null item and empty parameter
   				setGraphic(cellNode);
   				if (!(cell == null)) {
-  					cell.setTimeline(item);
+  					
+  					cell.setTimeline(item,list.getWidth()-30);
   					
   				}
   			} else {

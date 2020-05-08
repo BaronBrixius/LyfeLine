@@ -14,7 +14,7 @@ public class Timeline extends TimelineObject<Timeline> {
     private String timelineDescription = "";
     private List<Event> eventList = new ArrayList<>();
     private List<String> keywords = new ArrayList<>();
-    private int rating;
+    private double rating;
 
     public Timeline() {
     }
@@ -190,12 +190,12 @@ public class Timeline extends TimelineObject<Timeline> {
     }
 
 
-    public int addRating(int userID, int index){
-        return 0;
+    public void addRating(int userID, int rating){
+        System.out.println("Rating of " + rating + " added/updated. Dummy response text.");
     }
 
-    public int getRating(){
-        return 0;
+    public double getRating(){
+        return rating;
     }
 
     @Override
