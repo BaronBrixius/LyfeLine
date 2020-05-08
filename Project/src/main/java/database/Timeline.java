@@ -14,6 +14,7 @@ public class Timeline extends TimelineObject<Timeline> {
     private String timelineDescription = "";
     private List<Event> eventList = new ArrayList<>();
     private List<String> keywords = new ArrayList<>();
+    private int rating;
 
     public Timeline() {
     }
@@ -186,6 +187,15 @@ public class Timeline extends TimelineObject<Timeline> {
                 new Date(createdYear, createdMonth, createdDay, createdHour, createdMinute, createdSecond,
                         createdMillisecond),
                 timelineOwner, keywords, eventList);
+    }
+
+
+    public int addRating(int userID, int index){
+        return 0;
+    }
+
+    public int getRating(){
+        return 0;
     }
 
     @Override
