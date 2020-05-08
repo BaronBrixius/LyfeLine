@@ -33,44 +33,44 @@ public class TimelineCell {
 		//Ratings
 		ratingButtons = new ArrayList<>(5);
 		for (int i = 0; i < 5; i++) {
-			ratingButtons.add((Polygon) ratingBox.getChildren().get(i));
+			ratingButtons.add((Polygon) ratingBox.getChildren().get(i));	//grab each polygon from the HBox and set it up as a pseudo-button
 			setupRatingButton(ratingButtons.get(i), i);
 		}
 
-		ratingBox.setOnMouseMoved(e ->
-				colorStarsByRating((int) Math.floor(e.getX() * 5 / ratingBox.getWidth())));
-		ratingBox.setOnMouseExited(e -> colorStarsByRating((int) Math.ceil(timeline.getRating())));
+		ratingBox.setOnMouseMoved(e -> colorStarsByRating((int) Math.ceil(e.getX() * 5 / ratingBox.getWidth())));	//highlight current star and ones to the left
+		ratingBox.setOnMouseExited(e -> colorStarsByRating((int) Math.ceil(timeline.getRating())));					//return highlighting to normal
 	}
 
 
 	private void setupRatingButton(Polygon button, int index) {
-		double starSize = 40;
+		double starSize = 30;
 		int numPoints = 5;
 
 		button.getPoints().clear();
 		double angle = 0;
 		double distance;
+		//calculate position of each point of star, starting from top and going clockwise
 		for (int i = 0; i < numPoints * 2; i++) {
 			if (i % 2 == 0)
-				distance = starSize;
+				distance = starSize;		//tips stick out further
 			else
-				distance = starSize / 2;
+				distance = starSize / 2;	//intersections don't stick out as much, increase number to increase how "sharp" the star is
 
-			button.getPoints().addAll(Math.sin(angle) * distance,           //easier to implement/adjust than manual point placement
+			button.getPoints().addAll(Math.sin(angle) * distance,           //trig to find point position, easier to adjust than manual point placement
 					Math.cos(angle) * distance * -1);
 
-			angle += Math.PI / numPoints;       //simplified 2*PI / numPoints*2
+			angle += Math.PI / numPoints;       //simplified 2*PI / numPoints*2, rotates angle for next tip/intersection
 		}
 
-		button.setOnMouseClicked(e -> timeline.addRating(GUIManager.loggedInUser.getUserID(), index + 1));
+		button.setOnMouseClicked(e -> timeline.addRating(GUIManager.loggedInUser.getUserID(), index + 1));	//click a star to submit a rating
 	}
 
 	private void colorStarsByRating(int rating) {
 		for (int i = 0; i < 5; i++) {
-			if (i <= rating)
-				ratingButtons.get(i).setFill(Color.YELLOW);
+			if (i < rating)
+				ratingButtons.get(i).setFill(Color.YELLOW);		//yellow fill for lower stars
 			else
-				ratingButtons.get(i).setFill(Color.GREY);
+				ratingButtons.get(i).setFill(Color.GREY);		//grey fill for stars above timeline's rank
 		}
 	}
 

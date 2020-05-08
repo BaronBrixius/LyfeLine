@@ -190,11 +190,12 @@ public class Timeline extends TimelineObject<Timeline> {
     }
 
 
-    public void addRating(int userID, int index){
+    public void addRating(int userID, int rating){
+        System.out.println("Rating of " + rating + " added/updated. Dummy response text.");
     }
 
     public double getRating(){
-        return 0;
+        return rating;
     }
 
     @Override
