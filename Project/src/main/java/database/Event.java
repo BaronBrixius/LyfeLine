@@ -169,7 +169,7 @@ public class Event extends TimelineObject<Event> {
                 "`StartSecond` = ?,  `StartMillisecond` = ?,    `EndYear` = ?,  `EndMonth` = ?,  `EndDay` = ?,  `EndHour` = ?,  `EndMinute` = ?,  `EndSecond` = ?,  `EndMillisecond` = ?, `EventOwner` = ?, `EventPriority` = ?  WHERE (`EventID` = ?);");
         out.setString(1, eventName);
         out.setString(2, eventDescription);
-        out.setString(3, this.imagePath);
+        out.setString(3, imagePath);
         out.setInt(4, startDate.getYear());
         out.setInt(5, startDate.getMonth());
         out.setInt(6, startDate.getDay());

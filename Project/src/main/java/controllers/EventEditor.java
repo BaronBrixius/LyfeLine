@@ -1,25 +1,12 @@
 package controllers;
 
 import database.Event;
-import database.TimelineObject;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.stage.FileChooser;
 import javafx.util.StringConverter;
 
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
-import javax.imageio.stream.ImageInputStream;
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
 
 public class EventEditor extends Editor {
 
@@ -69,7 +56,7 @@ public class EventEditor extends Editor {
         setExpansion(endPane, endBoxes, hasDuration.isSelected() && endExpanded, parentController.activeTimeline.getScale());   //compresses if duration is disabled, if enabled leave it as user wanted
 
         if (hasDuration.isSelected()) {
-            populateEndInputs(event);
+            populateEndInputs();
             endPane.getStyleClass().remove("DisabledAnyways");
         } else {
             for (int i = 0; i < 7; i++) {
@@ -81,19 +68,14 @@ public class EventEditor extends Editor {
 
     void toggleEditable(boolean editable) {
         super.toggleEditable(editable);
-        uploadImageButton.setDisable(!editable);
-        deleteImageButton.setDisable(!editable);
         hasDuration.setDisable(!editable);
         prioritySlider.setDisable(!editable);
     }
 
-    public void uploadImage() throws IOException {super.uploadImage(this.event);}
-
-
-
     boolean setEvent(Event event) {
         parentController.eventEditorController.close();
         this.event = event;
+        itemInEditor = event;
         if (this.event.getID() == 0)       //if new event, set current user as owner
             this.event.setOwnerID(GUIManager.loggedInUser.getUserID());
         setOwner(GUIManager.loggedInUser.getUserID() == this.event.getOwnerID());
@@ -101,7 +83,7 @@ public class EventEditor extends Editor {
     }
 
     boolean populateDisplay() {
-        super.populateDisplay(event);    //populate inputs common to editors
+        super.populateDisplay();    //populate inputs common to editors
 
         if (event.getStartDate().compareTo(event.getEndDate()) != 0) {
             hasDuration.setSelected(true);
@@ -114,7 +96,7 @@ public class EventEditor extends Editor {
     }
 
     void updateItem() {                 //sets object's values based on input fields' values
-        super.updateItem(event);        //update variables common to TimelineObjects
+        super.updateItem();        //update variables common to TimelineObjects
         event.setEventPriority((int) prioritySlider.getValue());
     }
 
@@ -122,7 +104,7 @@ public class EventEditor extends Editor {
         updateItem();
         boolean newEvent = event.getID() == 0;
 
-        super.save(event);          //adds to database
+        super.save();          //adds to database
 
         if (newEvent)
             addToTimeline();        //new event is automatically added to active timeline when saved
@@ -153,7 +135,7 @@ public class EventEditor extends Editor {
     boolean hasChanges() {
         if (!hasDuration.isSelected() && event.getStartDate().compareTo(event.getEndDate()) != 0)
             return true;
-        if (super.hasChanges(event))
+        if (super.hasChanges())
             return true;
         return event.getEventPriority() != prioritySlider.getValue();
     }
@@ -166,21 +148,5 @@ public class EventEditor extends Editor {
             return false;
         parentController.rightSidebar.getChildren().remove(editor);
         return true;
-    }
-
-    @FXML
-    void clearImage() {
-        if (event.getImagePath() != null) {
-            try {
-                Files.deleteIfExists(Paths.get(event.getImagePath()));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            event.setImage(null);
-            filename = null; /////Maybe - because of updateitem call
-            image.setImage(null);
-            updateItem();
-        }
-
     }
 }

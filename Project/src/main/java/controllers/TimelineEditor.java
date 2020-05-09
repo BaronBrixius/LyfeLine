@@ -52,6 +52,7 @@ public class TimelineEditor extends Editor {
 
     boolean setTimeline(Timeline timeline) {
         this.timeline = timeline;
+        itemInEditor = timeline;
         //Check if Admin
         setOwner(GUIManager.loggedInUser.getUserID() == timeline.getOwnerID());
         return populateDisplay();
@@ -64,7 +65,7 @@ public class TimelineEditor extends Editor {
     }
 
     boolean populateDisplay() {
-        super.populateDisplay(timeline);    //populate inputs common to editors
+        super.populateDisplay();    //populate inputs common to editors
 
         if (timeline.getKeywords() != null) {
             keywords.clear();
@@ -79,7 +80,7 @@ public class TimelineEditor extends Editor {
     }
 
     void updateItem() {
-        super.updateItem(timeline);     //update variables common to TimelineObjects
+        super.updateItem();     //update variables common to TimelineObjects
 
         timeline.getKeywords().clear();
         timeline.getKeywords().addAll(keywords);
@@ -113,7 +114,7 @@ public class TimelineEditor extends Editor {
 
 
     boolean hasChanges() {
-        if (super.hasChanges(timeline))
+        if (super.hasChanges())
             return true;
 
         if (timeline.getKeywords().size() != keywords.size())
@@ -129,17 +130,10 @@ public class TimelineEditor extends Editor {
 
     boolean save() {
         updateItem();
-        super.save(timeline);
+        super.save();
         parentController.populateDisplay();
         return true;
     }
-
-    @Override
-    void uploadImage() throws IOException {
-
-    }
-
-
 
     boolean isUniqueKeyword(String k) {
         for (String s : keywords) {

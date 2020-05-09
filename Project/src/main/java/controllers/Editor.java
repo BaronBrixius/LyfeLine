@@ -67,7 +67,8 @@ public abstract class Editor {
     boolean startExpanded;
     boolean endExpanded;
     TimelineView parentController;
-    String filename;
+    String imageFilePath;
+    TimelineObject itemInEditor;
 
     public void initialize() {
         //Set Up the Spinners for Start/End Inputs, would have bloated the .fxml and variable list a ton if these were in fxml
@@ -117,7 +118,7 @@ public abstract class Editor {
         return expandPane.getChildren().size();
     }
 
-    void setParentController(TimelineView parentController) {             //TODO delete this inelegant solution
+    void setParentController(TimelineView parentController) {
         this.parentController = parentController;
     }
 
@@ -132,11 +133,14 @@ public abstract class Editor {
     void toggleEditable(boolean editable) {
         this.editable = editable;
 
+        uploadImageButton.setDisable(!editable);
+        deleteImageButton.setDisable(!editable);
+
         titleInput.setEditable(editable);
         descriptionInput.setEditable(editable);
-        for (Spinner<Integer> s: startInputs)
+        for (Spinner<Integer> s : startInputs)
             s.setDisable(!editable);
-        for (Spinner<Integer> s: endInputs)
+        for (Spinner<Integer> s : endInputs)
             s.setDisable(!editable);
 
         if (editable)
@@ -168,7 +172,23 @@ public abstract class Editor {
         Date newEndDate = new Date(endInputs.get(0).getValue(), endInputs.get(1).getValue(), endInputs.get(2).getValue(),
                 endInputs.get(3).getValue(), endInputs.get(4).getValue(), endInputs.get(5).getValue(), endInputs.get(6).getValue());
 
-        if (newStartDate.compareTo(newEndDate) > 0) {
+        if (titleInput.getText()== null || titleInput.getText().isEmpty()) {
+            Alert confirmDelete = new Alert(Alert.AlertType.CONFIRMATION);
+            confirmDelete.setTitle("Invalid Name");
+            confirmDelete.setHeaderText("Name input blank.");
+            confirmDelete.setContentText("Make sure to input a name before saving.");
+
+            confirmDelete.showAndWait();
+            return false;
+        }   else      if (titleInput.getText().length() > 100) {
+            Alert confirmDelete = new Alert(Alert.AlertType.CONFIRMATION);
+            confirmDelete.setTitle("Invalid Name");
+            confirmDelete.setHeaderText("Name input too long.");
+            confirmDelete.setContentText("Please choose a shorter name.");
+
+            confirmDelete.showAndWait();
+            return false;
+        }else if (newStartDate.compareTo(newEndDate) > 0) {
             Alert confirmDelete = new Alert(Alert.AlertType.CONFIRMATION);
             confirmDelete.setTitle("Invalid Dates");
             confirmDelete.setHeaderText("The End Date must be after the Start Date.");
@@ -185,21 +205,14 @@ public abstract class Editor {
         deleteButton.setDisable(!owner);
     }
 
-    abstract boolean populateDisplay();
-
-    void populateDisplay(TimelineObject itemInEditor) {
-        titleInput.setText(itemInEditor.getName());
-        descriptionInput.setText(itemInEditor.getDescription());
-
-        if (itemInEditor.getImagePath() != null) {
+    boolean populateDisplay() {
+        if (itemInEditor.getImagePath() != null)
             image.setImage(new Image("File:" + itemInEditor.getImagePath()));
-            //When event is saved the path to the image in resource folder is sent here (the one we can use to send to DB)
-            String fullOutPath = itemInEditor.getImagePath();
-        }
         else
             image.setImage(null);
 
-
+        titleInput.setText(itemInEditor.getName());
+        descriptionInput.setText(itemInEditor.getDescription());
 
         if (itemInEditor.getStartDate() != null) {
             startInputs.get(0).getValueFactory().setValue(itemInEditor.getStartDate().getYear());
@@ -210,14 +223,15 @@ public abstract class Editor {
             startInputs.get(5).getValueFactory().setValue(itemInEditor.getStartDate().getSecond());
             startInputs.get(6).getValueFactory().setValue(itemInEditor.getStartDate().getMillisecond());
 
-            populateEndInputs(itemInEditor);
+            populateEndInputs();
         }
 
         setExpansion(startPane, startBoxes, false, parentController.activeTimeline.getScale());
         setExpansion(endPane, endBoxes, false, parentController.activeTimeline.getScale());
+        return true;
     }
 
-    void populateEndInputs(TimelineObject itemInEditor) {            //so that end dates can have their display toggled separately for events
+    void populateEndInputs() {            //so that end dates can have their display toggled separately, useful for events
         endInputs.get(0).getValueFactory().setValue(itemInEditor.getEndDate().getYear());
         endInputs.get(1).getValueFactory().setValue(itemInEditor.getEndDate().getMonth());
         endInputs.get(2).getValueFactory().setValue(itemInEditor.getEndDate().getDay());
@@ -227,10 +241,19 @@ public abstract class Editor {
         endInputs.get(6).getValueFactory().setValue(itemInEditor.getEndDate().getMillisecond());
     }
 
-    void updateItem(TimelineObject itemInEditor) {                  //sets object's values based on input fields' values
+    void updateItem() {                  //sets object's values based on input fields' values
+        if (itemInEditor.getImagePath() != null && (!itemInEditor.getImagePath().equals(imageFilePath))) {     //deletes old picture if it has been replaced
+            try {
+                Files.deleteIfExists(Paths.get(itemInEditor.getImagePath()));
+            } catch (IOException er) {
+                er.printStackTrace();
+            }
+        }
+        itemInEditor.setImage(imageFilePath);
+
         itemInEditor.setName(titleInput.getText());
         itemInEditor.setDescription(descriptionInput.getText().replaceAll("([^\r])\n", "$1\r\n"));
-        itemInEditor.setImage(filename);
+        itemInEditor.setImage(imageFilePath);
 
         itemInEditor.setStartDate(new Date(startInputs.get(0).getValue(), startInputs.get(1).getValue(), startInputs.get(2).getValue(),
                 startInputs.get(3).getValue(), startInputs.get(4).getValue(), startInputs.get(5).getValue(), startInputs.get(6).getValue()));
@@ -239,11 +262,12 @@ public abstract class Editor {
                 endInputs.get(3).getValue(), endInputs.get(4).getValue(), endInputs.get(5).getValue(), endInputs.get(6).getValue()));
     }
 
-    abstract boolean hasChanges();
+    boolean hasChanges() {           //returns true if any input fields don't match the object's values
+        if ((itemInEditor.getImagePath() == null) ? imageFilePath != null : !itemInEditor.getImagePath().equals(imageFilePath))     //if item's pic is null, then filename not null
+            return true;
 
-    boolean hasChanges(TimelineObject itemInEditor) {           //returns true if any input fields don't match the object's values
-        if (!itemInEditor.getName().equals(titleInput.getText()) || !itemInEditor.getImagePath().equals(filename)
-                || !itemInEditor.getDescription().equals(descriptionInput.getText().replaceAll("([^\r])\n", "$1\r\n")))     //textArea tends to change the newline from \r\n to just \n which breaks some things)
+        if (!itemInEditor.getName().equals(titleInput.getText())
+                || !itemInEditor.getDescription().equals(descriptionInput.getText().replaceAll("([^\r])\n", "$1\r\n")))      //textArea tends to change the newline from \r\n to just \n which breaks some things)
             return true;
 
         Date readStart = new Date(startInputs.get(0).getValue(), startInputs.get(1).getValue(), startInputs.get(2).getValue(),
@@ -258,9 +282,7 @@ public abstract class Editor {
         );
     }
 
-    abstract boolean save();
-
-    boolean save(TimelineObject itemInEditor) {
+    boolean save() {
         try {
             if (itemInEditor.getID() == 0) {
                 DBM.insertIntoDB(itemInEditor);
@@ -321,13 +343,11 @@ public abstract class Editor {
     }
     ////////////////////==================================Common image handling========================================////////////////////
 
-    abstract void uploadImage() throws IOException;
-
     @FXML
-    protected void uploadImage(TimelineObject e) throws IOException {
+    protected void uploadImage() throws IOException {
         boolean confirm = true;
 
-        if (e.getImagePath() != null) {
+        if (itemInEditor.getImagePath() != null) {
             confirm = ImageSaveConfirm();
         }
 
@@ -349,16 +369,8 @@ public abstract class Editor {
             File imageChosen = chooser.showOpenDialog(GUIManager.mainStage);
             if (imageChosen != null) {
 
-                 filename = copyImage(imageChosen, imageChosen.getName());
-                 if (e.getImagePath() != null) {
-                    try {
-                        Files.deleteIfExists(Paths.get(e.getImagePath()));
-                    } catch (IOException er) {
-                        er.printStackTrace();
-                    }
-                }
-                e.setImage(filename);
-                populateDisplay();
+                imageFilePath = copyImage(imageChosen, imageChosen.getName());
+                image.setImage(new Image("File:" + imageFilePath));
             }
         }
     }
@@ -450,7 +462,9 @@ public abstract class Editor {
         return false;
     }
 
-
-
-
+    @FXML
+    void clearImage() {
+        imageFilePath = null;
+        image.setImage(null);
+    }
 }

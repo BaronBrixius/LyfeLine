@@ -122,44 +122,6 @@ VALUES (1, 'image1.png'),
        (5, 'image5.png');
 
 
-CREATE TABLE `groups`
-(
-    `GroupID`          int              NOT NULL AUTO_INCREMENT,
-    `GroupName`        nvarchar(100)    DEFAULT NULL,
-    `GroupDescription` nvarchar(5000)   DEFAULT NULL,
-    `Scale`            tinyint          NOT NULL,
-    `Public`           tinyint(1)       DEFAULT '0',
-    `FontID`           tinyint          DEFAULT '1',
-    `FontSize`         tinyint          DEFAULT '12',
-    `ThemeID`          tinyint          DEFAULT '1',
-    `StartYear`        bigint           NOT NULL,
-    `StartMonth`       tinyint unsigned NOT NULL,
-    `StartDay`         tinyint unsigned NOT NULL,
-    `StartTime`        time             NOT NULL,
-    `EndYear`          bigint           NOT NULL,
-    `EndMonth`         tinyint unsigned DEFAULT NULL,
-    `EndDay`           tinyint unsigned DEFAULT NULL,
-    `EndTime`          time             DEFAULT NULL,
-    PRIMARY KEY (`GroupID`),
-    UNIQUE KEY `GroupID_UNIQUE` (`GroupID`)
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8mb4
-  COLLATE = utf8mb4_general_ci;
-
-
-CREATE TABLE `groupevents`
-(
-    `GroupID` int NOT NULL,
-    `EventID` int NOT NULL,
-    PRIMARY KEY (`GroupID`, `EventID`),
-    KEY `fk_groupevents_events1_idx` (`EventID`),
-    CONSTRAINT `fk_groupevents_events1` FOREIGN KEY (`EventID`) REFERENCES `events` (`EventID`),
-    CONSTRAINT `fk_groupevents_groups` FOREIGN KEY (`GroupID`) REFERENCES `groups` (`GroupID`)
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8mb4
-  COLLATE = utf8mb4_general_ci;
-
-
 CREATE TABLE `users`
 (
     `UserID`    int           NOT NULL AUTO_INCREMENT,
