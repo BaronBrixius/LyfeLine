@@ -39,14 +39,13 @@ public abstract class TimelineObject<T> implements DBObject<T> {
         return creationDate;
     }
 
-    public void setImage(String path){
+    public void setImage(String imagePath) {
+        this.imagePath = imagePath;
+    }
 
-        this.imagePath = path;}
-
-    public String getImagePath(){
-
+    public String getImagePath() {
         return this.imagePath;
-   }
+    }
 
     public abstract String getName();
 
