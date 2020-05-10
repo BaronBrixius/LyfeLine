@@ -248,6 +248,7 @@ BEGIN
     end if;
 END;
 
+
 CREATE TABLE `rating` (
   `rating` int DEFAULT NULL,
   `userId` int DEFAULT NULL,
