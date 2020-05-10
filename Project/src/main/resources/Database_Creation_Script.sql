@@ -247,12 +247,11 @@ BEGIN
         set new.`CreatedMillisecond` = CAST(UNIX_TIMESTAMP(CURTIME(3)) % 1 * 1000 AS unsigned);
     end if;
 END;
+
 CREATE TABLE `rating` (
-  `idRating` int NOT NULL,
   `rating` int DEFAULT NULL,
   `userId` int DEFAULT NULL,
   `timeLineID` int DEFAULT NULL,
-  PRIMARY KEY (`idRating`),
   KEY `userID_idx` (`userId`),
   KEY `timeLineID_idx` (`timeLineID`),
   CONSTRAINT `timeLineID` FOREIGN KEY (`timeLineID`) REFERENCES `timelines` (`TimelineID`),
