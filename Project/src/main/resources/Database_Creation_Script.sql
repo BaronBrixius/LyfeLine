@@ -248,9 +248,7 @@ BEGIN
     end if;
 END;
 
-
-CREATE TABLE rating
-(
+CREATE TABLE `rating` (
   `rating` int DEFAULT NULL,
   `userId` int DEFAULT NULL,
   `timeLineID` int DEFAULT NULL,
