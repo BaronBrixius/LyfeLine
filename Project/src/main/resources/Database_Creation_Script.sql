@@ -258,7 +258,6 @@ CREATE TABLE `rating` (
   CONSTRAINT `userID` FOREIGN KEY (`userId`) REFERENCES `users` (`UserID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- This part is for populating tables with dummy data
 
 
 INSERT INTO `users`
@@ -507,5 +506,11 @@ VALUES ('1', '1'),
        ('12', '24'),
        ('12', '25'),
        ('12', '26');
+
+
+INSERT INTO rating
+(`rating`, `userId`, `timeLineID`)
+VALUES (5, 1, 1),
+       (6, 2, 2);
        
 
