@@ -279,6 +279,26 @@ for example:      buttonName.getStyleClass().add("smallButton");                
     -fx-font-size: 7;
 }
 
+.paneBG{
+	-fx-background-position: center;	
+	-fx-background-repeat: no-repeat;
+}
+
+.listCellText{
+	-fx-font-size: 20;
+	-fx-text-fill: white;
+}
+
+.listCellText .text{
+	-fx-stroke: black;
+    -fx-stroke-width: 1px;
+    -fx-effect: dropshadow(one-pass-box, black, 4, 0, 0, 0);
+}
+
+.listCellBackground{
+	-fx-background-color: #1aa9cd;
+}
+
 /*Here is a list of useful CSS commands:
 -fx-text-fill: black; (sets text color)
 -fx-font-size: 1.5em; (sets text size)

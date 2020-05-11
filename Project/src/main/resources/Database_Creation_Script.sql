@@ -122,44 +122,6 @@ VALUES (1, 'image1.png'),
        (5, 'image5.png');
 
 
-CREATE TABLE `groups`
-(
-    `GroupID`          int              NOT NULL AUTO_INCREMENT,
-    `GroupName`        nvarchar(100)    DEFAULT NULL,
-    `GroupDescription` nvarchar(5000)   DEFAULT NULL,
-    `Scale`            tinyint          NOT NULL,
-    `Public`           tinyint(1)       DEFAULT '0',
-    `FontID`           tinyint          DEFAULT '1',
-    `FontSize`         tinyint          DEFAULT '12',
-    `ThemeID`          tinyint          DEFAULT '1',
-    `StartYear`        bigint           NOT NULL,
-    `StartMonth`       tinyint unsigned NOT NULL,
-    `StartDay`         tinyint unsigned NOT NULL,
-    `StartTime`        time             NOT NULL,
-    `EndYear`          bigint           NOT NULL,
-    `EndMonth`         tinyint unsigned DEFAULT NULL,
-    `EndDay`           tinyint unsigned DEFAULT NULL,
-    `EndTime`          time             DEFAULT NULL,
-    PRIMARY KEY (`GroupID`),
-    UNIQUE KEY `GroupID_UNIQUE` (`GroupID`)
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8mb4
-  COLLATE = utf8mb4_general_ci;
-
-
-CREATE TABLE `groupevents`
-(
-    `GroupID` int NOT NULL,
-    `EventID` int NOT NULL,
-    PRIMARY KEY (`GroupID`, `EventID`),
-    KEY `fk_groupevents_events1_idx` (`EventID`),
-    CONSTRAINT `fk_groupevents_events1` FOREIGN KEY (`EventID`) REFERENCES `events` (`EventID`),
-    CONSTRAINT `fk_groupevents_groups` FOREIGN KEY (`GroupID`) REFERENCES `groups` (`GroupID`)
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8mb4
-  COLLATE = utf8mb4_general_ci;
-
-
 CREATE TABLE `users`
 (
     `UserID`    int           NOT NULL AUTO_INCREMENT,
@@ -181,9 +143,9 @@ CREATE TABLE `timelines`
 (
     `TimelineID`          int               NOT NULL AUTO_INCREMENT,
     `Scale`               int               DEFAULT 8,
-    `Rating`               int              DEFAULT 0,
     `TimelineName`        nvarchar(100)     DEFAULT NULL,
     `TimelineDescription` nvarchar(5000)    DEFAULT NULL,
+    `ImagePath`           nvarchar(5000)    DEFAULT NULL,
     `Theme`               nvarchar(100)     DEFAULT NULL,
     `StartYear`           bigint            NOT NULL,
     `StartMonth`          tinyint unsigned  NOT NULL,
@@ -249,7 +211,16 @@ BEGIN
 END;
 
 
--- This part is for populating tables with dummy data
+CREATE TABLE `rating` (
+  `rating` int DEFAULT NULL,
+  `userId` int DEFAULT NULL,
+  `timeLineID` int DEFAULT NULL,
+  KEY `userID_idx` (`userId`),
+  KEY `timeLineID_idx` (`timeLineID`),
+  CONSTRAINT `timeLineID` FOREIGN KEY (`timeLineID`) REFERENCES `timelines` (`TimelineID`),
+  CONSTRAINT `userID` FOREIGN KEY (`userId`) REFERENCES `users` (`UserID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 
 
 INSERT INTO `users`
@@ -292,7 +263,10 @@ VALUES ('1', 'Ben', 'Ben@gmail.com',
         'CEc1AAkRdz7BguqKQL4e4wrw7A3j6L', '0'),
        ('13', 'Hans Ove', 'Hans@math.biz',
         'tPmbHxe4qtzP8AaCpQJs/Hjr8RW3xDUGx+kk75AENDVY7Kkz85jJ/H1KICOH9TOsZPg4e/4ldTM9WzajCOJQiw==',
-        '8IzHZXvKP9hwwIr5EflEvhLYdo2AVY', '0');
+        '8IzHZXvKP9hwwIr5EflEvhLYdo2AVY', '0'),
+       ('14', 'Test User', 'User@test.com',
+        '9++aUh7ltf/BUAYP2adyTl4DoFthc387ahLWGV58pzyQsMRcJNKIH6g8UhdAF400MSysbm30v0AAkBXy4EgQaQ==',
+        'OsMpNbYBiPYkLAgmVmAFUt6faEW1Ot', '0');
 
 
 INSERT INTO `timelines`
@@ -498,5 +472,6 @@ VALUES ('1', '1'),
        ('12', '24'),
        ('12', '25'),
        ('12', '26');
-       
+
+
 

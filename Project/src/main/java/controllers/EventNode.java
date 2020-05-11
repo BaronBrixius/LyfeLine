@@ -15,6 +15,7 @@ public class EventNode implements Comparable<EventNode> {
     private Event activeEvent;
     private int startColumn;
     private int columnSpan;
+    private int row;
     private TimelineView parentController;
     @FXML
     private Tooltip hoverFlag;
@@ -31,6 +32,14 @@ public class EventNode implements Comparable<EventNode> {
         return activeEvent;
     }
 
+    public void setStartColumn(int startColumn) {
+        this.startColumn = startColumn;
+    }
+
+    public void setColumnSpan(int columnSpan) {
+        this.columnSpan = columnSpan;
+    }
+
     void setActiveEvent(Event event, Timeline activeTimeline, TimelineView parentController) {
         this.activeEvent = event;
         this.parentController = parentController;
@@ -38,6 +47,14 @@ public class EventNode implements Comparable<EventNode> {
         startColumn = activeTimeline.getStartDate().distanceTo(activeEvent.getStartDate(), activeTimeline.getScale());
         columnSpan = Math.max(activeEvent.getStartDate().distanceTo(activeEvent.getEndDate(), activeTimeline.getScale()), 1);   //instant events still need 1 whole column
         eventNameDisplay.setText(activeEvent.getName());
+    }
+
+    public int getRow() {
+        return row;
+    }
+
+    public void setRow(int row) {
+        this.row = row;
     }
 
     public int getStartColumn() {
@@ -55,7 +72,8 @@ public class EventNode implements Comparable<EventNode> {
 
     @FXML
     public void openEventViewer() {       //upon clicking a node
-        parentController.eventEditorController.close();
+        parentController.rightSidebar.getChildren().clear();
+        //parentController.eventEditorController.close();
         parentController.eventEditorController.setEvent(activeEvent);
         parentController.eventEditorController.toggleEditable(false);
         parentController.rightSidebar.getChildren().clear();

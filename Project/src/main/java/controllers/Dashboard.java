@@ -7,6 +7,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
@@ -54,7 +56,7 @@ public class Dashboard {
     @FXML
     protected TextField searchKeywords;
     @FXML
-    protected ComboBox searchRating;
+    protected ComboBox<Integer> searchRating;
     @FXML
     protected Button clearButton;
     @FXML
@@ -70,17 +72,9 @@ public class Dashboard {
     @FXML
     protected GridPane endDates;
     @FXML
-    protected GridPane topLabels;
-    @FXML
-    protected GridPane bottomLabels;
-    @FXML
     protected Text titleText;
     @FXML
     protected Hyperlink AdvancedSearch;
-    @FXML
-    protected Hyperlink toggleHHMMSS;
-    private List<Timeline> timelines;
-    private List<Timeline> userTimelines;
     private Timeline activeTimeline;
     private FilteredList<Timeline> filteredTimelines;
     private SortedList<Timeline> sortedTimelines;
@@ -95,27 +89,14 @@ public class Dashboard {
         setupTimeInputStartAndEnd("Second", -1, 59, 1, 2, 5);
         setupTimeInputStartAndEnd("Millisecond", -1, 999, 2, 2, 6);
 
-        // TODO fix this to be cleaner, I did it as a last second thing because it used
-
         initializeButtons();
 
         // Initialised sorting
         sortBy.getSelectionModel().select(0);
+
         // Fill ListView with the timelines
         populateTimelineList();
-
-        // approach adapted from https://stackoverflow.com/a/36657553
-        list.setCellFactory(param -> new ListCell<>() {
-            @Override
-            protected void updateItem(Timeline item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null || item.getName() == null) {
-                    setText(null);
-                } else {
-                    setText(item.getName());
-                }
-            }
-        });
+        list.setCellFactory(listView -> new TimelineCellListCell());
 
         // Add sorting options
         sortBy.getItems().setAll("Alphabetically", "Reverse-Alphabetically", "Most Recent", "Oldest");
@@ -124,12 +105,18 @@ public class Dashboard {
         sortBy.getSelectionModel().select(0);
 
         // Search field
-        searchTimelines();
+        cbOnlyViewPersonalLines.selectedProperty().addListener(this::simpleSearch);
+        searchInput.textProperty().addListener(this::simpleSearch);
         list.getSelectionModel().selectedIndexProperty().addListener(e -> {
             activeTimeline = list.getSelectionModel().getSelectedItem();
             updateDisplays();
         });
         titleText.setText("Select a Timeline.");
+
+        //Ratings combobox in advanced search
+        searchRating.getItems().setAll(Arrays.asList(0, 1, 2, 3, 4, 5));
+        searchRating.setButtonCell(new RatingsListCell());
+        searchRating.setCellFactory(param -> new RatingsListCell());
     }
 
     private void populateTimelineList() {
@@ -148,25 +135,17 @@ public class Dashboard {
         btnCreate.setVisible(GUIManager.loggedInUser.getAdmin());
         btnCreate.setDisable(!GUIManager.loggedInUser.getAdmin());
         btnEdit.setVisible(GUIManager.loggedInUser.getAdmin());
-        btnEdit.setDisable(list.getSelectionModel().isEmpty()
-                || list.getSelectionModel().getSelectedItem().getOwnerID() != GUIManager.loggedInUser.getUserID());
+        btnEdit.setDisable(list.getSelectionModel().isEmpty() || list.getSelectionModel().getSelectedItem().getOwnerID() != GUIManager.loggedInUser.getUserID());
         btnDelete.setVisible(GUIManager.loggedInUser.getAdmin());
-        btnDelete.setDisable(list.getSelectionModel().isEmpty()
-                || list.getSelectionModel().getSelectedItem().getOwnerID() != GUIManager.loggedInUser.getUserID());
+        btnDelete.setDisable(list.getSelectionModel().isEmpty() || list.getSelectionModel().getSelectedItem().getOwnerID() != GUIManager.loggedInUser.getUserID());
         adminGUI.setVisible(GUIManager.loggedInUser.getAdmin());
         adminGUI.setDisable(!GUIManager.loggedInUser.getAdmin());
         timelineViewButton.setDisable(list.getSelectionModel().getSelectedItem() == null);
     }
 
-    @FXML
-    public void searchTimelines() {
-        cbOnlyViewPersonalLines.selectedProperty().addListener(this::simpleSearch);
-        searchInput.textProperty().addListener(this::simpleSearch);
-    }
-
     private void simpleSearch(Observable obs) {
         String searchText = searchInput.getText();
-        if (searchText == null || searchText.length() == 0)
+        if (searchText == null || searchText.isEmpty())
             filteredTimelines.setPredicate(timeline -> true);
         else
             filteredTimelines.setPredicate(timeline -> timeline.getName().toLowerCase().contains(searchText.toLowerCase())
@@ -190,9 +169,9 @@ public class Dashboard {
 
     ResultSet advancedResultSet() {     //pull the relevant data from the database and pass back to search
         try {
-            PreparedStatement stmt = DBM.conn.prepareStatement("SELECT t.*, u.UserName FROM timelines t " +
-                    "INNER JOIN users u " +
-                    "ON t.TimelineOwner = u.UserID");
+            PreparedStatement stmt = DBM.conn.prepareStatement("SELECT t.*, u.UserName, AVG(r.rating) as Rating FROM timelines t " +
+                    "INNER JOIN users u ON t.TimelineOwner = u.UserID " +
+                    "LEFT JOIN rating r ON t.TimelineID = r.timeLineID");
             return stmt.executeQuery();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -249,12 +228,12 @@ public class Dashboard {
             }
 
             //Rating
-            //if (searchRating isn't empty and rating >= searchRating)      //TODO implement after ratings
-            //    addToList = false;
+            if (searchRating.getSelectionModel().getSelectedIndex() > 0 && data.getDouble("Rating") < searchRating.getSelectionModel().getSelectedIndex())      //TODO implement after ratings
+                addToList = false;
 
             if (addToList)
                 out.add(data.getInt("TimelineID"));
-            addToList = true;           //reset for next line of resultset
+            addToList = true;           //reset for next line of ResultSet
         }
 
         return out;
@@ -301,12 +280,6 @@ public class Dashboard {
         filteredTimelines.setPredicate(t -> true);
     }
 
-    @FXML
-    public void onlyUserTimelines() {
-
-    }
-
-
     public void sortTimelines() {
         switch (sortBy.getSelectionModel().getSelectedIndex()) {
             case 0:
@@ -316,7 +289,7 @@ public class Dashboard {
                 sortedTimelines.setComparator((t1, t2) -> (t2.getName().compareToIgnoreCase(t1.getName())));
                 break;
             case 2:
-                sortedTimelines.setComparator((t1, t2) -> (t2.getCreationDate().compareTo(t1.getCreationDate())));
+                sortedTimelines.setComparator(Comparator.comparing(Timeline::getCreationDate).reversed());
                 break;
             case 3:
                 sortedTimelines.setComparator(Comparator.comparing(Timeline::getCreationDate));
@@ -390,149 +363,6 @@ public class Dashboard {
 
         titleText.setText("Title: " + timeline.getName() + "\nDescription: " + timeline.getDescription()
                 + "\nDate Created: " + year + "/" + month + "/" + day + "\nKeywords: " + keyWords);
-    }
-
-    public void advancedSearch() throws SQLException {
-        boolean startDate = true;
-        boolean endDate = true;
-        Date startDateSpinner = new Date(startInputs.get(0).getValue(), startInputs.get(1).getValue(), startInputs.get(2).getValue(),
-                startInputs.get(3).getValue(), startInputs.get(4).getValue(), startInputs.get(5).getValue(), startInputs.get(6).getValue());
-        //System.out.println(startDateSpinner.toString());
-        if (startDateSpinner.getYear() == -2147483647)
-            startDateSpinner.setYear(0);
-        if (startDateSpinner.getMonth() == 1)
-            startDateSpinner.setMonth(0);
-        if (startDateSpinner.getDay() == 1)
-            startDateSpinner.setDay(0);
-        //System.out.println(startDateSpinner.toString());
-        if (startDateSpinner.toString().equals("0-000000"))
-            startDate = false;
-
-
-        Date endDateSpinner = new Date(endInputs.get(0).getValue(), endInputs.get(1).getValue(), endInputs.get(2).getValue(),
-                endInputs.get(3).getValue(), endInputs.get(4).getValue(), endInputs.get(5).getValue(), endInputs.get(6).getValue());
-        //System.out.println(endDateSpinner.toString());
-
-        if (endDateSpinner.getYear() == -2147483647)
-            endDateSpinner.setYear(0);
-        if (endDateSpinner.getMonth() == 1)
-            endDateSpinner.setMonth(0);
-        if (endDateSpinner.getDay() == 1)
-            endDateSpinner.setDay(0);
-        if (endDateSpinner.toString().equals("0-000000"))
-            endDate = false;
-        //System.out.println(endDateSpinner.toString());
-
-        List<Timeline> tempAllList;
-        List<Timeline> rightTimelines = new ArrayList<>(); //Currently the right list unless we need to update it with spinner search
-        //If only searching with Range and nothing else
-        //If searching with Range amongst else
-        if ((startDate || endDate)) {
-            PreparedStatement out = DBM.conn.prepareStatement("SELECT * FROM timelines");
-            tempAllList = DBM.getFromDB(out, new Timeline());
-            //If range is defined in both ends
-            if (startDate & endDate) {
-                Date start = startDateSpinner;
-                Date end = endDateSpinner;
-                for (int i = 0; i < tempAllList.size(); i++) {
-                    if (tempAllList.get(i).getStartDate().compareTo(start) != -1 & tempAllList.get(i).getEndDate().compareTo(end) != 1)
-                        rightTimelines.add(tempAllList.get(i));
-                }
-
-            }
-            //If range is defined in start
-            else if (startDate) {
-                Date start = startDateSpinner;
-                Date end = endDateSpinner;
-                for (int i = 0; i < tempAllList.size(); i++) {
-                    if (tempAllList.get(i).getStartDate().compareTo(start) != -1)
-                        rightTimelines.add(tempAllList.get(i));
-                }
-            }
-            //If range is defined in end
-            else {
-                Date start = startDateSpinner;
-                Date end = endDateSpinner;
-                for (int i = 0; i < tempAllList.size(); i++) {
-                    if (tempAllList.get(i).getEndDate().compareTo(end) != 1)
-                        rightTimelines.add(tempAllList.get(i));
-                }
-            }
-        }
-
-
-        String[] keywords = null;
-        StringBuilder dynamicParameter = new StringBuilder();
-        if (searchKeywords.getText() != null) {
-            keywords = searchKeywords.getText().trim().split(" ");
-
-            for (int i = 1; i < keywords.length; i++) {
-                //System.out.println(keywords[i]);
-                dynamicParameter.append("OR  CONCAT(',', `Keywords`, ',') LIKE CONCAT('%,', COALESCE(?, '%'), ',%')");
-            }
-        }
-
-        PreparedStatement stmt3 = DBM.conn.prepareStatement("SELECT * FROM `timelines` LEFT JOIN `users` ON users.UserID = timelines.TimelineOwner WHERE " +
-                " CONCAT(' ', `TimelineName`, ' ') LIKE CONCAT('% ', COALESCE(?, '%'), ' %') AND `UserName` = COALESCE(NULLIF(?, ''), `UserName`) AND `Rating` = COALESCE(NULLIF(?, ''), `Rating`)  AND (CONCAT(',', `Keywords`, ',') LIKE CONCAT('%,', COALESCE(?, '%'), ',%') " + dynamicParameter + ")  ;");
-        if (searchTimelineName.getText().isEmpty())
-            stmt3.setString(1, "%");
-        else
-            stmt3.setString(1, searchTimelineName.getText());
-        stmt3.setString(2, searchCreator.getText());
-        stmt3.setInt(3, 0); //For now until the Rating combobox provides something
-        if (keywords != null)
-            for (int i = 4; i < keywords.length + 4; i++) {
-                stmt3.setString(i, keywords[i - 4]);
-                //System.out.println(keywords[i - 4]);
-            }
-        else
-            stmt3.setString(4, searchKeywords.getText());
-
-
-        //EXAMPLE OF RETURNING THE TIMELINES THAT FULFILL THE SEARCH AS TIMELINE OBJECT
-        //System.out.println();
-        //System.out.println("======SEARCH RESULTS as objects - THE TIMELINES NAMES==========");
-        //System.out.println(stmt3);
-        List<Timeline> list = DBM.getFromDB(stmt3, new Timeline());
-        //System.out.println(startInputs.toString() + "what the startINput says");
-
-        if (!startDate & !endDate) {
-            rightTimelines = list;
-            //System.out.println("Spinner not used print result from SQL ");
-        } else if (rightTimelines.isEmpty())
-            //System.out.println("Spinner used but no match so ignore sql result")
-            ;
-
-        else if (!rightTimelines.isEmpty() & list.isEmpty()) {
-            rightTimelines = new ArrayList<>();
-            //System.out.println("Spinner used but AND match but sql no match");
-        } else if (!rightTimelines.isEmpty() & !list.isEmpty()) {
-            List<Timeline> temp = new ArrayList<>();
-            for (int i = 0; i < rightTimelines.size(); i++) {
-                for (int j = 0; j < list.size(); j++) {
-                    if (rightTimelines.get(i).getID() == list.get(j).getID())
-                        temp.add(rightTimelines.get(i));
-                }
-            }
-            rightTimelines = temp;
-            //System.out.println("have matches");
-        }
-
-        //for (int i = 0; i < rightTimelines.size(); i++)
-        //System.out.println(list.get(i).getName());
-
-        if (cbOnlyViewPersonalLines.isSelected()) {
-
-            List<Timeline> userline = new ArrayList<>();
-            for (int i = 0; i < rightTimelines.size(); i++) {
-                for (int j = 0; j < userTimelines.size(); j++) {
-                    if (userTimelines.get(j).getID() == rightTimelines.get(i).getID())
-                        userline.add(rightTimelines.get(i));
-                }
-            }
-            this.list.setItems(FXCollections.observableArrayList(userline));
-        } else
-            this.list.setItems(FXCollections.observableArrayList(rightTimelines));
     }
 
     private void setupTimeInputStartAndEnd(String timeSpinnerLabel, int minValue, int maxValue, int column, int row,
@@ -624,6 +454,49 @@ public class Dashboard {
             filteredTimelines.getSource().remove(list.getSelectionModel().getSelectedItem());
             list.getSelectionModel().select(null);
             return true;
+        }
+    }
+
+    private static class RatingsListCell extends ListCell<Integer> {    //for displaying ratings in combobox
+        @Override
+        protected void updateItem(Integer item, boolean empty) {
+            super.updateItem(item, empty);
+            if (empty || item == null || item == 0) {           //zero treated as blank/unused
+                setText(null);
+            } else {
+                setText(item.toString());
+            }
+        }
+    }
+
+    //approach from https://stackoverflow.com/a/27439026
+    private class TimelineCellListCell extends ListCell<Timeline> {         //for displaying timelines
+        private Node cellNode;
+        private TimelineCell cell;
+
+        public TimelineCellListCell() {
+            super();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("../FXML/TimelineCell.fxml"));
+            try {
+                cellNode = loader.load();
+                cell = loader.getController();
+
+            } catch (IOException e) {
+                System.err.println("Could not load TimelineCell.fxml");
+            }
+        }
+
+        @Override
+        protected void updateItem(Timeline item, boolean empty) {
+            super.updateItem(item, empty);
+            if (item != null && !empty) { //test for null item and empty parameter
+                setGraphic(cellNode);
+                if (!(cell == null)) {
+                    cell.setTimeline(item, list.getWidth() - 30);
+                }
+            } else {
+                setGraphic(null);
+            }
         }
     }
 }
