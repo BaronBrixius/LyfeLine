@@ -388,7 +388,7 @@ public abstract class Editor {
     }
 
     //Method that returns the image format as a string i.e sun.png == "png"
-    private String getFormat(File f) throws IOException {
+    protected String getFormat(File f) throws IOException {
         ImageInputStream iis = ImageIO.createImageInputStream(f);
         Iterator<ImageReader> imageReaders = ImageIO.getImageReaders(iis);
         String type = "png";
@@ -399,8 +399,8 @@ public abstract class Editor {
         return type;
     }
 
-    private String copyImage(File image, String filename) throws IOException { //Takes the file chosen and the name of it
-        String outPath = "src/main/resources/images/";
+    protected String copyImage(File image, String filename) throws IOException { //Takes the file chosen and the name of it
+        String outPath = "src/main/resources/images/event/";
         String imageName = filename;
         InputStream is = null;
         OutputStream os = null;
@@ -445,8 +445,8 @@ public abstract class Editor {
     }
 
     //Method to check if the image folder has this name already to avoid duplicates overriding earlier uploads
-    private boolean folderHasImage(String path) {
-        File folder = new File("src/main/resources/images/");
+    protected boolean folderHasImage(String path) {
+        File folder = new File("src/main/resources/images/event/");
         File[] listOfFiles = folder.listFiles();
         List<String> images = new ArrayList<>();
 
