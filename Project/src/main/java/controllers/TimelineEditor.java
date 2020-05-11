@@ -7,6 +7,9 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
+import javafx.scene.layout.HBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Polygon;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 
@@ -23,7 +26,9 @@ import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 
 public class TimelineEditor extends Editor {
+    private final ObservableList<String> keywords = FXCollections.observableArrayList();
     public Timeline timeline;
+    public HBox ratingBox;
     @FXML
     ComboBox<String> timeInput;
     @FXML
@@ -58,6 +63,7 @@ public class TimelineEditor extends Editor {
             e.printStackTrace();
         }
     }
+
 
     boolean setTimeline(Timeline timeline) {
         this.timeline = timeline;
