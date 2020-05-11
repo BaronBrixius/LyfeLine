@@ -14,6 +14,7 @@ import java.io.*;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,7 +37,7 @@ public class TimelineEditor extends Editor {
     @FXML
     private TextField keywordInput;
     private final ObservableList<String> keywords = FXCollections.observableArrayList();
-
+    private File imageChosen;
     public void initialize() {
         super.initialize();
 
@@ -247,64 +248,12 @@ public class TimelineEditor extends Editor {
         }
         return false;
     }
-}
 
-		if (timeline.getKeywords().size() != keywords.size())
-			return true;
-		if (timeline.getScale() != timeInput.getSelectionModel().getSelectedIndex() + 1)
-			return true;
-		for (int i = 0; i < keywords.size(); i++)
-			if (timeline.getKeywords().get(i).compareTo(keywords.get(i)) != 0)
-				return true;
 
-		return false;
-	}
 
-	boolean save() {
-		updateItem();
-		super.save();
-		parentController.populateDisplay();
-		return true;
-	}
 
-	boolean isUniqueKeyword(String k) {
-		for (String s : keywords) {
-			if (k.equalsIgnoreCase(s))
-				return false;
 
-		}
-		return true;
-	}
 
-	@FXML
-	void addKeyword() {
-		String inputWord = keywordInput.getText();
-		inputWord = inputWord.replace(",", " ");
-		if (inputWord.isBlank()) {
-			feedbackText.setText("Keyword cannot be empty!");
-		} else {
-			if (!isUniqueKeyword(inputWord)) {
-				feedbackText.setText("Keyword already exists!");
-			} else {
-				keywords.add(inputWord);
-				feedbackText.setText("Keyword " + inputWord + " added");
-				keywords.sort(String::compareTo);
-				keywordInput.setText("");
-			}
-		}
-	}
-
-	@FXML
-	void removeKeyword() {
-		if (keywordView.getSelectionModel().getSelectedIndex() < 0) {
-			feedbackText.setText("No keyword selected!");
-		} else {
-			String removedWord = keywordView.getSelectionModel().getSelectedItem();
-			keywords.remove(keywordView.getSelectionModel().getSelectedIndex());
-			feedbackText.setText("Keyword " + removedWord + " removed!");
-			keywordView.getSelectionModel().select(-1);
-		}
-	}
 
 	@Override
 	protected void uploadImage() throws IOException {
@@ -333,18 +282,15 @@ public class TimelineEditor extends Editor {
 				imageFilePath = copyImage(imageChosen, imageChosen.getName());
 				image.setImage(new Image("File:" + imageFilePath));
 
-			} /*
+			} 
 			else {
 				if (ImageResolutionNotification())
 				{
 					uploadImage();
 				}
-				else {
-					clearImage();
-				}
 					
 
-			}*/
+			}
 		}
 	}
 
