@@ -150,7 +150,8 @@ public abstract class Editor {
         Date newEndDate = new Date(endInputs.get(0).getValue(), endInputs.get(1).getValue(), endInputs.get(2).getValue(),
                 endInputs.get(3).getValue(), endInputs.get(4).getValue(), endInputs.get(5).getValue(), endInputs.get(6).getValue());
 
-        if (newStartDate.compareTo(newEndDate) > 0) {
+        boolean hasNoDuration = (this instanceof EventEditor && !((EventEditor) this).hasDuration.isSelected());
+        if (!hasNoDuration && newStartDate.compareTo(newEndDate) > 0) {
             Alert confirmDelete = new Alert(Alert.AlertType.CONFIRMATION);
             confirmDelete.setTitle("Invalid Dates");
             confirmDelete.setHeaderText("The End Date must be after the Start Date.");

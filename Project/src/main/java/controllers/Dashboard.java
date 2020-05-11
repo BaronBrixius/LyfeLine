@@ -14,7 +14,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
-import javafx.util.Callback;
 import javafx.util.StringConverter;
 import utils.Date;
 
@@ -98,8 +97,6 @@ public class Dashboard {
         setupTimeInputStartAndEnd("Second", -1, 59, 1, 2, 5);
         setupTimeInputStartAndEnd("Millisecond", -1, 999, 2, 2, 6);
 
-        // TODO fix this to be cleaner, I did it as a last second thing because it used
-
         initializeButtons();
 
         // Initialised sorting
@@ -107,12 +104,7 @@ public class Dashboard {
         // Fill ListView with the timelines
         populateTimelineList();
 
-        list.setCellFactory(new Callback<ListView<Timeline>, ListCell<Timeline>>() {
-			@Override
-			public ListCell<Timeline> call(ListView<Timeline> listView) {
-				return new CustomListCell();
-			}
-		});
+        list.setCellFactory(listView -> new CustomListCell());
 
         // Add sorting options
         sortBy.getItems().setAll("Alphabetically", "Reverse-Alphabetically", "Most Recent", "Oldest");
@@ -145,11 +137,9 @@ public class Dashboard {
         btnCreate.setVisible(GUIManager.loggedInUser.getAdmin());
         btnCreate.setDisable(!GUIManager.loggedInUser.getAdmin());
         btnEdit.setVisible(GUIManager.loggedInUser.getAdmin());
-        btnEdit.setDisable(list.getSelectionModel().isEmpty()
-                || list.getSelectionModel().getSelectedItem().getOwnerID() != GUIManager.loggedInUser.getUserID());
+        btnEdit.setDisable(list.getSelectionModel().isEmpty() || list.getSelectionModel().getSelectedItem().getOwnerID() != GUIManager.loggedInUser.getUserID());
         btnDelete.setVisible(GUIManager.loggedInUser.getAdmin());
-        btnDelete.setDisable(list.getSelectionModel().isEmpty()
-                || list.getSelectionModel().getSelectedItem().getOwnerID() != GUIManager.loggedInUser.getUserID());
+        btnDelete.setDisable(list.getSelectionModel().isEmpty() || list.getSelectionModel().getSelectedItem().getOwnerID() != GUIManager.loggedInUser.getUserID());
         adminGUI.setVisible(GUIManager.loggedInUser.getAdmin());
         adminGUI.setDisable(!GUIManager.loggedInUser.getAdmin());
         timelineViewButton.setDisable(list.getSelectionModel().getSelectedItem() == null);
