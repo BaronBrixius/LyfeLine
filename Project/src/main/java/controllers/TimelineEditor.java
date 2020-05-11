@@ -28,6 +28,8 @@ public class TimelineEditor extends Editor {
     public Timeline timeline;
     public HBox ratingBox;
     @FXML
+    HBox keywordBox;
+    @FXML
     ComboBox<String> timeInput;
     @FXML
     Button addKeywordButton;
@@ -73,6 +75,7 @@ public class TimelineEditor extends Editor {
     void toggleEditable(boolean editable) {
         super.toggleEditable(editable);
         keywordInput.setEditable(editable);
+        keywordBox.setDisable(!editable);
         timeInput.setDisable(!editable);
     }
 
@@ -173,8 +176,6 @@ public class TimelineEditor extends Editor {
         }
     }
 
-
-
     @FXML
     void removeKeyword() {
         if (keywordView.getSelectionModel().getSelectedIndex() < 0) {
@@ -251,12 +252,6 @@ public class TimelineEditor extends Editor {
         }
         return false;
     }
-
-
-
-
-
-
 
 	@Override
 	protected void uploadImage() throws IOException {

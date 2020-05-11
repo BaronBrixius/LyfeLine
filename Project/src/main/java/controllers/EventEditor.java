@@ -145,8 +145,8 @@ public class EventEditor extends Editor {
     boolean close() {
         parentController.rightSidebar.getChildren().remove(editor);
         parentController.rightSidebar.getChildren().add(editor);    //This moves the editor to the top of the stack pane
-        if (event != null && hasChanges())          //do you wanna save and exit or just exit?
-            if (closeConfirm())
+        if (event != null && hasChanges())
+            if (closeConfirm())          //do you wanna save and exit or just exit?
                 if (validData())
                 {
                     save();
