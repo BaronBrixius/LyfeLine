@@ -8,9 +8,11 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.text.Text;
 
-import java.io.IOException;
+import java.io.*;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public class TimelineEditor extends Editor {
@@ -173,6 +175,71 @@ public class TimelineEditor extends Editor {
             feedbackText.setText("Keyword " + removedWord + " removed!");
             keywordView.getSelectionModel().select(-1);
         }
+    }
+
+    @Override
+    protected String copyImage(File image, String filename) throws IOException { //Takes the file chosen and the name of it
+        String outPath = "src/main/resources/images/timeline/";
+        String imageName = filename;
+        InputStream is = null;
+        OutputStream os = null;
+
+        try {
+            is = new FileInputStream(image);
+            System.out.println("reading complete.");
+            //Path for saving, have special events folder now so if timeline guys are doing something they don't override copies
+            int duplicateDigit = 2;
+
+            while (folderHasImage(imageName)) {
+                int indexOfDot = filename.lastIndexOf(".");
+                if (imageName.matches(".*\\s\\(\\d\\)\\..*")) {
+                    int indexOfBrackets = imageName.lastIndexOf("(");
+                    imageName = imageName.substring(0, indexOfBrackets + 1) + duplicateDigit + ")" + "." + getFormat(image);
+
+                } else {
+                    imageName = imageName.substring(0, indexOfDot) + " (" + duplicateDigit + ")" + "." + getFormat(image);
+                }
+                duplicateDigit++;
+            }
+
+
+            os = new FileOutputStream(new File(outPath + imageName));
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = is.read(buffer)) > 0) {
+                os.write(buffer, 0, length);
+            }
+
+            System.out.println("Writing complete.");
+        } catch (IOException e) {
+            System.out.println("Error: " + e);
+
+        } finally {
+            if (is != null)
+                is.close();
+            if (os != null)
+                os.close();
+        }
+        return outPath + imageName;
+    }
+
+    //Method to check if the image folder has this name already to avoid duplicates overriding earlier uploads
+    @Override
+    protected boolean folderHasImage(String path) {
+        File folder = new File("src/main/resources/images/timeline/");
+        File[] listOfFiles = folder.listFiles();
+        List<String> images = new ArrayList<>();
+
+        for (int i = 0; i < listOfFiles.length; i++) {
+            if (listOfFiles[i].isFile()) {
+                images.add(listOfFiles[i].getName());
+            }
+        }
+        for (String s : images) {
+            if (path.equalsIgnoreCase(s))
+                return true;
+        }
+        return false;
     }
 }
 
