@@ -7,10 +7,12 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
-import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
 import java.io.*;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -19,14 +21,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
-import javax.imageio.stream.ImageInputStream;
-
 public class TimelineEditor extends Editor {
     private final ObservableList<String> keywords = FXCollections.observableArrayList();
     public Timeline timeline;
-    public HBox ratingBox;
     @FXML
     HBox keywordBox;
     @FXML
@@ -241,9 +238,9 @@ public class TimelineEditor extends Editor {
         File[] listOfFiles = folder.listFiles();
         List<String> images = new ArrayList<>();
 
-        for (int i = 0; i < listOfFiles.length; i++) {
-            if (listOfFiles[i].isFile()) {
-                images.add(listOfFiles[i].getName());
+        for (File f : listOfFiles) {
+            if (f.isFile()) {
+                images.add(f.getName());
             }
         }
         for (String s : images) {
@@ -280,13 +277,13 @@ public class TimelineEditor extends Editor {
 				imageFilePath = copyImage(imageChosen, imageChosen.getName());
 				image.setImage(new Image("File:" + imageFilePath));
 
-			} 
+			}
 			else {
 				if (ImageResolutionNotification())
 				{
 					uploadImage();
 				}
-					
+
 
 			}
 		}
@@ -321,7 +318,7 @@ public class TimelineEditor extends Editor {
 			}else {
 				check = true;
 			}
-		} 
+		}
 		return check;
 
 	}

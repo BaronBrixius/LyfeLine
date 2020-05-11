@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 public class EventSelector {
     private final ObservableList<Event> eventList = FXCollections.observableArrayList();
@@ -33,7 +34,7 @@ public class EventSelector {
     @FXML
     Button deleteButton;
     @FXML
-    TextField searchBar;
+    TextField searchInput;
     @FXML
     Button newButton;
     @FXML
@@ -59,33 +60,16 @@ public class EventSelector {
         sortBy.getSelectionModel().selectedIndexProperty().addListener(ov -> sortEvents(sortBy.getSelectionModel().getSelectedIndex()));
 
         //formatting for timeline and event selectors
-        timelineComboBox.setCellFactory(param -> new ListCell<>() {       //changes how Timelines are displayed (name only)
-            @Override
-            protected void updateItem(Timeline item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null || item.getName() == null) {
-                    setText(null);
-                } else {
-                    setText(item.getName());
-                }
-            }
-        });
+        timelineComboBox.setButtonCell(new TimelineListCell());
+        timelineComboBox.setCellFactory(param -> new TimelineListCell());
+        eventListView.setCellFactory(param -> new EventListCell());
 
-        eventListView.setCellFactory(param -> new ListCell<>() {         //changes how Events are displayed (name only)
-            @Override
-            protected void updateItem(Event item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null || item.getName() == null) {
-                    setText(null);
-                } else {
-                    setText(item.getName());
-                }
-            }
-        });
+        //search bar listener
+        searchInput.textProperty().addListener(e -> setFilter());
 
-
+        //listeners to respond to a timeline or event being selected
         timelineComboBox.getSelectionModel().selectedIndexProperty().addListener(event -> {     //on selecting a different timeline, clear the event selection and disable event controls
-            filterEvents();
+            setFilter();
             eventListView.getSelectionModel().clearSelection();
             disableEventControlButtons(true);
 
@@ -207,15 +191,6 @@ public class EventSelector {
         }
     }
 
-    void filterEvents() {
-        if (timelineComboBox.getSelectionModel().getSelectedIndex() < 0)    //if no selection, display everything
-            filterableEventList.setPredicate(e -> true);
-        else
-            filterableEventList.setPredicate(e -> (timelineEventLinks.stream().anyMatch(                //checks the junction table
-                    te -> te.get(0) == timelineComboBox.getSelectionModel().getSelectedItem().getID()   //filters by the selected timeline
-                            && e.getID() == te.get(1))));                                               //and returns whether each event is on that timeline
-    }
-
     void sortEvents(int selection) {
         switch (selection) {
             case 0:
@@ -236,8 +211,25 @@ public class EventSelector {
         }
     }
 
-    public void search() {
-        //not implemented yet
+    private void setFilter() {
+        filterableEventList.setPredicate(getFilterByTimeline().and(getFilterBySearch()));
+    }
+
+    Predicate<Event> getFilterBySearch() {
+        String searchText = searchInput.getText();
+        if (searchText == null || searchText.isEmpty())
+            return timeline -> true;
+        else
+            return timeline -> timeline.getName().toLowerCase().contains(searchText.toLowerCase());
+    }
+
+    Predicate<Event> getFilterByTimeline() {
+        if (timelineComboBox.getSelectionModel().getSelectedIndex() < 0)                                //if no selection, display everything
+            return e -> true;
+        else
+            return e -> (timelineEventLinks.stream().anyMatch(                                          //checks the junction table
+                    te -> te.get(0) == timelineComboBox.getSelectionModel().getSelectedItem().getID()   //filters by the selected timeline
+                            && e.getID() == te.get(1)));                                                //and returns whether each event is on that timeline
     }
 
     public void close() {
@@ -260,5 +252,29 @@ public class EventSelector {
 
     public void clearSelectedTimeline() {
         timelineComboBox.getSelectionModel().select(-1);
+    }
+
+    private static class EventListCell extends ListCell<Event> {         //changes how Events are displayed (name only)
+        @Override
+        protected void updateItem(Event item, boolean empty) {
+            super.updateItem(item, empty);
+            if (empty || item == null || item.getName() == null) {
+                setText(null);
+            } else {
+                setText(item.getName());
+            }
+        }
+    }
+
+    private static class TimelineListCell extends ListCell<Timeline> {         //changes how Events are displayed (name only)
+        @Override
+        protected void updateItem(Timeline item, boolean empty) {
+            super.updateItem(item, empty);
+            if (empty || item == null || item.getName() == null) {
+                setText(null);
+            } else {
+                setText(item.getName());
+            }
+        }
     }
 }
