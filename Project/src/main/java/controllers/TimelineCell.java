@@ -39,9 +39,9 @@ public class TimelineCell {
         ratingBox.setOnMouseEntered(e -> ratingBox.setOpacity(1));
         ratingBox.setOnMouseMoved(e -> colorStarsByRating((int) Math.ceil(e.getX() * 5 / ratingBox.getWidth())));   //highlight current star and ones to the left
         ratingBox.setOnMouseExited(e -> {
-            colorStarsByRating((int) Math.ceil(timeline.getRating()));
+            colorStarsByRating((int) Math.ceil(timeline.getRating()));  //return highlighting to normal
             ratingBox.setOpacity((timeline.getRating() > 1) ? 1 : 0);
-        });                 //return highlighting to normal
+        });
     }
 
     private void setupRatingButton(Polygon button, int index) {
