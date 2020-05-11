@@ -160,26 +160,24 @@ public class TimelineView {
     }
 
     void placeEvent(EventNode newNode, int eventsPlacedCount) {
-        int startColumn = newNode.getStartColumn();
-        int columnSpan = newNode.getColumnSpan();
-        if (startColumn < 0) {                                          // if node starts before the timeline begins, cut the beginning
-            columnSpan += startColumn;
-            startColumn = 0;
+        if (newNode.getStartColumn() < 0) {                                          // if node starts before the timeline begins, cut the beginning
+            newNode.setColumnSpan(newNode.getColumnSpan() + newNode.getStartColumn());
+            newNode.setStartColumn(0);
         }
-        if (startColumn + columnSpan > timelineGrid.getColumnCount())   // if node goes past the timeline's end, cut the end
-            columnSpan = timelineGrid.getColumnCount() - startColumn - 1;
-        if (columnSpan < 1)                                             // if, after cutting, nothing remains, don't display it at all
+        if (newNode.getStartColumn() + newNode.getColumnSpan() > timelineGrid.getColumnCount())   // if node goes past the timeline's end, cut the end
+            newNode.setColumnSpan(timelineGrid.getColumnCount() - newNode.getStartColumn() - 1);
+        if (newNode.getColumnSpan() < 1)                                             // if, after cutting, nothing remains, don't display it at all
             return;
 
         int row = 1;
         for (int i = 0; i < eventsPlacedCount; i++) { // check previous nodes to see if they occupy desired columns
-            if (eventList.get(i).getStartColumn() <= newNode.getStartColumn() + newNode.getColumnSpan()                     // if a previous node starts before the new one would end
-                    && eventList.get(i).getStartColumn() + eventList.get(i).getColumnSpan() >= newNode.getStartColumn())    // and it ends after the new one starts
-                row++;                                                                                                      // try next row
-            else
-                break;                                                                                                      //otherwise, we found an empty spot
+            if (row == eventList.get(i).getRow()
+                    && eventList.get(i).getStartColumn() < newNode.getStartColumn() + newNode.getColumnSpan()              // if a previous node on current row starts before the new one would end
+                    && eventList.get(i).getStartColumn() + eventList.get(i).getColumnSpan() > newNode.getStartColumn())    // and it ends after the new one starts
+                row++;                                                                                                     // try next row
         }
-        timelineGrid.add(newNode.getDisplayPane(), startColumn, row, columnSpan, 1);
+        newNode.setRow(row);
+        timelineGrid.add(newNode.getDisplayPane(), newNode.getStartColumn(), row, newNode.getColumnSpan(), 1);
     }
 
     public void openEventSelector() {

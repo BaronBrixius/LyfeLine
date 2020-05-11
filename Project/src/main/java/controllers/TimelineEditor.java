@@ -8,8 +8,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Polygon;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 
@@ -101,7 +99,7 @@ public class TimelineEditor extends Editor {
 
         timeline.setScale((timeInput.getSelectionModel().getSelectedIndex()) + 1);
         parentController.setActiveTimeline(timeline);
-        parentController.eventSelectorController.populateTimelineList();
+        parentController.eventSelectorController.populateDisplay();
     }
 
     @FXML

@@ -109,8 +109,7 @@ public class EventEditor extends Editor {
 
         if (newEvent)
             addToTimeline();        //new event is automatically added to active timeline when saved
-        parentController.eventSelectorController.populateTimelineList();
-        parentController.eventSelectorController.populateEventList();
+        parentController.eventSelectorController.populateDisplay();
         parentController.populateDisplay();
         return true;
     }
@@ -123,7 +122,7 @@ public class EventEditor extends Editor {
             else
                 System.out.println("Event is already on " + parentController.activeTimeline + " timeline.");
         } catch (SQLException e) {
-            System.out.println("Timeline not found.");
+            System.out.println("Timeline not found in database.");
         }
     }
 
