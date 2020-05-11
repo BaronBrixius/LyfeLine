@@ -41,7 +41,6 @@ public class TimelineEditor extends Editor {
     Text feedbackText;
     @FXML
     private TextField keywordInput;
-    private final ObservableList<String> keywords = FXCollections.observableArrayList();
     private File imageChosen;
     public void initialize() {
         super.initialize();
