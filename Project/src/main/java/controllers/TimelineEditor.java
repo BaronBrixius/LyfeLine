@@ -161,6 +161,8 @@ public class TimelineEditor extends Editor {
         }
     }
 
+
+
     @FXML
     void removeKeyword() {
         if (keywordView.getSelectionModel().getSelectedIndex() < 0) {
