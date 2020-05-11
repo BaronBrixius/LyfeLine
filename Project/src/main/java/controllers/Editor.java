@@ -367,12 +367,15 @@ public abstract class Editor {
             );
             //The current image chosen by FileChooser
             File imageChosen = chooser.showOpenDialog(GUIManager.mainStage);
+            System.out.println(getFormat(imageChosen));
+            if(getFormat(imageChosen).matches("(JPEG|png|jpg|bmp|gif|wbmp)")){
             if (imageChosen != null) {
-
                 imageFilePath = copyImage(imageChosen, imageChosen.getName());
                 image.setImage(new Image("File:" + imageFilePath));
             }
-        }
+            }}
+        else
+            throw new IllegalArgumentException("Not accepted image format");
     }
 
     @FXML
@@ -391,7 +394,7 @@ public abstract class Editor {
     protected String getFormat(File f) throws IOException {
         ImageInputStream iis = ImageIO.createImageInputStream(f);
         Iterator<ImageReader> imageReaders = ImageIO.getImageReaders(iis);
-        String type = "png";
+        String type = "";
         while (imageReaders.hasNext()) {
             ImageReader reader = imageReaders.next();
             type = reader.getFormatName();
@@ -400,7 +403,7 @@ public abstract class Editor {
     }
 
     protected String copyImage(File image, String filename) throws IOException { //Takes the file chosen and the name of it
-        String outPath = "src/main/resources/images/";
+        String outPath = "src/main/resources/images/event/";
         String imageName = filename;
         InputStream is = null;
         OutputStream os = null;
@@ -445,8 +448,8 @@ public abstract class Editor {
     }
 
     //Method to check if the image folder has this name already to avoid duplicates overriding earlier uploads
-    private boolean folderHasImage(String path) {
-        File folder = new File("src/main/resources/images/");
+    protected boolean folderHasImage(String path) {
+        File folder = new File("src/main/resources/images/event/");
         File[] listOfFiles = folder.listFiles();
         List<String> images = new ArrayList<>();
 
