@@ -14,6 +14,7 @@ public class Timeline extends TimelineObject<Timeline> {
     private String timelineDescription = "";
     private List<Event> eventList = new ArrayList<>();
     private List<String> keywords = new ArrayList<>();
+    private List<Integer> ratingsList = new ArrayList<>();
     private double rating;
 
     public Timeline() {
@@ -190,11 +191,24 @@ public class Timeline extends TimelineObject<Timeline> {
     }
 
 
-    public void addRating(int userID, int rating){
-        System.out.println("Rating of " + rating + " added/updated. Dummy response text.");
-    }
+    public PreparedStatement addRating(int rating, int userId) throws SQLException {
+        PreparedStatement out = DBM.conn.prepareStatement("INSERT INTO rating (`rating`, `userId`, `timeLineID`) VALUES (?, ?, ?)");
+        out.setInt(1, rating);
+        out.setInt(2, userId);
+        out.setInt(3, 1);
 
-    public double getRating(){
+        out.execute();
+
+        System.out.println("Rating of " + rating + " added/updated. Dummy response text.");
+
+        return out;
+
+    }
+    public double getRating() throws SQLException
+    {
+        PreparedStatement state = DBM.conn.prepareStatement("SELECT rating FROM project.rating\n" +
+                "JOIN project.timelines WHERE timelines.TimelineID = rating.timeLineID;");
+
         return rating;
     }
 
