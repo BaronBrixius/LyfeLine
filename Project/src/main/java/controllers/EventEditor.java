@@ -7,6 +7,7 @@ import javafx.util.StringConverter;
 
 import java.io.*;
 import java.sql.SQLException;
+import java.util.Optional;
 
 public class EventEditor extends Editor {
 
@@ -143,10 +144,32 @@ public class EventEditor extends Editor {
     @FXML
     boolean close() {
         parentController.rightSidebar.getChildren().remove(editor);
-        parentController.rightSidebar.getChildren().add(editor);
+        parentController.rightSidebar.getChildren().add(editor);    //This moves the editor to the top of the stack pane
         if (event != null && hasChanges())          //do you wanna save and exit or just exit?
-            saveConfirm();
-        parentController.rightSidebar.getChildren().remove(editor);
+            if (closeConfirm())
+                if (validData())
+                {
+                    save();
+                    return parentController.rightSidebar.getChildren().remove(editor);
+                }
+        return parentController.rightSidebar.getChildren().remove(editor);
+    }
+
+    @FXML
+    boolean closeConfirm() {
+
+        ButtonType yes = new ButtonType("Yes", ButtonBar.ButtonData.OK_DONE);
+        ButtonType no = new ButtonType("No", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+        Alert confirmSave = new Alert(Alert.AlertType.CONFIRMATION, "Would you like to save them before closing?", yes, no);
+
+        confirmSave.setTitle("Confirm Close");
+        confirmSave.setHeaderText("You have made unsaved changes!"); //TODO change text
+
+        Optional<ButtonType> result = confirmSave.showAndWait();
+
+        if (result.get() == no)
+            return false;
         return true;
     }
 }

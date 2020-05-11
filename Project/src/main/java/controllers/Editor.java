@@ -155,18 +155,10 @@ public abstract class Editor {
     @FXML
     boolean saveConfirm() {
         Alert confirmSave = new Alert(Alert.AlertType.CONFIRMATION);
-        if (itemInEditor instanceof Event)
-        {
-            confirmSave.setTitle("Confirm Close");
-            confirmSave.setHeaderText("You have made unsaved changes!");
-            confirmSave.setContentText("Would you like to save them before closing?");
-        }
-        else
-        {
-            confirmSave.setTitle("Confirm Save");
-            confirmSave.setHeaderText("This will make permanent changes!"); //TODO change text
-            confirmSave.setContentText("Would you like to save?");
-        }
+
+        confirmSave.setTitle("Confirm Save");
+        confirmSave.setHeaderText("This will make permanent changes!"); //TODO change text
+        confirmSave.setContentText("Would you like to save?");
 
         Optional<ButtonType> result = confirmSave.showAndWait();
 
