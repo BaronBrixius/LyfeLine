@@ -6,15 +6,22 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Polygon;
 import javafx.scene.text.Text;
 
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public class TimelineEditor extends Editor {
+    private final ObservableList<String> keywords = FXCollections.observableArrayList();
     public Timeline timeline;
+    public HBox ratingBox;
     @FXML
     ComboBox<String> timeInput;
     @FXML
@@ -27,7 +34,6 @@ public class TimelineEditor extends Editor {
     Text feedbackText;
     @FXML
     private TextField keywordInput;
-    private final ObservableList<String> keywords = FXCollections.observableArrayList();
 
     public void initialize() {
         super.initialize();
@@ -49,6 +55,7 @@ public class TimelineEditor extends Editor {
             e.printStackTrace();
         }
     }
+
 
     boolean setTimeline(Timeline timeline) {
         this.timeline = timeline;

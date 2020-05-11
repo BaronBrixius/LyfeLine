@@ -279,6 +279,11 @@ for example:      buttonName.getStyleClass().add("smallButton");                
     -fx-font-size: 7;
 }
 
+.paneBG{
+	-fx-background-position: center;	
+	-fx-background-repeat: no-repeat;
+}
+
 /*Here is a list of useful CSS commands:
 -fx-text-fill: black; (sets text color)
 -fx-font-size: 1.5em; (sets text size)
