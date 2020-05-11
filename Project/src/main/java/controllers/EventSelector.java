@@ -19,6 +19,9 @@ import java.util.List;
 import java.util.Optional;
 
 public class EventSelector {
+    private final ObservableList<Event> eventList = FXCollections.observableArrayList();
+    private final FilteredList<Event> filterableEventList = new FilteredList<>(eventList);
+    private final SortedList<Event> sortableEventList = new SortedList<>(filterableEventList);
     @FXML
     GridPane selector;
     @FXML
@@ -36,10 +39,7 @@ public class EventSelector {
     @FXML
     Button addToTimelineButton;
     @FXML
-    ListView<Event> eventListView = new ListView<>();
-    private FilteredList<Event> filterableEventList;
-    private ObservableList<Event> eventList = FXCollections.observableArrayList();
-    private SortedList<Event> sortableEventList;
+    ListView<Event> eventListView;
     private TimelineView parentController;
     private List<List<Integer>> timelineEventLinks;
 
@@ -50,10 +50,10 @@ public class EventSelector {
             addToTimelineButton.setVisible(false);
         }
 
-        populateDisplay();
-        filterableEventList = new FilteredList<>(eventList);
-        sortableEventList = new SortedList<>(filterableEventList);
         eventListView.setItems(sortableEventList);
+
+        populateDisplay();
+
 
         sortBy.getItems().setAll("Alphabetic", "Reverse Alphabetic", "Creation Date", "Reverse Creation Date", "Priority");
         sortBy.getSelectionModel().selectedIndexProperty().addListener(ov -> sortEvents(sortBy.getSelectionModel().getSelectedIndex()));
@@ -170,16 +170,16 @@ public class EventSelector {
     }
 
     void populateDisplay() {
+        Timeline currentSelection = timelineComboBox.getSelectionModel().getSelectedItem();
         populateTimelineList();
         populateEventList();
+        setTimelineSelected(currentSelection);
     }
 
     void populateTimelineList() {
         try {
-            Timeline currentSelection = timelineComboBox.getSelectionModel().getSelectedItem();
             PreparedStatement stmt = DBM.conn.prepareStatement("SELECT * FROM timelines");
             timelineComboBox.getItems().setAll(DBM.getFromDB(stmt, new Timeline()));
-            setTimelineSelected(currentSelection);
         } catch (SQLException e) {
             System.err.println("Could not access timelines database.");
         }
