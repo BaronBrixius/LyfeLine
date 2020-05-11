@@ -376,7 +376,7 @@ public abstract class Editor {
     }
 
     @FXML
-    private boolean ImageSaveConfirm() {
+    protected boolean ImageSaveConfirm() {
         Alert confirmSaveImage = new Alert(Alert.AlertType.CONFIRMATION);
         confirmSaveImage.setTitle("Confirm Change");
         confirmSaveImage.setHeaderText("Replacing or removing an image will permanently delete it from the system.");
@@ -388,7 +388,7 @@ public abstract class Editor {
     }
 
     //Method that returns the image format as a string i.e sun.png == "png"
-    private String getFormat(File f) throws IOException {
+    protected String getFormat(File f) throws IOException {
         ImageInputStream iis = ImageIO.createImageInputStream(f);
         Iterator<ImageReader> imageReaders = ImageIO.getImageReaders(iis);
         String type = "png";
@@ -399,7 +399,7 @@ public abstract class Editor {
         return type;
     }
 
-    private String copyImage(File image, String filename) throws IOException { //Takes the file chosen and the name of it
+    protected String copyImage(File image, String filename) throws IOException { //Takes the file chosen and the name of it
         String outPath = "src/main/resources/images/";
         String imageName = filename;
         InputStream is = null;
