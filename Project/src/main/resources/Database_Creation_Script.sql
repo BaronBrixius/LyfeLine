@@ -212,7 +212,16 @@ BEGIN
 END;
 
 
--- This part is for populating tables with dummy data
+CREATE TABLE `rating` (
+  `rating` int DEFAULT NULL,
+  `userId` int DEFAULT NULL,
+  `timeLineID` int DEFAULT NULL,
+  KEY `userID_idx` (`userId`),
+  KEY `timeLineID_idx` (`timeLineID`),
+  CONSTRAINT `timeLineID` FOREIGN KEY (`timeLineID`) REFERENCES `timelines` (`TimelineID`),
+  CONSTRAINT `userID` FOREIGN KEY (`userId`) REFERENCES `users` (`UserID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 
 
 INSERT INTO `users`
@@ -464,5 +473,11 @@ VALUES ('1', '1'),
        ('12', '24'),
        ('12', '25'),
        ('12', '26');
+
+
+INSERT INTO rating
+(`rating`, `userId`, `timeLineID`)
+VALUES (5, 1, 1),
+       (6, 2, 2);
        
 
