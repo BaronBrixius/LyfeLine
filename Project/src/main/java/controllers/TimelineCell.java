@@ -1,6 +1,7 @@
 package controllers;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +39,7 @@ public class TimelineCell {
 		}
 
 		ratingBox.setOnMouseMoved(e -> colorStarsByRating((int) Math.ceil(e.getX() * 5 / ratingBox.getWidth())));	//highlight current star and ones to the left
-		ratingBox.setOnMouseExited(e -> colorStarsByRating((int) Math.ceil(timeline.getRating())));					//return highlighting to normal
+		//ratingBox.setOnMouseExited(e -> colorStarsByRating((int) Math.ceil(timeline.getRating())));					//return highlighting to normal
 	}
 
 
@@ -62,7 +63,9 @@ public class TimelineCell {
 			angle += Math.PI / numPoints;       //simplified 2*PI / numPoints*2, rotates angle for next tip/intersection
 		}
 
-		button.setOnMouseClicked(e -> timeline.addRating(GUIManager.loggedInUser.getUserID(), index + 1));	//click a star to submit a rating
+		button.setOnMouseClicked(e -> {
+			timeline.rateTimeline(index +1);
+		});	//click a star to submit a rating
 	}
 
 	private void colorStarsByRating(int rating) {
@@ -79,7 +82,7 @@ public class TimelineCell {
 			title.setText(timeline.getName());
 			author.setText("By "+user.getUserName());
 			setBGImage(width);
-			colorStarsByRating((int) Math.ceil(timeline.getRating()));
+			//colorStarsByRating((int) Math.ceil(timeline.getRating()));
 		}
 	}
 
@@ -102,4 +105,5 @@ public class TimelineCell {
 		String imageURL = "'file:src/main/resources/images/image4.png'";
 		pane.setStyle("-fx-background-image: url("+imageURL+"); -fx-background-size: "+((int)(width+0.5))+"px;");
 	}
+
 }

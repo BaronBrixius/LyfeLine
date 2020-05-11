@@ -1,5 +1,6 @@
 package database;
 
+import controllers.GUIManager;
 import utils.Date;
 
 import java.sql.*;
@@ -14,6 +15,7 @@ public class Timeline extends TimelineObject<Timeline> {
     private String timelineDescription = "";
     private List<Event> eventList = new ArrayList<>();
     private List<String> keywords = new ArrayList<>();
+    private List<Integer> ratingsList = new ArrayList<>();
     private double rating;
 
     public Timeline() {
@@ -38,6 +40,12 @@ public class Timeline extends TimelineObject<Timeline> {
         this.ownerID = timelineOwner;
         this.keywords = keywords;
         this.eventList = eventList;
+        try {
+            this.rating = calcRating();
+        }
+        catch (SQLException ex){
+            ex.printStackTrace();
+        }
     }
 
     @Override
@@ -190,13 +198,56 @@ public class Timeline extends TimelineObject<Timeline> {
     }
 
 
-    public void addRating(int userID, int rating){
-        System.out.println("Rating of " + rating + " added/updated. Dummy response text.");
+    public PreparedStatement addRating(int rating, int userId) throws SQLException {
+        PreparedStatement out = DBM.conn.prepareStatement("INSERT INTO rating (`rating`, `userId`, `timeLineID`) VALUES (?, ?, ?)");
+        out.setInt(1, rating);
+        out.setInt(2, userId);
+        out.setInt(3, this.timelineID);
+        out.execute();
+        return out;
     }
 
-    public double getRating(){
-        return rating;
+    public PreparedStatement updateRating(int rating, int userId) throws SQLException {
+
+        PreparedStatement out = DBM.conn.prepareStatement("UPDATE rating SET `rating` = ?, `timeLineID` = ? WHERE (`userId` = ?)");
+        out.setInt(1, rating);
+        out.setInt(2, this.timelineID);
+        out.setInt(3, userId);
+        out.execute();
+        return out;
     }
+
+    public boolean checkRating() throws SQLException {
+        PreparedStatement rate = DBM.conn.prepareStatement("SELECT COUNT(*) FROM rating WHERE userId = ? AND timeLineID = ? ");
+        rate.setInt(1, GUIManager.loggedInUser.getUserID());
+        rate.setInt(2, this.getID());
+        ResultSet rs = rate.executeQuery();
+        rs.next();
+        return rs.getInt(1)>0;
+    }
+
+    private double calcRating() throws SQLException {
+        PreparedStatement rate = DBM.conn.prepareStatement("SELECT AVG(rating) FROM rating WHERE timeLineID = ?");
+        rate.setInt(1, this.getID());
+        ResultSet rs = rate.executeQuery();
+        rs.next();
+        return rs.getDouble(1);
+    }
+
+    public void rateTimeline(int index) {
+        try {
+            if (checkRating()) {
+                updateRating(index, GUIManager.loggedInUser.getUserID());
+            } else {
+                addRating(index, GUIManager.loggedInUser.getUserID());
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public double getRating() throws SQLException
+    { return rating; }
 
     @Override
     public String toString() {

@@ -181,7 +181,6 @@ CREATE TABLE `timelines`
 (
     `TimelineID`          int               NOT NULL AUTO_INCREMENT,
     `Scale`               int               DEFAULT 8,
-    `Rating`               int              DEFAULT 0,
     `TimelineName`        nvarchar(100)     DEFAULT NULL,
     `TimelineDescription` nvarchar(5000)    DEFAULT NULL,
     `Theme`               nvarchar(100)     DEFAULT NULL,
@@ -509,9 +508,4 @@ VALUES ('1', '1'),
        ('12', '26');
 
 
-INSERT INTO rating
-(`rating`, `userId`, `timeLineID`)
-VALUES (5, 1, 1),
-       (6, 2, 2);
-       
 

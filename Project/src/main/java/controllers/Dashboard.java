@@ -88,7 +88,7 @@ public class Dashboard {
     private FilteredList<Timeline> filteredTimelines;
     private SortedList<Timeline> sortedTimelines;
 
-    public void initialize() {
+    public void initialize()  {
         //Set Up the Spinners for Start/End Inputs, would have bloated the .fxml and variable list a ton if these were in fxml
         setupTimeInputStartAndEnd("Year", Integer.MIN_VALUE, Integer.MAX_VALUE, 0, 0, 0);
         setupTimeInputStartAndEnd("Month", 0, 12, 1, 0, 1);
@@ -129,7 +129,7 @@ public class Dashboard {
         titleText.setText("Select a Timeline.");
     }
 
-    private void populateTimelineList() {
+    private void populateTimelineList(){
         try {
             PreparedStatement stmt = DBM.conn.prepareStatement("SELECT * FROM timelines");
             filteredTimelines = new FilteredList<>(FXCollections.observableList(DBM.getFromDB(stmt, new Timeline())));
