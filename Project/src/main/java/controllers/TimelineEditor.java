@@ -11,13 +11,19 @@ import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
 
-import java.io.IOException;
+import java.io.*;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
 
 public class TimelineEditor extends Editor {
     private final ObservableList<String> keywords = FXCollections.observableArrayList();
@@ -35,7 +41,8 @@ public class TimelineEditor extends Editor {
     Text feedbackText;
     @FXML
     private TextField keywordInput;
-
+    private final ObservableList<String> keywords = FXCollections.observableArrayList();
+    private File imageChosen;
     public void initialize() {
         super.initialize();
 
@@ -60,6 +67,7 @@ public class TimelineEditor extends Editor {
 
     boolean setTimeline(Timeline timeline) {
         this.timeline = timeline;
+        itemInEditor = timeline;
         //Check if Admin
         setOwner(GUIManager.loggedInUser.getUserID() == timeline.getOwnerID());
         return populateDisplay();
@@ -72,7 +80,7 @@ public class TimelineEditor extends Editor {
     }
 
     boolean populateDisplay() {
-        super.populateDisplay(timeline);    //populate inputs common to editors
+        super.populateDisplay();    //populate inputs common to editors
 
         if (timeline.getKeywords() != null) {
             keywords.clear();
@@ -87,13 +95,12 @@ public class TimelineEditor extends Editor {
     }
 
     void updateItem() {
-        super.updateItem(timeline);     //update variables common to TimelineObjects
+        super.updateItem();     //update variables common to TimelineObjects
 
         timeline.getKeywords().clear();
         timeline.getKeywords().addAll(keywords);
 
         timeline.setScale((timeInput.getSelectionModel().getSelectedIndex()) + 1);
-
         parentController.setActiveTimeline(timeline);
         parentController.eventSelectorController.populateTimelineList();
     }
@@ -122,7 +129,7 @@ public class TimelineEditor extends Editor {
 
 
     boolean hasChanges() {
-        if (super.hasChanges(timeline))
+        if (super.hasChanges())
             return true;
 
         if (timeline.getKeywords().size() != keywords.size())
@@ -138,7 +145,7 @@ public class TimelineEditor extends Editor {
 
     boolean save() {
         updateItem();
-        super.save(timeline);
+        super.save();
         parentController.populateDisplay();
         return true;
     }
@@ -169,6 +176,8 @@ public class TimelineEditor extends Editor {
         }
     }
 
+
+
     @FXML
     void removeKeyword() {
         if (keywordView.getSelectionModel().getSelectedIndex() < 0) {
@@ -180,5 +189,149 @@ public class TimelineEditor extends Editor {
             keywordView.getSelectionModel().select(-1);
         }
     }
-}
 
+    @Override
+    protected String copyImage(File image, String filename) throws IOException { //Takes the file chosen and the name of it
+        String outPath = "src/main/resources/images/timeline/";
+        String imageName = filename;
+        InputStream is = null;
+        OutputStream os = null;
+
+        try {
+            is = new FileInputStream(image);
+            System.out.println("reading complete.");
+            //Path for saving, have special events folder now so if timeline guys are doing something they don't override copies
+            int duplicateDigit = 2;
+
+            while (folderHasImage(imageName)) {
+                int indexOfDot = filename.lastIndexOf(".");
+                if (imageName.matches(".*\\s\\(\\d\\)\\..*")) {
+                    int indexOfBrackets = imageName.lastIndexOf("(");
+                    imageName = imageName.substring(0, indexOfBrackets + 1) + duplicateDigit + ")" + "." + getFormat(image);
+
+                } else {
+                    imageName = imageName.substring(0, indexOfDot) + " (" + duplicateDigit + ")" + "." + getFormat(image);
+                }
+                duplicateDigit++;
+            }
+
+
+            os = new FileOutputStream(new File(outPath + imageName));
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = is.read(buffer)) > 0) {
+                os.write(buffer, 0, length);
+            }
+
+            System.out.println("Writing complete.");
+        } catch (IOException e) {
+            System.out.println("Error: " + e);
+
+        } finally {
+            if (is != null)
+                is.close();
+            if (os != null)
+                os.close();
+        }
+        return outPath + imageName;
+    }
+
+    //Method to check if the image folder has this name already to avoid duplicates overriding earlier uploads
+    @Override
+    protected boolean folderHasImage(String path) {
+        File folder = new File("src/main/resources/images/timeline/");
+        File[] listOfFiles = folder.listFiles();
+        List<String> images = new ArrayList<>();
+
+        for (int i = 0; i < listOfFiles.length; i++) {
+            if (listOfFiles[i].isFile()) {
+                images.add(listOfFiles[i].getName());
+            }
+        }
+        for (String s : images) {
+            if (path.equalsIgnoreCase(s))
+                return true;
+        }
+        return false;
+    }
+
+
+
+
+
+
+
+	@Override
+	protected void uploadImage() throws IOException {
+		boolean confirm = true;
+
+		if (itemInEditor.getImagePath() != null) {
+			confirm = ImageSaveConfirm();
+		}
+
+		if (confirm) {
+			FileChooser chooser = new FileChooser(); // For the file directory
+			chooser.setTitle("Upload image");
+
+			// All the image formats supported by java.imageio
+			// https://docs.oracle.com/javase/7/docs/api/javax/imageio/package-summary.html
+			chooser.getExtensionFilters().addAll(
+					new FileChooser.ExtensionFilter("All Images", "*.jpg", "*.jpeg", "*.png", "*.bmp", "*.gif",
+							"*.wbmp"),
+					new FileChooser.ExtensionFilter("JPG", "*.jpg"), new FileChooser.ExtensionFilter("JPEG", "*.jpeg"),
+					new FileChooser.ExtensionFilter("PNG", "*.png"), new FileChooser.ExtensionFilter("BMP", "*.bmp"),
+					new FileChooser.ExtensionFilter("GIF", "*.gif"), new FileChooser.ExtensionFilter("WBMP", "*.wbmp"));
+			// The current image chosen by FileChooser
+			imageChosen = chooser.showOpenDialog(GUIManager.mainStage);
+			if (imageChosen != null && checkResolution(imageChosen)) {
+
+				imageFilePath = copyImage(imageChosen, imageChosen.getName());
+				image.setImage(new Image("File:" + imageFilePath));
+
+			} 
+			else {
+				if (ImageResolutionNotification())
+				{
+					uploadImage();
+				}
+					
+
+			}
+		}
+	}
+
+	@FXML
+	private boolean ImageResolutionNotification() {
+		Alert resolutionSaveImage = new Alert(Alert.AlertType.CONFIRMATION);
+		resolutionSaveImage.setTitle("Too low resolution for timeline image");
+		resolutionSaveImage.setHeaderText("Resolution of the picture is too low. Minimum resolution is 1280x720");
+		resolutionSaveImage.setContentText("Would you like to upload a new image with higher resolution?");
+
+		Optional<ButtonType> result = resolutionSaveImage.showAndWait();
+		return result.get() == ButtonType.OK;
+
+	}
+	// Check resolution implementation based on http://bethecoder.com/applications/tutorials/java/image-io/how-to-get-image-width-height-and-format.html
+	private boolean checkResolution(File f) throws IOException {
+		int imageHeight;
+		int imageWidth;
+		boolean check = false;
+		final int REQUIRED_HEIGHT = 720;
+		final int REQUIRED_WIDTH = 1280;
+		ImageInputStream iis = ImageIO.createImageInputStream(f);
+		Iterator<ImageReader> readers = ImageIO.getImageReaders(iis);
+		if (readers.hasNext()) {
+			ImageReader reader = readers.next();
+			reader.setInput(iis, true);
+
+			if (reader.getWidth(0) < REQUIRED_WIDTH || reader.getHeight(0) < REQUIRED_HEIGHT) {
+				check = false;
+			}else {
+				check = true;
+			}
+		} 
+		return check;
+
+	}
+
+}
