@@ -379,7 +379,7 @@ public abstract class Editor {
     }
 
     @FXML
-    private boolean ImageSaveConfirm() {
+    protected boolean ImageSaveConfirm() {
         Alert confirmSaveImage = new Alert(Alert.AlertType.CONFIRMATION);
         confirmSaveImage.setTitle("Confirm Change");
         confirmSaveImage.setHeaderText("Replacing or removing an image will permanently delete it from the system.");
