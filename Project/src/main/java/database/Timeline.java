@@ -40,6 +40,12 @@ public class Timeline extends TimelineObject<Timeline> {
         this.ownerID = timelineOwner;
         this.keywords = keywords;
         this.eventList = eventList;
+        try {
+            this.rating = calcRating();
+        }
+        catch (SQLException ex){
+            ex.printStackTrace();
+        }
     }
 
     @Override
@@ -197,15 +203,9 @@ public class Timeline extends TimelineObject<Timeline> {
         out.setInt(1, rating);
         out.setInt(2, userId);
         out.setInt(3, this.timelineID);
-
         out.execute();
-
-        System.out.println("Rating of " + rating + " added. Dummy response text.");
-
         return out;
-
     }
-
 
     public PreparedStatement updateRating(int rating, int userId) throws SQLException {
 
@@ -213,11 +213,7 @@ public class Timeline extends TimelineObject<Timeline> {
         out.setInt(1, rating);
         out.setInt(2, this.timelineID);
         out.setInt(3, userId);
-
         out.execute();
-
-        System.out.println("Rating of " + rating + " updated. Dummy response text.");
-
         return out;
     }
 
@@ -229,6 +225,15 @@ public class Timeline extends TimelineObject<Timeline> {
         rs.next();
         return rs.getInt(1)>0;
     }
+
+    private double calcRating() throws SQLException {
+        PreparedStatement rate = DBM.conn.prepareStatement("SELECT AVG(rating) FROM rating WHERE timeLineID = ?");
+        rate.setInt(1, this.getID());
+        ResultSet rs = rate.executeQuery();
+        rs.next();
+        return rs.getDouble(1);
+    }
+
     public void rateTimeline(int index) {
         try {
             if (checkRating()) {
@@ -242,12 +247,7 @@ public class Timeline extends TimelineObject<Timeline> {
     }
 
     public double getRating() throws SQLException
-    {
-        PreparedStatement state = DBM.conn.prepareStatement("SELECT rating FROM project.rating\n" +
-                "JOIN project.timelines WHERE timelines.TimelineID = rating.timeLineID;");
-
-        return rating;
-    }
+    { return rating; }
 
     @Override
     public String toString() {
