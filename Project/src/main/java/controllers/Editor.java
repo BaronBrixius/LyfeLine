@@ -1,6 +1,7 @@
 package controllers;
 
 import database.DBM;
+import database.Event;
 import database.TimelineObject;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -154,9 +155,18 @@ public abstract class Editor {
     @FXML
     boolean saveConfirm() {
         Alert confirmSave = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmSave.setTitle("Confirm Save");
-        confirmSave.setHeaderText("This will make permanent changes!"); //TODO change text
-        confirmSave.setContentText("Would you like to save?");
+        if (itemInEditor instanceof Event)
+        {
+            confirmSave.setTitle("Confirm Close");
+            confirmSave.setHeaderText("You have made unsaved changes!");
+            confirmSave.setContentText("Would you like to save them before closing?");
+        }
+        else
+        {
+            confirmSave.setTitle("Confirm Save");
+            confirmSave.setHeaderText("This will make permanent changes!"); //TODO change text
+            confirmSave.setContentText("Would you like to save?");
+        }
 
         Optional<ButtonType> result = confirmSave.showAndWait();
 

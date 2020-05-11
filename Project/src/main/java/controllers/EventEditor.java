@@ -73,7 +73,8 @@ public class EventEditor extends Editor {
     }
 
     boolean setEvent(Event event) {
-        parentController.eventEditorController.close();
+        //parentController.eventEditorController.close();
+        parentController.rightSidebar.getChildren().remove(editor);
         this.event = event;
         itemInEditor = event;
         if (this.event.getID() == 0)       //if new event, set current user as owner
@@ -129,7 +130,7 @@ public class EventEditor extends Editor {
     @FXML
     boolean deleteEvent() {
         parentController.eventSelectorController.deleteEvent(event);
-        return close();
+        return parentController.rightSidebar.getChildren().remove(editor);
     }
 
     boolean hasChanges() {
@@ -144,8 +145,8 @@ public class EventEditor extends Editor {
     boolean close() {
         parentController.rightSidebar.getChildren().remove(editor);
         parentController.rightSidebar.getChildren().add(editor);
-        if (event != null && hasChanges() && !saveConfirm())          //do you wanna save and exit or just exit?
-            return false;
+        if (event != null && hasChanges())          //do you wanna save and exit or just exit?
+            saveConfirm();
         parentController.rightSidebar.getChildren().remove(editor);
         return true;
     }

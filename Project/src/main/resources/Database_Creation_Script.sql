@@ -217,10 +217,7 @@ END;
 
 INSERT INTO `users`
     (`UserID`, `UserName`, `UserEmail`, `Password`, `Salt`, `Admin`)
-VALUES ('999', 'Test User', 'User@test.com',
-        '9++aUh7ltf/BUAYP2adyTl4DoFthc387ahLWGV58pzyQsMRcJNKIH6g8UhdAF400MSysbm30v0AAkBXy4EgQaQ==',
-        'OsMpNbYBiPYkLAgmVmAFUt6faEW1Ot', '0'),
-       ('1', 'Ben', 'Ben@gmail.com',
+VALUES ('1', 'Ben', 'Ben@gmail.com',
         'FPUpkk14h2EWAX9J7q18Ue6QJ/VSrs5ulnaw/Tggo23smYvqcLKihIUARNQcxUpDSGXOGBsGo4gjKTikDfrpxw==',
         'hXEFj6Yy9hanXVOUyACANrUi1eZs4f', '1'),
        ('2', 'Max', 'Max@gmail.com',
@@ -258,7 +255,10 @@ VALUES ('999', 'Test User', 'User@test.com',
         'CEc1AAkRdz7BguqKQL4e4wrw7A3j6L', '0'),
        ('13', 'Hans Ove', 'Hans@math.biz',
         'tPmbHxe4qtzP8AaCpQJs/Hjr8RW3xDUGx+kk75AENDVY7Kkz85jJ/H1KICOH9TOsZPg4e/4ldTM9WzajCOJQiw==',
-        '8IzHZXvKP9hwwIr5EflEvhLYdo2AVY', '0');
+        '8IzHZXvKP9hwwIr5EflEvhLYdo2AVY', '0'),
+       ('14', 'Test User', 'User@test.com',
+        '9++aUh7ltf/BUAYP2adyTl4DoFthc387ahLWGV58pzyQsMRcJNKIH6g8UhdAF400MSysbm30v0AAkBXy4EgQaQ==',
+        'OsMpNbYBiPYkLAgmVmAFUt6faEW1Ot', '0');
 
 
 INSERT INTO `timelines`
