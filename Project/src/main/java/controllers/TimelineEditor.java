@@ -7,15 +7,11 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Polygon;
 import javafx.scene.text.Text;
 
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 public class TimelineEditor extends Editor {
@@ -94,7 +90,7 @@ public class TimelineEditor extends Editor {
         timeline.setScale((timeInput.getSelectionModel().getSelectedIndex()) + 1);
 
         parentController.setActiveTimeline(timeline);
-        parentController.eventSelectorController.populateTimelineList();
+        parentController.eventSelectorController.populateDisplay();
     }
 
     @FXML
