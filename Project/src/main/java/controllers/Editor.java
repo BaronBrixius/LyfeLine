@@ -1,7 +1,6 @@
 package controllers;
 
 import database.DBM;
-import database.Event;
 import database.TimelineObject;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -173,8 +172,9 @@ public abstract class Editor {
 
         Date newEndDate = new Date(endInputs.get(0).getValue(), endInputs.get(1).getValue(), endInputs.get(2).getValue(),
                 endInputs.get(3).getValue(), endInputs.get(4).getValue(), endInputs.get(5).getValue(), endInputs.get(6).getValue());
+        boolean hasNoDuration = (this instanceof EventEditor && !((EventEditor) this).hasDuration.isSelected());
 
-        if (titleInput.getText()== null || titleInput.getText().isEmpty()) {
+        if (titleInput.getText() == null || titleInput.getText().isEmpty()) {
             Alert confirmDelete = new Alert(Alert.AlertType.CONFIRMATION);
             confirmDelete.setTitle("Invalid Name");
             confirmDelete.setHeaderText("Name input blank.");
@@ -182,7 +182,7 @@ public abstract class Editor {
 
             confirmDelete.showAndWait();
             return false;
-        }   else      if (titleInput.getText().length() > 100) {
+        } else if (titleInput.getText().length() > 100) {
             Alert confirmDelete = new Alert(Alert.AlertType.CONFIRMATION);
             confirmDelete.setTitle("Invalid Name");
             confirmDelete.setHeaderText("Name input too long.");
@@ -190,7 +190,7 @@ public abstract class Editor {
 
             confirmDelete.showAndWait();
             return false;
-        }else if (newStartDate.compareTo(newEndDate) > 0) {
+        } else if (!hasNoDuration && newStartDate.compareTo(newEndDate) > 0) {
             Alert confirmDelete = new Alert(Alert.AlertType.CONFIRMATION);
             confirmDelete.setTitle("Invalid Dates");
             confirmDelete.setHeaderText("The End Date must be after the Start Date.");
@@ -370,13 +370,13 @@ public abstract class Editor {
             //The current image chosen by FileChooser
             File imageChosen = chooser.showOpenDialog(GUIManager.mainStage);
             System.out.println(getFormat(imageChosen));
-            if(getFormat(imageChosen).matches("(JPEG|png|jpg|bmp|gif|wbmp)")){
-            if (imageChosen != null) {
-                imageFilePath = copyImage(imageChosen, imageChosen.getName());
-                image.setImage(new Image("File:" + imageFilePath));
+            if (getFormat(imageChosen).matches("(JPEG|png|jpg|bmp|gif|wbmp)")) {
+                if (imageChosen != null) {
+                    imageFilePath = copyImage(imageChosen, imageChosen.getName());
+                    image.setImage(new Image("File:" + imageFilePath));
+                }
             }
-            }}
-        else
+        } else
             throw new IllegalArgumentException("Not accepted image format");
     }
 

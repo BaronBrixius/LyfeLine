@@ -34,20 +34,6 @@ public class Event extends TimelineObject<Event> {
         this.eventPriority = eventPriority;
     }
 
-
-    public static List<Integer> getYears() throws SQLException {
-        return DBM.getFromDB(DBM.conn.prepareStatement("SELECT StartYear FROM events"), rs -> rs.getInt("StartYear"));
-    }
-
-
-
-    //Some examples of working with the database
-    /*static List<Event> getAll() throws SQLException {
-        return DBM.getFromDB(DBM.conn.prepareStatement("SELECT * FROM events"), new Event());     //blank object so functional interface method can be accessed
-    }*/
-
-
-
     @Override
     public PreparedStatement getInsertQuery() throws SQLException, RuntimeException {
         if (eventID > 0)
@@ -138,8 +124,6 @@ public class Event extends TimelineObject<Event> {
     public void setID(int id) {
         this.eventID = id;
     }
-
-
 
     public int getID() {
         return this.eventID;
