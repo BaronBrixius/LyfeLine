@@ -508,8 +508,4 @@ VALUES ('1', '1'),
        ('12', '26');
 
 
-INSERT INTO rating
-(`rating`, `userId`, `timeLineID`)
-VALUES (6, 2, 2);
-       
 

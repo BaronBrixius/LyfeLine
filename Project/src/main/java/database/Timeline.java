@@ -1,5 +1,6 @@
 package database;
 
+import controllers.GUIManager;
 import utils.Date;
 
 import java.sql.*;
@@ -195,15 +196,51 @@ public class Timeline extends TimelineObject<Timeline> {
         PreparedStatement out = DBM.conn.prepareStatement("INSERT INTO rating (`rating`, `userId`, `timeLineID`) VALUES (?, ?, ?)");
         out.setInt(1, rating);
         out.setInt(2, userId);
-        out.setInt(3, 1);
+        out.setInt(3, this.timelineID);
 
         out.execute();
 
-        System.out.println("Rating of " + rating + " added/updated. Dummy response text.");
+        System.out.println("Rating of " + rating + " added. Dummy response text.");
 
         return out;
 
     }
+
+
+    public PreparedStatement updateRating(int rating, int userId) throws SQLException {
+
+        PreparedStatement out = DBM.conn.prepareStatement("UPDATE rating SET `rating` = ?, `timeLineID` = ? WHERE (`userId` = ?)");
+        out.setInt(1, rating);
+        out.setInt(2, this.timelineID);
+        out.setInt(3, userId);
+
+        out.execute();
+
+        System.out.println("Rating of " + rating + " updated. Dummy response text.");
+
+        return out;
+    }
+
+    public boolean checkRating() throws SQLException {
+        PreparedStatement rate = DBM.conn.prepareStatement("SELECT COUNT(*) FROM rating WHERE userId = ? AND timeLineID = ? ");
+        rate.setInt(1, GUIManager.loggedInUser.getUserID());
+        rate.setInt(2, this.getID());
+        ResultSet rs = rate.executeQuery();
+        rs.next();
+        return rs.getInt(1)>0;
+    }
+    public void rateTimeline(int index) {
+        try {
+            if (checkRating()) {
+                updateRating(index, GUIManager.loggedInUser.getUserID());
+            } else {
+                addRating(index, GUIManager.loggedInUser.getUserID());
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }
+
     public double getRating() throws SQLException
     {
         PreparedStatement state = DBM.conn.prepareStatement("SELECT rating FROM project.rating\n" +

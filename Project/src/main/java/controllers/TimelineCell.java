@@ -1,6 +1,7 @@
 package controllers;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -63,11 +64,7 @@ public class TimelineCell {
 		}
 
 		button.setOnMouseClicked(e -> {
-			try {
-				timeline.addRating(GUIManager.loggedInUser.getUserID(), index + 1);
-			} catch (SQLException ex) {
-				ex.printStackTrace();
-			}
+			timeline.rateTimeline(index +1);
 		});	//click a star to submit a rating
 	}
 
@@ -108,4 +105,5 @@ public class TimelineCell {
 		String imageURL = "'file:src/main/resources/images/image4.png'";
 		pane.setStyle("-fx-background-image: url("+imageURL+"); -fx-background-size: "+((int)(width+0.5))+"px;");
 	}
+
 }
