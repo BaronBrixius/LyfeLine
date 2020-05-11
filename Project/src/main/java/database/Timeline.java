@@ -27,7 +27,7 @@ public class Timeline extends TimelineObject<Timeline> {
         this(0, timelineName, timelineDescription, scale, theme, startDate, endDate, null, 0, keywords, null, null);
     }
 
-    private Timeline(int timelineID, String timelineName, String timelineDescription, int scale, String theme,                          // String imagePath
+    private Timeline(int timelineID, String timelineName, String timelineDescription, int scale, String theme,
                      Date startDate, Date endDate, Date dateCreated, int timelineOwner, List<String> keywords, List<Event> eventList, String imagePath) {
         this.timelineID = timelineID;
         this.timelineName = timelineName;
@@ -199,7 +199,7 @@ public class Timeline extends TimelineObject<Timeline> {
             stmt.setInt(1, timelineID);
             eventList = DBM.getFromDB(stmt, new Event());
         }
-        return new Timeline(timelineID, timelineName, timelineDescription, scale, theme,                            // imagePath,
+        return new Timeline(timelineID, timelineName, timelineDescription, scale, theme,
                 new Date(startYear, startMonth, startDay, startHour, startMinute, startSecond, startMillisecond),
                 new Date(endYear, endMonth, endDay, endHour, endMinute, endSecond, endMillisecond),
                 new Date(createdYear, createdMonth, createdDay, createdHour, createdMinute, createdSecond,
