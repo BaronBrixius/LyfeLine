@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import java.lang.Double?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.shape.Polygon?>
-<?import javafx.scene.text.Text?>
 
-
-<GridPane fx:id="pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="200.0" styleClass="paneBG" stylesheets="@../styles/DefaultStyle.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.TimelineCell">
+<GridPane fx:id="pane" maxHeight="200.0" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="200.0" styleClass="paneBG" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.TimelineCell">
   <columnConstraints>
     <ColumnConstraints />
       <ColumnConstraints hgrow="SOMETIMES" />
@@ -21,10 +21,10 @@
     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
   </rowConstraints>
    <children>
-      <Text fx:id="title" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />
-      <Text fx:id="author" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" GridPane.rowIndex="1" />
+      <Label fx:id="title" styleClass="listCellText" text="Label" GridPane.columnSpan="3" />
+      <Label fx:id="author" styleClass="listCellText" text="Label" GridPane.rowIndex="1" />
       <Region prefWidth="20.0" GridPane.columnIndex="1" GridPane.rowSpan="2" GridPane.vgrow="SOMETIMES" />
-      <HBox fx:id="ratingBox" alignment="CENTER_RIGHT" prefHeight="400.0" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowSpan="2" GridPane.valignment="CENTER">
+      <HBox fx:id="ratingBox" alignment="BOTTOM_RIGHT" prefHeight="400.0" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="CENTER">
          <children>
             <Polygon fill="YELLOW" points="-50.0, 40.0, 50.0, 40.0, 0.0, -60.0" stroke="BLACK" strokeType="INSIDE" />
             <Polygon fill="YELLOW" stroke="BLACK" strokeType="INSIDE">
@@ -68,6 +68,9 @@
               </points>
             </Polygon>
          </children>
+         <padding>
+            <Insets bottom="5.0" right="5.0" />
+         </padding>
       </HBox>
    </children>
 </GridPane>
