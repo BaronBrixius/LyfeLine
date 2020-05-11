@@ -176,8 +176,10 @@ public class EventSelector {
 
     void populateTimelineList() {
         try {
+            Timeline currentSelection = timelineComboBox.getSelectionModel().getSelectedItem();
             PreparedStatement stmt = DBM.conn.prepareStatement("SELECT * FROM timelines");
-            timelineComboBox.getItems().setAll(FXCollections.observableArrayList(DBM.getFromDB(stmt, new Timeline())));
+            timelineComboBox.getItems().setAll(DBM.getFromDB(stmt, new Timeline()));
+            setTimelineSelected(currentSelection);
         } catch (SQLException e) {
             System.err.println("Could not access timelines database.");
         }
@@ -204,7 +206,6 @@ public class EventSelector {
             }
         }
     }
-
 
     void filterEvents() {
         if (timelineComboBox.getSelectionModel().getSelectedIndex() < 0)    //if no selection, display everything
