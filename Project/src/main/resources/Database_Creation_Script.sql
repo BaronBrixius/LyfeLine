@@ -146,6 +146,7 @@ CREATE TABLE `timelines`
     `Rating`               int              DEFAULT 0,
     `TimelineName`        nvarchar(100)     DEFAULT NULL,
     `TimelineDescription` nvarchar(5000)    DEFAULT NULL,
+    `ImagePath`           nvarchar(5000)    DEFAULT NULL,
     `Theme`               nvarchar(100)     DEFAULT NULL,
     `StartYear`           bigint            NOT NULL,
     `StartMonth`          tinyint unsigned  NOT NULL,
