@@ -367,12 +367,15 @@ public abstract class Editor {
             );
             //The current image chosen by FileChooser
             File imageChosen = chooser.showOpenDialog(GUIManager.mainStage);
+            System.out.println(getFormat(imageChosen));
+            if(getFormat(imageChosen).matches("(JPEG|png|jpg|bmp|gif|wbmp)")){
             if (imageChosen != null) {
-
                 imageFilePath = copyImage(imageChosen, imageChosen.getName());
                 image.setImage(new Image("File:" + imageFilePath));
             }
-        }
+            }}
+        else
+            throw new IllegalArgumentException("Not accepted image format");
     }
 
     @FXML
@@ -391,7 +394,7 @@ public abstract class Editor {
     private String getFormat(File f) throws IOException {
         ImageInputStream iis = ImageIO.createImageInputStream(f);
         Iterator<ImageReader> imageReaders = ImageIO.getImageReaders(iis);
-        String type = "png";
+        String type = "";
         while (imageReaders.hasNext()) {
             ImageReader reader = imageReaders.next();
             type = reader.getFormatName();
