@@ -146,6 +146,7 @@ CREATE TABLE `timelines`
     `Rating`               int              DEFAULT 0,
     `TimelineName`        nvarchar(100)     DEFAULT NULL,
     `TimelineDescription` nvarchar(5000)    DEFAULT NULL,
+    `ImagePath`           nvarchar(5000)    DEFAULT NULL,
     `Theme`               nvarchar(100)     DEFAULT NULL,
     `StartYear`           bigint            NOT NULL,
     `StartMonth`          tinyint unsigned  NOT NULL,
@@ -216,7 +217,10 @@ END;
 
 INSERT INTO `users`
     (`UserID`, `UserName`, `UserEmail`, `Password`, `Salt`, `Admin`)
-VALUES ('1', 'Ben', 'Ben@gmail.com',
+VALUES ('999', 'Test User', 'User@test.com',
+        '9++aUh7ltf/BUAYP2adyTl4DoFthc387ahLWGV58pzyQsMRcJNKIH6g8UhdAF400MSysbm30v0AAkBXy4EgQaQ==',
+        'OsMpNbYBiPYkLAgmVmAFUt6faEW1Ot', '0'),
+       ('1', 'Ben', 'Ben@gmail.com',
         'FPUpkk14h2EWAX9J7q18Ue6QJ/VSrs5ulnaw/Tggo23smYvqcLKihIUARNQcxUpDSGXOGBsGo4gjKTikDfrpxw==',
         'hXEFj6Yy9hanXVOUyACANrUi1eZs4f', '1'),
        ('2', 'Max', 'Max@gmail.com',

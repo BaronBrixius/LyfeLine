@@ -1,16 +1,21 @@
 package controllers;
 
-import database.*;
+import database.DBM;
+import database.Timeline;
+import database.User;
 import javafx.beans.Observable;
 import javafx.collections.FXCollections;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
+import javafx.util.Callback;
 import javafx.util.StringConverter;
 import utils.Date;
 
@@ -103,18 +108,12 @@ public class Dashboard {
         // Fill ListView with the timelines
         populateTimelineList();
 
-        // approach adapted from https://stackoverflow.com/a/36657553
-        list.setCellFactory(param -> new ListCell<>() {
-            @Override
-            protected void updateItem(Timeline item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null || item.getName() == null) {
-                    setText(null);
-                } else {
-                    setText(item.getName());
-                }
-            }
-        });
+        list.setCellFactory(new Callback<ListView<Timeline>, ListCell<Timeline>>() {
+			@Override
+			public ListCell<Timeline> call(ListView<Timeline> listView) {
+				return new CustomListCell();
+			}
+		});
 
         // Add sorting options
         sortBy.getItems().setAll("Alphabetically", "Reverse-Alphabetically", "Most Recent", "Oldest");
@@ -177,7 +176,7 @@ public class Dashboard {
     }
 
     @FXML
-    void searchAdvanced() {
+    void searchAdvanced() {         //get list of IDs that satisfy search conditions, and apply as predicate to filteredlist
         ResultSet data = advancedResultSet();
         try {
             List<Integer> listOfIDs = parseResultsForAdvancedSearch(data);
@@ -185,12 +184,9 @@ public class Dashboard {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        Predicate<Timeline> onlyPersonal = timeline -> timeline.getOwnerID() == GUIManager.loggedInUser.getUserID();
-        if (cbOnlyViewPersonalLines.isSelected())
-            filteredTimelines.setPredicate(onlyPersonal.and(filteredTimelines.getPredicate()));
     }
 
-    ResultSet advancedResultSet() {
+    ResultSet advancedResultSet() {     //pull the relevant data from the database and pass back to search
         try {
             PreparedStatement stmt = DBM.conn.prepareStatement("SELECT t.*, u.UserName FROM timelines t " +
                     "INNER JOIN users u " +
@@ -208,13 +204,16 @@ public class Dashboard {
 
         while (data.next()) {
             //if the search box is filled, but doesn't match DB contents, don't add to list. check for each box
+            //Timeline Name
             if (!searchTimelineName.getText().isEmpty() && !data.getString("TimelineName").toLowerCase().contains(searchTimelineName.getText().toLowerCase())) {
                 addToList = false;
             }
+            //Timeline Owner
             if (!searchCreator.getText().isEmpty() && !data.getString("UserName").toLowerCase().contains(searchCreator.getText().toLowerCase())) {
                 addToList = false;
             }
 
+            //Keywords
             Predicate<String> keywordMatches = k -> {
                 try {
                     return data.getString("Keywords").toLowerCase().contains(k.toLowerCase());
@@ -227,6 +226,7 @@ public class Dashboard {
                 addToList = false;
             }
 
+            //Start Date
             Date startDateSpinner = new Date(startInputs.get(0).getValue(), startInputs.get(1).getValue(), startInputs.get(2).getValue(),
                     startInputs.get(3).getValue(), startInputs.get(4).getValue(), startInputs.get(5).getValue(), startInputs.get(6).getValue());
             Date startDateInDB = new Date(data.getInt("StartYear"), data.getInt("StartMonth"), data.getInt("StartDay"),
@@ -236,6 +236,7 @@ public class Dashboard {
                 addToList = false;
             }
 
+            //End Date
             Date endDateSpinner = new Date(endInputs.get(0).getValue(), endInputs.get(1).getValue(), endInputs.get(2).getValue(),
                     endInputs.get(3).getValue(), endInputs.get(4).getValue(), endInputs.get(5).getValue(), endInputs.get(6).getValue());
             Date endDateInDB = new Date(data.getInt("EndYear"), data.getInt("EndMonth"), data.getInt("EndDay"),
@@ -245,6 +246,7 @@ public class Dashboard {
                 addToList = false;
             }
 
+            //Rating
             //if (searchRating isn't empty and rating >= searchRating)      //TODO implement after ratings
             //    addToList = false;
 
@@ -256,35 +258,30 @@ public class Dashboard {
         return out;
     }
 
-    boolean dateSearchedBy(List<Spinner<Integer>> inputs) {
-        boolean searchedBy = false;
+    boolean dateSearchedBy(List<Spinner<Integer>> inputs) {     //returns whether or not ANY inputs of either start or end dates are being used
         if (inputs.get(0).getValue() != Integer.MIN_VALUE)
-            searchedBy = true;
-        else if (inputs.get(1).getValue() != 0)
-            searchedBy = true;
-        else if (inputs.get(2).getValue() != 0)
-            searchedBy = true;
-        else if (inputs.get(3).getValue() != -1)
-            searchedBy = true;
-        else if (inputs.get(4).getValue() != -1)
-            searchedBy = true;
-        else if (inputs.get(5).getValue() != -1)
-            searchedBy = true;
-        else if (inputs.get(6).getValue() != -1)
-            searchedBy = true;
-        return searchedBy;
+            return true;
+        if (inputs.get(1).getValue() != 0)
+            return true;
+        if (inputs.get(2).getValue() != 0)
+            return true;
+        if (inputs.get(3).getValue() != -1)
+            return true;
+        if (inputs.get(4).getValue() != -1)
+            return true;
+        if (inputs.get(5).getValue() != -1)
+            return true;
+        return inputs.get(6).getValue() != -1;
     }
 
 
     @FXML
     public void toggleAdvancedSearch() {
-        if (stack.getChildren().size() > 0)
-        {
+        if (stack.getChildren().size() > 0) {
             stack.getChildren().remove(advancedSearchView);
             searchInput.setDisable(false);
             cbOnlyViewPersonalLines.setDisable(false);
-        }
-        else {
+        } else {
             clearAdvancedSearch();
             stack.getChildren().add(advancedSearchView);
             searchInput.setDisable(true);
@@ -299,12 +296,13 @@ public class Dashboard {
         searchKeywords.clear();
         searchInput.clear();
         cbOnlyViewPersonalLines.setSelected(false);
-        filteredTimelines.setPredicate(t->true);
+        filteredTimelines.setPredicate(t -> true);
     }
 
     @FXML
-    public void onlyUserTimelines() {
-
+    public void onlyUserTimelines() throws SQLException {
+        User testUser = new User("Test User", "User@test.com", "Passw0rd!");
+        DBM.insertIntoDB(testUser);
     }
 
 
@@ -379,7 +377,7 @@ public class Dashboard {
         }
     }
 
-    private void displayTimelineDetails(Timeline timeline){
+    private void displayTimelineDetails(Timeline timeline) {
         int year = timeline.getCreationDate().getYear();
         int month = timeline.getCreationDate().getMonth();
         int day = timeline.getCreationDate().getDay();
@@ -615,9 +613,9 @@ public class Dashboard {
 
         if (result.get() == ButtonType.CANCEL)
             return false;
-        else
-        {
-            try {list.getSelectionModel().getSelectedItem().deleteOrphans();
+        else {
+            try {
+                list.getSelectionModel().getSelectedItem().deleteOrphans();
                 DBM.deleteFromDB(list.getSelectionModel().getSelectedItem());
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -627,4 +625,37 @@ public class Dashboard {
             return true;
         }
     }
+    
+  //approach from https://stackoverflow.com/a/27439026
+  	private class CustomListCell extends ListCell<Timeline> {
+  		private Node cellNode;
+  		private TimelineCell cell;
+  		private FXMLLoader loader;
+
+  		public CustomListCell() {
+  			super();
+  			loader = new FXMLLoader(getClass().getResource("../FXML/TimelineCell.fxml"));
+  			try {
+  				cellNode = loader.load();
+  				cell = loader.getController();
+  			
+  			} catch (IOException e) {
+  			}
+  		}
+
+  		@Override
+  		protected void updateItem(Timeline item, boolean empty) {
+  			super.updateItem(item, empty);
+  			if (item != null && !empty) { // <== test for null item and empty parameter
+  				setGraphic(cellNode);
+  				if (!(cell == null)) {
+  					
+  					cell.setTimeline(item,list.getWidth()-30);
+  					
+  				}
+  			} else {
+  				setGraphic(null);
+  			}
+  		}
+  	}
 }
