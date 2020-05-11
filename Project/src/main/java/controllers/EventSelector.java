@@ -219,13 +219,13 @@ public class EventSelector {
     void sortEvents(int selection) {
         switch (selection) {
             case 0:
-                sortableEventList.setComparator(Comparator.comparing(Event::getName));
+                sortableEventList.setComparator((e1, e2) -> (e1.getName().compareToIgnoreCase(e2.getName())));
                 break;
             case 1:
-                sortableEventList.setComparator((e1, e2) -> (e2.getName().compareTo(e1.getName())));
+                sortableEventList.setComparator((e1, e2) -> (e2.getName().compareToIgnoreCase(e1.getName())));
                 break;
             case 2:
-                sortableEventList.setComparator((e1, e2) -> (e2.getCreationDate().compareTo(e1.getCreationDate())));
+                sortableEventList.setComparator(Comparator.comparing(Event::getCreationDate).reversed());
                 break;
             case 3:
                 sortableEventList.setComparator(Comparator.comparing(Event::getCreationDate));

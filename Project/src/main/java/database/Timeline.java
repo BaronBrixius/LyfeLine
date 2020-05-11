@@ -2,6 +2,9 @@ package database;
 
 import utils.Date;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,11 +25,11 @@ public class Timeline extends TimelineObject<Timeline> {
     //Do we need this? We mostly create blank timelines and then use setters called from GUI fields for new timelines
     public Timeline(String timelineName, String timelineDescription, int scale, String theme, Date startDate,
                     Date endDate, List<String> keywords) {
-        this(0, timelineName, timelineDescription, scale, theme, startDate, endDate, null, 0, keywords, null);
+        this(0, timelineName, timelineDescription, scale, theme, startDate, endDate, null, 0, keywords, null, null);
     }
 
     private Timeline(int timelineID, String timelineName, String timelineDescription, int scale, String theme,
-                     Date startDate, Date endDate, Date dateCreated, int timelineOwner, List<String> keywords, List<Event> eventList) {
+                     Date startDate, Date endDate, Date dateCreated, int timelineOwner, List<String> keywords, List<Event> eventList, String imagePath) {
         this.timelineID = timelineID;
         this.timelineName = timelineName;
         this.scale = scale;
@@ -38,6 +41,7 @@ public class Timeline extends TimelineObject<Timeline> {
         this.ownerID = timelineOwner;
         this.keywords = keywords;
         this.eventList = eventList;
+        this.imagePath = imagePath;
     }
 
     @Override
@@ -46,9 +50,9 @@ public class Timeline extends TimelineObject<Timeline> {
             throw new SQLIntegrityConstraintViolationException("TimelineID is already in DB.");
 
         PreparedStatement out = DBM.conn.prepareStatement(
-                "INSERT INTO `timelines` ( `Scale`,`TimelineName`, `TimelineDescription`, `Theme`,`StartYear`,`StartMonth`,`StartDay`,`StartHour`"
+                "INSERT INTO `timelines` ( `Scale`,`TimelineName`, `TimelineDescription`,  `Theme`,`StartYear`,`StartMonth`,`StartDay`,`StartHour`"
                         + ",`StartMinute`,`StartSecond`,`StartMillisecond`,`EndYear`,`EndMonth`,`EndDay`,`EndHour`,`EndMinute`,`EndSecond`,"
-                        + "`EndMillisecond`,`TimelineOwner`,`Keywords`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                        + "`EndMillisecond`,`TimelineOwner`,`Keywords`,`ImagePath`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
                 Statement.RETURN_GENERATED_KEYS);
         out.setInt(1, scale);
         out.setString(2, timelineName);
@@ -76,6 +80,10 @@ public class Timeline extends TimelineObject<Timeline> {
             sb.append(",");
         }
         out.setString(20, sb.toString());
+        if (this.imagePath == null)
+            out.setNull(21, Types.INTEGER);
+        else
+            out.setString(21, this.imagePath);
         return out;
     }
 
@@ -85,7 +93,7 @@ public class Timeline extends TimelineObject<Timeline> {
                 "UPDATE `timelines` SET `Scale` = ?, `TimelineName` = ?, `TimelineDescription` = ?,  `Theme` = ?,   "
                         + "`StartYear` = ?,  `StartMonth` = ?,  `StartDay` = ?,  `StartHour` = ?,  `StartMinute` = ?,  `StartSecond` = ?,  "
                         + "`StartMillisecond` = ?,    `EndYear` = ?,  `EndMonth` = ?,  `EndDay` = ?,  `EndHour` = ?,  `EndMinute` = ?,  "
-                        + "`EndSecond` = ?,  `EndMillisecond` = ?, `Keywords` = ? WHERE (`TimelineID` = ?)");
+                        + "`EndSecond` = ?,  `EndMillisecond` = ?, `Keywords` = ?, `ImagePath` = ? WHERE (`TimelineID` = ?)");
         out.setInt(1, scale);
         out.setString(2, timelineName);
         out.setString(3, timelineDescription);
@@ -111,7 +119,9 @@ public class Timeline extends TimelineObject<Timeline> {
             sb.append(",");
         }
         out.setString(19, sb.toString());
-        out.setInt(20, timelineID);
+        out.setString(20, imagePath);
+        out.setInt(21, timelineID);
+
         return out;
     }
 
@@ -133,6 +143,14 @@ public class Timeline extends TimelineObject<Timeline> {
     public PreparedStatement getDeleteQuery() throws SQLException {
         PreparedStatement out = DBM.conn.prepareStatement("DELETE FROM `timelines` WHERE (`TimelineID` = ?)");
         out.setInt(1, timelineID);
+        // Deleting the images
+        if (getImagePath() != null) {
+            try {
+                Files.deleteIfExists(Paths.get(getImagePath()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         return out;
     }
 
@@ -142,6 +160,7 @@ public class Timeline extends TimelineObject<Timeline> {
         int scale = rs.getInt("Scale");
         String timelineName = rs.getString("TimelineName");
         String timelineDescription = rs.getString("TimelineDescription");
+        String imagePath = rs.getString("ImagePath");
         String theme = rs.getString("Theme");
         int startYear = rs.getInt("StartYear");
         int startMonth = rs.getInt("StartMonth");
@@ -186,7 +205,7 @@ public class Timeline extends TimelineObject<Timeline> {
                 new Date(endYear, endMonth, endDay, endHour, endMinute, endSecond, endMillisecond),
                 new Date(createdYear, createdMonth, createdDay, createdHour, createdMinute, createdSecond,
                         createdMillisecond),
-                timelineOwner, keywords, eventList);
+                timelineOwner, keywords, eventList, imagePath);
     }
 
 

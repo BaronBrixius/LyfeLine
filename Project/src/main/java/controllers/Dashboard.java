@@ -2,6 +2,7 @@ package controllers;
 
 import database.DBM;
 import database.Timeline;
+import database.User;
 import javafx.beans.Observable;
 import javafx.collections.FXCollections;
 import javafx.collections.transformation.FilteredList;
@@ -289,7 +290,7 @@ public class Dashboard {
     }
 
     @FXML
-    public void onlyUserTimelines() {
+    public void onlyUserTimelines() throws SQLException {
 
     }
 
@@ -303,7 +304,7 @@ public class Dashboard {
                 sortedTimelines.setComparator((t1, t2) -> (t2.getName().compareToIgnoreCase(t1.getName())));
                 break;
             case 2:
-                sortedTimelines.setComparator((t1, t2) -> (t2.getCreationDate().compareTo(t1.getCreationDate())));
+                sortedTimelines.setComparator(Comparator.comparing(Timeline::getCreationDate).reversed());
                 break;
             case 3:
                 sortedTimelines.setComparator(Comparator.comparing(Timeline::getCreationDate));

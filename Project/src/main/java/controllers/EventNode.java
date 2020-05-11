@@ -72,7 +72,8 @@ public class EventNode implements Comparable<EventNode> {
 
     @FXML
     public void openEventViewer() {       //upon clicking a node
-        parentController.eventEditorController.close();
+        parentController.rightSidebar.getChildren().clear();
+        //parentController.eventEditorController.close();
         parentController.eventEditorController.setEvent(activeEvent);
         parentController.eventEditorController.toggleEditable(false);
         parentController.rightSidebar.getChildren().clear();

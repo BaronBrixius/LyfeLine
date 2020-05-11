@@ -260,7 +260,7 @@ public class EventEditorTest {
 
         runLater(() -> {
             sut.saveEditButton();
-            sut.titleInput.setText(null);
+            sut.titleInput.setText("\uD801\uDC1C \uD801\uDC14\uD801\uDC07\uD801\uDC1D\uD801\uDC00\uD801\uDC21\uD801\uDC07\uD801\uDC13 \uD801\uDC19\uD801\uDC0A\uD801\uDC21\uD801\uDC1D\uD801\uDC13/\uD801\uDC1D\uD801\uDC07\uD801\uDC17\uD801\uDC0A\uD801\uDC24\uD801\uDC14 \uD801\uDC12\uD801\uDC0B");
             sut.descriptionInput.setText("test \t\t\t\t test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text test text ");
             assertNotEquals(sut.titleInput.getText(), sut.event.getName());
             assertNotEquals(sut.descriptionInput.getText(), sut.event.getDescription());
