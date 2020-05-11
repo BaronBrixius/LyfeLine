@@ -2,6 +2,7 @@ package controllers;
 
 import database.DBM;
 import database.Timeline;
+import database.User;
 import javafx.beans.Observable;
 import javafx.collections.FXCollections;
 import javafx.collections.transformation.FilteredList;
@@ -299,8 +300,9 @@ public class Dashboard {
     }
 
     @FXML
-    public void onlyUserTimelines() {
-
+    public void onlyUserTimelines() throws SQLException {
+        User testUser = new User("Test User", "User@test.com", "Passw0rd!");
+        DBM.insertIntoDB(testUser);
     }
 
 

@@ -18,6 +18,7 @@ import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.ApplicationExtension;
 import org.testfx.framework.junit5.Start;
 
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,6 +33,7 @@ public class DashboardTest {
     Dashboard sut;
     String StyleSheetName = "None";
     FxRobot robot = new FxRobot();
+    int loginUserID;
 
     @BeforeAll
     public static void beforeAll() {
@@ -49,8 +51,12 @@ public class DashboardTest {
         System.out.println("Test " + ++testCount);
         DBM.setupSchema();
 
-        GUIManager.loggedInUser = new User();
-        GUIManager.loggedInUser.setID(-1);
+        try {
+            PreparedStatement stat = DBM.conn.prepareStatement("SELECT * FROM Users WHERE UserID=?");
+            stat.setInt(1, 999);
+            GUIManager.loggedInUser =  DBM.getFromDB(stat, new User()).get(0);
+            loginUserID = GUIManager.loggedInUser.getUserID();
+        } catch (SQLException e) { System.out.println("Could not get test user from database"); }
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("../../classes/FXML/Dashboard.fxml"));
         stage.setScene(new Scene(loader.load()));
@@ -58,14 +64,6 @@ public class DashboardTest {
         sut = loader.getController();
         GUIManager.mainStage = stage;
         stage.show();
-    }
-
-    @BeforeEach
-    void setUp() throws Exception {
-    }
-
-    @AfterEach
-    void tearDown() {
     }
 
     @AfterAll
@@ -299,7 +297,7 @@ public class DashboardTest {
 
     @Test
     void testOnlyViewPersonalTimelines() throws InterruptedException {
-        addNewTimelineToDBByOwnerId(-1, -1, -1);
+        addNewTimelineToDBByOwnerId(loginUserID, loginUserID, loginUserID);
 
         Platform.runLater(() -> {
             sut.initialize();
@@ -326,7 +324,7 @@ public class DashboardTest {
 
     @Test
     void testViewPersonalChangeSortMethodThenViewAllTimelines() throws InterruptedException {
-        addNewTimelineToDBByOwnerId(-1, -1, -1);    //Add some new timelines to the list
+        addNewTimelineToDBByOwnerId(loginUserID, loginUserID, loginUserID);    //Add some new timelines to the list
 
         Platform.runLater(() -> {       //View only personal timelines
             sut.initialize();
@@ -379,11 +377,11 @@ public class DashboardTest {
     @Test
     void testDeleteTimelineConfirm() throws InterruptedException {
         setAdminLoggedIn(true);
-        addNewTimelineToDBByOwnerId(-1);
+        addNewTimelineToDBByOwnerId(loginUserID);
         reinitializeDashboard();
 
-        //Select the first timeline in the list that has an owner ID of -1
-        sut.list.getSelectionModel().select(sut.list.getItems().stream().filter(t -> t.getOwnerID() == -1).findFirst().get());
+        //Select the first timeline in the list that has an owner ID of the logged in user
+        sut.list.getSelectionModel().select(sut.list.getItems().stream().filter(t -> t.getOwnerID() == loginUserID).findFirst().get());
         int initialListSize = sut.list.getItems().size();
 
         Platform.runLater(() -> robot.clickOn("#btnDelete"));
@@ -403,11 +401,11 @@ public class DashboardTest {
     @Test
     void testDeleteTimelineClose() throws InterruptedException {
         setAdminLoggedIn(true);
-        addNewTimelineToDBByOwnerId(-1);
+        addNewTimelineToDBByOwnerId(loginUserID);
         reinitializeDashboard();
 
-        //Select the first timeline in the list that has an owner ID of -1
-        sut.list.getSelectionModel().select(sut.list.getItems().stream().filter(t -> t.getOwnerID() == -1).findFirst().get());
+        //Select the first timeline in the list that has an owner ID of the logged in user
+        sut.list.getSelectionModel().select(sut.list.getItems().stream().filter(t -> t.getOwnerID() == loginUserID).findFirst().get());
         int initialListSize = sut.list.getItems().size();
 
         Platform.runLater(() -> robot.clickOn("#btnDelete"));
@@ -428,10 +426,10 @@ public class DashboardTest {
     void testCreateTimelineButton() throws InterruptedException {
         GUIManager.main = new BorderPane(); //Avoids a null pointer
         setAdminLoggedIn(true);
-        addNewTimelineToDBByOwnerId(-1);
+        addNewTimelineToDBByOwnerId(loginUserID);
         reinitializeDashboard();
-        //Select the first timeline in the list that has an owner ID of -1 to ensure that the new timeline doesn't get overridden in edit mode
-        sut.list.getSelectionModel().select(sut.list.getItems().stream().filter(t -> t.getOwnerID() == -1).findFirst().get());
+        //Select the first timeline in the list that has an owner ID of the logged in user to ensure that the new timeline doesn't get overridden in edit mode
+        sut.list.getSelectionModel().select(sut.list.getItems().stream().filter(t -> t.getOwnerID() == loginUserID).findFirst().get());
 
 
         Platform.runLater(() -> {
@@ -449,7 +447,7 @@ public class DashboardTest {
             assertEquals(expectedString, actualString);
 
             int actualInt = testView.activeTimeline.getOwnerID();
-            int expectedInt = -1;
+            int expectedInt = loginUserID;
             assertEquals(expectedInt, actualInt);
 
             actualInt = testView.activeTimeline.getKeywords().size();
@@ -475,7 +473,7 @@ public class DashboardTest {
         setAdminLoggedIn(true);
 
         Timeline newTimeline = new Timeline();
-        newTimeline.setOwnerID(-1);
+        newTimeline.setOwnerID(loginUserID);
         newTimeline.setName("Name");
         newTimeline.setDescription("Description");
         newTimeline.getKeywords().add("Keyword");
@@ -484,14 +482,14 @@ public class DashboardTest {
         try {DBM.insertIntoDB(newTimeline);} catch (SQLException e) {e.printStackTrace();}
 
         Event testEvent = new Event();
-        testEvent.setOwnerID(-1);
+        testEvent.setOwnerID(loginUserID);
         try {DBM.insertIntoDB(testEvent);} catch (SQLException e) {e.printStackTrace();}
         try {testEvent.addToTimeline(newTimeline.getID());} catch (SQLException e) {e.printStackTrace();}
 
         reinitializeDashboard();
 
-        //Select the first timeline in the list that has an owner ID of -1
-        sut.list.getSelectionModel().select(sut.list.getItems().stream().filter(t -> t.getOwnerID() == -1).findFirst().get());
+        //Select the first timeline in the list that has an owner ID of the logged in user
+        sut.list.getSelectionModel().select(sut.list.getItems().stream().filter(t -> t.getOwnerID() == loginUserID).findFirst().get());
 
         Platform.runLater(() -> {
             TimelineView testView = sut.editTimeline();
@@ -507,7 +505,7 @@ public class DashboardTest {
             assertEquals(expectedString, actualString);
 
             int actualInt = testView.activeTimeline.getOwnerID();
-            int expectedInt = -1;
+            int expectedInt = loginUserID;
             assertEquals(expectedInt, actualInt);
 
             actualInt = testView.activeTimeline.getKeywords().size();
@@ -636,7 +634,7 @@ public class DashboardTest {
     void testSimpleSearchByTimelineNamePersonalOnly() throws InterruptedException {
         Platform.runLater(() -> {
             sut.cbOnlyViewPersonalLines.setSelected(true);
-            addNewTimelineToDBByOwnerIdAndName("Please don't make a timeline with this name it will ruin my tests", -1);
+            addNewTimelineToDBByOwnerIdAndName("Please don't make a timeline with this name it will ruin my tests", loginUserID);
         });
         waitForRunLater();
         reinitializeDashboard();
@@ -651,7 +649,7 @@ public class DashboardTest {
     void testSimpleSearchByTimelineNameCaseInsensitivePersonalOnly() throws InterruptedException {
         Platform.runLater(() -> {
             sut.cbOnlyViewPersonalLines.setSelected(true);
-            addNewTimelineToDBByOwnerIdAndName("Please don't make a timeline with this name it will ruin my tests", -1);
+            addNewTimelineToDBByOwnerIdAndName("Please don't make a timeline with this name it will ruin my tests", loginUserID);
         });
         waitForRunLater();
         reinitializeDashboard();
@@ -666,7 +664,7 @@ public class DashboardTest {
     void testSimpleSearchByWeirdTimelineNamePersonalOnly() throws InterruptedException {
         Platform.runLater(() -> {
             sut.cbOnlyViewPersonalLines.setSelected(true);
-            addNewTimelineToDBByOwnerIdAndName("☺☻♥♦♣♠", -1);
+            addNewTimelineToDBByOwnerIdAndName("☺☻♥♦♣♠", loginUserID);
         });
         waitForRunLater();
         reinitializeDashboard();
@@ -681,7 +679,7 @@ public class DashboardTest {
     void testSimpleSearchByTimelineNamePersonalOnlyFailure() throws InterruptedException {
         Platform.runLater(() -> {
             sut.cbOnlyViewPersonalLines.setSelected(true);
-            addNewTimelineToDBByOwnerIdAndName("Please don't make a timeline with this name it will ruin my tests", -1);
+            addNewTimelineToDBByOwnerIdAndName("Please don't make a timeline with this name it will ruin my tests", loginUserID);
         });
         waitForRunLater();
         reinitializeDashboard();
@@ -697,7 +695,7 @@ public class DashboardTest {
     void testSimpleSearchByTimelineNamePersonalOnlyIDFailure() throws InterruptedException {
         Platform.runLater(() -> {
             sut.cbOnlyViewPersonalLines.setSelected(true);
-            addNewTimelineToDBByOwnerIdAndName("Please don't make a timeline with this name it will ruin my tests", -2);
+            addNewTimelineToDBByOwnerIdAndName("Please don't make a timeline with this name it will ruin my tests", 1);
         });
         waitForRunLater();
         reinitializeDashboard();
@@ -713,7 +711,7 @@ public class DashboardTest {
     void testSimpleSearchByKeyWordPersonalOnly() throws InterruptedException {
         Platform.runLater(() -> {
             sut.cbOnlyViewPersonalLines.setSelected(true);
-            addNewTimelineToDBByOwnerIdAndKeyword(-1,"Please don't make a timeline with this keyword it will ruin my tests");
+            addNewTimelineToDBByOwnerIdAndKeyword(loginUserID,"Please don't make a timeline with this keyword it will ruin my tests");
         });
         waitForRunLater();
         reinitializeDashboard();
@@ -767,16 +765,16 @@ public class DashboardTest {
     void testSimpleSearchByTimelineNameAndSortPersonalOnly() throws InterruptedException {
         Platform.runLater(() -> {
             sut.cbOnlyViewPersonalLines.setSelected(true);
-            addNewTimelineToDBByOwnerIdAndName("aPlease don't make a timeline with this name it will ruin my tests", -1);
-            addNewTimelineToDBByOwnerIdAndName("bPlease don't make a timeline with this name it will ruin my tests", -1);
-            addNewTimelineToDBByOwnerIdAndName("cPlease don't make a timeline with this name it will ruin my tests", -1);
-            addNewTimelineToDBByOwnerIdAndName("dPlease don't make a timeline with this name it will ruin my tests", -1);
-            addNewTimelineToDBByOwnerIdAndName("ePlease don't make a timeline with this name it will ruin my tests", -1);
-            addNewTimelineToDBByOwnerIdAndName("aPlease don't make a timeline with this name it will ruin my tests", -2);
-            addNewTimelineToDBByOwnerIdAndName("bPlease don't make a timeline with this name it will ruin my tests", -2);
-            addNewTimelineToDBByOwnerIdAndName("cPlease don't make a timeline with this name it will ruin my tests", -2);
-            addNewTimelineToDBByOwnerIdAndName("dPlease don't make a timeline with this name it will ruin my tests", -2);
-            addNewTimelineToDBByOwnerIdAndName("ePlease don't make a timeline with this name it will ruin my tests", -2);
+            addNewTimelineToDBByOwnerIdAndName("aPlease don't make a timeline with this name it will ruin my tests", loginUserID);
+            addNewTimelineToDBByOwnerIdAndName("bPlease don't make a timeline with this name it will ruin my tests", loginUserID);
+            addNewTimelineToDBByOwnerIdAndName("cPlease don't make a timeline with this name it will ruin my tests", loginUserID);
+            addNewTimelineToDBByOwnerIdAndName("dPlease don't make a timeline with this name it will ruin my tests", loginUserID);
+            addNewTimelineToDBByOwnerIdAndName("ePlease don't make a timeline with this name it will ruin my tests", loginUserID);
+            addNewTimelineToDBByOwnerIdAndName("aPlease don't make a timeline with this name it will ruin my tests", 1);
+            addNewTimelineToDBByOwnerIdAndName("bPlease don't make a timeline with this name it will ruin my tests", 1);
+            addNewTimelineToDBByOwnerIdAndName("cPlease don't make a timeline with this name it will ruin my tests", 1);
+            addNewTimelineToDBByOwnerIdAndName("dPlease don't make a timeline with this name it will ruin my tests", 1);
+            addNewTimelineToDBByOwnerIdAndName("ePlease don't make a timeline with this name it will ruin my tests", 1);
         });
         reinitializeDashboard();
 
@@ -793,9 +791,9 @@ public class DashboardTest {
             lowerTimelineOnList = timelinesList.get(i + 1);
 
             assertTrue(higherTimelineOnList.getName().compareTo(lowerTimelineOnList.getName()) <= 0);   //assert that the one below it comes after alphabetically by name, or is the same
-            assertTrue(lowerTimelineOnList.getName().contains("Please don't make a timeline with this name it will ruin my tests") && lowerTimelineOnList.getOwnerID()==-1);
+            assertTrue(lowerTimelineOnList.getName().contains("Please don't make a timeline with this name it will ruin my tests") && lowerTimelineOnList.getOwnerID()==loginUserID);
         }
-        assertTrue(timelinesList.get(0).getName().contains("Please don't make a timeline with this name it will ruin my tests") && timelinesList.get(0).getOwnerID()==-1);
+        assertTrue(timelinesList.get(0).getName().contains("Please don't make a timeline with this name it will ruin my tests") && timelinesList.get(0).getOwnerID()==loginUserID);
 
         changeSortBy(1);    //Reverse alphabetically
         timelinesList = new ArrayList<>(sut.list.getItems());
@@ -805,9 +803,9 @@ public class DashboardTest {
             lowerTimelineOnList = timelinesList.get(i + 1);
 
             assertTrue(higherTimelineOnList.getName().compareTo(lowerTimelineOnList.getName()) >= 0);   //assert that the one below it comes before alphabetically by name, or is the same
-            assertTrue(lowerTimelineOnList.getName().contains("Please don't make a timeline with this name it will ruin my tests") && lowerTimelineOnList.getOwnerID()==-1);
+            assertTrue(lowerTimelineOnList.getName().contains("Please don't make a timeline with this name it will ruin my tests") && lowerTimelineOnList.getOwnerID()==loginUserID);
         }
-        assertTrue(timelinesList.get(0).getName().contains("Please don't make a timeline with this name it will ruin my tests") && timelinesList.get(0).getOwnerID()==-1);
+        assertTrue(timelinesList.get(0).getName().contains("Please don't make a timeline with this name it will ruin my tests") && timelinesList.get(0).getOwnerID()==loginUserID);
     }
 
     //Helper methods to make changing GUI elements possible
@@ -837,6 +835,7 @@ public class DashboardTest {
         for (String n : name) {
             Timeline newTimeline = new Timeline();
             newTimeline.setName(n);
+            newTimeline.setOwnerID(loginUserID);
             try {DBM.insertIntoDB(newTimeline);} catch (SQLException e) {e.printStackTrace();}
         }
     }
@@ -851,6 +850,7 @@ public class DashboardTest {
 
     void addNewTimelineToDBByKeyWords(String... words) {
         Timeline newTimeline = new Timeline();
+        newTimeline.setOwnerID(loginUserID);
         try {DBM.insertIntoDB(newTimeline);} catch (SQLException e) {e.printStackTrace();}
         for (String n : words)
             newTimeline.getKeywords().add(n);
@@ -881,6 +881,5 @@ public class DashboardTest {
         }
         return null;
     }
-
 
 }
