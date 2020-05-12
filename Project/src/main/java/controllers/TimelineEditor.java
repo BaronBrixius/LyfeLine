@@ -136,13 +136,6 @@ public class TimelineEditor extends Editor {
 		return false;
 	}
 
-	boolean save() {
-		updateItem();
-		super.save();
-		parentController.populateDisplay();
-		return true;
-	}
-
 	boolean isUniqueKeyword(String k) {
 		for (String s : keywords) {
 			if (k.equalsIgnoreCase(s))
