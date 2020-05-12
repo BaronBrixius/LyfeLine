@@ -279,6 +279,25 @@ for example:      buttonName.getStyleClass().add("smallButton");                
     -fx-font-size: 7;
 }
 
+.check-box .box {
+	-fx-background-color: white;
+	-fx-border-color:grey;
+	-fx-border-radius:3px; 
+}
+
+.check-box:selected .mark {
+	-fx-background-color: white;
+}
+
+.check-box:selected .box {
+	-fx-background-color: #1AA9CD;
+}
+
+.combo-box-base, .combo-box-base .list-cell {
+    -fx-background-radius: 5;
+    -fx-text-fill: white;
+}
+
 /*Here is a list of useful CSS commands:
 -fx-text-fill: black; (sets text color)
 -fx-font-size: 1.5em; (sets text size)

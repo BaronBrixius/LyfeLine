@@ -13,6 +13,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
 
 public class AdminRoleManager {
@@ -22,6 +23,7 @@ public class AdminRoleManager {
 	@FXML private ListView<User> listView;
 	@FXML private CheckBox toggle;
 	@FXML private ComboBox <String> sortBy;
+    @FXML protected TextField searchInput;
 	
 	
 	final ObservableList<User> userList = FXCollections.observableArrayList();
