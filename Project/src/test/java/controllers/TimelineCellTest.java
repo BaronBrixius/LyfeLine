@@ -12,7 +12,9 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.testfx.api.FxRobot;
+import org.testfx.framework.junit5.ApplicationExtension;
 import org.testfx.framework.junit5.Start;
 
 import database.DBM;
@@ -25,7 +27,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 //focusing on rating testing for now, probably lacking a ton of testing
-
+@ExtendWith(ApplicationExtension.class)
 class TimelineCellTest {
 	static private int testCount = 0;
 	Dashboard dash;
@@ -66,50 +68,60 @@ class TimelineCellTest {
 		GUIManager.mainStage = stage;
 		stage.show();
 	}
-	
-	   @BeforeEach
-	    void setUp() {
-	        try {
-	            DBM.setupSchema();
-	        } catch (SQLException | FileNotFoundException e) {e.printStackTrace();}
-	        System.out.println("Test " + ++testCount);
-	    }
+
+	@BeforeEach
+	void setUp() {
+		try {
+			DBM.setupSchema();
+		} catch (SQLException | FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		System.out.println("Test " + ++testCount);
+	}
 
 	@AfterAll
 	static void end() throws SQLException {
 		DBM.conn.createStatement().execute("DROP DATABASE IF EXISTS test");
 		DBM.conn.close();
 	}
-	
-	@Test 
-	void changeIfHoverTest() {
-		
+
+	@Test
+	void opacityTest() {
+
+		double actualOpacity = tc.ratingBox.getOpacity(); // checking opacity is 0 fora low rating
+		double expectedOpacity = 0;
+		assertEquals(actualOpacity, expectedOpacity);
+
 	}
 
 	@Test
-	void ratingInDBTest() {
+	void EmptyRatingInDBTest() throws SQLException {
 		GUIManager.main = new BorderPane(); // Avoids a null pointer?
 		ArrayList<Timeline> timelinesList = new ArrayList<>(dash.list.getItems());
-		for (Timeline t : timelinesList)
-            System.out.println(t.getName());
-        int listSize = timelinesList.size();
-        for(int i = 0 ; i < listSize - 1; i++) {
-        	dash.list.getSelectionModel().select(i);
-    		Timeline timelineSelected = dash.list.getSelectionModel().getSelectedItem();
-     		double actual = timelineSelected.getRating();
-    		double expected = 0;
-    		assertEquals(actual,expected);
-        }
+		int listSize = timelinesList.size();
+		for (int i = 0; i < listSize - 1; i++) {
+			dash.list.getSelectionModel().select(i);
+			Timeline timelineSelected = dash.list.getSelectionModel().getSelectedItem();
+			double actual = timelineSelected.getRating();
+			double expected = 0;
+			assertEquals(actual, expected);
+		}
 	}
 
 	@Test
-	void initializeTest() {
-		// do we need this?
-	}
-
-	@Test
-	void setupRatingButtonTest() {
-		// do we need this?
+	void LowRatingInDBTest() throws SQLException {
+		// Rating of 1 in db
+		GUIManager.main = new BorderPane(); // Avoids a null pointer?
+		ArrayList<Timeline> timelinesList = new ArrayList<>(dash.list.getItems());
+		int listSize = timelinesList.size();
+		for (int i = 0; i < listSize - 1; i++) {
+			dash.list.getSelectionModel().clearAndSelect(i);
+			Timeline timelineSelected = dash.list.getSelectionModel().getSelectedItem();
+			timelineSelected.addRating(1, 1);
+			double actual = timelineSelected.getRating();
+			double expected = 0;
+			assertEquals(actual, expected);
+		}
 	}
 
 	@Test
@@ -124,31 +136,16 @@ class TimelineCellTest {
 
 	@Test
 	void getTimelineTest() throws InterruptedException {
-		// Throws null pointer for anything with timelinecells, need to select one?
-		/*
-		GUIManager.main = new BorderPane(); // Avoids a null pointer?
-		TimelineCell testCell = new TimelineCell();
-		dash.list.getSelectionModel().select(0);
-		Timeline timelineSelected = dash.list.getSelectionModel().getSelectedItem();
-		// Timeline TestTimeline = new Timeline();
-		testCell.setTimeline(timelineSelected, 25); // Random Width for now
-		GUIManager.main = new BorderPane(); // Avoids a null pointer
-		// Select the first timeline in the list
-		dash.list.getSelectionModel().select(0);
-		String actual = testCell.timeline.getName();
-		String expected = testCell.getTimeline().getName();
-		assertEquals(actual, expected);
-		*/
-
-		//dash.list.getSelectionModel().select(0);
-		//waitForRunLater();
-        ArrayList<Timeline> timelinesList = new ArrayList<>(dash.list.getItems());
-        int listSize = timelinesList.size();
-        for(int i = 0 ; i < listSize; i++) {
-        	dash.list.getSelectionModel().select(i);
-    		Timeline timelineSelected = dash.list.getSelectionModel().getSelectedItem();    		
-        }
-
+		// need to find a way to iterate over all timelinecells
+		ArrayList<Timeline> timelinesList = new ArrayList<>(dash.list.getItems());
+		// ArrayList<TimelineCell> timelineCellList = new ArrayList<>(dash.time);
+		int listSize = timelinesList.size();
+		for (int i = 0; i < listSize - 1; i++) {
+			dash.list.getSelectionModel().select(i);
+			Timeline timelineSelected = dash.list.getSelectionModel().getSelectedItem();
+			String actual = timelineSelected.getName();
+			String expected = timelineSelected.getName();
+		}
 		Timeline timelineSelected = dash.list.getSelectionModel().getSelectedItem();
 		tc.setTimeline(timelineSelected, 25); // Random Width for now
 		String actual = tc.timeline.getName();
