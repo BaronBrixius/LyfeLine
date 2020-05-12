@@ -84,8 +84,7 @@ public class TimelineEditor extends Editor {
 		} else
 			timeline.setKeywords(FXCollections.observableArrayList());
 
-		timeInput.getSelectionModel().select(timeline.getScale() - 1);
-
+        timeInput.getSelectionModel().select(timeline.getScale() > 0 ? timeline.getScale() - 1 : 4);
 		return true;
 	}
 
@@ -183,6 +182,15 @@ public class TimelineEditor extends Editor {
 		}
 	}
 
+    boolean save() {
+        updateItem();
+        super.save();
+        parentController.populateDisplay();
+        parentController.eventSelectorController.populateDisplay();
+        parentController.eventSelectorController.setTimelineSelected(timeline);
+        return true;
+    }
+    
 	@Override
 	protected String copyImage(File image, String filename) throws IOException { // Takes the file chosen and the name
 																					// of it
