@@ -69,6 +69,7 @@ public abstract class Editor {
     TimelineView parentController;
     String imageFilePath;
     TimelineObject itemInEditor;
+    String outPath;
 
     public void initialize() {
         //Set Up the Spinners for Start/End Inputs, would have bloated the .fxml and variable list a ton if these were in fxml
@@ -405,7 +406,6 @@ public abstract class Editor {
     }
 
     protected String copyImage(File image, String filename) throws IOException { //Takes the file chosen and the name of it
-        String outPath = "src/main/resources/images/event/";
         String imageName = filename;
         InputStream is = null;
         OutputStream os = null;
@@ -451,7 +451,7 @@ public abstract class Editor {
 
     //Method to check if the image folder has this name already to avoid duplicates overriding earlier uploads
     protected boolean folderHasImage(String path) {
-        File folder = new File("src/main/resources/images/event/");
+        File folder = new File(outPath);
         File[] listOfFiles = folder.listFiles();
         List<String> images = new ArrayList<>();
 
