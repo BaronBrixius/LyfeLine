@@ -8,6 +8,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 
@@ -96,18 +98,8 @@ public class TimelineView {
     void populateDisplay() {
         timelineGrid.getChildren().clear();
         timelineGrid.getColumnConstraints().clear();
-
         setupMainLine();
-
-        eventList.clear();
-        EventNode newNode;
-        for (Event e : activeTimeline.getEventList()) {
-            newNode = addEvent(e);
-            eventList.add(newNode);
-        }
-        Collections.sort(eventList);            // sort so that earlier events are placed first (longer comes first in case of tie)
-        for (int i = 0; i < eventList.size(); i++)
-            placeEvent(eventList.get(i), i);
+        setupEventNodes();
     }
 
     Pane setupMainLine() {
@@ -144,6 +136,18 @@ public class TimelineView {
             timelineGrid.add(mainLine, 0, 0, numberOfCol, 1);   // which does not work for the amount of columns
         GridPane.setMargin(mainLine, new Insets(25, 0, -25, 0));
         return mainLine;
+    }
+
+    private void setupEventNodes(){
+        eventList.clear();
+        EventNode newNode;
+        for (Event e : activeTimeline.getEventList()) {
+            newNode = addEvent(e);
+            eventList.add(newNode);
+        }
+        Collections.sort(eventList);            // sort so that earlier events are placed first (longer comes first in case of tie)
+        for (int i = 0; i < eventList.size(); i++)
+            placeEvent(eventList.get(i), i);
     }
 
     EventNode addEvent(Event event) {

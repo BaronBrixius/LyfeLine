@@ -46,7 +46,7 @@ public class GUIManager extends Application {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        loggedInUser = DBM.getFromDB(DBM.conn.prepareStatement("SELECT * FROM users"), new User()).get(0);  //delete when merging to dev
+        //loggedInUser = DBM.getFromDB(DBM.conn.prepareStatement("SELECT * FROM users"), new User()).get(0);  //delete when merging to dev
         main = new BorderPane();
         loader = new FXMLLoader(getClass().getResource("../FXML/TopMenu.fxml"));
         main.setTop(loader.load());
@@ -54,9 +54,9 @@ public class GUIManager extends Application {
 
         mainStage = primaryStage;
         mainStage.setScene(new Scene(main));
-        //swapScene("Welcome");
-        TimelineView systemUnderDevelopment = swapScene("TimelineView");        //delete when merging to dev
-        systemUnderDevelopment.setActiveTimeline(1);
+        swapScene("Welcome");
+        //TimelineView systemUnderDevelopment = swapScene("TimelineView");        //delete when merging to dev
+        //systemUnderDevelopment.setActiveTimeline(1);
         mainStage.getScene().getStylesheets().add("File:src/main/resources/styles/DefaultStyle.css");
         mainStage.show();
     }

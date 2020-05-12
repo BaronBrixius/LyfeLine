@@ -89,7 +89,7 @@ public class TimelineEditor extends Editor {
         } else
             timeline.setKeywords(FXCollections.observableArrayList());
 
-        timeInput.getSelectionModel().select(timeline.getScale() - 1);
+        timeInput.getSelectionModel().select(timeline.getScale() > 0 ? timeline.getScale() - 1 : 4);
 
         return true;
     }
@@ -101,8 +101,6 @@ public class TimelineEditor extends Editor {
         timeline.getKeywords().addAll(keywords);
 
         timeline.setScale((timeInput.getSelectionModel().getSelectedIndex()) + 1);
-        parentController.setActiveTimeline(timeline);
-        parentController.eventSelectorController.populateDisplay();
     }
 
     @FXML

@@ -72,12 +72,6 @@ public class EventSelector {
             setFilter();
             eventListView.getSelectionModel().clearSelection();
             disableEventControlButtons(true);
-
-            if (timelineComboBox.getSelectionModel().getSelectedIndex() < 0)
-                newButton.setDisable(true);                                     //if no timeline selected, disable New Event button
-            else                                                                //otherwise, allow based on ownership
-                newButton.setDisable(GUIManager.loggedInUser.getUserID() != timelineComboBox.getSelectionModel().getSelectedItem().getOwnerID());
-
         });
 
         eventListView.getSelectionModel().selectedIndexProperty().addListener(e -> {
@@ -86,11 +80,9 @@ public class EventSelector {
             if (GUIManager.loggedInUser.getAdmin()) {           //if admin, allow editing events
                 addToTimelineButton.setDisable(eventListView.getSelectionModel().getSelectedIndex() < 0);
 
-                if (timelineComboBox.getSelectionModel().getSelectedIndex() < 0) {     //no adding/deleting from null timeline
-                    newButton.setDisable(true);
+                if (timelineComboBox.getSelectionModel().getSelectedIndex() < 0) {     //no deleting from null timeline
                     deleteButton.setDisable(true);
-                } else {        //only owner can edit
-                    newButton.setDisable(GUIManager.loggedInUser.getUserID() != timelineComboBox.getSelectionModel().getSelectedItem().getOwnerID());
+                } else {        //only owner can delete
                     deleteButton.setDisable(GUIManager.loggedInUser.getUserID() != timelineComboBox.getSelectionModel().getSelectedItem().getOwnerID());
                 }
             }
@@ -98,7 +90,6 @@ public class EventSelector {
     }
 
     private void disableEventControlButtons(boolean disable) {
-        newButton.setDisable(disable);
         viewButton.setDisable(disable);
         addToTimelineButton.setDisable(disable);
         deleteButton.setDisable(disable);
@@ -189,6 +180,9 @@ public class EventSelector {
                 break;
             }
         }
+        //disable adding new event if not owner
+        newButton.setDisable(GUIManager.loggedInUser.getUserID()
+                != parentController.activeTimeline.getOwnerID());
     }
 
     void sortEvents(int selection) {
@@ -212,10 +206,10 @@ public class EventSelector {
     }
 
     private void setFilter() {
-        filterableEventList.setPredicate(getFilterByTimeline().and(getFilterBySearch()));
+        filterableEventList.setPredicate(getTimelineFilter().and(getSearchFilter()));
     }
 
-    Predicate<Event> getFilterBySearch() {
+    Predicate<Event> getSearchFilter() {
         String searchText = searchInput.getText();
         if (searchText == null || searchText.isEmpty())
             return timeline -> true;
@@ -223,7 +217,7 @@ public class EventSelector {
             return timeline -> timeline.getName().toLowerCase().contains(searchText.toLowerCase());
     }
 
-    Predicate<Event> getFilterByTimeline() {
+    Predicate<Event> getTimelineFilter() {
         if (timelineComboBox.getSelectionModel().getSelectedIndex() < 0)                                //if no selection, display everything
             return e -> true;
         else
