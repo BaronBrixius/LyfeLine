@@ -147,6 +147,8 @@ public class TimelineEditor extends Editor {
         updateItem();
         super.save();
         parentController.populateDisplay();
+        parentController.eventSelectorController.populateDisplay();
+        parentController.eventSelectorController.setTimelineSelected(timeline);
         return true;
     }
 
