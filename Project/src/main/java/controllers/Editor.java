@@ -370,16 +370,18 @@ public abstract class Editor {
             );
             //The current image chosen by FileChooser
             File imageChosen = chooser.showOpenDialog(GUIManager.mainStage);
-            System.out.println(getFormat(imageChosen));
-            if (getFormat(imageChosen).matches("(JPEG|png|jpg|bmp|gif|wbmp)")) {
-                if (imageChosen != null) {
-                    imageFilePath = copyImage(imageChosen, imageChosen.getName());
-                    image.setImage(new Image("File:" + imageFilePath));
-                }
-            }
-        } else
-            throw new IllegalArgumentException("Not accepted image format");
-    }
+
+            if (imageChosen != null) {
+                System.out.println(getFormat(imageChosen));
+				if (getFormat(imageChosen).matches("(JPEG|png|jpg|bmp|gif|wbmp)")) {
+		            System.out.println(getFormat(imageChosen));
+					imageFilePath = copyImage(imageChosen, imageChosen.getName());
+					image.setImage(new Image("File:" + imageFilePath));
+				}
+			}
+		} else
+			throw new IllegalArgumentException("Not accepted image format");
+	}
 
     @FXML
     protected boolean ImageSaveConfirm() {
