@@ -359,7 +359,8 @@ public class Dashboard {
         StringBuilder keyWords = new StringBuilder();
         for (String s : timeline.getKeywords())
             keyWords.append(s + ", ");
-        keyWords.delete(keyWords.length() - 2, keyWords.length());
+        if (keyWords.length() >= 2)
+            keyWords.delete(keyWords.length() - 2, keyWords.length());
 
         titleText.setText("Title: " + timeline.getName() + "\nDescription: " + timeline.getDescription()
                 + "\nDate Created: " + year + "/" + month + "/" + day + "\nKeywords: " + keyWords);
