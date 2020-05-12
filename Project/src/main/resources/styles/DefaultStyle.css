@@ -138,6 +138,10 @@ for example:      buttonName.getStyleClass().add("smallButton");                
     -fx-font-size: 1.5em;
 }
 
+.eventEditor {
+    -fx-background-color: #f4f4f4;
+}
+
 .date-picker .label {
     -fx-padding: 0 0 0 0;
     -fx-pref-width: 5px;

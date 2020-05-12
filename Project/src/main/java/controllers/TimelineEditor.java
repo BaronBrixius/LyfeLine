@@ -151,8 +151,8 @@ public class TimelineEditor extends Editor {
 
     boolean isUniqueKeyword(String k) {
         for (String s : keywords) {
-            if (k.equalsIgnoreCase(s)) return false;
-
+            if (k.equalsIgnoreCase(s))
+                return false;
         }
         return true;
     }
