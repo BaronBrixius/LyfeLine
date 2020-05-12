@@ -21,6 +21,7 @@ public class EventEditor extends Editor {
 
     public void initialize() {
         super.initialize();
+        outPath = "src/main/resources/images/event/";
 
         //set up priority slider labels
         prioritySlider.setLabelFormatter(new StringConverter<>() {
