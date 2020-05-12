@@ -36,7 +36,7 @@ public class TimelineEditor extends Editor {
     @FXML
     ListView<String> keywordView;
     @FXML
-    Text feedbackText;
+    Label feedbackText;
     @FXML
     private TextField keywordInput;
     private File imageChosen;
@@ -74,6 +74,7 @@ public class TimelineEditor extends Editor {
     void toggleEditable(boolean editable) {
         super.toggleEditable(editable);
         keywordInput.setEditable(editable);
+        feedbackText.setText("");
         keywordBox.setDisable(!editable);
         timeInput.setDisable(!editable);
     }
@@ -168,7 +169,7 @@ public class TimelineEditor extends Editor {
                 feedbackText.setText("Keyword already exists!");
             } else {
                 keywords.add(inputWord);
-                feedbackText.setText("Keyword " + inputWord + " added");
+                feedbackText.setText(inputWord + " added");
                 keywords.sort(String::compareTo);
                 keywordInput.setText("");
             }
