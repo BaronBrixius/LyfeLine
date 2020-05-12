@@ -35,7 +35,7 @@ public class TimelineEditor extends Editor {
 	@FXML
 	ListView<String> keywordView;
 	@FXML
-	Text feedbackText;
+	Label feedbackText;
 	@FXML
 	private TextField keywordInput;
 	private File imageChosen;
