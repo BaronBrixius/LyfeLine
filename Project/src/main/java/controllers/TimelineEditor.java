@@ -261,4 +261,20 @@ public class TimelineEditor extends Editor {
 
 	}
 
+    @Override
+    boolean validData() {
+        if (timeInput.getSelectionModel().getSelectedIndex() >= 0)
+            return super.validData();
+        else
+        {
+            Alert confirmDelete = new Alert(Alert.AlertType.CONFIRMATION);
+            confirmDelete.setTitle("Invalid Units");
+            confirmDelete.setHeaderText("A time unit must be selected.");
+            confirmDelete.setContentText("Make sure to selected a time unit appropriate for your timeline before saving.");
+
+            confirmDelete.showAndWait();
+            return false;
+        }
+    }
+
 }
