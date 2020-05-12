@@ -259,12 +259,8 @@ public class TimelineEditor extends Editor {
 	protected void uploadImage() throws IOException {
 		boolean confirm = true;
 		if (itemInEditor.getImagePath() != null) {
-			confirm = false;
-		}
-		else  {
 			confirm = ImageSaveConfirm();
 		}
-
 		if (confirm) {
 			FileChooser chooser = new FileChooser(); // For the file directory
 			chooser.setTitle("Upload image");
@@ -279,23 +275,27 @@ public class TimelineEditor extends Editor {
 					new FileChooser.ExtensionFilter("GIF", "*.gif"), new FileChooser.ExtensionFilter("WBMP", "*.wbmp"));
 			// The current image chosen by FileChooser
 			imageChosen = chooser.showOpenDialog(GUIManager.mainStage);
-			if (!getFormat(imageChosen).matches("(JPEG|png|jpg|bmp|gif|wbmp)")) {
-				System.out.println("Wrong format");
-				WrongFormatNotification();
-			} else {
-				if (imageChosen != null && checkResolution(imageChosen)) {
 
-					
-						imageFilePath = copyImage(imageChosen, imageChosen.getName());
-						image.setImage(new Image("File:" + imageFilePath));
+		}
+		if (imageChosen != null) {
+			if (getFormat(imageChosen).matches("(JPEG|png|jpg|bmp|gif|wbmp)")) {
 
-					
+				if (checkResolution(imageChosen)) {
+					System.out.println("Correct");
+					imageFilePath = copyImage(imageChosen, imageChosen.getName());
+					image.setImage(new Image("File:" + imageFilePath));
 				}
 
+				else {
+					ImageResolutionNotification();
+				}
+
+			} else {
+				WrongFormatNotification();
 			}
 
 		}
-	
+
 	}
 
 	@FXML
@@ -303,15 +303,8 @@ public class TimelineEditor extends Editor {
 		Alert resolutionSaveImage = new Alert(Alert.AlertType.CONFIRMATION);
 		resolutionSaveImage.setTitle("Too low resolution for timeline image");
 		resolutionSaveImage.setHeaderText("Resolution of the picture is too low. Minimum resolution is 1280x720");
-		resolutionSaveImage.setContentText("Would you like to upload a new image with higher resolution?");
 
 		Optional<ButtonType> result = resolutionSaveImage.showAndWait();
-		try {
-			uploadImage();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		return result.get() == ButtonType.OK;
 
 	}
@@ -339,10 +332,11 @@ public class TimelineEditor extends Editor {
 		if (readers.hasNext()) {
 			ImageReader reader = readers.next();
 			reader.setInput(iis, true);
-			System.out.println("Width " +reader.getWidth(0) + " and required minimum width is: " + REQUIRED_WIDTH);
-			System.out.println("Height " +reader.getHeight(0) + " and required minimumn height is: " + REQUIRED_HEIGHT);
+			System.out.println("Width " + reader.getWidth(0) + " and required minimum width is: " + REQUIRED_WIDTH);
+			System.out
+					.println("Height " + reader.getHeight(0) + " and required minimumn height is: " + REQUIRED_HEIGHT);
 			if (reader.getWidth(0) < REQUIRED_WIDTH || reader.getHeight(0) < REQUIRED_HEIGHT) {
-			
+
 				check = false;
 			} else {
 				check = true;
