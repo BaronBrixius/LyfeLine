@@ -2,12 +2,15 @@ package controllers;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.io.FileNotFoundException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.concurrent.Semaphore;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.Start;
@@ -63,16 +66,40 @@ class TimelineCellTest {
 		GUIManager.mainStage = stage;
 		stage.show();
 	}
+	
+	   @BeforeEach
+	    void setUp() {
+	        try {
+	            DBM.setupSchema();
+	        } catch (SQLException | FileNotFoundException e) {e.printStackTrace();}
+	        System.out.println("Test " + ++testCount);
+	    }
 
 	@AfterAll
 	static void end() throws SQLException {
 		DBM.conn.createStatement().execute("DROP DATABASE IF EXISTS test");
 		DBM.conn.close();
 	}
+	
+	@Test 
+	void changeIfHoverTest() {
+		
+	}
 
 	@Test
-	void RatingInDBTest() {
-
+	void ratingInDBTest() {
+		GUIManager.main = new BorderPane(); // Avoids a null pointer?
+		ArrayList<Timeline> timelinesList = new ArrayList<>(dash.list.getItems());
+		for (Timeline t : timelinesList)
+            System.out.println(t.getName());
+        int listSize = timelinesList.size();
+        for(int i = 0 ; i < listSize - 1; i++) {
+        	dash.list.getSelectionModel().select(i);
+    		Timeline timelineSelected = dash.list.getSelectionModel().getSelectedItem();
+     		double actual = timelineSelected.getRating();
+    		double expected = 0;
+    		assertEquals(actual,expected);
+        }
 	}
 
 	@Test
@@ -113,14 +140,17 @@ class TimelineCellTest {
 		assertEquals(actual, expected);
 		*/
 
-		dash.list.getSelectionModel().select(0);
-		waitForRunLater();
+		//dash.list.getSelectionModel().select(0);
+		//waitForRunLater();
+        ArrayList<Timeline> timelinesList = new ArrayList<>(dash.list.getItems());
+        int listSize = timelinesList.size();
+        for(int i = 0 ; i < listSize; i++) {
+        	dash.list.getSelectionModel().select(i);
+    		Timeline timelineSelected = dash.list.getSelectionModel().getSelectedItem();    		
+        }
+
 		Timeline timelineSelected = dash.list.getSelectionModel().getSelectedItem();
-		waitForRunLater();
-
 		tc.setTimeline(timelineSelected, 25); // Random Width for now
-		waitForRunLater();
-
 		String actual = tc.timeline.getName();
 		String expected = tc.getTimeline().getName();
 		assertEquals(actual, expected);
