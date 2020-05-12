@@ -8,11 +8,12 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Polygon;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
 import java.io.*;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -20,10 +21,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
-
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
-import javax.imageio.stream.ImageInputStream;
 
 public class TimelineEditor extends Editor {
 	private final ObservableList<String> keywords = FXCollections.observableArrayList();
@@ -345,5 +342,21 @@ public class TimelineEditor extends Editor {
 		return check;
 
 	}
+
+    @Override
+    boolean validData() {
+        if (timeInput.getSelectionModel().getSelectedIndex() >= 0)
+            return super.validData();
+        else
+        {
+            Alert confirmDelete = new Alert(Alert.AlertType.CONFIRMATION);
+            confirmDelete.setTitle("Invalid Units");
+            confirmDelete.setHeaderText("A time unit must be selected.");
+            confirmDelete.setContentText("Make sure to selected a time unit appropriate for your timeline before saving.");
+
+            confirmDelete.showAndWait();
+            return false;
+        }
+    }
 
 }

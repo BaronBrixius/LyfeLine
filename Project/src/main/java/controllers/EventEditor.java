@@ -7,6 +7,7 @@ import javafx.util.StringConverter;
 
 import java.io.*;
 import java.sql.SQLException;
+import java.util.Optional;
 
 public class EventEditor extends Editor {
 
@@ -20,6 +21,7 @@ public class EventEditor extends Editor {
 
     public void initialize() {
         super.initialize();
+        outPath = "src/main/resources/images/event/";
 
         //set up priority slider labels
         prioritySlider.setLabelFormatter(new StringConverter<>() {
@@ -73,7 +75,8 @@ public class EventEditor extends Editor {
     }
 
     boolean setEvent(Event event) {
-        parentController.eventEditorController.close();
+        //parentController.eventEditorController.close();
+        parentController.rightSidebar.getChildren().remove(editor);
         this.event = event;
         itemInEditor = event;
         if (this.event.getID() == 0)       //if new event, set current user as owner
@@ -108,8 +111,7 @@ public class EventEditor extends Editor {
 
         if (newEvent)
             addToTimeline();        //new event is automatically added to active timeline when saved
-        parentController.eventSelectorController.populateTimelineList();
-        parentController.eventSelectorController.populateEventList();
+        parentController.eventSelectorController.populateDisplay();
         parentController.populateDisplay();
         return true;
     }
@@ -122,14 +124,14 @@ public class EventEditor extends Editor {
             else
                 System.out.println("Event is already on " + parentController.activeTimeline + " timeline.");
         } catch (SQLException e) {
-            System.out.println("Timeline not found.");
+            System.out.println("Timeline not found in database.");
         }
     }
 
     @FXML
     boolean deleteEvent() {
         parentController.eventSelectorController.deleteEvent(event);
-        return close();
+        return parentController.rightSidebar.getChildren().remove(editor);
     }
 
     boolean hasChanges() {
@@ -143,10 +145,37 @@ public class EventEditor extends Editor {
     @FXML
     boolean close() {
         parentController.rightSidebar.getChildren().remove(editor);
-        parentController.rightSidebar.getChildren().add(editor);
-        if (event != null && hasChanges() && !saveConfirm())          //do you wanna save and exit or just exit?
+        parentController.rightSidebar.getChildren().add(editor);    //This moves the editor to the top of the stack pane
+        if (event != null && hasChanges())
+            if (closeConfirm())          //do you wanna save and exit or just exit?
+            {
+                if (validData())
+                {
+                    save();
+                    return parentController.rightSidebar.getChildren().remove(editor);
+                }
+                else
+                    return false;
+            }
+
+        return parentController.rightSidebar.getChildren().remove(editor);
+    }
+
+    @FXML
+    boolean closeConfirm() {
+
+        ButtonType yes = new ButtonType("Yes", ButtonBar.ButtonData.OK_DONE);
+        ButtonType no = new ButtonType("No", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+        Alert confirmSave = new Alert(Alert.AlertType.CONFIRMATION, "Would you like to save them before closing?", yes, no);
+
+        confirmSave.setTitle("Confirm Close");
+        confirmSave.setHeaderText("You have made unsaved changes!"); //TODO change text
+
+        Optional<ButtonType> result = confirmSave.showAndWait();
+
+        if (result.get() == no)
             return false;
-        parentController.rightSidebar.getChildren().remove(editor);
         return true;
     }
 }

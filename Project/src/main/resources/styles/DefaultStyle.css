@@ -5,11 +5,6 @@
     -fx-background-color: #f4f4f4;
 }
 
-/* .root was applying "weakly", causing gridpanes to be semi-transparent*/
-GridPane{
-    -fx-background-color: #f4f4f4;
-}
-
 /*Text applies to any free floating text (inc. TextField), does not apply to text in Buttons, etc.
 "-fx-text-fill" does not work here, use "fx-fill" to color the text instead.*/
 Text{
@@ -136,6 +131,10 @@ for example:      buttonName.getStyleClass().add("smallButton");                
 
 .mediumText{
     -fx-font-size: 1.5em;
+}
+
+.eventEditor {
+    -fx-background-color: #f4f4f4;
 }
 
 .date-picker .label {

@@ -19,22 +19,16 @@ public class GUIManager extends Application {
     public static TopMenu menu;
     public static BorderPane main;
     public static FXMLLoader loader;
-    //public static Stack<Node> pastPages = new Stack<>(); //Unused, might be handy later, caused problems now.
 
     public static void main(String[] args) {
         launch(args);
     }
 
     public static <T> T swapScene(String fxml) throws IOException {
-        //pastPages.add(main.getCenter());
         loader = new FXMLLoader(GUIManager.class.getResource("../FXML/" + fxml + ".fxml"));
         main.setCenter(loader.load());
         return loader.getController();
     }
-
-    //public static void previousPage() {
-    //    main.getChildren().set(1, pastPages.pop());
-    //}
 
     public static void applyStyle(String style) {
         mainStage.getScene().getStylesheets().remove(0);
