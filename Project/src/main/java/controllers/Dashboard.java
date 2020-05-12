@@ -169,9 +169,10 @@ public class Dashboard {
 
     ResultSet advancedResultSet() {     //pull the relevant data from the database and pass back to search
         try {
-            PreparedStatement stmt = DBM.conn.prepareStatement("SELECT t.*, u.UserName, AVG(r.rating) as Rating FROM timelines t " +
+            PreparedStatement stmt = DBM.conn.prepareStatement("SELECT t.*, u.UserName, COALESCE(AVG(r.rating), 0) as Rating FROM timelines t " +
                     "INNER JOIN users u ON t.TimelineOwner = u.UserID " +
-                    "LEFT JOIN rating r ON t.TimelineID = r.timeLineID");
+                    "LEFT JOIN rating r ON t.TimelineID = r.timeLineID " +
+                    "GROUP BY t.TimelineID");
             return stmt.executeQuery();
         } catch (SQLException e) {
             e.printStackTrace();
