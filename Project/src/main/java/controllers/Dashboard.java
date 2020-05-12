@@ -72,7 +72,7 @@ public class Dashboard {
     @FXML
     protected GridPane endDates;
     @FXML
-    protected Text titleText;
+    protected TextArea titleText;
     @FXML
     protected Hyperlink AdvancedSearch;
     private Timeline activeTimeline;
