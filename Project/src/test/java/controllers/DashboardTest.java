@@ -53,7 +53,7 @@ public class DashboardTest {
 
         try {
             PreparedStatement stat = DBM.conn.prepareStatement("SELECT * FROM Users WHERE UserID=?");
-            stat.setInt(1, 999);
+            stat.setInt(1, 14);
             GUIManager.loggedInUser =  DBM.getFromDB(stat, new User()).get(0);
             loginUserID = GUIManager.loggedInUser.getUserID();
         } catch (SQLException e) { System.out.println("Could not get test user from database"); }
