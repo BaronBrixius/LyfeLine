@@ -9,6 +9,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.DialogPane;
+import javafx.scene.control.Spinner;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javafx.stage.Window;
@@ -17,6 +18,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.ApplicationExtension;
 import org.testfx.framework.junit5.Start;
+import utils.Date;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -648,9 +650,9 @@ public class DashboardTest {
 
     @Test
     void testSimpleSearchByTimelineNamePersonalOnly() throws InterruptedException {
+        addNewTimelineToDBByOwnerIdAndName("Please don't make a timeline with this name it will ruin my tests", loginUserID);
         Platform.runLater(() -> {
             sut.cbOnlyViewPersonalLines.setSelected(true);
-            addNewTimelineToDBByOwnerIdAndName("Please don't make a timeline with this name it will ruin my tests", loginUserID);
             sut.initialize();
             sut.searchInput.setText("me"); //Checks that searching for something in the middle of the name still counts
         });
@@ -664,9 +666,9 @@ public class DashboardTest {
 
     @Test
     void testSimpleSearchByTimelineNameCaseInsensitivePersonalOnly() throws InterruptedException {
+        addNewTimelineToDBByOwnerIdAndName("Please don't make a timeline with this name it will ruin my tests", loginUserID);
         Platform.runLater(() -> {
             sut.cbOnlyViewPersonalLines.setSelected(true);
-            addNewTimelineToDBByOwnerIdAndName("Please don't make a timeline with this name it will ruin my tests", loginUserID);
             sut.initialize();
             sut.searchInput.setText("ME");
         });
@@ -680,9 +682,9 @@ public class DashboardTest {
 
     @Test
     void testSimpleSearchByWeirdTimelineNamePersonalOnly() throws InterruptedException {
+        addNewTimelineToDBByOwnerIdAndName("☺☻♥♦♣♠", loginUserID);
         Platform.runLater(() -> {
             sut.cbOnlyViewPersonalLines.setSelected(true);
-            addNewTimelineToDBByOwnerIdAndName("☺☻♥♦♣♠", loginUserID);
             sut.initialize();
             sut.searchInput.setText("♦");
         });
@@ -710,9 +712,9 @@ public class DashboardTest {
 
     @Test
     void testSimpleSearchByTimelineNamePersonalOnlyIDFailure() throws InterruptedException {
+        addNewTimelineToDBByOwnerIdAndName("Please don't make a timeline with this name it will ruin my tests", 1);
         Platform.runLater(() -> {
             sut.cbOnlyViewPersonalLines.setSelected(true);
-            addNewTimelineToDBByOwnerIdAndName("Please don't make a timeline with this name it will ruin my tests", 1);
             sut.initialize();
             sut.searchInput.setText("Please"); //Checks that searching for something not in the name actually removes it from the list
         });
@@ -724,9 +726,9 @@ public class DashboardTest {
 
     @Test
     void testSimpleSearchByKeyWordPersonalOnly() throws InterruptedException {
+        addNewTimelineToDBByOwnerIdAndKeyword(loginUserID,"Please don't make a timeline with this keyword it will ruin my tests");
         Platform.runLater(() -> {
             sut.cbOnlyViewPersonalLines.setSelected(true);
-            addNewTimelineToDBByOwnerIdAndKeyword(loginUserID,"Please don't make a timeline with this keyword it will ruin my tests");
             sut.initialize();
             sut.searchInput.setText("t mak"); //Checks that searching for something in the middle of the key word still counts
         });
@@ -835,6 +837,183 @@ public class DashboardTest {
         assertEquals(timelinesList.get(0).getOwnerID(), loginUserID);
     }
 
+    @Test
+    void testAdvancedSearchTimelineName() throws InterruptedException {
+        addNewTimelineToDBByName("Please don't make a timeline with this name it will ruin my tests");
+
+        Platform.runLater(() -> {
+            sut.initialize();
+            sut.toggleAdvancedSearch();
+            sut.searchTimelineName.setText("t mak");
+            sut.searchAdvanced();
+        });
+        waitForRunLater();
+
+        assertTrue(sut.list.getItems().stream().allMatch(timeline -> timeline.getName().toLowerCase().contains(sut.searchTimelineName.getText().toLowerCase())));
+        int actual = sut.list.getItems().size();
+        int expected = 0;
+        assertNotEquals(expected, actual); //If list is empty, then previous assert defaults to true
+    }
+
+    @Test
+    void testAdvancedSearchTimelineOwnerName() throws InterruptedException {
+        addNewTimelineToDBByOwnerId(GUIManager.loggedInUser.getUserID());
+
+        Platform.runLater(() -> {
+            sut.initialize();
+            sut.toggleAdvancedSearch();
+            sut.searchCreator.setText(GUIManager.loggedInUser.getUserName());
+            sut.searchAdvanced();
+        });
+        waitForRunLater();
+
+        assertTrue(sut.list.getItems().stream().allMatch(timeline -> timeline.getOwnerID() == GUIManager.loggedInUser.getUserID()));
+        int actual = sut.list.getItems().size();
+        int expected = 0;
+        assertNotEquals(expected, actual); //If list is empty, then previous assert defaults to true
+    }
+
+    @Test
+    void testAdvancedSearchTimelineKeyword() throws InterruptedException {
+        addNewTimelineToDBByKeyWords("Please don't make a timeline with this keyword it will ruin my tests");
+
+        Platform.runLater(() -> {
+            sut.initialize();
+            sut.toggleAdvancedSearch();
+            sut.searchKeywords.setText("is ke");
+            sut.searchAdvanced();
+        });
+        waitForRunLater();
+
+        assertTrue(sut.list.getItems().stream().allMatch(timeline -> timeline.getKeywords().stream().anyMatch(keyWord->keyWord.contains(sut.searchKeywords.getText().toLowerCase()))));
+        int actual = sut.list.getItems().size();
+        int expected = 0;
+        assertNotEquals(expected, actual); //If list is empty, then previous assert defaults to true
+    }
+
+    @Test
+    void testAdvancedSearchTimelineStartYear() throws InterruptedException {
+        addNewTimelineToDBByStartDate(1550, 10, 3, 6, 9, 34, 25);
+
+        Platform.runLater(() -> {
+            sut.initialize();
+            sut.toggleAdvancedSearch();
+            sut.startInputs.get(0).getValueFactory().setValue(1550);
+            sut.searchAdvanced();
+        });
+        waitForRunLater();
+
+        assertTrue(sut.list.getItems().stream().allMatch(timeline -> timeline.getStartDate().getYear() >= 1550));
+        int actual = sut.list.getItems().size();
+        int expected = 0;
+        assertNotEquals(expected, actual); //If list is empty, then previous assert defaults to true
+    }
+
+    @Test
+    void testAdvancedSearchTimelineEndYear() throws InterruptedException {
+        addNewTimelineToDBByEndDate(1550, 10, 3, 6, 9, 34, 25);
+
+        Platform.runLater(() -> {
+            sut.initialize();
+            sut.toggleAdvancedSearch();
+            sut.endInputs.get(0).getValueFactory().setValue(1550);
+            sut.searchAdvanced();
+        });
+        waitForRunLater();
+
+        assertTrue(sut.list.getItems().stream().allMatch(timeline -> timeline.getStartDate().getYear() <= 1550));
+        int actual = sut.list.getItems().size();
+        int expected = 0;
+        assertNotEquals(expected, actual); //If list is empty, then previous assert defaults to true
+    }
+
+    /*@Test
+    void testAdvancedSearchTimelineStartMonth() throws InterruptedException {
+        addNewTimelineToDBByStartDate(1550, 10, 3, 6, 9, 34, 25);
+
+        Platform.runLater(() -> {
+            sut.initialize();
+            sut.toggleAdvancedSearch();
+            sut.startInputs.get(1).getValueFactory().setValue(10);
+            sut.searchAdvanced();
+        });
+        waitForRunLater();
+
+        for (Timeline t : sut.list.getItems()) {
+            System.out.println(t.getStartDate().getMonth());
+        }
+
+        assertTrue(sut.list.getItems().stream().allMatch(timeline -> timeline.getStartDate().getMonth() >= 10));
+        int actual = sut.list.getItems().size();
+        int expected = 0;
+        assertNotEquals(expected, actual); //If list is empty, then previous assert defaults to true
+    }
+
+    @Test
+    void testAdvancedSearchTimelineStartDay() throws InterruptedException {
+        addNewTimelineToDBByStartDate(1550, 10, 30, 6, 9, 34, 25);
+
+        Platform.runLater(() -> {
+            sut.initialize();
+            sut.toggleAdvancedSearch();
+            sut.startInputs.get(2).getValueFactory().setValue(30);
+            sut.searchAdvanced();
+        });
+        waitForRunLater();
+
+        assertTrue(sut.list.getItems().stream().allMatch(timeline -> timeline.getStartDate().getMonth() >= 30));
+        int actual = sut.list.getItems().size();
+        int expected = 0;
+        assertNotEquals(expected, actual); //If list is empty, then previous assert defaults to true
+    }*/
+
+    @Test
+    void testAdvancedSearchTimelineNameAndOwner() throws InterruptedException {
+        addNewTimelineToDBByOwnerIdAndName("Please don't make a timeline with this name it will ruin my tests", GUIManager.loggedInUser.getUserID());
+
+        Platform.runLater(() -> {
+            sut.initialize();
+            sut.toggleAdvancedSearch();
+            sut.searchTimelineName.setText("t mak");
+            sut.searchCreator.setText(GUIManager.loggedInUser.getUserName());
+            sut.searchAdvanced();
+        });
+        waitForRunLater();
+
+        assertTrue(sut.list.getItems().stream().allMatch(timeline -> timeline.getName().toLowerCase().contains(sut.searchTimelineName.getText().toLowerCase())));
+        assertTrue(sut.list.getItems().stream().allMatch(timeline -> timeline.getOwnerID() == GUIManager.loggedInUser.getUserID()));
+        int actual = sut.list.getItems().size();
+        int expected = 0;
+        assertNotEquals(expected, actual); //If list is empty, then previous asserts defaults to true
+    }
+
+    @Test
+    void testAdvancedSearchTimelineNameAndOwnerAndKeyword() throws InterruptedException {
+        Timeline newTimeline = new Timeline();
+        newTimeline.setOwnerID(GUIManager.loggedInUser.getUserID());
+        newTimeline.setName("Please don't make a timeline with this name it will ruin my tests");
+        newTimeline.getKeywords().add("Please don't make a timeline with this keyword it will ruin my tests");
+        try {DBM.insertIntoDB(newTimeline);} catch (SQLException e) {e.printStackTrace();}
+
+
+        Platform.runLater(() -> {
+            sut.initialize();
+            sut.toggleAdvancedSearch();
+            sut.searchTimelineName.setText("t mak");
+            sut.searchCreator.setText(GUIManager.loggedInUser.getUserName());
+            sut.searchKeywords.setText("is ke");
+            sut.searchAdvanced();
+        });
+        waitForRunLater();
+
+        assertTrue(sut.list.getItems().stream().allMatch(timeline -> timeline.getName().toLowerCase().contains(sut.searchTimelineName.getText().toLowerCase())));
+        assertTrue(sut.list.getItems().stream().allMatch(timeline -> timeline.getOwnerID() == GUIManager.loggedInUser.getUserID()));
+        assertTrue(sut.list.getItems().stream().allMatch(timeline -> timeline.getKeywords().stream().anyMatch(keyWord->keyWord.contains(sut.searchKeywords.getText().toLowerCase()))));
+        int actual = sut.list.getItems().size();
+        int expected = 0;
+        assertNotEquals(expected, actual); //If list is empty, then previous asserts defaults to true
+    }
+
 
 
     //Gui elements take some time to load, and the tests will be run before any changes are made.
@@ -903,6 +1082,30 @@ public class DashboardTest {
         for (String n : words)
             newTimeline.getKeywords().add(n);
         try {DBM.insertIntoDB(newTimeline);} catch (SQLException e) {e.printStackTrace();}
+    }
+
+    //Adds a single timeline that has a start date with the inputted values
+    void addNewTimelineToDBByStartDate(int year, int month, int day, int hour, int minute, int second, int millisecond) {
+        Timeline newTimeline = new Timeline();
+        newTimeline.setOwnerID(loginUserID);
+        try {DBM.insertIntoDB(newTimeline);} catch (SQLException e) {e.printStackTrace();}
+
+        newTimeline.setStartDate(new Date(year, month, day, hour, minute, second, millisecond));
+        newTimeline.setEndDate(new Date(year + 1, 0, 0, 0, 0, 0, 0)); //Timelines must have an end date that is after the start date
+
+        try {DBM.updateInDB(newTimeline);} catch (SQLException e) {e.printStackTrace();}
+    }
+
+    //Adds a single timeline that has a start date with the inputted values
+    void addNewTimelineToDBByEndDate(int year, int month, int day, int hour, int minute, int second, int millisecond) {
+        Timeline newTimeline = new Timeline();
+        newTimeline.setOwnerID(loginUserID);
+        try {DBM.insertIntoDB(newTimeline);} catch (SQLException e) {e.printStackTrace();}
+
+        newTimeline.setStartDate(new Date(year - 1, 0, 0, 0, 0, 0, 0)); //Timelines must have an end date that is after the start date
+        newTimeline.setEndDate(new Date(year, month, day, hour, minute, second, millisecond));
+
+        try {DBM.updateInDB(newTimeline);} catch (SQLException e) {e.printStackTrace();}
     }
 
     //Helper method for getting the robot to click on a popup window/alert
