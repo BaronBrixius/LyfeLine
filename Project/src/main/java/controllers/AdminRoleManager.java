@@ -1,7 +1,10 @@
 package controllers;
 
 import java.io.IOException;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
@@ -13,6 +16,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
 
 public class AdminRoleManager {
@@ -22,7 +26,8 @@ public class AdminRoleManager {
 	@FXML private ListView<User> listView;
 	@FXML private CheckBox toggle;
 	@FXML private ComboBox <String> sortBy;
-	
+    @FXML protected TextField searchInput;
+	private List<User> usersFromDB;
 	
 	final ObservableList<User> userList = FXCollections.observableArrayList();
 
@@ -83,12 +88,26 @@ public class AdminRoleManager {
 			}
 		});
 
-
+		searchInput.focusedProperty().addListener(ov -> search());
+	}
+	
+	@FXML
+	public void search() {
+		searchInput.setOnKeyReleased(keyEvent -> {
+			try {
+				String sql = "SELECT * FROM users WHERE UserName LIKE '" + searchInput.getText() + "%' OR UserEmail LIKE'" + searchInput.getText() + "%'";
+				PreparedStatement search = DBM.conn.prepareStatement(sql);
+				List<User> userlist = DBM.getFromDB(search, new User());
+				listView.setItems(FXCollections.observableArrayList(userlist));
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		});
 	}
 
 	public void fillListView() {
 		try {
-			List<User> usersFromDB = DBM.getFromDB(DBM.conn.prepareStatement("SELECT * FROM users "), new User());
+			usersFromDB = DBM.getFromDB(DBM.conn.prepareStatement("SELECT * FROM users "), new User());
 			for (User u : usersFromDB) {
 				userList.add(u);
 			}
