@@ -95,16 +95,13 @@ public class AdminRoleManager {
 	public void search() {
 		searchInput.setOnKeyReleased(keyEvent -> {
 			try {
-				String sql = "SELECT * FROM users WHERE UserName LIKE '" + searchInput.getText() + "%'";
+				String sql = "SELECT * FROM users WHERE UserName LIKE '" + searchInput.getText() + "%' OR UserEmail LIKE'" + searchInput.getText() + "%'";
 				PreparedStatement search = DBM.conn.prepareStatement(sql);
 				List<User> userlist = DBM.getFromDB(search, new User());
 				listView.setItems(FXCollections.observableArrayList(userlist));
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
-			
-			if (searchInput.getText().isBlank())
-				fillListView();
 		});
 	}
 
