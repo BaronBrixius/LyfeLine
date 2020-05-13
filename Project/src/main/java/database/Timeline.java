@@ -1,7 +1,12 @@
 package database;
 
+import controllers.GUIManager;
+import javafx.scene.control.Alert;
 import utils.Date;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +19,7 @@ public class Timeline extends TimelineObject<Timeline> {
     private String timelineDescription = "";
     private List<Event> eventList = new ArrayList<>();
     private List<String> keywords = new ArrayList<>();
+    private double rating;
 
     public Timeline() {
     }
@@ -21,11 +27,11 @@ public class Timeline extends TimelineObject<Timeline> {
     //Do we need this? We mostly create blank timelines and then use setters called from GUI fields for new timelines
     public Timeline(String timelineName, String timelineDescription, int scale, String theme, Date startDate,
                     Date endDate, List<String> keywords) {
-        this(0, timelineName, timelineDescription, scale, theme, startDate, endDate, null, 0, keywords, null);
+        this(0, timelineName, timelineDescription, scale, theme, startDate, endDate, null, 0, keywords, null, null);
     }
 
     private Timeline(int timelineID, String timelineName, String timelineDescription, int scale, String theme,
-                     Date startDate, Date endDate, Date dateCreated, int timelineOwner, List<String> keywords, List<Event> eventList) {
+                     Date startDate, Date endDate, Date dateCreated, int timelineOwner, List<String> keywords, List<Event> eventList, String imagePath) {
         this.timelineID = timelineID;
         this.timelineName = timelineName;
         this.scale = scale;
@@ -37,6 +43,14 @@ public class Timeline extends TimelineObject<Timeline> {
         this.ownerID = timelineOwner;
         this.keywords = keywords;
         this.eventList = eventList;
+        this.imagePath = imagePath;
+
+        try {
+            this.rating = calcRating();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+
     }
 
     @Override
@@ -45,9 +59,9 @@ public class Timeline extends TimelineObject<Timeline> {
             throw new SQLIntegrityConstraintViolationException("TimelineID is already in DB.");
 
         PreparedStatement out = DBM.conn.prepareStatement(
-                "INSERT INTO `timelines` ( `Scale`,`TimelineName`, `TimelineDescription`, `Theme`,`StartYear`,`StartMonth`,`StartDay`,`StartHour`"
+                "INSERT INTO `timelines` ( `Scale`,`TimelineName`, `TimelineDescription`,  `Theme`,`StartYear`,`StartMonth`,`StartDay`,`StartHour`"
                         + ",`StartMinute`,`StartSecond`,`StartMillisecond`,`EndYear`,`EndMonth`,`EndDay`,`EndHour`,`EndMinute`,`EndSecond`,"
-                        + "`EndMillisecond`,`TimelineOwner`,`Keywords`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                        + "`EndMillisecond`,`TimelineOwner`,`Keywords`,`ImagePath`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
                 Statement.RETURN_GENERATED_KEYS);
         out.setInt(1, scale);
         out.setString(2, timelineName);
@@ -75,6 +89,10 @@ public class Timeline extends TimelineObject<Timeline> {
             sb.append(",");
         }
         out.setString(20, sb.toString());
+        if (this.imagePath == null)
+            out.setNull(21, Types.INTEGER);
+        else
+            out.setString(21, this.imagePath);
         return out;
     }
 
@@ -84,7 +102,7 @@ public class Timeline extends TimelineObject<Timeline> {
                 "UPDATE `timelines` SET `Scale` = ?, `TimelineName` = ?, `TimelineDescription` = ?,  `Theme` = ?,   "
                         + "`StartYear` = ?,  `StartMonth` = ?,  `StartDay` = ?,  `StartHour` = ?,  `StartMinute` = ?,  `StartSecond` = ?,  "
                         + "`StartMillisecond` = ?,    `EndYear` = ?,  `EndMonth` = ?,  `EndDay` = ?,  `EndHour` = ?,  `EndMinute` = ?,  "
-                        + "`EndSecond` = ?,  `EndMillisecond` = ?, `Keywords` = ? WHERE (`TimelineID` = ?)");
+                        + "`EndSecond` = ?,  `EndMillisecond` = ?, `Keywords` = ?, `ImagePath` = ? WHERE (`TimelineID` = ?)");
         out.setInt(1, scale);
         out.setString(2, timelineName);
         out.setString(3, timelineDescription);
@@ -110,7 +128,9 @@ public class Timeline extends TimelineObject<Timeline> {
             sb.append(",");
         }
         out.setString(19, sb.toString());
-        out.setInt(20, timelineID);
+        out.setString(20, imagePath);
+        out.setInt(21, timelineID);
+
         return out;
     }
 
@@ -127,11 +147,19 @@ public class Timeline extends TimelineObject<Timeline> {
 
         DBM.deleteFromDB(DBM.getFromDB(out, new Event()));
     }
-    
+
     @Override
     public PreparedStatement getDeleteQuery() throws SQLException {
         PreparedStatement out = DBM.conn.prepareStatement("DELETE FROM `timelines` WHERE (`TimelineID` = ?)");
         out.setInt(1, timelineID);
+        // Deleting the images
+        if (getImagePath() != null) {
+            try {
+                Files.deleteIfExists(Paths.get(getImagePath()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         return out;
     }
 
@@ -141,6 +169,7 @@ public class Timeline extends TimelineObject<Timeline> {
         int scale = rs.getInt("Scale");
         String timelineName = rs.getString("TimelineName");
         String timelineDescription = rs.getString("TimelineDescription");
+        String imagePath = rs.getString("ImagePath");
         String theme = rs.getString("Theme");
         int startYear = rs.getInt("StartYear");
         int startMonth = rs.getInt("StartMonth");
@@ -185,7 +214,80 @@ public class Timeline extends TimelineObject<Timeline> {
                 new Date(endYear, endMonth, endDay, endHour, endMinute, endSecond, endMillisecond),
                 new Date(createdYear, createdMonth, createdDay, createdHour, createdMinute, createdSecond,
                         createdMillisecond),
-                timelineOwner, keywords, eventList);
+                timelineOwner, keywords, eventList, imagePath);
+    }
+
+    public void rateTimeline(int index) {
+        if (GUIManager.loggedInUser.getUserID() == this.ownerID) {
+            Alert confirmDelete = new Alert(Alert.AlertType.INFORMATION);
+            confirmDelete.setTitle("Rating Failed");
+            confirmDelete.setHeaderText("You may not rate your own timeline.");
+
+            confirmDelete.showAndWait();
+            return;
+        }
+        try {
+            if (checkRating()) {
+                updateRating(index, GUIManager.loggedInUser.getUserID());
+            } else {
+                addRating(index, GUIManager.loggedInUser.getUserID());
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public PreparedStatement addRating(int rating, int userId) throws SQLException {
+        PreparedStatement out = DBM.conn.prepareStatement("INSERT INTO rating (`rating`, `userId`, `timeLineID`) VALUES (?, ?, ?)");
+        out.setInt(1, rating);
+        out.setInt(2, userId);
+        out.setInt(3, this.timelineID);
+        out.execute();
+        return out;
+    }
+
+    public PreparedStatement updateRating(int rating, int userId) throws SQLException {
+
+        PreparedStatement out = DBM.conn.prepareStatement("UPDATE rating SET `rating` = ? WHERE (`timeLineID` = ? AND `userId` = ?)");
+        out.setInt(1, rating);
+        out.setInt(2, this.timelineID);
+        out.setInt(3, userId);
+        out.execute();
+        return out;
+    }
+
+    public boolean checkRating() throws SQLException {
+        PreparedStatement rate = DBM.conn.prepareStatement("SELECT COUNT(*) FROM rating WHERE userId = ? AND timeLineID = ? ");
+        rate.setInt(1, GUIManager.loggedInUser.getUserID());
+        rate.setInt(2, this.getID());
+        ResultSet rs = rate.executeQuery();
+        rs.next();
+        return rs.getInt(1) > 0;
+    }
+
+    double calcRating() throws SQLException {
+        PreparedStatement rate = DBM.conn.prepareStatement("SELECT AVG(rating) FROM rating WHERE timeLineID = ?");
+        rate.setInt(1, this.getID());
+        ResultSet rs = rate.executeQuery();
+        rs.next();
+        return rs.getDouble(1);
+    }
+
+    public double getRating() {
+        return rating;
+    }
+
+    public void updateRatingFromDB() {
+        try {
+            PreparedStatement rate = DBM.conn.prepareStatement("SELECT AVG(rating) FROM rating WHERE timeLineID = ?");
+            rate.setInt(1, this.getID());
+            ResultSet rs = rate.executeQuery();
+            rs.next();
+            this.rating = rs.getDouble(1);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        ;
     }
 
     @Override
@@ -223,6 +325,12 @@ public class Timeline extends TimelineObject<Timeline> {
     // Getters
     public int getID() {
         return this.timelineID;
+    }
+
+    // Setters
+    @Override
+    public void setID(int id) {
+        this.timelineID = id;
     }
 
     public int getScale() {
@@ -263,12 +371,6 @@ public class Timeline extends TimelineObject<Timeline> {
 
     public void setKeywords(List<String> keywords) {
         this.keywords = keywords;
-    }
-
-    // Setters
-    @Override
-    public void setID(int id) {
-        this.timelineID = id;
     }
 
     public List<Event> getEventList() {

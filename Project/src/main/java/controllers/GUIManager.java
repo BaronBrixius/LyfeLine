@@ -19,22 +19,16 @@ public class GUIManager extends Application {
     public static TopMenu menu;
     public static BorderPane main;
     public static FXMLLoader loader;
-    //public static Stack<Node> pastPages = new Stack<>(); //Unused, might be handy later, caused problems now.
 
     public static void main(String[] args) {
         launch(args);
     }
 
     public static <T> T swapScene(String fxml) throws IOException {
-        //pastPages.add(main.getCenter());
         loader = new FXMLLoader(GUIManager.class.getResource("../FXML/" + fxml + ".fxml"));
         main.setCenter(loader.load());
         return loader.getController();
     }
-
-    //public static void previousPage() {
-    //    main.getChildren().set(1, pastPages.pop());
-    //}
 
     public static void applyStyle(String style) {
         mainStage.getScene().getStylesheets().remove(0);
@@ -52,8 +46,7 @@ public class GUIManager extends Application {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        loggedInUser = DBM.getFromDB(DBM.conn.prepareStatement("SELECT * FROM users"), new User()).get(0);  //delete when merging to dev
-
+        //loggedInUser = DBM.getFromDB(DBM.conn.prepareStatement("SELECT * FROM users"), new User()).get(0);  //delete when merging to dev
         main = new BorderPane();
         loader = new FXMLLoader(getClass().getResource("../FXML/TopMenu.fxml"));
         main.setTop(loader.load());
@@ -61,10 +54,9 @@ public class GUIManager extends Application {
 
         mainStage = primaryStage;
         mainStage.setScene(new Scene(main));
-
-        //swapScene("Welcome");
-        TimelineView systemUnderDevelopment = swapScene("TimelineView");        //delete when merging to dev
-        systemUnderDevelopment.setActiveTimeline(1);
+        swapScene("Welcome");
+        //TimelineView systemUnderDevelopment = swapScene("TimelineView");        //delete when merging to dev
+        //systemUnderDevelopment.setActiveTimeline(1);
         mainStage.getScene().getStylesheets().add("File:src/main/resources/styles/DefaultStyle.css");
         mainStage.show();
     }

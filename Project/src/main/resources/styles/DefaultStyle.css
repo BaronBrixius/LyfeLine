@@ -5,11 +5,6 @@
     -fx-background-color: #f4f4f4;
 }
 
-/* .root was applying "weakly", causing gridpanes to be semi-transparent*/
-GridPane{
-    -fx-background-color: #f4f4f4;
-}
-
 /*Text applies to any free floating text (inc. TextField), does not apply to text in Buttons, etc.
 "-fx-text-fill" does not work here, use "fx-fill" to color the text instead.*/
 Text{
@@ -136,6 +131,10 @@ for example:      buttonName.getStyleClass().add("smallButton");                
 
 .mediumText{
     -fx-font-size: 1.5em;
+}
+
+.eventEditor {
+    -fx-background-color: #f4f4f4;
 }
 
 .date-picker .label {
@@ -278,7 +277,6 @@ for example:      buttonName.getStyleClass().add("smallButton");                
 .slider .axis{
     -fx-font-size: 7;
 }
-
 .check-box .box {
 	-fx-background-color: white;
 	-fx-border-color:grey;
@@ -295,6 +293,26 @@ for example:      buttonName.getStyleClass().add("smallButton");                
 
 .combo-box-base, .combo-box-base .list-cell {
     -fx-background-radius: 5;
+}
+
+.paneBG{
+	-fx-background-position: center;	
+	-fx-background-repeat: no-repeat;
+}
+
+.listCellText{
+	-fx-font-size: 20;
+	-fx-text-fill: white;
+}
+
+.listCellText .text{
+	-fx-stroke: black;
+    -fx-stroke-width: 1px;
+    -fx-effect: dropshadow(one-pass-box, black, 4, 0, 0, 0);
+}
+
+.listCellBackground{
+	-fx-background-color: #1aa9cd;
 }
 
 /*Here is a list of useful CSS commands:

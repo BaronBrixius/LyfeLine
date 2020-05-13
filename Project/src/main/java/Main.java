@@ -12,18 +12,21 @@ import java.io.PrintWriter;
 import java.sql.Array;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.Scanner;
 
 class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
         PreparedStatement stmt;
         PreparedStatement stmt2;
+        Timeline time = new Timeline();
         try {
             new DBM();
             DBM.setupSchema();       //destroys + remakes DB with default settings, can comment this out after first run if desired
+            time.addRating(5, 1);
 
 
 
@@ -119,6 +122,7 @@ class Main {
                 e.printStackTrace();
             }
         }
+
     }
 
     public static List<Integer> advancedSearch(String name, String keyword2, String author, Date startDateSpinner, Date endDateSpinner) throws SQLException {
@@ -230,6 +234,5 @@ class Main {
 
         return timelineIDList;
     }
-
 }
 

@@ -1,8 +1,8 @@
 CREATE TABLE `events`
 (
-    `EventID`            int               NOT NULL AUTO_INCREMENT,
+    `EventID`            int NOT NULL AUTO_INCREMENT,
     `EventOwner`         int               DEFAULT 0,
-    `EventPriority`      int               NOT NULL,
+    `EventPriority`      int NOT NULL,
     `ImagePath`          nvarchar(5000)    DEFAULT NULL,
     `EventName`          nvarchar(100)     DEFAULT NULL,
     `EventDescription`   nvarchar(5000)    DEFAULT NULL,
@@ -122,44 +122,6 @@ VALUES (1, 'image1.png'),
        (5, 'image5.png');
 
 
-CREATE TABLE `groups`
-(
-    `GroupID`          int              NOT NULL AUTO_INCREMENT,
-    `GroupName`        nvarchar(100)    DEFAULT NULL,
-    `GroupDescription` nvarchar(5000)   DEFAULT NULL,
-    `Scale`            tinyint          NOT NULL,
-    `Public`           tinyint(1)       DEFAULT '0',
-    `FontID`           tinyint          DEFAULT '1',
-    `FontSize`         tinyint          DEFAULT '12',
-    `ThemeID`          tinyint          DEFAULT '1',
-    `StartYear`        bigint           NOT NULL,
-    `StartMonth`       tinyint unsigned NOT NULL,
-    `StartDay`         tinyint unsigned NOT NULL,
-    `StartTime`        time             NOT NULL,
-    `EndYear`          bigint           NOT NULL,
-    `EndMonth`         tinyint unsigned DEFAULT NULL,
-    `EndDay`           tinyint unsigned DEFAULT NULL,
-    `EndTime`          time             DEFAULT NULL,
-    PRIMARY KEY (`GroupID`),
-    UNIQUE KEY `GroupID_UNIQUE` (`GroupID`)
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8mb4
-  COLLATE = utf8mb4_general_ci;
-
-
-CREATE TABLE `groupevents`
-(
-    `GroupID` int NOT NULL,
-    `EventID` int NOT NULL,
-    PRIMARY KEY (`GroupID`, `EventID`),
-    KEY `fk_groupevents_events1_idx` (`EventID`),
-    CONSTRAINT `fk_groupevents_events1` FOREIGN KEY (`EventID`) REFERENCES `events` (`EventID`),
-    CONSTRAINT `fk_groupevents_groups` FOREIGN KEY (`GroupID`) REFERENCES `groups` (`GroupID`)
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8mb4
-  COLLATE = utf8mb4_general_ci;
-
-
 CREATE TABLE `users`
 (
     `UserID`    int           NOT NULL AUTO_INCREMENT,
@@ -181,9 +143,9 @@ CREATE TABLE `timelines`
 (
     `TimelineID`          int               NOT NULL AUTO_INCREMENT,
     `Scale`               int               DEFAULT 8,
-    `Rating`               int              DEFAULT 0,
     `TimelineName`        nvarchar(100)     DEFAULT NULL,
     `TimelineDescription` nvarchar(5000)    DEFAULT NULL,
+    `ImagePath`           nvarchar(5000)    DEFAULT NULL,
     `Theme`               nvarchar(100)     DEFAULT NULL,
     `StartYear`           bigint            NOT NULL,
     `StartMonth`          tinyint unsigned  NOT NULL,
@@ -249,7 +211,18 @@ BEGIN
 END;
 
 
--- This part is for populating tables with dummy data
+CREATE TABLE `rating`
+(
+    `rating`     int NOT NULL,
+    `userId`     int NOT NULL,
+    `timeLineID` int NOT NULL,
+    KEY `userID_idx` (`userId`),
+    KEY `timeLineID_idx` (`timeLineID`),
+    CONSTRAINT `timeLineID` FOREIGN KEY (`timeLineID`) REFERENCES `timelines` (`TimelineID`) ON DELETE CASCADE,
+    CONSTRAINT `userID` FOREIGN KEY (`userId`) REFERENCES `users` (`UserID`) ON DELETE CASCADE
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_general_ci;
 
 
 INSERT INTO `users`
@@ -292,7 +265,10 @@ VALUES ('1', 'Ben', 'Ben@gmail.com',
         'CEc1AAkRdz7BguqKQL4e4wrw7A3j6L', '0'),
        ('13', 'Hans Ove', 'Hans@math.biz',
         'tPmbHxe4qtzP8AaCpQJs/Hjr8RW3xDUGx+kk75AENDVY7Kkz85jJ/H1KICOH9TOsZPg4e/4ldTM9WzajCOJQiw==',
-        '8IzHZXvKP9hwwIr5EflEvhLYdo2AVY', '0');
+        '8IzHZXvKP9hwwIr5EflEvhLYdo2AVY', '0'),
+       ('14', 'Test User', 'User@test.com',
+        '9++aUh7ltf/BUAYP2adyTl4DoFthc387ahLWGV58pzyQsMRcJNKIH6g8UhdAF400MSysbm30v0AAkBXy4EgQaQ==',
+        'OsMpNbYBiPYkLAgmVmAFUt6faEW1Ot', '0');
 
 
 INSERT INTO `timelines`
@@ -300,42 +276,47 @@ INSERT INTO `timelines`
  `Scale`, `TimelineName`, `TimelineDescription`, `Theme`, `StartYear`, `StartMonth`, `StartDay`, `StartHour`,
  `StartMinute`, `StartSecond`, `StartMillisecond`, `EndYear`, `EndMonth`, `EndDay`, `EndHour`, `EndMinute`, `EndSecond`,
  `EndMillisecond`, `CreatedYear`, `CreatedMonth`, `CreatedDay`, `CreatedHour`, `CreatedMinute`, `CreatedSecond`,
- `CreatedMillisecond`, `Private`, `TimelineOwner`, `Keywords`)
+ `CreatedMillisecond`, `Private`, `TimelineOwner`, `Keywords`, `ImagePath`)
 VALUES (01, 8, 'Fall of Rome', 'Out with a wimper, not a bang', 'dark', 45, 5, 20, 4, 43, 32, 213, 201, 5, 20, 4,
         43, 32, 213, 2000, 5, 20, 4, 43,
-        32, 213, default, 1, 'Caesar,Rome,'),
+        32, 213, default, 1, 'Caesar,Rome,', 'src/main/resources/images/timeline/sky_planet_03.jpg'),
        (02, 2, 'New Timeline', '', 'dark', 2000, 5, 20, 4, 43, 20, 213, 2000, 5, 20, 4, 43, 32, 213, 2003, 5, 20, 4,
-        43, 32, 213, default, 1, 'stuff,things,test,test1,test3,test4,test5,test6,'),
+        43, 32, 213, default, 1, 'stuff,things,test,test1,test3,test4,test5,test6,', 'src/main/resources/images/timeline/sekiro-shadows-die-twice-2019-4k-5b-3840x2160.jpg'),
        (03, 4, 'Hound of Baskervilles', 'Investigation of an attempted murder', 'light', 2006, 5, 19, 4, 43, 32, 213,
         2006, 5, 20, 4, 43, 32, 213, 2003, 5, 20, 3,
-        43, 32, 213, default, 2, 'murder,death,'),
+        43, 32, 213, default, 2, 'murder,death,', 'src/main/resources/images/timeline/revelations_03.jpg'),
        (04, 5, 'Dr. Strangelove', 'A dark comedy on nuclear war', 'dark', 2007, 5, 18, 4, 43, 32, 213, 2007, 5, 20, 4,
         43, 32, 213, 2007, 5, 20, 4, 43,
-        32, 213, default, 2, 'war,nuclear,'),
+        32, 213, default, 2, 'war,nuclear,', 'src/main/resources/images/timeline/thumb-1920-872366.jpg'),
        (05, 6, 'Incredibly, Wastefully Long Timeline Name', '', 'light', 2009, 2, 20, 4, 43, 32, 213, 2009, 5, 20, 4,
         43, 32, 213, 2008, 5, 20, 4,
-        43, 32, 213, default, 3, 'testing,123,'),
-       (06, 11, 'Bronze Age Collapse', 'When civilization reset', 'light', -13000, 5, 20, 4, 43, 32, 213, 2020, 5, 20, 4,
+        43, 32, 213, default, 3, 'testing,123,', 'src/main/resources/images/timeline/rainbow_waves.jpg'),
+       (06, 11, 'Bronze Age Collapse', 'When civilization reset', 'light', -13000, 5, 20, 4, 43, 32, 213, 2020, 5, 20,
+        4,
         43, 32, 213, 2009, 5, 20, 4,
-        43, 32, 213, default, 4, 'bronze,collapse,'),
+        43, 32, 213, default, 4, 'bronze,collapse,', null),
        (07, 8, 'Life of Bacillus', 'Life and times of a bacterium', 'mad', 1450, 5, 20, 4, 43, 32, 213, 1505, 5, 20, 4,
         43, 32, 213, 2000, 5, 20, 4, 46,
-        32, 213, default, 5, 'basillus,life,'),
+        32, 213, default, 5, 'basillus,life,', 'src/main/resources/images/timeline/QrM6nph.jpg'),
        (08, 5, 'Decay of Ununoctium', 'Radioactive decay - a study', 'dark', 2000, 4, 20, 4, 43, 32, 213, 2000, 5, 20,
         4, 43, 32, 213, 1550, 5, 20, 4, 43,
-        32, 213, default, 6, 'decay,long,'),
-        (09, 8, 'Owner: Max - Dummy timeline 9', 'A timeline meant for testing years', 'dark', 50, 4, 20, 4, 43, 32, 213, 100, 5, 20,
+        32, 213, default, 6, 'decay,long,', 'src/main/resources/images/timeline/neverknowsbest1080.png'),
+       (09, 8, 'Owner: Max - Dummy timeline 9', 'A timeline meant for testing years', 'dark', 50, 4, 20, 4, 43, 32, 213,
+        100, 5, 20,
         4, 43, 32, 213, 1550, 5, 20, 4, 43,
-        32, 213, default, 2, 'testing, Max, fifty'),
-        (10, 2, 'Owner: Max - Dummy timeline 10', 'A timeline meant for testing seconds', 'dark', 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,
+        32, 213, default, 2, 'testing, 2, fifty', null),
+       (10, 2, 'Owner: Max - Dummy timeline 10', 'A timeline meant for testing seconds', 'dark', 0, 0, 0, 0, 0, 1, 0, 0,
+        0, 0,
         0, 0, 59, 0, 1550, 5, 20, 4, 43,
-        32, 213, default, 2, 'testing, Max, sixty'),
-        (11, 2, 'Owner: Max - Dummy timeline 11', 'A timeline meant for testing the upper bounds of seconds (1 min 10 sec)', 'dark', 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,
+        32, 213, default, 2, 'testing, 2, sixty', 'src/main/resources/images/timeline/0cse72h.jpg'),
+       (11, 2, 'Owner: Max - Dummy timeline 11',
+        'A timeline meant for testing the upper bounds of seconds (1 min 10 sec)', 'dark', 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,
         0, 1, 10, 0, 1550, 5, 20, 4, 43,
-        32, 213, default, 2, 'testing, Max, sixty'),
-        (12, 6, 'Owner: Max - Dummy timeline 12', 'A timeline meant for testing weeks', 'dark', 50, 4, 20, 4, 43, 32, 213, 50, 8, 20,
+        32, 213, default, 2, 'testing, 2, sixty', 'src/main/resources/images/timeline/Minitokyo.Tales.of.Symphonia.Wallpaper.474526.jpg'),
+       (12, 6, 'Owner: Max - Dummy timeline 12', 'A timeline meant for testing weeks', 'dark', 50, 4, 20, 4, 43, 32,
+        213, 50, 8, 20,
         4, 43, 32, 213, 1550, 5, 20, 4, 43,
-        32, 213, default, 2, 'testing, Max, fifty');
+        32, 213, default, 2, 'testing, 2, fifty', 'src/main/resources/images/timeline/lady_of_the_lake.jpg');
 
 
 INSERT INTO `events` (`EventOwner`, `EventPriority`, `EventName`, `EventDescription`, `StartYear`, `StartMonth`,
@@ -366,7 +347,7 @@ VALUES ( '1', '1', 'Crossing the Rubicon', 'Julius Caesar''s crossing the Rubico
         Cicero vainly tried to uphold the republican system''s integrity during the instability that led to the establishment of
         the Roman Empire.[6] He came from a wealthy municipal family of the Roman equestrian order, and served as consul in the
         year 63 BC.', '56', '8', '8', '9', '20', '20', '25', '59', '10', '30', '22', '50', '45', '40'),
-        ('2', '0', 'dummyEvent5', 'This event breaks the upper bound of dummy timeline 9',
+       ('2', '0', 'dummyEvent5', 'This event breaks the upper bound of dummy timeline 9',
         '52', '2', '14', '18', '45', '30', '28', '115', '9', '28', '21', '48', '46', '11'),
        ('2', '1', 'dummyEvent6', 'This event breaks the lower bound of dummy timeline 9',
         '45', '2', '14', '18', '45', '30', '28', '61', '9', '28', '21', '48', '46', '11'),
@@ -380,76 +361,76 @@ VALUES ( '1', '1', 'Crossing the Rubicon', 'Julius Caesar''s crossing the Rubico
         '57', '2', '14', '18', '45', '30', '28', '65', '9', '28', '21', '48', '46', '11'),
        ('2', '0', 'dummyEvent11', 'Owner: Max - Testing overlapping events on dummy timeline 9',
         '58', '2', '14', '18', '45', '30', '28', '60', '9', '28', '21', '48', '46', '11'),
-        ('2', '2', 'dummyEvent12', 'Owner: Max - Testing overlapping events on dummy timeline 9',
-        '55', '2', '14', '18', '45', '30', '28', '63', '9', '28', '21', '48', '46', '11'),  
-		('2', '2', 'dummyEvent13', 'Owner: Max - Testing overlapping events on dummy timeline12',
+       ('2', '2', 'dummyEvent12', 'Owner: Max - Testing overlapping events on dummy timeline 9',
+        '55', '2', '14', '18', '45', '30', '28', '63', '9', '28', '21', '48', '46', '11'),
+       ('2', '2', 'dummyEvent13', 'Owner: Max - Testing overlapping events on dummy timeline12',
         '50', '4', '20', '0', '0', '0', '0', '50', '5', '12', '0', '0', '0', '0'),
        ('2', '2', 'dummyEvent14', 'Owner: Max - Testing overlapping events on dummy timeline12',
         '50', '4', '20', '0', '0', '0', '0', '50', '6', '12', '0', '0', '0', '0'),
        ('2', '2', 'dummyEvent15', 'Owner: Max - Testing overlapping events on dummy timeline12',
         '50', '4', '20', '0', '0', '0', '0', '50', '7', '12', '0', '0', '0', '0'),
-      ('2', '2', 'dummyEvent16', 'Owner: Max - Testing overlapping events on dummy timeline12',
+       ('2', '2', 'dummyEvent16', 'Owner: Max - Testing overlapping events on dummy timeline12',
         '50', '4', '20', '0', '0', '0', '0', '50', '6', '20', '0', '0', '0', '0'),
-      ('2', '2', 'dummyEvent17', 'Owner: Max - Testing overlapping events on dummy timeline12',
+       ('2', '2', 'dummyEvent17', 'Owner: Max - Testing overlapping events on dummy timeline12',
         '50', '6', '20', '0', '0', '0', '0', '50', '7', '12', '0', '0', '0', '0'),
-      ('2', '2', 'dummyEvent18', 'Owner: Max - Testing overlapping events on dummy timeline12',
+       ('2', '2', 'dummyEvent18', 'Owner: Max - Testing overlapping events on dummy timeline12',
         '50', '7', '20', '0', '0', '0', '0', '50', '7', '30', '0', '0', '0', '0'),
-      ('2', '2', 'dummyEvent19', 'Owner: Max - Testing overlapping events on dummy timeline12',
+       ('2', '2', 'dummyEvent19', 'Owner: Max - Testing overlapping events on dummy timeline12',
         '50', '5', '2', '0', '0', '0', '0', '50', '5', '12', '0', '0', '0', '0'),
-      ('2', '2', 'dummyEvent20', 'Owner: Max - Testing overlapping events on dummy timeline12',
+       ('2', '2', 'dummyEvent20', 'Owner: Max - Testing overlapping events on dummy timeline12',
         '50', '4', '30', '0', '0', '0', '0', '50', '6', '30', '0', '0', '0', '0'),
-      ('2', '2', 'dummyEvent21', 'Owner: Max - Testing overlapping events on dummy timeline12',
+       ('2', '2', 'dummyEvent21', 'Owner: Max - Testing overlapping events on dummy timeline12',
         '50', '5', '25', '0', '0', '0', '0', '50', '5', '30', '0', '0', '0', '0'),
-      ('2', '2', 'dummyEvent22', 'Owner: Max - Testing overlapping events on dummy timeline12',
+       ('2', '2', 'dummyEvent22', 'Owner: Max - Testing overlapping events on dummy timeline12',
         '50', '4', '1', '0', '0', '0', '0', '50', '7', '15', '0', '0', '0', '0'),
-      ('2', '2', 'dummyEvent23', 'Owner: Max - Testing overlapping events on dummy timeline12',
+       ('2', '2', 'dummyEvent23', 'Owner: Max - Testing overlapping events on dummy timeline12',
         '50', '6', '5', '0', '0', '0', '0', '50', '6', '15', '0', '0', '0', '0'),
-      ('2', '2', 'dummyEvent24', 'Owner: Max - Testing upper bounds of dummy timeline12',
+       ('2', '2', 'dummyEvent24', 'Owner: Max - Testing upper bounds of dummy timeline12',
         '50', '4', '20', '0', '0', '0', '0', '50', '9', '1', '0', '0', '0', '0'),
        ('2', '2', 'dummyEvent25', 'Owner: Max - Testing lower bounds of dummy timeline12',
         '50', '3', '20', '0', '0', '0', '0', '50', '5', '12', '0', '0', '0', '0'),
        ('2', '2', 'dummyEvent26', 'Owner: Max - Testing upper and lower bounds of dummy timeline12',
         '50', '3', '15', '0', '0', '0', '0', '50', '9', '1', '0', '0', '0', '0'),
-       /*
-            dummyEvent(ID)27-37
+    /*
+         dummyEvent(ID)27-37
 
-        Events varying in Seconds / Minutes / Milliseconds
-            
-        Note: Not linked in the junction table.
-                
-        Owner:              Max(ID2)
-        Priority:           0
+     Events varying in Seconds / Minutes / Milliseconds
 
-        StartYear:          10        ==        EndYear:            10
-        StartMonth:          2        ==        EndMonth:            2
-        StartDay:           14        ==        EndDay:             14
-        StartHour:          18        ==        EndHour:            18
-        StartMinute:        45      ------>     EndMinute:          45+
-        StartSecond:        30      ------>     EndSecond:          30+
-        StartMillisecond:   28      ------>     EndMillisecond:     28+
+     Note: Not linked in the junction table.
 
-        */
-       
-       /* Events varying in Seconds */
-       
+     Owner:              Max(ID2)
+     Priority:           0
+
+     StartYear:          10        ==        EndYear:            10
+     StartMonth:          2        ==        EndMonth:            2
+     StartDay:           14        ==        EndDay:             14
+     StartHour:          18        ==        EndHour:            18
+     StartMinute:        45      ------>     EndMinute:          45+
+     StartSecond:        30      ------>     EndSecond:          30+
+     StartMillisecond:   28      ------>     EndMillisecond:     28+
+
+     */
+
+    /* Events varying in Seconds */
+
        ('2', '0', 'dummyEvent27', '1 Second',
         '10', '2', '14', '18', '45', '30', '28', '10', '2', '14', '18', '45', '31', '28'),
        ('2', '0', 'dummyEvent28', '10 Seconds',
         '10', '2', '14', '18', '45', '30', '28', '10', '2', '14', '18', '45', '40', '28'),
        ('2', '0', 'dummyEvent29', '29 Seconds',
         '10', '2', '14', '18', '45', '30', '28', '10', '2', '14', '18', '45', '59', '28'),
-       
-       /* Events varying in Minutes */
-       
+
+    /* Events varying in Minutes */
+
        ('2', '0', 'dummyEvent30', '1 Minute',
         '10', '2', '14', '18', '45', '30', '28', '10', '2', '14', '18', '46', '30', '28'),
        ('2', '2', 'dummyEvent31', '2 Minutes',
         '10', '2', '14', '18', '45', '30', '28', '10', '2', '14', '18', '47', '30', '28'),
        ('2', '2', 'dummyEvent32', '5 Minutes',
         '10', '2', '14', '18', '45', '30', '28', '10', '2', '14', '18', '50', '30', '28'),
-       
-       /* Events varying in Minutes + Seconds (+) Milliseconds */
-       
+
+    /* Events varying in Minutes + Seconds (+) Milliseconds */
+
        ('2', '2', 'dummyEvent33', '1 Minute 1 Second',
         '10', '2', '14', '18', '45', '30', '28', '10', '2', '14', '18', '46', '31', '28'),
        ('2', '0', 'dummyEvent34', '1 Minute 2 Seconds',
@@ -457,7 +438,7 @@ VALUES ( '1', '1', 'Crossing the Rubicon', 'Julius Caesar''s crossing the Rubico
        ('2', '0', 'dummyEvent35', '1 Minute 1 Second 1 Millisecond',
         '10', '2', '14', '18', '45', '30', '28', '10', '2', '14', '18', '46', '31', '29'),
 
-       /* Events that break the upper limit of minutes and seconds */
+    /* Events that break the upper limit of minutes and seconds */
 
        ('2', '0', 'dummyEvent36', '200 seconds (breaks the 59 second barrier)',
         '10', '2', '14', '18', '45', '30', '28', '10', '2', '14', '18', '45', '230', '28'),
@@ -472,7 +453,6 @@ VALUES ('1', '1'),
        ('1', '4'),
        ('2', '2'),
        ('3', '2'),
-       ('4', '1'),
        ('5', '1'),
        ('6', '1'),
        ('7', '1'),
@@ -499,5 +479,6 @@ VALUES ('1', '1'),
        ('12', '24'),
        ('12', '25'),
        ('12', '26');
-       
+
+
 
