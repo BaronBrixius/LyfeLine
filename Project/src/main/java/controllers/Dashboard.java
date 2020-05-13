@@ -12,7 +12,6 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.util.StringConverter;
 import utils.Date;
@@ -43,8 +42,6 @@ public class Dashboard {
     protected Button btnCreate;
     @FXML
     protected Button searchButton;
-    @FXML
-    protected TextFlow displayInfo;
     @FXML
     protected ListView<Timeline> list;
     @FXML

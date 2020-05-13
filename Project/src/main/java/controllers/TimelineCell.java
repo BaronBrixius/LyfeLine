@@ -108,12 +108,13 @@ public class TimelineCell {
     }
 
     public void setBGImage(double width) {
-        String imageURL = "'file:src/main/resources/images/image3.png'";
+        String imageURL = timeline.getImagePath();
         if (imageURL != null) {
+            imageURL = "file:" + imageURL;
             pane.setStyle("-fx-background-image: url(" + imageURL + "); -fx-background-size: " + ((int) (width + 1.0))
                     + "px;");
         } else {
-            pane.getStyleClass().add("listCellBackground");
+            pane.setStyle("-fx-background-image: null");
         }
     }
 

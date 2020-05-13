@@ -207,7 +207,7 @@ public class TimelineEditor extends Editor {
 							+ getFormat(image);
 
 				} else {
-					imageName = imageName.substring(0, indexOfDot) + " (" + duplicateDigit + ")" + "."
+					imageName = imageName.substring(0, indexOfDot) + "(" + duplicateDigit + ")" + "."
 							+ getFormat(image);
 				}
 				duplicateDigit++;
