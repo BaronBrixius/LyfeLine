@@ -211,15 +211,15 @@ BEGIN
 END;
 
 
-CREATE TABLE `rating`
+CREATE TABLE ratings
 (
-    `rating`     int NOT NULL,
-    `userId`     int NOT NULL,
-    `timeLineID` int NOT NULL,
-    KEY `userID_idx` (`userId`),
-    KEY `timeLineID_idx` (`timeLineID`),
-    CONSTRAINT `timeLineID` FOREIGN KEY (`timeLineID`) REFERENCES `timelines` (`TimelineID`) ON DELETE CASCADE,
-    CONSTRAINT `userID` FOREIGN KEY (`userId`) REFERENCES `users` (`UserID`) ON DELETE CASCADE
+    `UserID`     int NOT NULL,
+    `TimeLineID` int NOT NULL,
+    `Rating`     int NOT NULL,
+    KEY `UserID_idx` (`UserID`),
+    KEY `TimeLineID_idx` (`TimeLineID`),
+    CONSTRAINT `TimeLineID` FOREIGN KEY (`TimeLineID`) REFERENCES `timelines` (`TimelineID`) ON DELETE CASCADE,
+    CONSTRAINT `UserID` FOREIGN KEY (`UserID`) REFERENCES `users` (`UserID`) ON DELETE CASCADE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_general_ci;
@@ -281,7 +281,8 @@ VALUES (01, 8, 'Fall of Rome', 'Out with a wimper, not a bang', 'dark', 45, 5, 2
         43, 32, 213, 2000, 5, 20, 4, 43,
         32, 213, default, 1, 'Caesar,Rome,', 'src/main/resources/images/timeline/sky_planet_03.jpg'),
        (02, 2, 'New Timeline', '', 'dark', 2000, 5, 20, 4, 43, 20, 213, 2000, 5, 20, 4, 43, 32, 213, 2003, 5, 20, 4,
-        43, 32, 213, default, 1, 'stuff,things,test,test1,test3,test4,test5,test6,', 'src/main/resources/images/timeline/sekiro-shadows-die-twice-2019-4k-5b-3840x2160.jpg'),
+        43, 32, 213, default, 1, 'stuff,things,test,test1,test3,test4,test5,test6,',
+        'src/main/resources/images/timeline/watchman.jpg'),
        (03, 4, 'Hound of Baskervilles', 'Investigation of an attempted murder', 'light', 2006, 5, 19, 4, 43, 32, 213,
         2006, 5, 20, 4, 43, 32, 213, 2003, 5, 20, 3,
         43, 32, 213, default, 2, 'murder,death,', 'src/main/resources/images/timeline/revelations_03.jpg'),
@@ -294,25 +295,25 @@ VALUES (01, 8, 'Fall of Rome', 'Out with a wimper, not a bang', 'dark', 45, 5, 2
        (06, 11, 'Bronze Age Collapse', 'When civilization reset', 'light', -13000, 5, 20, 4, 43, 32, 213, 2020, 5, 20,
         4,
         43, 32, 213, 2009, 5, 20, 4,
-        43, 32, 213, default, 4, 'bronze,collapse,', null),
+        43, 32, 213, default, 4, 'bronze,collapse,', 'src/main/resources/images/timeline/neverknowsbest1080.png'),
        (07, 8, 'Life of Bacillus', 'Life and times of a bacterium', 'mad', 1450, 5, 20, 4, 43, 32, 213, 1505, 5, 20, 4,
         43, 32, 213, 2000, 5, 20, 4, 46,
-        32, 213, default, 5, 'basillus,life,', 'src/main/resources/images/timeline/QrM6nph.jpg'),
+        32, 213, default, 5, 'basillus,life,', 'src/main/resources/images/timeline/transistor.jpg'),
        (08, 5, 'Decay of Ununoctium', 'Radioactive decay - a study', 'dark', 2000, 4, 20, 4, 43, 32, 213, 2000, 5, 20,
         4, 43, 32, 213, 1550, 5, 20, 4, 43,
-        32, 213, default, 6, 'decay,long,', 'src/main/resources/images/timeline/neverknowsbest1080.png'),
+        32, 213, default, 6, 'decay,long,', null),
        (09, 8, 'Owner: Max - Dummy timeline 9', 'A timeline meant for testing years', 'dark', 50, 4, 20, 4, 43, 32, 213,
         100, 5, 20,
         4, 43, 32, 213, 1550, 5, 20, 4, 43,
-        32, 213, default, 2, 'testing, 2, fifty', null),
+        32, 213, default, 2, 'testing, 2, fifty', 'src/main/resources/images/timeline/art_andre_kutscherauer.jpg'),
        (10, 2, 'Owner: Max - Dummy timeline 10', 'A timeline meant for testing seconds', 'dark', 0, 0, 0, 0, 0, 1, 0, 0,
         0, 0,
         0, 0, 59, 0, 1550, 5, 20, 4, 43,
-        32, 213, default, 2, 'testing, 2, sixty', 'src/main/resources/images/timeline/0cse72h.jpg'),
+        32, 213, default, 2, 'testing, 2, sixty', null),
        (11, 2, 'Owner: Max - Dummy timeline 11',
         'A timeline meant for testing the upper bounds of seconds (1 min 10 sec)', 'dark', 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,
         0, 1, 10, 0, 1550, 5, 20, 4, 43,
-        32, 213, default, 2, 'testing, 2, sixty', 'src/main/resources/images/timeline/Minitokyo.Tales.of.Symphonia.Wallpaper.474526.jpg'),
+        32, 213, default, 2, 'testing, 2, sixty', 'src/main/resources/images/timeline/colette.jpg'),
        (12, 6, 'Owner: Max - Dummy timeline 12', 'A timeline meant for testing weeks', 'dark', 50, 4, 20, 4, 43, 32,
         213, 50, 8, 20,
         4, 43, 32, 213, 1550, 5, 20, 4, 43,
@@ -481,4 +482,35 @@ VALUES ('1', '1'),
        ('12', '26');
 
 
-
+INSERT INTO `ratings` (`UserID`, `TimelineID`, `Rating`)
+VALUES ('1', '1', '3'),
+       ('2', '6', '1'),
+       ('2', '5', '1'),
+       ('2', '7', '3'),
+       ('2', '2', '1'),
+       ('1', '6', '2'),
+       ('1', '4', '5'),
+       ('1', '3', '2'),
+       ('1', '5', '1'),
+       ('1', '7', '4'),
+       ('1', '10', '3'),
+       ('1', '11', '2'),
+       ('1', '12', '4'),
+       ('1', '9', '3'),
+       ('12', '6', '2'),
+       ('12', '4', '5'),
+       ('12', '1', '5'),
+       ('12', '7', '2'),
+       ('12', '2', '1'),
+       ('12', '11', '4'),
+       ('12', '9', '5'),
+       ('3', '6', '2'),
+       ('3', '4', '2'),
+       ('3', '1', '3'),
+       ('3', '3', '4'),
+       ('3', '12', '2'),
+       ('3', '9', '1'),
+       ('10', '6', '2'),
+       ('10', '3', '5'),
+       ('10', '5', '1'),
+       ('10', '12', '4');
