@@ -295,7 +295,6 @@ for example:      buttonName.getStyleClass().add("smallButton");                
 
 .combo-box-base, .combo-box-base .list-cell {
     -fx-background-radius: 5;
-    -fx-text-fill: white;
 }
 
 /*Here is a list of useful CSS commands:
