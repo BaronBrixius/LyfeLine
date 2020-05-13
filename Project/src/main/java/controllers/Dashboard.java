@@ -96,7 +96,7 @@ public class Dashboard {
 
         // Fill ListView with the timelines
         populateTimelineList();
-        list.setCellFactory(listView -> new TimelineCellListCell());
+        list.setCellFactory((ListView<Timeline> ls) -> new TimelineCellListCell());
 
         // Add sorting options
         sortBy.getItems().setAll("Alphabetically", "Reverse-Alphabetically", "Most Recent", "Oldest");
@@ -492,7 +492,7 @@ public class Dashboard {
             list.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
                 if (newValue != null && newValue.equals(cell.timeline))                 //when selected timeline changes, new choice stops being disabled
                     cell.ratingBox.setDisable(false);
-                else if (oldValue != null && oldValue.equals(cell.timeline))    //and old one is disabled
+                if (oldValue != null && oldValue.equals(cell.timeline))    //and old one is disabled
                     cell.ratingBox.setDisable(true);
 
             });
