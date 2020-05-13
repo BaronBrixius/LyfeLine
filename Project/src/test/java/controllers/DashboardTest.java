@@ -20,12 +20,15 @@ import org.testfx.framework.junit5.ApplicationExtension;
 import org.testfx.framework.junit5.Start;
 import utils.Date;
 
+import java.io.File;
+import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Semaphore;
+import org.apache.commons.io.FileUtils;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -36,12 +39,29 @@ public class DashboardTest {
     String StyleSheetName = "None";
     FxRobot robot = new FxRobot();
     int loginUserID;
+    static File source = new File("src/main/resources/images/timeline");
+    static File dest = new File("src/test/testImages");
 
     @BeforeAll
     public static void beforeAll() {
         try {
             new DBM("test");
         } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            FileUtils.copyDirectory(source, dest);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @AfterEach
+    public void resetTest() {
+        try {
+            FileUtils.copyDirectory(dest, source);
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
