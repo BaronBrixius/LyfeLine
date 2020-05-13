@@ -219,10 +219,9 @@ public class Timeline extends TimelineObject<Timeline> {
 
     public void rateTimeline(int index) {
         if (GUIManager.loggedInUser.getUserID() == this.ownerID) {
-            Alert confirmDelete = new Alert(Alert.AlertType.CONFIRMATION);
-            confirmDelete.setTitle("Invalid Name");
-            confirmDelete.setHeaderText("Name input blank.");
-            confirmDelete.setContentText("Make sure to input a name before saving.");
+            Alert confirmDelete = new Alert(Alert.AlertType.INFORMATION);
+            confirmDelete.setTitle("Rating Failed");
+            confirmDelete.setHeaderText("You may not rate your own timeline.");
 
             confirmDelete.showAndWait();
             return;
