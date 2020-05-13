@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.io.FileNotFoundException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Semaphore;
@@ -99,6 +100,38 @@ class TimelineCellTest {
 	}
 
 	@Test
+	void noOwnRatingTest() throws SQLException {
+		GUIManager.loggedInUser.setID(2);
+		Timeline user2Timeline = new Timeline();
+		user2Timeline.setOwnerID(2);
+		double ratingBefore = user2Timeline.getRating();
+		assertThrows(SQLIntegrityConstraintViolationException.class, () -> {
+			user2Timeline.addRating(5, 2);
+		});
+		double ratingAfter = user2Timeline.getRating();
+		assertEquals(ratingBefore, ratingAfter);
+
+	}
+
+	@Test
+	void noZeroRating() throws SQLException {
+		ArrayList<Timeline> timelinesList = new ArrayList<>(dash.list.getItems());
+		int listSize = timelinesList.size();
+		for (int i = 0; i < listSize - 1; i++) {
+			dash.list.getSelectionModel().select(i);
+			Timeline timelineSelected = dash.list.getSelectionModel().getSelectedItem();
+			timelineSelected.addRating(0, 1);
+			//this is not even possible from the Rating GUI soo...
+			
+			/*
+			assertThrows(SQLIntegrityConstraintViolationException.class, () -> {
+				timelineSelected.addRating(0, 1);
+			});
+			*/
+		}
+	}
+
+	@Test
 	void EmptyRatingInDBTest() throws SQLException {
 		GUIManager.main = new BorderPane(); // Avoids a null pointer?
 		ArrayList<Timeline> timelinesList = new ArrayList<>(dash.list.getItems());
@@ -135,14 +168,28 @@ class TimelineCellTest {
 		dash.list.getSelectionModel().clearAndSelect(3);
 		Timeline timelineSelected = dash.list.getSelectionModel().getSelectedItem();
 		timelineSelected.addRating(3, 1);
-		int expectedDB = DBM.getFromDB(DBM.conn.prepareStatement("SELECT COUNT(*) FROM rating "), rs -> rs.getInt(1)).get(0);
-		System.out.println(expectedDB);
-		assertEquals(expectedDB,1);
+		int expectedDB = DBM.getFromDB(DBM.conn.prepareStatement("SELECT COUNT(*) FROM rating "), rs -> rs.getInt(1))
+				.get(0);
+		assertEquals(expectedDB, 1);
 	}
 
 	@Test
 	void updateTest() {
+		// I dont think this is working the way it is suposed to
+		// Should not be able to have a bg image of 0 width
+		for (int i = 0; i < 500; i++) {
+			TimelineCell testingCell = new TimelineCell();
+			testingCell.update(i);
+		}
+	}
 
+	@Test
+	void updateExeptionTest() {
+		// this is kinda a joke
+		TimelineCell testingCell = new TimelineCell();
+		assertThrows(NullPointerException.class, () -> {
+			testingCell.update((Double) null);
+		});
 	}
 
 	@Test
@@ -172,6 +219,7 @@ class TimelineCellTest {
 	/* ********** Helper Methods ****************/
 	// Helper methods to make changing GUI elements possible
 	void testingCellsSetup() throws SQLException {
+		// not functional at all
 		TimelineCell tc1 = new TimelineCell();
 		List<Timeline> timelineList = DBM.getFromDB(
 				DBM.conn.prepareStatement("SELECT * FROM timelines WHERE TimelineID = " + 1), new Timeline());
