@@ -6,14 +6,12 @@ import javafx.beans.Observable;
 import javafx.collections.FXCollections;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
-import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.util.StringConverter;
@@ -490,16 +488,14 @@ public class Dashboard {
                 System.err.println("Could not load TimelineCell.fxml");
             }
 
-            /*list.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-                if (!newValue
-                        .equals
-                                (oldValue)) {
-                    if (newValue.equals(cell.timeline))
-                        cell.ratingBox.addEventFilter(MouseEvent.ANY, Event::consume);
-                    else
-                        cell.ratingBox.removeEventFilter(MouseEvent.ANY, Event::consume);
-                }
-            });*/
+            //listener to only enable rating (e.g. changing rating and stars changing on hover) for selected timeline
+            list.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+                if (newValue != null && newValue.equals(cell.timeline))                 //when selected timeline changes, new choice stops being disabled
+                    cell.ratingBox.setDisable(false);
+                else if (oldValue != null && oldValue.equals(cell.timeline))    //and old one is disabled
+                    cell.ratingBox.setDisable(true);
+
+            });
         }
 
         @Override
