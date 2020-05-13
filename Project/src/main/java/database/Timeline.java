@@ -1,6 +1,7 @@
 package database;
 
 import controllers.GUIManager;
+import javafx.scene.control.Alert;
 import utils.Date;
 
 import java.io.IOException;
@@ -216,6 +217,26 @@ public class Timeline extends TimelineObject<Timeline> {
                 timelineOwner, keywords, eventList, imagePath);
     }
 
+    public void rateTimeline(int index) {
+        if (GUIManager.loggedInUser.getUserID() == this.ownerID) {
+            Alert confirmDelete = new Alert(Alert.AlertType.CONFIRMATION);
+            confirmDelete.setTitle("Invalid Name");
+            confirmDelete.setHeaderText("Name input blank.");
+            confirmDelete.setContentText("Make sure to input a name before saving.");
+
+            confirmDelete.showAndWait();
+            return;
+        }
+        try {
+            if (checkRating()) {
+                updateRating(index, GUIManager.loggedInUser.getUserID());
+            } else {
+                addRating(index, GUIManager.loggedInUser.getUserID());
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }
 
     public PreparedStatement addRating(int rating, int userId) throws SQLException {
         PreparedStatement out = DBM.conn.prepareStatement("INSERT INTO rating (`rating`, `userId`, `timeLineID`) VALUES (?, ?, ?)");
@@ -251,18 +272,6 @@ public class Timeline extends TimelineObject<Timeline> {
         ResultSet rs = rate.executeQuery();
         rs.next();
         return rs.getDouble(1);
-    }
-
-    public void rateTimeline(int index) {
-        try {
-            if (checkRating()) {
-                updateRating(index, GUIManager.loggedInUser.getUserID());
-            } else {
-                addRating(index, GUIManager.loggedInUser.getUserID());
-            }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
     }
 
     public double getRating() {
