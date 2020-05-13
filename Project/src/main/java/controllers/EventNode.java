@@ -37,7 +37,7 @@ public class EventNode implements Comparable<EventNode> {
 
         startColumn = activeTimeline.getStartDate().distanceTo(activeEvent.getStartDate(), activeTimeline.getScale());
         columnSpan = Math.max(activeEvent.getStartDate().distanceTo(activeEvent.getEndDate(), activeTimeline.getScale()), 1);   //instant events still need 1 whole column
-        eventNameDisplay.setText(activeEvent.getEventName());
+        eventNameDisplay.setText(activeEvent.getName());
     }
 
     public int getStartColumn() {
@@ -50,16 +50,16 @@ public class EventNode implements Comparable<EventNode> {
 
     @FXML
     public void openDetails() {
-        hoverFlag.setText(activeEvent.getEventName() + "\n" + activeEvent.getEventDescrition());
+        hoverFlag.setText(activeEvent.getName() + "\n" + activeEvent.getDescription());
     }
 
     @FXML
     public void openEventViewer() {       //upon clicking a node
-        parentController.editorController.close();
-        parentController.editorController.setEvent(activeEvent);
-        parentController.editorController.toggleEditable(false);
+        parentController.eventEditorController.close();
+        parentController.eventEditorController.setEvent(activeEvent);
+        parentController.eventEditorController.toggleEditable(false);
         parentController.rightSidebar.getChildren().clear();
-        parentController.rightSidebar.getChildren().add(parentController.editorController.editor);
+        parentController.rightSidebar.getChildren().add(parentController.eventEditorController.editor);
     }
 
     @Override

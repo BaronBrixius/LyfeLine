@@ -5,76 +5,212 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
-<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-
 <?import javafx.scene.text.Text?>
 <?import javafx.scene.text.TextFlow?>
 
-<VBox xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.Dashboard">
-    <GridPane alignment="CENTER" prefHeight="700.0" prefWidth="1280.0">
-        <columnConstraints>
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="914.6666870117188" minWidth="10.0" prefWidth="530.3333740234375" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="914.6666870117188" minWidth="10.0" prefWidth="281.6666259765625" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="810.6666870117188" minWidth="10.0" prefWidth="547.3333129882812" />
-        </columnConstraints>
-        <rowConstraints>
-            <RowConstraints maxHeight="398.0" minHeight="10.0" prefHeight="95.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="675.9999923706055" minHeight="0.0" prefHeight="585.0" vgrow="SOMETIMES" />
-        </rowConstraints>
-        <padding>
-            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-        </padding>
-        <VBox prefHeight="84.0" prefWidth="206.0" spacing="10.0" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
-            <HBox alignment="CENTER_LEFT" spacing="10.0">
-                <ComboBox fx:id="sortBy" prefHeight="35.0" prefWidth="193.0" promptText="Sort By" style="-fx-font-size: 1.3em;" />
-                <CheckBox fx:id="cbOnlyViewPersonalLines" alignment="CENTER" mnemonicParsing="false" onAction="#onlyUserTimelines" style="-fx-font-size: 1.3em;" text="Only Show My Timelines" />
-            </HBox>
-            <TextField fx:id="searchInput" prefHeight="42.0" prefWidth="501.0" style="-fx-font-size: 1.3em;" text="Search here..." />
-         <padding>
-            <Insets bottom="10.0" top="10.0" />
-         </padding>
-        </VBox>
-        <ListView fx:id="list" onMouseClicked="#updateDisplays" prefHeight="590.0" prefWidth="753.0" GridPane.columnSpan="2" GridPane.rowIndex="1" />
-        <ScrollPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
-            <TextFlow fx:id="displayInfo" prefHeight="564.0" prefWidth="500.0">
-                <Text fx:id="titleText" strokeType="OUTSIDE" strokeWidth="0.0" />
-            </TextFlow>
-        </ScrollPane>
-    </GridPane>
-    <GridPane fx:id="gridButtons">
-        <columnConstraints>
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="1029.3333740234375" minWidth="10.0" prefWidth="766.6666870117188" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="533.6666870117188" minWidth="10.0" prefWidth="524.3333129882812" />
-        </columnConstraints>
-        <rowConstraints>
-            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-        </rowConstraints>
-        <HBox alignment="CENTER" prefHeight="100.0" prefWidth="880.0" spacing="10.0">
-            <padding>
-                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-            </padding>
+<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.Dashboard">
+   <center>
+      <VBox minHeight="400.0" minWidth="600.0" stylesheets="@../styles/DefaultStyle.css">
+          <HBox fx:id="Simple" alignment="CENTER_LEFT" spacing="10.0">
+              <VBox prefWidth="412.0" spacing="40.0">
+               <GridPane hgap="5.0" vgap="5.0">
+                 <columnConstraints>
+                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="229.0" minWidth="10.0" prefWidth="202.0" />
+                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="207.0" minWidth="10.0" prefWidth="90.0" />
+                     <ColumnConstraints hgrow="SOMETIMES" maxWidth="207.0" minWidth="10.0" prefWidth="102.0" />
+                 </columnConstraints>
+                 <rowConstraints>
+                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                 </rowConstraints>
+                  <children>
+                         <TextField fx:id="searchInput" prefHeight="31.0" prefWidth="376.0" promptText="Search here..." style="-fx-font-size: 1.3em;" GridPane.columnSpan="2147483647" />
+                         <ComboBox fx:id="sortBy" prefHeight="31.0" prefWidth="201.0" promptText="Sort By" style="-fx-font-size: 1.3em;" GridPane.columnSpan="2" GridPane.rowIndex="1" />
+                         <CheckBox fx:id="cbOnlyViewPersonalLines" alignment="CENTER" mnemonicParsing="false" onAction="#onlyUserTimelines" prefHeight="33.0" prefWidth="195.0" style="-fx-font-size: 1.3em;" text="Only Show My Timelines" GridPane.rowIndex="2" />
+                         <Hyperlink fx:id="AdvancedSearch" alignment="CENTER" contentDisplay="CENTER" onAction="#toggleAdvancedSearch" prefHeight="31.0" prefWidth="109.0" text="Advanced Search" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                  </children>
+                  <padding>
+                     <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                  </padding>
+               </GridPane>
+              </VBox>
+          </HBox>
+            <GridPane hgap="10.0" prefHeight="500.0">
+                <columnConstraints>
+                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="809.0" minWidth="10.0" prefWidth="447.0" />
+               <ColumnConstraints hgrow="SOMETIMES" maxWidth="898.0" minWidth="10.0" prefWidth="880.0" />
+                </columnConstraints>
+                <rowConstraints>
+                    <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" vgrow="SOMETIMES" />
+                </rowConstraints>
+                  <ListView fx:id="list" maxHeight="1.7976931348623157E308" minWidth="400.0" onMouseClicked="#updateDisplays" prefHeight="500.0" GridPane.vgrow="SOMETIMES" />
+                  <TextFlow fx:id="displayInfo" maxHeight="1.7976931348623157E308" prefHeight="500.0" GridPane.columnIndex="1" GridPane.vgrow="SOMETIMES">
+                      <Text fx:id="titleText" strokeType="OUTSIDE" strokeWidth="0.0" />
+                  </TextFlow>
+            </GridPane>
+          <padding>
+              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+          </padding>
+      </VBox>
+   </center>
+   <left>
+      <StackPane fx:id="stack" BorderPane.alignment="CENTER">
+         <children>
+            <GridPane fx:id="advancedSearchView" alignment="CENTER_RIGHT" hgap="5" vgap="5">
+               <columnConstraints>
+                  <ColumnConstraints prefWidth="125.0" />
+                  <ColumnConstraints maxWidth="-Infinity" prefWidth="125.0" />
+               </columnConstraints>
+               <children>
+                  <Region prefHeight="1.0" GridPane.columnSpan="2" GridPane.vgrow="SOMETIMES" />
+                       <Label alignment="CENTER" contentDisplay="CENTER" text="Name" wrapText="true" GridPane.rowIndex="1" GridPane.valignment="BOTTOM" />
+                       <TextField fx:id="searchTimelineName" alignment="CENTER" onAction="#searchAdvanced" promptText="Timeline Name" style="-fx-font-size: 1.3em;" GridPane.columnSpan="2" GridPane.rowIndex="2">
+                     <GridPane.margin>
+                        <Insets />
+                     </GridPane.margin>
+                  </TextField>
+                       <Label alignment="CENTER" contentDisplay="CENTER" text="Author" wrapText="true" GridPane.rowIndex="3" GridPane.valignment="BOTTOM" />
+                       <TextField fx:id="searchCreator" alignment="CENTER" onAction="#searchAdvanced" promptText="Author of Timeline" style="-fx-font-size: 1.3em;" GridPane.columnSpan="2" GridPane.rowIndex="4">
+                     <GridPane.margin>
+                        <Insets />
+                     </GridPane.margin>
+                       </TextField>
+                       <Label fx:id="KeywordLabel" alignment="CENTER" contentDisplay="CENTER" text="Keywords" wrapText="true" GridPane.rowIndex="5" GridPane.valignment="BOTTOM" />
+                       <TextField fx:id="searchKeywords" alignment="CENTER" onAction="#searchAdvanced" promptText="Keywords" style="-fx-font-size: 1.3em;" GridPane.columnSpan="2" GridPane.rowIndex="6">
+                     <GridPane.margin>
+                        <Insets />
+                     </GridPane.margin>
+                  </TextField>
+                  <Label text="Start" GridPane.columnSpan="2" GridPane.rowIndex="7" GridPane.valignment="BOTTOM" />
+                  <GridPane fx:id="startDates" hgap="5.0" GridPane.columnSpan="2" GridPane.rowIndex="8">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="60.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="60.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="60.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="60.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                  </GridPane>
+                  <Label contentDisplay="RIGHT" text="End" GridPane.rowIndex="9" GridPane.valignment="BOTTOM" />
+                  <GridPane fx:id="endDates" hgap="5.0" GridPane.columnSpan="2" GridPane.rowIndex="10">
+                     <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="60.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="60.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="60.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="60.0" />
+                     </columnConstraints>
+                     <rowConstraints>
+                        <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                     </rowConstraints>
+                  </GridPane>
+                       <Label fx:id="RatingLabel" alignment="CENTER" contentDisplay="CENTER" text="Rating" wrapText="true" GridPane.rowIndex="11" GridPane.valignment="BOTTOM" />
+                       <ComboBox fx:id="searchRating" prefWidth="100.0" GridPane.columnSpan="2" GridPane.rowIndex="12">
+                     <GridPane.margin>
+                        <Insets />
+                     </GridPane.margin>
+                       </ComboBox>
+                  <Region prefHeight="1.0" GridPane.columnSpan="2" GridPane.rowIndex="13" GridPane.vgrow="SOMETIMES" />
+                      <Button fx:id="searchButton" contentDisplay="TOP" minWidth="50.0" mnemonicParsing="false" onAction="#searchAdvanced" prefHeight="32.0" prefWidth="200.0" style="-fx-pref-width: 250;" styleClass="smallButton" text="Search" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="14" GridPane.valignment="TOP">
+                          <opaqueInsets>
+                              <Insets />
+                          </opaqueInsets>
+                     <GridPane.margin>
+                        <Insets bottom="10.0" />
+                     </GridPane.margin>
+                      </Button>
+                      <Button fx:id="clearButton" contentDisplay="TOP" minWidth="50.0" mnemonicParsing="false" onAction="#clearAdvancedSearch" prefHeight="32.0" prefWidth="200.0" style="-fx-pref-width: 250;" styleClass="smallButton" text="Clear" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="15" GridPane.valignment="TOP">
+                          <opaqueInsets>
+                              <Insets />
+                          </opaqueInsets>
+                     <GridPane.margin>
+                        <Insets bottom="10.0" />
+                     </GridPane.margin>
+                      </Button>
+               </children>
+               <rowConstraints>
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" />
+                  <RowConstraints prefHeight="40.0" />
+                  <RowConstraints minHeight="10.0" prefHeight="40.0" />
+               </rowConstraints>
+               <padding>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </padding>
+            </GridPane>
+         </children>
+      </StackPane>
+   </left>
+   <bottom>
+       <GridPane alignment="TOP_CENTER" BorderPane.alignment="CENTER">
+           <columnConstraints>
+               <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="250.0" />
+            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="250.0" />
+            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="250.0" />
+            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="250.0" />
+            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="250.0" />
+           </columnConstraints>
+           <rowConstraints>
+               <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+           </rowConstraints>
             <Button fx:id="btnCreate" mnemonicParsing="false" onAction="#createTimeline" styleClass="dashBoard" text="Create" />
-            <Button fx:id="btnEdit" mnemonicParsing="false" onAction="#editTimeline" style="-fx-pref-height: 75px;" styleClass="dashBoard" text="Edit" />
-            <Button fx:id="btnDelete" mnemonicParsing="false" onAction="#deleteConfirmation" style="-fx-pref-height: 75px;" text="Delete">
+            <Button fx:id="btnEdit" mnemonicParsing="false" onAction="#editTimeline" styleClass="dashBoard" text="Edit" GridPane.columnIndex="1" />
+            <Button fx:id="btnDelete" mnemonicParsing="false" onAction="#deleteConfirmation" text="Delete" GridPane.columnIndex="2">
                 <styleClass>
                     <String fx:value="hoverRed" />
                     <String fx:value="dashBoard" />
                 </styleClass>
             </Button>
-        </HBox>
-        <HBox prefHeight="100.0" prefWidth="200.0" spacing="10.0" GridPane.columnIndex="1">
-            <padding>
-                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-            </padding>
-            <Button fx:id="adminGUI" alignment="CENTER" mnemonicParsing="false" onAction="#adminScreen" prefWidth="297.0" styleClass="dashBoard" text="Admin Manager" />
-            <Button fx:id="eventEditorButton" mnemonicParsing="false" onAction="#openTimeline" styleClass="dashBoard" text="View Timeline" />
-        </HBox>
-    </GridPane>
-</VBox>
+            <GridPane fx:id="gridButtons" alignment="TOP_CENTER" prefHeight="85.0" prefWidth="515.0" GridPane.columnIndex="3" GridPane.columnSpan="2147483647" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+                <columnConstraints>
+                    <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" />
+                    <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" />
+                </columnConstraints>
+                <rowConstraints>
+                    <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                </rowConstraints>
+                <Button fx:id="adminGUI" alignment="CENTER" mnemonicParsing="false" onAction="#adminScreen" prefWidth="297.0" styleClass="dashBoard" text="Admin Manager" textAlignment="CENTER">
+                    <GridPane.margin>
+                        <Insets />
+                    </GridPane.margin>
+                    <opaqueInsets>
+                        <Insets />
+                    </opaqueInsets>
+                </Button>
+                <Button fx:id="timelineViewButton" mnemonicParsing="false" onAction="#openTimeline" styleClass="dashBoard" text="View Timeline" GridPane.columnIndex="1" />
+            </GridPane>
+       </GridPane>
+   </bottom>
+</BorderPane>

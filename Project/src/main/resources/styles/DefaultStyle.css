@@ -40,6 +40,10 @@ Text{
     -fx-scale-y: 1.1;
 }
 
+.DisabledInvisible:disabled, .DisabledInvisible:disabled > * {
+    -fx-opacity: 0 !important;
+}
+
 .text-field{
     -fx-pref-height: 30px;
 }
@@ -133,6 +137,7 @@ for example:      buttonName.getStyleClass().add("smallButton");                
 .mediumText{
     -fx-font-size: 1.5em;
 }
+
 .date-picker .label {
     -fx-padding: 0 0 0 0;
     -fx-pref-width: 5px;
@@ -269,6 +274,9 @@ for example:      buttonName.getStyleClass().add("smallButton");                
 }
 .spinner .decrement-arrow-button .decrement-arrow {
     -fx-padding: 2 3 2 3;
+}
+.slider .axis{
+    -fx-font-size: 7;
 }
 
 /*Here is a list of useful CSS commands:
