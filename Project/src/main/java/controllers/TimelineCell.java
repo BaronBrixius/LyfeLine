@@ -97,7 +97,7 @@ public class TimelineCell {
     public void setTimeline(Timeline timeline, double width) {
         this.timeline = timeline;
         try {
-            PreparedStatement stat = DBM.conn.prepareStatement("SELECT * FROM Users WHERE UserID=?");
+            PreparedStatement stat = DBM.conn.prepareStatement("SELECT * FROM users WHERE UserID=?");
             stat.setInt(1, timeline.getOwnerID());
             user = DBM.getFromDB(stat, new User()).get(0);
         } catch (SQLException e) {

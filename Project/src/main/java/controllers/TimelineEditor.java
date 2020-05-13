@@ -307,17 +307,7 @@ public class TimelineEditor extends Editor {
 
 	}
 
-	@FXML
-	private boolean WrongFormatNotification() {
-		Alert formatNotification = new Alert(Alert.AlertType.CONFIRMATION);
-		formatNotification.setTitle("Non-image file");
-		formatNotification.setHeaderText("The picture has to be .jpg, .jpeg, .png, .bmp, .gif");
-		formatNotification.setContentText("Please provide an image file");
 
-		Optional<ButtonType> result = formatNotification.showAndWait();
-		return result.get() == ButtonType.OK;
-
-	}
 
 	// Check resolution implementation based on
 	// http://bethecoder.com/applications/tutorials/java/image-io/how-to-get-image-width-height-and-format.html

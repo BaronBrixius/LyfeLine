@@ -378,9 +378,14 @@ public abstract class Editor {
 					imageFilePath = copyImage(imageChosen, imageChosen.getName());
 					image.setImage(new Image("File:" + imageFilePath));
 				}
+
+                else {
+                    WrongFormatNotification();
+                }
 			}
-		} else
-			throw new IllegalArgumentException("Not accepted image format");
+
+
+		}
 	}
 
     @FXML
@@ -473,5 +478,17 @@ public abstract class Editor {
     void clearImage() {
         imageFilePath = null;
         image.setImage(null);
+    }
+
+    @FXML
+   boolean WrongFormatNotification() {
+        Alert formatNotification = new Alert(Alert.AlertType.CONFIRMATION);
+        formatNotification.setTitle("Non-image file");
+        formatNotification.setHeaderText("The picture has to be .jpg, .jpeg, .png, .bmp, .gif");
+        formatNotification.setContentText("Please provide an image file");
+
+        Optional<ButtonType> result = formatNotification.showAndWait();
+        return result.get() == ButtonType.OK;
+
     }
 }
