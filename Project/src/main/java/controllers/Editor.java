@@ -414,6 +414,7 @@ public abstract class Editor {
 
     protected String copyImage(File image, String filename) throws IOException { //Takes the file chosen and the name of it
         String imageName = filename;
+        imageName = imageName.replaceAll("\\s", "_");
         InputStream is = null;
         OutputStream os = null;
 
