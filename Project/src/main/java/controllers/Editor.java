@@ -212,8 +212,10 @@ public abstract class Editor {
         if (itemInEditor.getImagePath() != null) {
             image.setImage(new Image("File:" + itemInEditor.getImagePath()));
             imageFilePath = itemInEditor.getImagePath();
-        } else
+        } else {
             image.setImage(null);
+            imageFilePath = itemInEditor.getImagePath();
+        }
 
         titleInput.setText(itemInEditor.getName());
         descriptionInput.setText(itemInEditor.getDescription());
