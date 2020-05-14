@@ -209,8 +209,10 @@ public abstract class Editor {
     }
 
     boolean populateDisplay() {
-        if (itemInEditor.getImagePath() != null)
+        if (itemInEditor.getImagePath() != null) {
             image.setImage(new Image("File:" + itemInEditor.getImagePath()));
+            imageFilePath = itemInEditor.getImagePath();
+        }
         else
             image.setImage(null);
 
@@ -256,7 +258,6 @@ public abstract class Editor {
 
         itemInEditor.setName(titleInput.getText());
         itemInEditor.setDescription(descriptionInput.getText().replaceAll("([^\r])\n", "$1\r\n"));
-        itemInEditor.setImage(imageFilePath);
 
         itemInEditor.setStartDate(new Date(startInputs.get(0).getValue(), startInputs.get(1).getValue(), startInputs.get(2).getValue(),
                 startInputs.get(3).getValue(), startInputs.get(4).getValue(), startInputs.get(5).getValue(), startInputs.get(6).getValue()));

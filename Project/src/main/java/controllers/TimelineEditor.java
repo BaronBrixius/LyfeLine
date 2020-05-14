@@ -24,7 +24,6 @@ import java.util.Optional;
 public class TimelineEditor extends Editor {
 	private final ObservableList<String> keywords = FXCollections.observableArrayList();
 	public Timeline timeline;
-	public HBox ratingBox;
 	@FXML
 	ComboBox<String> timeInput;
 	@FXML
@@ -41,6 +40,7 @@ public class TimelineEditor extends Editor {
 
 	public void initialize() {
 		super.initialize();
+		outPath = "src/main/resources/images/timeline/";
 
 		toggleEditable(false);
 		keywordView.setItems(keywords);
