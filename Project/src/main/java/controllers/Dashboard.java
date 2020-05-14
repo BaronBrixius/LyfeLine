@@ -10,9 +10,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.text.TextFlow;
 import javafx.util.StringConverter;
 import utils.Date;
 
@@ -72,6 +73,8 @@ public class Dashboard {
     protected TextArea titleText;
     @FXML
     protected Hyperlink AdvancedSearch;
+    @FXML
+    ImageView fullPicture;
     private Timeline activeTimeline;
     private FilteredList<Timeline> filteredTimelines;
     private SortedList<Timeline> sortedTimelines;
@@ -93,7 +96,7 @@ public class Dashboard {
 
         // Fill ListView with the timelines
         populateTimelineList();
-        list.setCellFactory(listView -> new TimelineCellListCell());
+        list.setCellFactory((ListView<Timeline> ls) -> new TimelineCellListCell());
 
         // Add sorting options
         sortBy.getItems().setAll("Alphabetically", "Reverse-Alphabetically", "Most Recent", "Oldest");
@@ -108,7 +111,6 @@ public class Dashboard {
             activeTimeline = list.getSelectionModel().getSelectedItem();
             updateDisplays();
         });
-        titleText.setText("Select a Timeline.");
 
         //Ratings combobox in advanced search
         searchRating.getItems().setAll(Arrays.asList(0, 1, 2, 3, 4, 5));
@@ -166,9 +168,9 @@ public class Dashboard {
 
     ResultSet advancedResultSet() {     //pull the relevant data from the database and pass back to search
         try {
-            PreparedStatement stmt = DBM.conn.prepareStatement("SELECT t.*, u.UserName, COALESCE(AVG(r.rating), 0) as Rating FROM timelines t " +
+            PreparedStatement stmt = DBM.conn.prepareStatement("SELECT t.*, u.UserName, COALESCE(AVG(r.Rating), 0) as Rating FROM timelines t " +
                     "INNER JOIN users u ON t.TimelineOwner = u.UserID " +
-                    "LEFT JOIN rating r ON t.TimelineID = r.timeLineID " +
+                    "LEFT JOIN ratings r ON t.TimelineID = r.TimeLineID " +
                     "GROUP BY t.TimelineID");
             return stmt.executeQuery();
         } catch (SQLException e) {
@@ -345,7 +347,8 @@ public class Dashboard {
             timelineViewButton.setDisable(true);
             btnDelete.setDisable(true);
             btnEdit.setDisable(true);
-            titleText.setText("Select a Timeline.");
+            titleText.clear();
+            fullPicture.setImage(null);
         }
     }
 
@@ -362,6 +365,7 @@ public class Dashboard {
 
         titleText.setText("Title: " + timeline.getName() + "\nDescription: " + timeline.getDescription()
                 + "\nDate Created: " + year + "/" + month + "/" + day + "\nKeywords: " + keyWords);
+        fullPicture.setImage(new Image("file:" + timeline.getImagePath()));
     }
 
     private void setupTimeInputStartAndEnd(String timeSpinnerLabel, int minValue, int maxValue, int column, int row,
@@ -483,6 +487,15 @@ public class Dashboard {
             } catch (IOException e) {
                 System.err.println("Could not load TimelineCell.fxml");
             }
+
+            //listener to only enable rating (e.g. changing rating and stars changing on hover) for selected timeline
+            list.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+                if (newValue != null && newValue.equals(cell.timeline))                 //when selected timeline changes, new choice stops being disabled
+                    cell.ratingBox.setDisable(false);
+                if (oldValue != null && oldValue.equals(cell.timeline))    //and old one is disabled
+                    cell.ratingBox.setDisable(true);
+
+            });
         }
 
         @Override

@@ -238,7 +238,7 @@ public class Timeline extends TimelineObject<Timeline> {
     }
 
     public PreparedStatement addRating(int rating, int userId) throws SQLException {
-        PreparedStatement out = DBM.conn.prepareStatement("INSERT INTO rating (`rating`, `userId`, `timeLineID`) VALUES (?, ?, ?)");
+        PreparedStatement out = DBM.conn.prepareStatement("INSERT INTO ratings (`Rating`, `UserId`, `TimeLineID`) VALUES (?, ?, ?)");
         out.setInt(1, rating);
         out.setInt(2, userId);
         out.setInt(3, this.timelineID);
@@ -248,7 +248,7 @@ public class Timeline extends TimelineObject<Timeline> {
 
     public PreparedStatement updateRating(int rating, int userId) throws SQLException {
 
-        PreparedStatement out = DBM.conn.prepareStatement("UPDATE rating SET `rating` = ? WHERE (`timeLineID` = ? AND `userId` = ?)");
+        PreparedStatement out = DBM.conn.prepareStatement("UPDATE ratings SET `Rating` = ? WHERE (`TimeLineID` = ? AND `UserId` = ?)");
         out.setInt(1, rating);
         out.setInt(2, this.timelineID);
         out.setInt(3, userId);
@@ -257,7 +257,7 @@ public class Timeline extends TimelineObject<Timeline> {
     }
 
     public boolean checkRating() throws SQLException {
-        PreparedStatement rate = DBM.conn.prepareStatement("SELECT COUNT(*) FROM rating WHERE userId = ? AND timeLineID = ? ");
+        PreparedStatement rate = DBM.conn.prepareStatement("SELECT COUNT(*) FROM ratings WHERE UserID = ? AND TimeLineID = ? ");
         rate.setInt(1, GUIManager.loggedInUser.getUserID());
         rate.setInt(2, this.getID());
         ResultSet rs = rate.executeQuery();
@@ -266,7 +266,7 @@ public class Timeline extends TimelineObject<Timeline> {
     }
 
     double calcRating() throws SQLException {
-        PreparedStatement rate = DBM.conn.prepareStatement("SELECT AVG(rating) FROM rating WHERE timeLineID = ?");
+        PreparedStatement rate = DBM.conn.prepareStatement("SELECT AVG(Rating) FROM ratings WHERE TimeLineID = ?");
         rate.setInt(1, this.getID());
         ResultSet rs = rate.executeQuery();
         rs.next();
@@ -279,7 +279,7 @@ public class Timeline extends TimelineObject<Timeline> {
 
     public void updateRatingFromDB() {
         try {
-            PreparedStatement rate = DBM.conn.prepareStatement("SELECT AVG(rating) FROM rating WHERE timeLineID = ?");
+            PreparedStatement rate = DBM.conn.prepareStatement("SELECT AVG(Rating) FROM ratings WHERE TimeLineID = ?");
             rate.setInt(1, this.getID());
             ResultSet rs = rate.executeQuery();
             rs.next();
