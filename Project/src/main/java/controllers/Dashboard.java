@@ -241,21 +241,12 @@ public class Dashboard {
     }
 
     boolean dateSearchedBy(List<Spinner<Integer>> inputs) {     //returns whether or not ANY inputs of either start or end dates are being used
-        if (inputs.get(0).getValue() != Integer.MIN_VALUE)
-            return true;
-        if (inputs.get(1).getValue() != 0)
-            return true;
-        if (inputs.get(2).getValue() != 0)
-            return true;
-        if (inputs.get(3).getValue() != -1)
-            return true;
-        if (inputs.get(4).getValue() != -1)
-            return true;
-        if (inputs.get(5).getValue() != -1)
-            return true;
-        return inputs.get(6).getValue() != -1;
+        for (Spinner<Integer> s: inputs) {
+            if (s.getValue() != ((SpinnerValueFactory.IntegerSpinnerValueFactory) s.getValueFactory()).getMin())
+                return true;
+        }
+        return false;
     }
-
 
     @FXML
     public void toggleAdvancedSearch() {
@@ -418,6 +409,7 @@ public class Dashboard {
             }
         });
 
+        valueFactory.setWrapAround(true);
         spinnerList.add(index, new Spinner<>(valueFactory));
         spinnerList.get(index).setEditable(true);
 
