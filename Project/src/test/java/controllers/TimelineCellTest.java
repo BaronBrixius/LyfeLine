@@ -177,7 +177,7 @@ class TimelineCellTest {
 
 	@Test
 	void updateTest() {
-		// I dont think this is working the way it is suposed to
+		// I dont think this is working the way it is supposed to
 		// Should not be able to have a bg image of 0 width
 		for (int i = 0; i < 500; i++) {
 			TimelineCell testingCell = new TimelineCell();
@@ -186,7 +186,7 @@ class TimelineCellTest {
 	}
 
 	@Test
-	void updateExeptionTest() {
+	void updateExceptionTest() {
 		// this is kinda a joke
 		TimelineCell testingCell = new TimelineCell();
 		assertThrows(NullPointerException.class, () -> {

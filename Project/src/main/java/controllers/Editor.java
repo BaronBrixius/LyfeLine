@@ -209,8 +209,10 @@ public abstract class Editor {
     }
 
     boolean populateDisplay() {
-        if (itemInEditor.getImagePath() != null)
+        if (itemInEditor.getImagePath() != null) {
             image.setImage(new Image("File:" + itemInEditor.getImagePath()));
+            imageFilePath = itemInEditor.getImagePath();
+        }
         else
             image.setImage(null);
 
