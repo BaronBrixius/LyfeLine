@@ -193,7 +193,6 @@ public class TimelineEditor extends Editor {
 
 		try {
 			is = new FileInputStream(image);
-			System.out.println("reading complete.");
 			// Path for saving, have special events folder now so if timeline guys are doing something they don't override copies
 			int duplicateDigit = 2;
 
@@ -217,11 +216,8 @@ public class TimelineEditor extends Editor {
 			while ((length = is.read(buffer)) > 0) {
 				os.write(buffer, 0, length);
 			}
-
-			System.out.println("Writing complete.");
 		} catch (IOException e) {
-			System.out.println("Error: " + e);
-
+			System.err.println("Error: " + e);
 		} finally {
 			if (is != null)
 				is.close();
@@ -314,9 +310,6 @@ public class TimelineEditor extends Editor {
 		if (readers.hasNext()) {
 			ImageReader reader = readers.next();
 			reader.setInput(iis, true);
-			System.out.println("Width " + reader.getWidth(0) + " and required minimum width is: " + REQUIRED_WIDTH);
-			System.out
-					.println("Height " + reader.getHeight(0) + " and required minimumn height is: " + REQUIRED_HEIGHT);
 			if (reader.getWidth(0) < REQUIRED_WIDTH || reader.getHeight(0) < REQUIRED_HEIGHT) {
 
 				check = false;
