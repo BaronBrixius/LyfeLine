@@ -132,7 +132,7 @@ class TimelineCellTest {
 	}
 
 	@Test
-	void EmptyRatingInDBTest() throws SQLException {
+	void EmptyRatingInDBTest() throws SQLException {				//TODO make this work with our dummy data, maybe make new timeline?
 		GUIManager.main = new BorderPane(); // Avoids a null pointer?
 		ArrayList<Timeline> timelinesList = new ArrayList<>(dash.list.getItems());
 		int listSize = timelinesList.size();
@@ -146,7 +146,7 @@ class TimelineCellTest {
 	}
 
 	@Test
-	void RatingTest() throws SQLException {
+	void RatingTest() throws SQLException {				//TODO make this work with our dummy data, maybe make new timeline?
 		// Rating 1-5 for each timeline
 		GUIManager.main = new BorderPane(); // Avoids a null pointer?
 		ArrayList<Timeline> timelinesList = new ArrayList<>(dash.list.getItems());
@@ -165,12 +165,14 @@ class TimelineCellTest {
 
 	@Test
 	void ratingInDB() throws SQLException {
+		int expectedDB = DBM.getFromDB(DBM.conn.prepareStatement("SELECT COUNT(*) FROM ratings "), rs -> rs.getInt(1))
+				.get(0) + 1;
 		dash.list.getSelectionModel().clearAndSelect(3);
 		Timeline timelineSelected = dash.list.getSelectionModel().getSelectedItem();
 		timelineSelected.addRating(3, 1);
-		int expectedDB = DBM.getFromDB(DBM.conn.prepareStatement("SELECT COUNT(*) FROM rating "), rs -> rs.getInt(1))
+		int actualDB = DBM.getFromDB(DBM.conn.prepareStatement("SELECT COUNT(*) FROM ratings "), rs -> rs.getInt(1))
 				.get(0);
-		assertEquals(expectedDB, 1);
+		assertEquals(expectedDB, actualDB);
 	}
 
 	@Test
