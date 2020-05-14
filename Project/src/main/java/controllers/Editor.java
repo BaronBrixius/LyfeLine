@@ -209,9 +209,10 @@ public abstract class Editor {
     }
 
     boolean populateDisplay() {
-        if (itemInEditor.getImagePath() != null)
+        if (itemInEditor.getImagePath() != null) {
             image.setImage(new Image("File:" + itemInEditor.getImagePath()));
-        else
+            imageFilePath = itemInEditor.getImagePath();
+        } else
             image.setImage(null);
 
         titleInput.setText(itemInEditor.getName());
@@ -256,7 +257,6 @@ public abstract class Editor {
 
         itemInEditor.setName(titleInput.getText());
         itemInEditor.setDescription(descriptionInput.getText().replaceAll("([^\r])\n", "$1\r\n"));
-        itemInEditor.setImage(imageFilePath);
 
         itemInEditor.setStartDate(new Date(startInputs.get(0).getValue(), startInputs.get(1).getValue(), startInputs.get(2).getValue(),
                 startInputs.get(3).getValue(), startInputs.get(4).getValue(), startInputs.get(5).getValue(), startInputs.get(6).getValue()));
@@ -373,20 +373,18 @@ public abstract class Editor {
 
             if (imageChosen != null) {
                 System.out.println(getFormat(imageChosen));
-				if (getFormat(imageChosen).matches("(JPEG|png|jpg|bmp|gif|wbmp)")) {
-		            System.out.println(getFormat(imageChosen));
-					imageFilePath = copyImage(imageChosen, imageChosen.getName());
-					image.setImage(new Image("File:" + imageFilePath));
-				}
-
-                else {
+                if (getFormat(imageChosen).matches("(JPEG|png|jpg|bmp|gif|wbmp)")) {
+                    System.out.println(getFormat(imageChosen));
+                    imageFilePath = copyImage(imageChosen, imageChosen.getName());
+                    image.setImage(new Image("File:" + imageFilePath));
+                } else {
                     WrongFormatNotification();
                 }
-			}
+            }
 
 
-		}
-	}
+        }
+    }
 
     @FXML
     protected boolean ImageSaveConfirm() {
@@ -482,7 +480,7 @@ public abstract class Editor {
     }
 
     @FXML
-   boolean WrongFormatNotification() {
+    boolean WrongFormatNotification() {
         Alert formatNotification = new Alert(Alert.AlertType.CONFIRMATION);
         formatNotification.setTitle("Non-image file");
         formatNotification.setHeaderText("The picture has to be .jpg, .jpeg, .png, .bmp, .gif");
