@@ -47,13 +47,15 @@ public class TimelineView {
 
         leftSidebar.getChildren().add(timelineEditorController.editor);
         rightSidebar.getChildren().add(eventSelectorController.selector);
-
-        //setup horizontal scroll with mouse wheel
+        
         ScrollPane mainScrollPane = (ScrollPane) mainBorderPane.getCenter();
         mainScrollPane.setOnScroll(e -> {
-            if (e.getDeltaX() == 0 && e.getDeltaY() != 0) {
+            timelineGrid.setScaleX(timelineGrid.getScaleX()*(1+e.getDeltaY()/200));     //if you want to do zoom you can start with this
+            timelineGrid.setScaleY(timelineGrid.getScaleY()*(1+e.getDeltaY()/200));     //it doesn't quite update the scrollbar/container size properly, and zooming in zooms slightly further than zooming out because of the 1+deltaY math (e.g. 0.8 * 1.2 = 0.96)
+            //setup horizontal scroll with mouse wheel
+            /*if (e.getDeltaX() == 0 && e.getDeltaY() != 0) {
                 mainScrollPane.setHvalue(mainScrollPane.getHvalue() - e.getDeltaY() / mainScrollPane.getWidth());
-            }
+            }*/
         });
     }
 
