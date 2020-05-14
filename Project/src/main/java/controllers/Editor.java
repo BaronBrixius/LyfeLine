@@ -374,7 +374,6 @@ public abstract class Editor {
             File imageChosen = chooser.showOpenDialog(GUIManager.mainStage);
 
             if (imageChosen != null) {
-                System.out.println(getFormat(imageChosen));
                 if (getFormat(imageChosen).matches("(JPEG|png|jpg|bmp|gif|wbmp)")) {
                     System.out.println(getFormat(imageChosen));
                     imageFilePath = copyImage(imageChosen, imageChosen.getName());
@@ -420,7 +419,6 @@ public abstract class Editor {
 
         try {
             is = new FileInputStream(image);
-            System.out.println("reading complete.");
             //Path for saving, have special events folder now so if timeline guys are doing something they don't override copies
             int duplicateDigit = 2;
 
@@ -429,13 +427,11 @@ public abstract class Editor {
                 if (imageName.matches(".*\\s\\(\\d\\)\\..*")) {
                     int indexOfBrackets = imageName.lastIndexOf("(");
                     imageName = imageName.substring(0, indexOfBrackets + 1) + duplicateDigit + ")" + "." + getFormat(image);
-
                 } else {
                     imageName = imageName.substring(0, indexOfDot) + " (" + duplicateDigit + ")" + "." + getFormat(image);
                 }
                 duplicateDigit++;
             }
-
 
             os = new FileOutputStream(new File(outPath + imageName));
             byte[] buffer = new byte[1024];
@@ -443,8 +439,6 @@ public abstract class Editor {
             while ((length = is.read(buffer)) > 0) {
                 os.write(buffer, 0, length);
             }
-
-            System.out.println("Writing complete.");
         } catch (IOException e) {
             System.out.println("Error: " + e);
 
