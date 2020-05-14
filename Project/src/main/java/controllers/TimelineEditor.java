@@ -38,6 +38,7 @@ public class TimelineEditor extends Editor {
 	private TextField keywordInput;
 	private File imageChosen;
 
+	@Override
 	public void initialize() {
 		super.initialize();
 		outPath = "src/main/resources/images/timeline/";
@@ -184,9 +185,7 @@ public class TimelineEditor extends Editor {
     }
     
 	@Override
-	protected String copyImage(File image, String filename) throws IOException { // Takes the file chosen and the name
-																					// of it
-		String outPath = "src/main/resources/images/timeline/";
+	protected String copyImage(File image, String filename) throws IOException { // Takes the file chosen and the name of it
 		String imageName = filename;
 		imageName = imageName.replaceAll("\\s", "_");
 		InputStream is = null;
@@ -195,8 +194,7 @@ public class TimelineEditor extends Editor {
 		try {
 			is = new FileInputStream(image);
 			System.out.println("reading complete.");
-			// Path for saving, have special events folder now so if timeline guys are doing
-			// something they don't override copies
+			// Path for saving, have special events folder now so if timeline guys are doing something they don't override copies
 			int duplicateDigit = 2;
 
 			while (folderHasImage(imageName)) {
@@ -233,8 +231,7 @@ public class TimelineEditor extends Editor {
 		return outPath + imageName;
 	}
 
-	// Method to check if the image folder has this name already to avoid duplicates
-	// overriding earlier uploads
+	// Method to check if the image folder has this name already to avoid duplicates overriding earlier uploads
 	@Override
 	protected boolean folderHasImage(String path) {
 		File folder = new File("src/main/resources/images/timeline/");
@@ -297,7 +294,7 @@ public class TimelineEditor extends Editor {
 
 	@FXML
 	private boolean ImageResolutionNotification() {
-		Alert resolutionSaveImage = new Alert(Alert.AlertType.CONFIRMATION);
+		Alert resolutionSaveImage = new Alert(Alert.AlertType.INFORMATION);
 		resolutionSaveImage.setTitle("Too low resolution for timeline image");
 		resolutionSaveImage.setHeaderText("Resolution of the picture is too low. Minimum resolution is 1280x720");
 

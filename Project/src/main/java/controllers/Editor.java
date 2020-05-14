@@ -176,7 +176,7 @@ public abstract class Editor {
         boolean hasNoDuration = (this instanceof EventEditor && !((EventEditor) this).hasDuration.isSelected());
 
         if (titleInput.getText() == null || titleInput.getText().isEmpty()) {
-            Alert confirmDelete = new Alert(Alert.AlertType.CONFIRMATION);
+            Alert confirmDelete = new Alert(Alert.AlertType.INFORMATION);
             confirmDelete.setTitle("Invalid Name");
             confirmDelete.setHeaderText("Name input blank.");
             confirmDelete.setContentText("Make sure to input a name before saving.");
@@ -184,7 +184,7 @@ public abstract class Editor {
             confirmDelete.showAndWait();
             return false;
         } else if (titleInput.getText().length() > 100) {
-            Alert confirmDelete = new Alert(Alert.AlertType.CONFIRMATION);
+            Alert confirmDelete = new Alert(Alert.AlertType.INFORMATION);
             confirmDelete.setTitle("Invalid Name");
             confirmDelete.setHeaderText("Name input too long.");
             confirmDelete.setContentText("Please choose a shorter name.");
@@ -192,7 +192,7 @@ public abstract class Editor {
             confirmDelete.showAndWait();
             return false;
         } else if (!hasNoDuration && newStartDate.compareTo(newEndDate) > 0) {
-            Alert confirmDelete = new Alert(Alert.AlertType.CONFIRMATION);
+            Alert confirmDelete = new Alert(Alert.AlertType.INFORMATION);
             confirmDelete.setTitle("Invalid Dates");
             confirmDelete.setHeaderText("The End Date must be after the Start Date.");
             confirmDelete.setContentText("Make sure to check your dates before saving.");
@@ -212,8 +212,7 @@ public abstract class Editor {
         if (itemInEditor.getImagePath() != null) {
             image.setImage(new Image("File:" + itemInEditor.getImagePath()));
             imageFilePath = itemInEditor.getImagePath();
-        }
-        else
+        } else
             image.setImage(null);
 
         titleInput.setText(itemInEditor.getName());
@@ -374,20 +373,18 @@ public abstract class Editor {
 
             if (imageChosen != null) {
                 System.out.println(getFormat(imageChosen));
-				if (getFormat(imageChosen).matches("(JPEG|png|jpg|bmp|gif|wbmp)")) {
-		            System.out.println(getFormat(imageChosen));
-					imageFilePath = copyImage(imageChosen, imageChosen.getName());
-					image.setImage(new Image("File:" + imageFilePath));
-				}
-
-                else {
+                if (getFormat(imageChosen).matches("(JPEG|png|jpg|bmp|gif|wbmp)")) {
+                    System.out.println(getFormat(imageChosen));
+                    imageFilePath = copyImage(imageChosen, imageChosen.getName());
+                    image.setImage(new Image("File:" + imageFilePath));
+                } else {
                     WrongFormatNotification();
                 }
-			}
+            }
 
 
-		}
-	}
+        }
+    }
 
     @FXML
     protected boolean ImageSaveConfirm() {
@@ -483,7 +480,7 @@ public abstract class Editor {
     }
 
     @FXML
-   boolean WrongFormatNotification() {
+    boolean WrongFormatNotification() {
         Alert formatNotification = new Alert(Alert.AlertType.CONFIRMATION);
         formatNotification.setTitle("Non-image file");
         formatNotification.setHeaderText("The picture has to be .jpg, .jpeg, .png, .bmp, .gif");
