@@ -306,14 +306,12 @@ public class TimelineEditor extends Editor {
 
 	}
 
-
-
 	// Check resolution implementation based on
 	// http://bethecoder.com/applications/tutorials/java/image-io/how-to-get-image-width-height-and-format.html
 	private boolean checkResolution(File f) throws IOException {
 		boolean check = false;
-		final int REQUIRED_HEIGHT = 720;
-		final int REQUIRED_WIDTH = 1280;
+		final int REQUIRED_HEIGHT = 576;
+		final int REQUIRED_WIDTH = 1024;
 		ImageInputStream iis = ImageIO.createImageInputStream(f);
 		Iterator<ImageReader> readers = ImageIO.getImageReaders(iis);
 		if (readers.hasNext()) {
