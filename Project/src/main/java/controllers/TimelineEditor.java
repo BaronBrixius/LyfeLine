@@ -8,7 +8,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
-import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 
 import javax.imageio.ImageIO;
@@ -189,6 +188,7 @@ public class TimelineEditor extends Editor {
 																					// of it
 		String outPath = "src/main/resources/images/timeline/";
 		String imageName = filename;
+		imageName = imageName.replaceAll("\\s", "_");
 		InputStream is = null;
 		OutputStream os = null;
 
@@ -279,7 +279,6 @@ public class TimelineEditor extends Editor {
 			if (getFormat(imageChosen).matches("(JPEG|png|jpg|bmp|gif|wbmp)")) {
 
 				if (checkResolution(imageChosen)) {
-					System.out.println("Correct");
 					imageFilePath = copyImage(imageChosen, imageChosen.getName());
 					image.setImage(new Image("File:" + imageFilePath));
 				}
