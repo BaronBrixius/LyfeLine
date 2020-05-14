@@ -39,6 +39,7 @@ public class TimelineEditor extends Editor {
 	private TextField keywordInput;
 	private File imageChosen;
 
+	@Override
 	public void initialize() {
 		super.initialize();
 
@@ -297,7 +298,7 @@ public class TimelineEditor extends Editor {
 
 	@FXML
 	private boolean ImageResolutionNotification() {
-		Alert resolutionSaveImage = new Alert(Alert.AlertType.CONFIRMATION);
+		Alert resolutionSaveImage = new Alert(Alert.AlertType.INFORMATION);
 		resolutionSaveImage.setTitle("Too low resolution for timeline image");
 		resolutionSaveImage.setHeaderText("Resolution of the picture is too low. Minimum resolution is 1280x720");
 
