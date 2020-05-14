@@ -19,8 +19,8 @@
     <ColumnConstraints fillWidth="false" />
   </columnConstraints>
   <rowConstraints>
-    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+    <RowConstraints minHeight="-Infinity" prefHeight="45.0" vgrow="SOMETIMES" />
+    <RowConstraints minHeight="-Infinity" prefHeight="45.0" vgrow="SOMETIMES" />
   </rowConstraints>
    <children>
       <Label fx:id="title" styleClass="listCellText" text="Label" GridPane.columnSpan="3">

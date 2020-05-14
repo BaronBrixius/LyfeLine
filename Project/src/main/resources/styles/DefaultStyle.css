@@ -301,7 +301,7 @@ for example:      buttonName.getStyleClass().add("smallButton");                
 }
 
 .listCellText{
-	-fx-font-size: 20;
+	-fx-font-size: 26;
 	-fx-text-fill: white;
 }
 
