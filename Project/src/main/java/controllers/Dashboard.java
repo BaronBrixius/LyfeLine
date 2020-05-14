@@ -116,6 +116,8 @@ public class Dashboard {
         searchRating.getItems().setAll(Arrays.asList(0, 1, 2, 3, 4, 5));
         searchRating.setButtonCell(new RatingsListCell());
         searchRating.setCellFactory(param -> new RatingsListCell());
+
+        GUIManager.mainStage.setTitle("Dashboard");
     }
 
     private void populateTimelineList() {

@@ -58,6 +58,7 @@ public class TimelineEditor extends Editor {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		GUIManager.mainStage.setTitle("Timeline Editor");
 	}
 
 	boolean setTimeline(Timeline timeline) {
