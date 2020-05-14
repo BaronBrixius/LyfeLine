@@ -105,7 +105,7 @@ public class LoginAndRegistration {
 
     @FXML
     public void loginUser(ActionEvent event) {
-// Reset the error message if the input fields match after getting the error
+        // Reset the error message if the input fields match after getting the error
         errorMessage.setText("");
 
         try {

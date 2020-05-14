@@ -153,6 +153,7 @@ public class Dashboard {
         Predicate<Timeline> onlyPersonal = timeline -> timeline.getOwnerID() == GUIManager.loggedInUser.getUserID();
         if (cbOnlyViewPersonalLines.isSelected())
             filteredTimelines.setPredicate(onlyPersonal.and(filteredTimelines.getPredicate()));
+        list.refresh();
     }
 
     @FXML
@@ -228,7 +229,7 @@ public class Dashboard {
             }
 
             //Rating
-            if (searchRating.getSelectionModel().getSelectedIndex() > 0 && data.getDouble("Rating") < searchRating.getSelectionModel().getSelectedIndex())      //TODO implement after ratings
+            if (searchRating.getSelectionModel().getSelectedIndex() > 0 && Math.ceil(data.getDouble("Rating")) < searchRating.getSelectionModel().getSelectedIndex())      //TODO implement after ratings
                 addToList = false;
 
             if (addToList)
@@ -487,15 +488,6 @@ public class Dashboard {
             } catch (IOException e) {
                 System.err.println("Could not load TimelineCell.fxml");
             }
-
-            //listener to only enable rating (e.g. changing rating and stars changing on hover) for selected timeline
-            list.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-                if (newValue != null && newValue.equals(cell.timeline))                 //when selected timeline changes, new choice stops being disabled
-                    cell.ratingBox.setDisable(false);
-                if (oldValue != null && oldValue.equals(cell.timeline))    //and old one is disabled
-                    cell.ratingBox.setDisable(true);
-
-            });
         }
 
         @Override

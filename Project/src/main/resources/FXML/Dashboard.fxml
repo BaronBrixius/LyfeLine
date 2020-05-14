@@ -124,7 +124,7 @@
                                 <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
                             </rowConstraints>
                         </GridPane>
-                        <Label fx:id="RatingLabel" alignment="CENTER" contentDisplay="CENTER" text="Rating" wrapText="true" GridPane.rowIndex="11" GridPane.valignment="BOTTOM" />
+                        <Label fx:id="RatingLabel" alignment="CENTER" contentDisplay="CENTER" text="Minimum Rating" wrapText="true" GridPane.columnSpan="2" GridPane.rowIndex="11" GridPane.valignment="BOTTOM" />
                         <ComboBox fx:id="searchRating" prefWidth="100.0" GridPane.columnSpan="2" GridPane.rowIndex="12">
                             <GridPane.margin>
                                 <Insets />
