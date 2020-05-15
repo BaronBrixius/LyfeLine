@@ -2,23 +2,30 @@
 
 /*.root applies to everything in a scene and overrides all other commands in this file. Use carefully.*/
 .root{
-    -fx-background-color: #FFFF00;
+    -fx-background-color: #390325;
 }
 
 /*Text applies to any free floating text (inc. TextField), does not apply to text in Buttons, etc.
 "-fx-text-fill" does not work here, use "fx-fill" to color the text instead.*/
-Text{
+.textStyle {
+    -fx-fill: white;
 }
 
-.label{
+.label, .label .text {
     -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-fill: white;
+}
+
+.hyperlink .text {
+	-fx-color: white;
 }
 
 /*The following apply to any object of the corresponding name.*/
 .button, .toggle-button{
     -fx-font-weight: bold;
     -fx-text-fill: white;
-    -fx-background-color: #1aa9cd;
+    -fx-background-color: #713E5F;
     -fx-background-radius: 222px;
 }
 
@@ -43,12 +50,13 @@ Text{
 
 }
 
-.menu-item{
-
+.menu-bar, .menu-item {
+	-fx-background-color: #5E7B8A;
 }
 
-.menu-bar{
+.menu {
     -fx-font-weight: lighter;
+    -fx-background-fill: #5E7B8A;
 }
 
 .combo-box{
@@ -107,7 +115,7 @@ for example:      buttonName.getStyleClass().add("smallButton");                
 }
 
 .eventEditor {
-    -fx-background-color: #FFFF00;
+    -fx-background-color: #713E5F;
 }
 
 .date-picker .label {
@@ -235,6 +243,22 @@ for example:      buttonName.getStyleClass().add("smallButton");                
 .slider .axis{
 
 }
+
+.combo-box-base, .list-cell:filled:selected .text { 
+	/*-fx-shadow-highlight-color, -fx-outer-border, -fx-inner-border, -fx-body-color*/
+    -fx-background-color: #713E5F;
+    /*-fx-text-base-color*/
+    -fx-fill: white;
+}
+
+.combo-box-base .arrow-button .arrow {
+	-fx-background-color: white;
+}
+
+.check-box {
+	-fx-text-fill: white;
+}
+
 .check-box .box {
 	-fx-background-color: white;
 	-fx-border-color:grey;
@@ -257,6 +281,10 @@ for example:      buttonName.getStyleClass().add("smallButton");                
 
 }
 
+.list-view:focused {
+	-fx-background-color: #5E7B8A;
+}
+
 .listCellText{
 	-fx-text-fill: white;
 }
@@ -267,7 +295,7 @@ for example:      buttonName.getStyleClass().add("smallButton");                
 }
 
 .listCellBackground{
-	-fx-background-color: #1aa9cd;
+	-fx-background-color: #5E7B8A;
 }
 
 /*Here is a list of useful CSS commands:

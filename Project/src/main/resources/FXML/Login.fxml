@@ -24,10 +24,10 @@
     <padding>
         <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
     </padding>
-    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Email" GridPane.halignment="LEFT" />
+    <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="textStyle" text="Email" GridPane.halignment="LEFT" />
     <TextField fx:id="usernameInput" GridPane.columnIndex="2" />
-    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Password" GridPane.halignment="LEFT" GridPane.rowIndex="1" />
-    <PasswordField fx:id="passwordInput" GridPane.columnIndex="2" GridPane.rowIndex="1" onAction="#loginUser" />
+    <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="textStyle" text="Password" GridPane.halignment="LEFT" GridPane.rowIndex="1" />
+    <PasswordField fx:id="passwordInput" onAction="#loginUser" GridPane.columnIndex="2" GridPane.rowIndex="1" />
     <Text fx:id="errorMessage" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="smallText" wrappingWidth="190" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
     <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0" GridPane.columnIndex="2" GridPane.rowIndex="2">
         <Button defaultButton="true" mnemonicParsing="false" onAction="#loginUser" styleClass="smallButton" text="Login" />
