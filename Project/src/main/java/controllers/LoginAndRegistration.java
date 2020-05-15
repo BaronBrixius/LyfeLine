@@ -47,7 +47,7 @@ public class LoginAndRegistration {
 
         Parent root = FXMLLoader.load(GUIManager.class.getResource("../FXML/Login.fxml"));
         loginStage.setScene(new Scene(root));
-        loginStage.getScene().getStylesheets().add(GUIManager.mainStage.getScene().getStylesheets().get(0));
+        loginStage.getScene().getStylesheets().addAll(GUIManager.mainStage.getScene().getStylesheets());
         loginStage.show();
     }
 
@@ -60,7 +60,7 @@ public class LoginAndRegistration {
         registerStage.initModality(Modality.WINDOW_MODAL);  //I don't actually know what Modality is, Google just said this works and it does.
 
         registerStage.setScene(new Scene(FXMLLoader.load(GUIManager.class.getResource("../FXML/Register.fxml"))));
-        registerStage.getScene().getStylesheets().add(GUIManager.mainStage.getScene().getStylesheets().get(0));
+        registerStage.getScene().getStylesheets().addAll(GUIManager.mainStage.getScene().getStylesheets());
         registerStage.show();
 
     }
@@ -138,7 +138,7 @@ public class LoginAndRegistration {
                         //hide login window
                         ((Node) (event.getSource())).getScene().getWindow().hide();
                         GUIManager.swapScene("Dashboard");
-
+                        GUIManager.applyStyle(user.getTheme());
                     }
                 }
             }

@@ -31,8 +31,16 @@ public class GUIManager extends Application {
     }
 
     public static void applyStyle(String style) {
-        mainStage.getScene().getStylesheets().remove(0);
+        mainStage.getScene().getStylesheets().remove(1);
         mainStage.getScene().getStylesheets().add("File:src/main/resources/styles/" + style + ".css");
+        if (loggedInUser != null) {
+	        loggedInUser.setTheme(style);
+	        try {
+				DBM.updateInDB(loggedInUser);
+			} catch (SQLException e) {
+				
+			}
+        }
     }
 
     //default window set up
@@ -57,7 +65,8 @@ public class GUIManager extends Application {
         swapScene("Welcome");
         //TimelineView systemUnderDevelopment = swapScene("TimelineView");        //delete when merging to dev
         //systemUnderDevelopment.setActiveTimeline(1);
-        mainStage.getScene().getStylesheets().add("File:src/main/resources/styles/DefaultStyle.css");
+        mainStage.getScene().getStylesheets().add("File:src/main/resources/styles/Base.css");
+        mainStage.getScene().getStylesheets().add("File:src/main/resources/styles/Default.css");
         mainStage.show();
     }
 

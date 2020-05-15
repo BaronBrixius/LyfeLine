@@ -25,12 +25,12 @@ public class TopMenu {
     
     @FXML
     public void styleDefaultPressed() {
-    	GUIManager.applyStyle("DefaultStyle");
+    	GUIManager.applyStyle("Default");
     }
     
     @FXML
     public void styleNonePressed() {
-    	GUIManager.applyStyle("None");
+    	GUIManager.applyStyle("Test");
     }
 
     @FXML
@@ -48,6 +48,7 @@ public class TopMenu {
     public void logOutPressed() {
         GUIManager.loggedInUser = null;
         updateLoggedInStatus();
+        GUIManager.applyStyle("Default");
         try {
             GUIManager.swapScene("Welcome");
         } catch (IOException e) {

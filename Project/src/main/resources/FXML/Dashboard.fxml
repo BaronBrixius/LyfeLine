@@ -22,7 +22,7 @@
 
 <BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.Dashboard">
     <center>
-        <VBox minHeight="400.0" minWidth="600.0" stylesheets="@../styles/DefaultStyle.css">
+        <VBox minHeight="400.0" minWidth="600.0">
             <HBox fx:id="Simple" alignment="CENTER_LEFT" spacing="10.0">
                 <VBox prefWidth="412.0" spacing="40.0">
                     <GridPane hgap="5.0" vgap="5.0">
