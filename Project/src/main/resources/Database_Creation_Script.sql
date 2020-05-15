@@ -279,7 +279,7 @@ INSERT INTO `timelines`
  `CreatedMillisecond`, `Private`, `TimelineOwner`, `Keywords`, `ImagePath`)
 VALUES (01, 8, 'Fall of Rome', 'Out with a wimper, not a bang', 'dark', 45, 5, 20, 4, 43, 32, 213, 201, 5, 20, 4,
         43, 32, 213, 2000, 5, 20, 4, 43,
-        32, 213, default, 1, 'Caesar,Rome,', 'src/main/resources/images/timeline/sky_planet_03.jpg'),
+        32, 213, default, 1, 'Caesar,Rome,', 'src/main/resources/images/timeline/fall_of_rome.jpg'),
        (02, 2, 'New Timeline', '', 'dark', 2000, 5, 20, 4, 43, 20, 213, 2000, 5, 20, 4, 43, 32, 213, 2003, 5, 20, 4,
         43, 32, 213, default, 1, 'stuff,things,test,test1,test3,test4,test5,test6,',
         null),
