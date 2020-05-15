@@ -47,7 +47,7 @@ public class TimelineView {
 
         leftSidebar.getChildren().add(timelineEditorController.editor);
         rightSidebar.getChildren().add(eventSelectorController.selector);
-        
+
         ScrollPane mainScrollPane = (ScrollPane) mainBorderPane.getCenter();
         mainScrollPane.setOnScroll(e -> {
             timelineGrid.setScaleX(timelineGrid.getScaleX()*(1+e.getDeltaY()/200));     //if you want to do zoom you can start with this
