@@ -5,6 +5,7 @@ import database.Timeline;
 import database.User;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
@@ -22,11 +23,12 @@ public class TimelineCell {
     public User user;
     List<Polygon> ratingButtons;
     @FXML
-    private GridPane pane;
+    public GridPane pane;
     @FXML
     private Label title;
     @FXML
     private Label author;
+    public boolean focused = false;
 
     public void initialize() {
         // Ratings
@@ -81,7 +83,8 @@ public class TimelineCell {
     }
 
     public void update(double width) {
-        if (timeline != null) {
+        if (timeline != null)
+        {
             title.setText(timeline.getName());
             author.setText("By " + user.getUserName());
             setBGImage(width);
@@ -111,11 +114,12 @@ public class TimelineCell {
         String imageURL = timeline.getImagePath();
         if (imageURL != null) {
             imageURL = "file:" + imageURL;
-            pane.setStyle("-fx-background-image: url(" + imageURL + "); -fx-background-size: " + ((int) (width + 1.0))
-                    + "px;");
+            if (focused)
+                pane.setStyle(" -fx-background-image: url(" + imageURL + "); -fx-pref-height: 400px; -fx-background-size: " + ((int) (width + 1.0)) + ", stretch;");
+            else
+                pane.setStyle(" -fx-background-image: url(" + imageURL + "); -fx-background-size: " + ((int) (width + 1.0)) + "px;");
         } else {
-            pane.setStyle("-fx-background-image: null");
+            pane.setStyle(" -fx-background-image: null;");
         }
     }
-
 }

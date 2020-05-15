@@ -478,10 +478,18 @@ public class Dashboard {
             try {
                 cellNode = loader.load();
                 cell = loader.getController();
-
             } catch (IOException e) {
                 System.err.println("Could not load TimelineCell.fxml");
             }
+            this.focusedProperty().addListener((observable, oldValue, newValue) -> {
+                cell.focused = newValue;
+                if (newValue)
+                    this.setStyle(" -fx-pref-height: 400px;");
+                else
+                    this.setStyle(" -fx-pref-height: 100px;");
+                cell.setBGImage(list.getWidth() - 30);
+                //-fx-pref-height: 400px;
+            });
         }
 
         @Override

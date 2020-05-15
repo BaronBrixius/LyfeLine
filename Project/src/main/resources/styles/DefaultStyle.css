@@ -296,7 +296,7 @@ for example:      buttonName.getStyleClass().add("smallButton");                
 }
 
 .paneBG{
-	-fx-background-position: center;	
+	-fx-background-position: center;
 	-fx-background-repeat: no-repeat;
 }
 
@@ -312,7 +312,7 @@ for example:      buttonName.getStyleClass().add("smallButton");                
 }
 
 .listCellBackground{
-	-fx-background-color: #1aa9cd;
+    -fx-background-color: #1aa9cd;
 }
 
 /*Here is a list of useful CSS commands:
