@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Timeline extends TimelineObject<Timeline> {
-    private int timelineID;
+    private transient int timelineID;
     private int scale;
     private String timelineName = "";
     private String theme;
