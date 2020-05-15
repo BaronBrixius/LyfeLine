@@ -3,7 +3,7 @@ package database;
 import utils.Date;
 
 public abstract class TimelineObject<T> implements DBObject<T> {
-    int ownerID;
+    transient int ownerID;
     Date startDate = new Date();
     Date endDate = new Date();
     Date creationDate;

@@ -19,7 +19,7 @@ public class Timeline extends TimelineObject<Timeline> {
     private String timelineDescription = "";
     private List<Event> eventList = new ArrayList<>();
     private List<String> keywords = new ArrayList<>();
-    private double rating;
+    private transient double rating;
 
     public Timeline() {
     }
@@ -27,11 +27,11 @@ public class Timeline extends TimelineObject<Timeline> {
     //Do we need this? We mostly create blank timelines and then use setters called from GUI fields for new timelines
     public Timeline(String timelineName, String timelineDescription, int scale, String theme, Date startDate,
                     Date endDate, List<String> keywords) {
-        this(0, timelineName, timelineDescription, scale, theme, startDate, endDate, null, 0, keywords, null, null);
+        this(0, timelineName, timelineDescription, scale, theme, startDate, endDate, null, 0, keywords, null, null, 0);
     }
 
     private Timeline(int timelineID, String timelineName, String timelineDescription, int scale, String theme,
-                     Date startDate, Date endDate, Date dateCreated, int timelineOwner, List<String> keywords, List<Event> eventList, String imagePath) {
+                     Date startDate, Date endDate, Date dateCreated, int timelineOwner, List<String> keywords, List<Event> eventList, String imagePath, double rating) {
         this.timelineID = timelineID;
         this.timelineName = timelineName;
         this.scale = scale;
@@ -44,13 +44,7 @@ public class Timeline extends TimelineObject<Timeline> {
         this.keywords = keywords;
         this.eventList = eventList;
         this.imagePath = imagePath;
-
-        try {
-            this.rating = calcRating();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-
+        this.rating = rating;
     }
 
     @Override
@@ -209,12 +203,21 @@ public class Timeline extends TimelineObject<Timeline> {
             stmt.setInt(1, timelineID);
             eventList = DBM.getFromDB(stmt, new Event());
         }
+
+        double rating = 0;
+
+        try {
+            rating = calcRating();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+
         return new Timeline(timelineID, timelineName, timelineDescription, scale, theme,
                 new Date(startYear, startMonth, startDay, startHour, startMinute, startSecond, startMillisecond),
                 new Date(endYear, endMonth, endDay, endHour, endMinute, endSecond, endMillisecond),
                 new Date(createdYear, createdMonth, createdDay, createdHour, createdMinute, createdSecond,
                         createdMillisecond),
-                timelineOwner, keywords, eventList, imagePath);
+                timelineOwner, keywords, eventList, imagePath, rating);
     }
 
     public void rateTimeline(int index) {
