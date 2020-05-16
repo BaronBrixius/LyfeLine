@@ -16,7 +16,7 @@ public class JSONTimeline {
     private List<Rating> ratings;
     private User owner;
 
-    public JSONTimeline(Timeline timeline) {
+    public JSONTimeline(Timeline timeline) {        //TODO close statements!!!!!!!!!!
         this.timeline = timeline;
         makeTimelineImage();
         makeEventImages();
