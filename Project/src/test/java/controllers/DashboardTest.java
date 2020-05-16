@@ -1108,7 +1108,7 @@ public class DashboardTest {
         newTimeline.setOwnerID(loginUserID);
         try {DBM.insertIntoDB(newTimeline);} catch (SQLException e) {e.printStackTrace();}
 
-        newTimeline.setStartDate(LocalDateTime.of(year, month, day, hour, minute, second, millisecond*1000));
+        newTimeline.setStartDate(LocalDateTime.of(year, month, day, hour, minute, second, millisecond*1000000));
         newTimeline.setEndDate(LocalDateTime.of(year + 1, 0, 0, 0, 0, 0, 0)); //Timelines must have an end date that is after the start date
 
         try {DBM.updateInDB(newTimeline);} catch (SQLException e) {e.printStackTrace();}

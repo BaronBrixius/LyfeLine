@@ -227,7 +227,7 @@ public abstract class Editor {
             startInputs.get(3).getValueFactory().setValue(itemInEditor.getStartDate().getHour());
             startInputs.get(4).getValueFactory().setValue(itemInEditor.getStartDate().getMinute());
             startInputs.get(5).getValueFactory().setValue(itemInEditor.getStartDate().getSecond());
-            startInputs.get(6).getValueFactory().setValue(itemInEditor.getStartDate().getNano() / 1000);
+            startInputs.get(6).getValueFactory().setValue(itemInEditor.getStartDate().getNano() / 1000000);
 
             populateEndInputs();
         }
@@ -244,7 +244,7 @@ public abstract class Editor {
         endInputs.get(3).getValueFactory().setValue(itemInEditor.getEndDate().getHour());
         endInputs.get(4).getValueFactory().setValue(itemInEditor.getEndDate().getMinute());
         endInputs.get(5).getValueFactory().setValue(itemInEditor.getEndDate().getSecond());
-        endInputs.get(6).getValueFactory().setValue(itemInEditor.getEndDate().getNano() / 1000);
+        endInputs.get(6).getValueFactory().setValue(itemInEditor.getEndDate().getNano() / 1000000);
     }
 
     void updateItem() {                  //sets object's values based on input fields' values
@@ -261,10 +261,10 @@ public abstract class Editor {
         itemInEditor.setDescription(descriptionInput.getText().replaceAll("([^\r])\n", "$1\r\n"));
 
         itemInEditor.setStartDate(LocalDateTime.of(startInputs.get(0).getValue(), startInputs.get(1).getValue(), startInputs.get(2).getValue(),
-                startInputs.get(3).getValue(), startInputs.get(4).getValue(), startInputs.get(5).getValue(), startInputs.get(6).getValue()*1000));
+                startInputs.get(3).getValue(), startInputs.get(4).getValue(), startInputs.get(5).getValue(), startInputs.get(6).getValue()*1000000));
 
         itemInEditor.setEndDate(LocalDateTime.of(endInputs.get(0).getValue(), endInputs.get(1).getValue(), endInputs.get(2).getValue(),
-                endInputs.get(3).getValue(), endInputs.get(4).getValue(), endInputs.get(5).getValue(), endInputs.get(6).getValue()*1000));
+                endInputs.get(3).getValue(), endInputs.get(4).getValue(), endInputs.get(5).getValue(), endInputs.get(6).getValue()*1000000));
     }
 
     boolean hasChanges() {           //returns true if any input fields don't match the object's values
@@ -276,10 +276,10 @@ public abstract class Editor {
             return true;
 
         LocalDateTime readStart = LocalDateTime.of(startInputs.get(0).getValue(), startInputs.get(1).getValue(), startInputs.get(2).getValue(),
-                startInputs.get(3).getValue(), startInputs.get(4).getValue(), startInputs.get(5).getValue(), startInputs.get(6).getValue()*1000);
+                startInputs.get(3).getValue(), startInputs.get(4).getValue(), startInputs.get(5).getValue(), startInputs.get(6).getValue()*1000000);
 
         LocalDateTime readEnd = LocalDateTime.of(endInputs.get(0).getValue(), endInputs.get(1).getValue(), endInputs.get(2).getValue(),
-                endInputs.get(3).getValue(), endInputs.get(4).getValue(), endInputs.get(5).getValue(), endInputs.get(6).getValue()*1000);
+                endInputs.get(3).getValue(), endInputs.get(4).getValue(), endInputs.get(5).getValue(), endInputs.get(6).getValue()*1000000);
 
         return (
                 itemInEditor.getStartDate().compareTo(readStart) != 0

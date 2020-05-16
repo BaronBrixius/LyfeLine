@@ -48,14 +48,14 @@ public class Event extends TimelineObject<Event> {
         out.setInt(6, startDate.getHour());
         out.setInt(7, startDate.getMinute());
         out.setInt(8, startDate.getSecond());
-        out.setInt(9, startDate.getNano() * 1000);
+        out.setInt(9, startDate.getNano() / 1000000);
         out.setInt(10, endDate.getYear());
         out.setInt(11, endDate.getMonthValue());
         out.setInt(12, endDate.getDayOfMonth());
         out.setInt(13, endDate.getHour());
         out.setInt(14, endDate.getMinute());
         out.setInt(15, endDate.getSecond());
-        out.setInt(16, endDate.getNano() * 1000);
+        out.setInt(16, endDate.getNano() / 1000000);
         out.setInt(17, ownerID);
         if (this.imagePath == null)
             out.setNull(18, Types.INTEGER);
@@ -158,14 +158,14 @@ public class Event extends TimelineObject<Event> {
         out.setInt(7, startDate.getHour());
         out.setInt(8, startDate.getMinute());
         out.setInt(9, startDate.getSecond());
-        out.setInt(10, startDate.getNano() * 1000);
+        out.setInt(10, startDate.getNano() / 1000000);
         out.setInt(11, endDate.getYear());
         out.setInt(12, endDate.getMonthValue());
         out.setInt(13, endDate.getDayOfMonth());
         out.setInt(14, endDate.getHour());
         out.setInt(15, endDate.getMinute());
         out.setInt(16, endDate.getSecond());
-        out.setInt(17, endDate.getNano() * 1000);
+        out.setInt(17, endDate.getNano() / 1000000);
         out.setInt(18, ownerID);
         out.setInt(19, eventPriority);
         out.setInt(20, eventID);
