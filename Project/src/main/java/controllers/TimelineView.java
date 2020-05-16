@@ -69,10 +69,12 @@ public class TimelineView {
         SnapshotParameters snapShotparams = new SnapshotParameters();
          //snapShotparams.setFill(Color.TRANSPARENT);  if we want transparent background instead of white
         if(isZoomed()){
+            mainScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
             WritableImage  temp = mainScrollPane.snapshot(snapShotparams,
                 new WritableImage((int) mainScrollPane.getLayoutBounds().getWidth(),
                         (int) mainScrollPane.getLayoutBounds().getHeight()));
             System.out.println(" zoom printout");
+
         return temp;}
         WritableImage  temp = timelineGrid.snapshot(snapShotparams,
                     new WritableImage((int) timelineGrid.getLayoutBounds().getWidth(),
@@ -216,7 +218,7 @@ public class TimelineView {
     public void returnToDashboard() throws IOException {
       try {
             GUIManager.swapScene("Dashboard");
-          // just method I used to see the snapshot output copy(snapshot());
+          copy(snapshot()); //just method I used to see the snapshot output
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -226,7 +228,7 @@ public class TimelineView {
 
          public File fileChooser(){
              FileChooser fileChooser = new FileChooser();
-             fileChooser.setInitialFileName(this.activeTimeline.getName().replaceAll("\\s+","_")); //We will add read format from dropdown or use png
+             fileChooser.setInitialFileName(this.activeTimeline.getName().replaceAll("\\s+","_")+".png"); //We will add read format from dropdown or use png
              fileChooser.getExtensionFilters().addAll(
                      new FileChooser.ExtensionFilter("All Images", "*.jpg", "*.jpeg", "*.png", "*.bmp", "*.gif", "*.wbmp"),
                      new FileChooser.ExtensionFilter("JPG", "*.jpg"),
@@ -242,11 +244,11 @@ public class TimelineView {
              return file;
          }
 
-     /*  //Just a placeholder method that creates a image of the snapshot
+      //Just a placeholder method that creates a image of the snapshot
     public void copy(WritableImage temp) throws IOException {
         BufferedImage fromFXImage = SwingFXUtils.fromFXImage(temp,null);
         System.out.println(fromFXImage.getHeight() + " and width is "+fromFXImage.getWidth());
-        ImageIO.write(fromFXImage, "PNG", new File("filename.png"));}  //Printed under Project folder not images*/
+        ImageIO.write(fromFXImage, "PNG", fileChooser());}  //Printed under Project folder not images*/
 
     }
 
