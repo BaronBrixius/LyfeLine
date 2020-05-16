@@ -8,20 +8,14 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
+import utils.DateUtil;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class TimelineView {
 
@@ -107,7 +101,7 @@ public class TimelineView {
     Pane setupMainLine() {
         Pane mainLine = new Pane();
         mainLine.getStyleClass().add("timeline");
-        int numberOfCol = activeTimeline.getStartDate().distanceTo(activeTimeline.getEndDate(), activeTimeline.getScale());
+        int numberOfCol = DateUtil.distanceBetween(activeTimeline.getStartDate(), activeTimeline.getEndDate(), activeTimeline.getScale());
         int start = 1, frequency = 1;
 
         switch (activeTimeline.getScale()) {

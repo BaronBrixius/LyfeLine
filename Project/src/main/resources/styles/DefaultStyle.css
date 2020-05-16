@@ -144,7 +144,7 @@ for example:      buttonName.getStyleClass().add("smallButton");                
 
 }
 
-/*.button settings was making Date picker weird, so these are the default settings for it, slightly tweaked for consistency.*/
+/*.button settings was making LocalDateTime picker weird, so these are the default settings for it, slightly tweaked for consistency.*/
 .date-picker-popup .button {
     -fx-background-color: -fx-outer-border, -fx-inner-border, -fx-body-color;
     -fx-background-insets: 0, 1, 2;

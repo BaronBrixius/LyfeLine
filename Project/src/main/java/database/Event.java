@@ -1,12 +1,10 @@
 package database;
 
-import utils.Date;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.*;
-import java.util.List;
+import java.time.LocalDateTime;
 
 public class Event extends TimelineObject<Event> {
     private int eventID = 0;
@@ -22,7 +20,7 @@ public class Event extends TimelineObject<Event> {
         this.ownerID = user.getUserID();
     }
 
-    private Event(int eventID, int ownerID, Date startDate, Date endDate, Date creationDate, String title, String description, String imagePath, int eventPriority) {      //for reading from database
+    private Event(int eventID, int ownerID, LocalDateTime startDate, LocalDateTime endDate, LocalDateTime creationDate, String title, String description, String imagePath, int eventPriority) {      //for reading from database
         this.eventID = eventID;
         this.ownerID = ownerID;
         this.startDate = startDate;
@@ -45,19 +43,19 @@ public class Event extends TimelineObject<Event> {
         out.setString(1, eventName);
         out.setString(2, eventDescription);
         out.setInt(3, startDate.getYear());
-        out.setInt(4, startDate.getMonth());
-        out.setInt(5, startDate.getDay());
+        out.setInt(4, startDate.getMonthValue());
+        out.setInt(5, startDate.getDayOfMonth());
         out.setInt(6, startDate.getHour());
         out.setInt(7, startDate.getMinute());
         out.setInt(8, startDate.getSecond());
-        out.setInt(9, startDate.getMillisecond());
+        out.setInt(9, startDate.getNano() * 1000);
         out.setInt(10, endDate.getYear());
-        out.setInt(11, endDate.getMonth());
-        out.setInt(12, endDate.getDay());
+        out.setInt(11, endDate.getMonthValue());
+        out.setInt(12, endDate.getDayOfMonth());
         out.setInt(13, endDate.getHour());
         out.setInt(14, endDate.getMinute());
         out.setInt(15, endDate.getSecond());
-        out.setInt(16, endDate.getMillisecond());
+        out.setInt(16, endDate.getNano() * 1000);
         out.setInt(17, ownerID);
         if (this.imagePath == null)
             out.setNull(18, Types.INTEGER);
@@ -112,21 +110,21 @@ public class Event extends TimelineObject<Event> {
         int CreatedMinute = rs.getInt("CreatedMinute");
         int CreatedSecond = rs.getInt("CreatedSecond");
         int CreatedMillisecond = rs.getInt("CreatedMillisecond");
-        Date start = new Date(StartYear, StartMonth, StartDay, StartHour, StartMinute, StartSecond, StartMillisecond);
-        Date end = new Date(EndYear, EndMonth, EndDay, EndHour, EndMinute, EndSecond, EndMillisecond);
-        Date created = new Date(CreatedYear, CreatedMonth, CreatedDay, CreatedHour, CreatedMinute, CreatedSecond, CreatedMillisecond);
+        LocalDateTime start = LocalDateTime.of(StartYear, StartMonth, StartDay, StartHour, StartMinute, StartSecond, StartMillisecond);
+        LocalDateTime end = LocalDateTime.of(EndYear, EndMonth, EndDay, EndHour, EndMinute, EndSecond, EndMillisecond);
+        LocalDateTime created = LocalDateTime.of(CreatedYear, CreatedMonth, CreatedDay, CreatedHour, CreatedMinute, CreatedSecond, CreatedMillisecond);
         int EventPriority = rs.getInt("EventPriority");
 
         return new Event(eventID, ownerID, start, end, created, eventName, eventDescription, imagePath, EventPriority);
     }
 
+    public int getID() {
+        return this.eventID;
+    }
+
     @Override
     public void setID(int id) {
         this.eventID = id;
-    }
-
-    public int getID() {
-        return this.eventID;
     }
 
     public String getDescription() {
@@ -155,19 +153,19 @@ public class Event extends TimelineObject<Event> {
         out.setString(2, eventDescription);
         out.setString(3, imagePath);
         out.setInt(4, startDate.getYear());
-        out.setInt(5, startDate.getMonth());
-        out.setInt(6, startDate.getDay());
+        out.setInt(5, startDate.getMonthValue());
+        out.setInt(6, startDate.getDayOfMonth());
         out.setInt(7, startDate.getHour());
         out.setInt(8, startDate.getMinute());
         out.setInt(9, startDate.getSecond());
-        out.setInt(10, startDate.getMillisecond());
+        out.setInt(10, startDate.getNano() * 1000);
         out.setInt(11, endDate.getYear());
-        out.setInt(12, endDate.getMonth());
-        out.setInt(13, endDate.getDay());
+        out.setInt(12, endDate.getMonthValue());
+        out.setInt(13, endDate.getDayOfMonth());
         out.setInt(14, endDate.getHour());
         out.setInt(15, endDate.getMinute());
         out.setInt(16, endDate.getSecond());
-        out.setInt(17, endDate.getMillisecond());
+        out.setInt(17, endDate.getNano() * 1000);
         out.setInt(18, ownerID);
         out.setInt(19, eventPriority);
         out.setInt(20, eventID);
@@ -200,6 +198,6 @@ public class Event extends TimelineObject<Event> {
 
     @Override
     public String toString() {
-        return "EventID: " + eventID + " EventName " + eventName + " EventDescription " + eventDescription + " Start Date: " + startDate + " End Date: " + endDate + " Created: " + creationDate;
+        return "EventID: " + eventID + " EventName " + eventName + " EventDescription " + eventDescription + " Start : " + startDate + " End : " + endDate + " Created: " + creationDate;
     }
 }

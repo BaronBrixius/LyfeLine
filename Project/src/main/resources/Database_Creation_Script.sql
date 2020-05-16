@@ -306,12 +306,12 @@ VALUES (01, 8, 'Fall of Rome', 'Out with a wimper, not a bang', 'dark', 45, 5, 2
         100, 5, 20,
         4, 43, 32, 213, 1550, 5, 20, 4, 43,
         32, 213, default, 2, 'testing, 2, fifty', 'src/main/resources/images/timeline/art_andre_kutscherauer.jpg'),
-       (10, 2, 'Owner: Max - Dummy timeline 10', 'A timeline meant for testing seconds', 'dark', 0, 0, 0, 0, 0, 1, 0, 0,
-        0, 0,
+       (10, 2, 'Owner: Max - Dummy timeline 10', 'A timeline meant for testing seconds', 'dark', 0, 1, 1, 0, 0, 1, 0, 0,
+        1, 1,
         0, 0, 59, 0, 1550, 5, 20, 4, 43,
         32, 213, default, 2, 'testing, 2, sixty', 'src/main/resources/images/timeline/colette.jpg'),
        (11, 2, 'Owner: Max - Dummy timeline 11',
-        'A timeline meant for testing the upper bounds of seconds (1 min 10 sec)', 'dark', 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,
+        'A timeline meant for testing the upper bounds of seconds (1 min 10 sec)', 'dark', 0, 1, 1, 0, 0, 1, 0, 0, 1, 1,
         0, 1, 10, 0, 1550, 5, 20, 4, 43,
         32, 213, default, 2, 'testing, 2, sixty', null),
        (12, 6, 'Owner: Max - Dummy timeline 12', 'A timeline meant for testing weeks', 'dark', 50, 4, 20, 4, 43, 32,
@@ -442,9 +442,9 @@ VALUES ( '1', '1', 'Crossing the Rubicon', 'Julius Caesar''s crossing the Rubico
     /* Events that break the upper limit of minutes and seconds */
 
        ('2', '0', 'dummyEvent36', '200 seconds (breaks the 59 second barrier)',
-        '10', '2', '14', '18', '45', '30', '28', '10', '2', '14', '18', '45', '230', '28'),
+        '10', '2', '14', '18', '45', '30', '28', '10', '2', '14', '18', '45', '23', '28'),
        ('2', '0', 'dummyEvent37', '200 Minutes (breaks the 59 Minute barrier)',
-        '10', '2', '14', '18', '45', '30', '28', '10', '2', '14', '18', '45', '230', '28');
+        '10', '2', '14', '18', '45', '30', '28', '10', '2', '14', '18', '45', '23', '28');
 
 
 INSERT INTO `timelineevents` (`TimelineID`, `EventID`)
