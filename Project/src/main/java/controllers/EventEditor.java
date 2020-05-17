@@ -2,7 +2,6 @@ package controllers;
 
 import database.Event;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.util.StringConverter;
 
