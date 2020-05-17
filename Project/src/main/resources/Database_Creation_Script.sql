@@ -216,9 +216,9 @@ CREATE TABLE ratings
     `TimeLineID` int NOT NULL,
     `Rating`     int NOT NULL,
     KEY `UserID_idx` (`UserID`),
-    KEY `TimeLineID_idx` (`TimeLineID`),
-    CONSTRAINT `TimeLineID` FOREIGN KEY (`TimeLineID`) REFERENCES `timelines` (`TimelineID`) ON DELETE CASCADE,
-    CONSTRAINT `UserID` FOREIGN KEY (`UserID`) REFERENCES `users` (`UserID`) ON DELETE CASCADE
+    KEY `TimeLineID_idx` (`TimeLineID`)
+#     CONSTRAINT `TimeLineID` FOREIGN KEY (`TimeLineID`) REFERENCES `timelines` (`TimelineID`) ON DELETE CASCADE,
+#     CONSTRAINT `UserID` FOREIGN KEY (`UserID`) REFERENCES `users` (`UserID`) ON DELETE CASCADE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_general_ci;
@@ -512,4 +512,18 @@ VALUES ('1', '1', '3'),
        ('10', '6', '2'),
        ('10', '3', '5'),
        ('10', '5', '1'),
-       ('10', '12', '4');
+       ('10', '12', '4'),
+       ('1', '1', '3'),
+       ('1', '1', '3'),
+       ('1', '1', '3'),
+       ('1', '1', '3'),
+       ('1', '1', '3'),
+       ('1', '1', '3'),
+       ('1', '1', '3'),
+       ('1', '1', '3'),
+       ('1', '1', '3'),
+       ('1', '1', '3'),
+       ('1', '1', '3'),
+       ('1', '1', '3'),
+       ('1', '1', '3'),
+       ('1', '1', '3');
