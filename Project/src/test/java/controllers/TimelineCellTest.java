@@ -64,6 +64,7 @@ class TimelineCellTest {
 		}
 
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("../../classes/FXML/Dashboard.fxml"));
+		GUIManager.mainStage = stage;
 		stage.setScene(new Scene(loader.load()));
 		stage.getScene().getStylesheets().add("File:src/main/resources/styles/" + StyleSheetName + ".css");
 		dash = loader.getController();

@@ -52,6 +52,7 @@ public class EventEditorTest {
         GUIManager.loggedInUser = new User();
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("../../classes/FXML/TimelineView.fxml"));
+        GUIManager.mainStage = stage;
         stage.setScene(new Scene(loader.load()));
         parent = loader.getController();
         parent.setActiveTimeline(DBM.getFromDB(DBM.conn.prepareStatement("SELECT * FROM timelines LIMIT 1"), new Timeline()).get(0));
