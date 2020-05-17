@@ -72,6 +72,7 @@ public abstract class Editor {
     String outPath;
 
     public void initialize() {
+        editor.getStylesheets().add("styles/DisabledViewable.css");
         //Set Up the Spinners for Start/End Inputs, would have bloated the .fxml and variable list a ton if these were in fxml
         setupTimeInputStartAndEnd("Year", Integer.MIN_VALUE + 1, Integer.MAX_VALUE, 0);
         setupTimeInputStartAndEnd("Month", 1, 12, 1);
@@ -143,12 +144,6 @@ public abstract class Editor {
             s.setDisable(!editable);
         for (Spinner<Integer> s : endInputs)
             s.setDisable(!editable);
-
-        if (editable)
-            editor.getStylesheets().remove("styles/DisabledViewable.css");
-        else
-            editor.getStylesheets().add("styles/DisabledViewable.css");
-
         saveEditButton.setText(editable ? "Save" : "Edit");
     }
 
@@ -211,11 +206,10 @@ public abstract class Editor {
     boolean populateDisplay() {
         if (itemInEditor.getImagePath() != null) {
             image.setImage(new Image("File:" + itemInEditor.getImagePath()));
-            imageFilePath = itemInEditor.getImagePath();
         } else {
             image.setImage(null);
-            imageFilePath = itemInEditor.getImagePath();
         }
+        imageFilePath = itemInEditor.getImagePath();
 
         titleInput.setText(itemInEditor.getName());
         descriptionInput.setText(itemInEditor.getDescription());
