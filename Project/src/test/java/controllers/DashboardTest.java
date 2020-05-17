@@ -79,10 +79,10 @@ public class DashboardTest {
         } catch (SQLException e) { System.out.println("Could not get test user from database"); }
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("../../classes/FXML/Dashboard.fxml"));
+        GUIManager.mainStage = stage;
         stage.setScene(new Scene(loader.load()));
         stage.getScene().getStylesheets().add("File:src/main/resources/styles/"+ StyleSheetName +".css");
         sut = loader.getController();
-        GUIManager.mainStage = stage;
         stage.show();
     }
 
