@@ -54,6 +54,7 @@ public class TimelineView {
         rightSidebar.getChildren().add(eventSelectorController.selector);
 
         mainScrollPane.addEventFilter(ScrollEvent.ANY, this::scrollHandler);
+        mainScrollPane.hvalueProperty().addListener((obs, oldv, newv) -> System.out.println(oldv + " " + newv));
     }
 
     public boolean isZoomed() {
@@ -262,15 +263,16 @@ public class TimelineView {
         timelineGrid.setScaleX(newScale);
         timelineGrid.setScaleY(newScale);
 
-        double adjustment = newScale / oldScale - 1;    //panning the mouse has to be calculated as though unscaled
+        /*double adjustment = newScale / oldScale - 1;    //panning the mouse has to be calculated as though unscaled
         double dx = (event.getSceneX() - (mainScrollPane.getBoundsInParent().getWidth() / 2 + mainScrollPane.getBoundsInParent().getMinX()));
         double dy = (event.getSceneY() - (mainScrollPane.getBoundsInParent().getHeight() / 2 + mainScrollPane.getBoundsInParent().getMinY()));
 
         double endx =(mainScrollPane.getHvalue() + (adjustment * dx) / mainScrollPane.getHmax());
-        double endy = (mainScrollPane.getVvalue() + (adjustment * dy) / mainScrollPane.getVmax());
+        double endy = (mainScrollPane.getVvalue() + (adjustment * dy) / mainScrollPane.getVmax());*/
 
-        mainScrollPane.setHvalue(endx);
-        mainScrollPane.setVvalue(endy);
+
+        mainScrollPane.setHvalue(event.getX() / timelineGrid.getWidth() * newScale / oldScale);
+        mainScrollPane.setVvalue(event.getY() / timelineGrid.getHeight() * newScale / oldScale);
 
         event.consume();
     }
