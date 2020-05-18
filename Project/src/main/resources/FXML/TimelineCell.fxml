@@ -11,21 +11,22 @@
 <?import javafx.scene.shape.Polygon?>
 <?import javafx.scene.text.Font?>
 
-<GridPane fx:id="pane" maxHeight="200.0" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="200.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.TimelineCell">
+<GridPane fx:id="pane" gridLinesVisible="true" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="200.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.TimelineCell">
     <columnConstraints>
-        <ColumnConstraints />
-        <ColumnConstraints hgrow="SOMETIMES" />
-        <ColumnConstraints fillWidth="false" />
+        <ColumnConstraints maxWidth="-Infinity" minWidth="-Infinity" prefWidth="1000.0" />
+        <ColumnConstraints maxWidth="-Infinity" minWidth="-Infinity" prefWidth="200.0" />
     </columnConstraints>
     <rowConstraints>
-        <RowConstraints maxHeight="400.0" minHeight="-Infinity" prefHeight="45.0" vgrow="SOMETIMES" />
-        <RowConstraints maxHeight="390.0" minHeight="-Infinity" prefHeight="45.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="-Infinity" minHeight="0.0" vgrow="SOMETIMES" />
+      <RowConstraints minHeight="0.0" vgrow="ALWAYS" />
+      <RowConstraints maxHeight="-Infinity" minHeight="0.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="-Infinity" minHeight="0.0" vgrow="SOMETIMES" />
     </rowConstraints>
     <styleClass>
         <String fx:value="paneBG" />
         <String fx:value="listCellBackground" />
     </styleClass>
-    <Label fx:id="title" styleClass="listCellText" text="Label" GridPane.columnSpan="3" GridPane.halignment="LEFT" GridPane.rowSpan="2" GridPane.valignment="TOP">
+    <Label fx:id="title" styleClass="listCellText" text="Title" GridPane.halignment="LEFT" GridPane.valignment="CENTER">
         <font>
           <Font size="14.0" />
         </font>
@@ -33,7 +34,22 @@
          <Insets left="1.0" />
       </GridPane.margin>
     </Label>
-    <HBox fx:id="ratingBox" alignment="BOTTOM_RIGHT" prefHeight="400.0" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+   <Label fx:id="description" maxHeight="300.0" styleClass="listCellText" text="Description" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS">
+      <font>
+         <Font size="14.0" />
+      </font>
+   </Label>
+   <Label fx:id="keywords" styleClass="listCellText" text="Keywords" GridPane.rowIndex="2">
+      <font>
+         <Font size="14.0" />
+      </font>
+   </Label>
+   <Label fx:id="author" styleClass="listCellText" text="Author" GridPane.rowIndex="3">
+      <font>
+         <Font size="14.0" />
+      </font>
+   </Label>
+    <HBox fx:id="ratingBox" alignment="BOTTOM_RIGHT" prefHeight="100.0" prefWidth="300.0" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="3" GridPane.valignment="CENTER">
         <padding>
             <Insets bottom="5.0" right="5.0" />
         </padding>
@@ -79,4 +95,10 @@
             </points>
         </Polygon>
     </HBox>
+   <opaqueInsets>
+      <Insets left="5.0" />
+   </opaqueInsets>
+   <padding>
+      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+   </padding>
 </GridPane>

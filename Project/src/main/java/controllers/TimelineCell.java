@@ -6,8 +6,6 @@ import database.User;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.OverrunStyle;
-import javafx.scene.image.Image;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
@@ -20,17 +18,22 @@ import java.util.List;
 
 public class TimelineCell {
 
-    public HBox ratingBox;
-    public Timeline timeline;
-    public User user;
+    @FXML
+    GridPane pane;
+    @FXML
+    HBox ratingBox;
+    @FXML
+    Label title;
+    @FXML
+    Label description;
+    @FXML
+    Label keywords;
+    @FXML
+    Label author;
     List<Polygon> ratingButtons;
-    @FXML
-    public GridPane pane;
-    @FXML
-    private Label title;
-    @FXML
-    private Label author;
-    public boolean focused = false;
+    Timeline timeline;
+    User user;
+    boolean focused = false;
 
     public void initialize() {
         // Ratings
@@ -85,11 +88,11 @@ public class TimelineCell {
     }
 
     public void update(double width) {
-        if (timeline != null)
-        {
+        if (timeline != null) {
+            title.setText("Title: " + timeline.getName());
+            author.setText(user.getUserName());
 
-            if (focused)
-            {
+            if (focused) {
                 int year = timeline.getCreationDate().getYear();
                 int month = timeline.getCreationDate().getMonth();
                 int day = timeline.getCreationDate().getDay();
@@ -100,16 +103,15 @@ public class TimelineCell {
                 if (keyWords.length() >= 2)
                     keyWords.delete(keyWords.length() - 2, keyWords.length());
 
-                title.setText("Title: " + timeline.getName() + "\nDescription: " + timeline.getDescription()
-                        + "\nDate Created: " + year + "/" + month + "/" + day + "\nKeywords: " + keyWords
-                        + "\nBy " + user.getUserName());
-            }
-            else
-            {
-                title.setText("Title: " + timeline.getName() + "\nBy " + user.getUserName());
+                description.setText("Description: " + timeline.getDescription());
+                //TODO start and end date here
+                keywords.setText("Keywords: " + keyWords);
+            } else {
+                description.setText("");
+                keywords.setText("");
             }
 
-            title.setTextOverrun(OverrunStyle.CENTER_ELLIPSIS);
+            description.setTextOverrun(OverrunStyle.CENTER_ELLIPSIS);
 
             setBGImage(width);
             colorStarsByRating((int) Math.ceil(timeline.getRating()));
