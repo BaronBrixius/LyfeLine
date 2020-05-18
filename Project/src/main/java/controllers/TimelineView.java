@@ -4,11 +4,9 @@ import database.DBM;
 import database.Event;
 import database.Timeline;
 import javafx.embed.swing.SwingFXUtils;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
@@ -55,7 +53,7 @@ public class TimelineView {
         leftSidebar.getChildren().add(timelineEditorController.editor);
         rightSidebar.getChildren().add(eventSelectorController.selector);
 
-        mainScrollPane.addEventFilter(ScrollEvent.ANY, this::scrollHander);
+        mainScrollPane.addEventFilter(ScrollEvent.ANY, this::scrollHandler);
     }
 
     public boolean isZoomed() {
@@ -255,7 +253,7 @@ public class TimelineView {
     }  //Printed under Project folder not images*/
 
 
-    private void scrollHander(ScrollEvent event) {
+    private void scrollHandler(ScrollEvent event) {
         double oldScale = timelineGrid.getScaleX();
         double newScale = event.getDeltaY() > 0 ? oldScale * 1.2 : oldScale / 1.2;
         if (newScale > 100)
@@ -264,13 +262,16 @@ public class TimelineView {
         timelineGrid.setScaleX(newScale);
         timelineGrid.setScaleY(newScale);
 
-        double adjust = newScale / oldScale - 1;    //panning the mouse has to be calculated as though unscaled
-        double dx = (event.getSceneX() - (timelineGrid.getBoundsInParent().getWidth() / 2 + timelineGrid.getBoundsInParent().getMinX()));
-        double dy = (event.getSceneY() - (timelineGrid.getBoundsInParent().getHeight() / 2 + timelineGrid.getBoundsInParent().getMinY()));
+        double adjustment = newScale / oldScale - 1;    //panning the mouse has to be calculated as though unscaled
+        double dx = (event.getSceneX() - (mainScrollPane.getBoundsInParent().getWidth() / 2 + mainScrollPane.getBoundsInParent().getMinX()));
+        double dy = (event.getSceneY() - (mainScrollPane.getBoundsInParent().getHeight() / 2 + mainScrollPane.getBoundsInParent().getMinY()));
 
-        timelineGrid.setTranslateX(timelineGrid.getTranslateX() - adjust * dx);
-        timelineGrid.setTranslateY(timelineGrid.getTranslateY() - adjust * dy);
-        
+        double endx =(mainScrollPane.getHvalue() + (adjustment * dx) / mainScrollPane.getHmax());
+        double endy = (mainScrollPane.getVvalue() + (adjustment * dy) / mainScrollPane.getVmax());
+
+        mainScrollPane.setHvalue(endx);
+        mainScrollPane.setVvalue(endy);
+
         event.consume();
     }
 
