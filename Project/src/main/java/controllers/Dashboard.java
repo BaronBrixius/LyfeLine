@@ -117,6 +117,8 @@ public class Dashboard {
         searchRating.setButtonCell(new RatingsListCell());
         searchRating.setCellFactory(param -> new RatingsListCell());
 
+        list.getSelectionModel().select(0);
+
         GUIManager.mainStage.setTitle("Dashboard");
     }
 
@@ -336,13 +338,13 @@ public class Dashboard {
                 btnEdit.setDisable(true);
             }
             timelineViewButton.setDisable(false);
-            displayTimelineDetails(list.getSelectionModel().getSelectedItem());
+            //displayTimelineDetails(list.getSelectionModel().getSelectedItem());
         } else {        //If a timeline is not selected
             timelineViewButton.setDisable(true);
             btnDelete.setDisable(true);
             btnEdit.setDisable(true);
-            titleText.clear();
-            fullPicture.setImage(null);
+            //titleText.clear();
+            //fullPicture.setImage(null);
         }
     }
 

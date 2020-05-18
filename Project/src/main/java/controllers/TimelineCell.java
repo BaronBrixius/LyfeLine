@@ -5,6 +5,8 @@ import database.Timeline;
 import database.User;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.control.OverrunStyle;
+import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -85,8 +87,30 @@ public class TimelineCell {
     public void update(double width) {
         if (timeline != null)
         {
-            title.setText(timeline.getName());
-            author.setText("By " + user.getUserName());
+
+            if (focused)
+            {
+                int year = timeline.getCreationDate().getYear();
+                int month = timeline.getCreationDate().getMonth();
+                int day = timeline.getCreationDate().getDay();
+
+                StringBuilder keyWords = new StringBuilder();
+                for (String s : timeline.getKeywords())
+                    keyWords.append(s + ", ");
+                if (keyWords.length() >= 2)
+                    keyWords.delete(keyWords.length() - 2, keyWords.length());
+
+                title.setText("Title: " + timeline.getName() + "\nDescription: " + timeline.getDescription()
+                        + "\nDate Created: " + year + "/" + month + "/" + day + "\nKeywords: " + keyWords
+                        + "\nBy " + user.getUserName());
+            }
+            else
+            {
+                title.setText("Title: " + timeline.getName() + "\nBy " + user.getUserName());
+            }
+
+            title.setTextOverrun(OverrunStyle.CENTER_ELLIPSIS);
+
             setBGImage(width);
             colorStarsByRating((int) Math.ceil(timeline.getRating()));
             ratingBox.setOpacity((timeline.getRating() > 1) ? 1 : 0);
@@ -117,7 +141,7 @@ public class TimelineCell {
             if (focused)
                 pane.setStyle(" -fx-background-image: url(" + imageURL + "); -fx-pref-height: 400px; -fx-background-size: " + ((int) (width + 1.0)) + ", stretch;");
             else
-                pane.setStyle(" -fx-background-image: url(" + imageURL + "); -fx-background-size: " + ((int) (width + 1.0)) + "px;");
+                pane.setStyle(" -fx-background-image: url(" + imageURL + "); -fx-pref-height: 100px; -fx-background-size: " + ((int) (width + 1.0)) + "px;");
         } else {
             pane.setStyle(" -fx-background-image: null;");
         }
