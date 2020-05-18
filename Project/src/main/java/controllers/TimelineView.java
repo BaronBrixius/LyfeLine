@@ -41,12 +41,15 @@ public class TimelineView {
     @FXML
     EventEditor eventEditorController;
     @FXML
+    ImageExport imageExportController;
+    @FXML
     private Button backButton;
 
     public void initialize() {
         timelineEditorController.setParentController(this);
         eventSelectorController.setParentController(this);
         eventEditorController.setParentController(this);
+
 
         leftSidebar.getChildren().add(timelineEditorController.editor);
         rightSidebar.getChildren().add(eventSelectorController.selector);
@@ -225,7 +228,7 @@ public class TimelineView {
     public void returnToDashboard() throws IOException {
         try {
             GUIManager.swapScene("Dashboard");
-            copy(snapshot()); //just method I used to see the snapshot output
+            //copy(snapshot()); //just method I used to see the snapshot output
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -233,25 +236,9 @@ public class TimelineView {
 
     }
 
-    public File fileChooser() {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setInitialFileName(this.activeTimeline.getName().replaceAll("\\s+", "_") + ".png"); //We will add read format from dropdown or use png
-        fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("All Images", "*.jpg", "*.jpeg", "*.png", "*.bmp", "*.gif", "*.wbmp"),
-                new FileChooser.ExtensionFilter("JPG", "*.jpg"),
-                new FileChooser.ExtensionFilter("JPEG", "*.jpeg"),
-                new FileChooser.ExtensionFilter("PNG", "*.png"),
-                new FileChooser.ExtensionFilter("BMP", "*.bmp"),
-                new FileChooser.ExtensionFilter("GIF", "*.gif"),
-                new FileChooser.ExtensionFilter("WBMP", "*.wbmp")
-        );
 
-        //Show save file dialog
-        File file = fileChooser.showSaveDialog(GUIManager.mainStage);
-        return file;
-    }
 
-    //Just a placeholder method that creates a image of the snapshot
+   /* //Just a placeholder method that creates a image of the snapshot
     public void copy(WritableImage temp) throws IOException {
         BufferedImage fromFXImage = SwingFXUtils.fromFXImage(temp, null);
         System.out.println(fromFXImage.getHeight() + " and width is " + fromFXImage.getWidth());
