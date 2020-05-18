@@ -81,38 +81,30 @@ public class TopMenu {
 
         }
     }
-
-    @FXML
-    void importFromJSON() throws FileNotFoundException, SQLException {
-        Gson gson = new Gson();
-        File file = new File("/Users/chris/Library/Mobile Documents/com~apple~CloudDocs/1DV508/data/Project/Bronze Age Collapse.json");
-        Scanner inFile = new Scanner(file);
+    boolean isduplicate(String name) throws SQLException {
         timelineNames = DBM.getFromDB(DBM.conn.prepareStatement("SELECT * FROM timelines"),
                 rs -> Arrays.asList(rs.getString("TimelineName")));
-        System.out.println(timelineNames);
-        String name = "Bronze Age Collapse";
         for (int i = 0; i < timelineNames.size(); i++) {
             if(timelineNames.get(i).contains(name)){
-                System.out.println("duplicate");
-                break;
-            }
-            else{
-                System.out.println("Else triggered");
+                return true;
             }
         }
-        /*Gson gson = new Gson();
-        File file = new File("/Users/chris/Library/Mobile Documents/com~apple~CloudDocs/1DV508/data/Project/Bronze Age Collapse.json");
-        Scanner inFile = new Scanner(file);
+        return false;
+    }
+    @FXML
+    void importFromJSON() throws FileNotFoundException, SQLException {
+     /*   timelineNames = DBM.getFromDB(DBM.conn.prepareStatement("SELECT * FROM timelines"),
+                rs -> Arrays.asList(rs.getString("TimelineName")));*/
         String name = "Bronze Age Collapse";
-        if(timelines.get(0).equals(name)){
-            System.out.println("duplicate");
-        }
-        else {
+        if (isduplicate(name) == false){
+            Gson gson = new Gson();
+            File file = new File("D:\\Java\\java_courses\\1Dv508\\Project\\jsonTest.json");
+            Scanner inFile = new Scanner(file);
             JSONTimeline readJson = gson.fromJson(inFile.nextLine(), JSONTimeline.class);
             readJson.importToDB();
             inFile.close();
-        }
-*/
+        }else
+            System.out.println("Error");
     }
 
     void exportToJSON(Timeline timelineToExport) throws FileNotFoundException {

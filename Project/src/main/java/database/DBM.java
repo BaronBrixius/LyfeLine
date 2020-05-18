@@ -14,8 +14,8 @@ public class DBM {
     public static String creationScript = "src/main/resources/Database_Creation_Script.sql";
     private static String DB_URL = "jdbc:mysql://localhost?useTimezone=true&serverTimezone=UTC";
     private static String USER = "root";
-    private static String PASS = "Password123";
-    //private static String PASS = "AJnuHA^8VKHht=uB";
+   // private static String PASS = "Password123";
+   private static String PASS = "AJnuHA^8VKHht=uB";
     private static String SCHEMA = "project";
 
     public DBM() throws ClassNotFoundException, SQLException {                                                         //Connect to server with default settings
