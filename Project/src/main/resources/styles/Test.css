@@ -2,7 +2,7 @@
 
 /*.root applies to everything in a scene and overrides all other commands in this file. Use carefully.*/
 .root{
-    -fx-background-color: #390325;
+    -fx-background-color: #292991;
 }
 
 /*Text applies to any free floating text (inc. TextField), does not apply to text in Buttons, etc.
@@ -25,14 +25,13 @@
 .button, .toggle-button{
     -fx-font-weight: bold;
     -fx-text-fill: white;
-    -fx-background-color: #713E5F;
+    -fx-background-color: #196585;
     -fx-background-radius: 222px;
 }
 
-
 /*This is what the button looks like when you hover over it*/
 .button:hover, .toggle-button:hover, .toggle-button:selected{
-    -fx-background-color: #872539;
+    -fx-background-color: #612c96;
 }
 
 .DisabledInvisible:disabled, .DisabledInvisible:disabled > * {
@@ -51,24 +50,24 @@
 }
 
 .menu-bar, .menu-item {
-	-fx-background-color: #5E7B8A;
+	-fx-background-color: #261c61;
 }
 
 .menu-item:hover {
-	-fx-background-color: #445963;
+	-fx-background-color: black;
 }
 
 .menu {
     -fx-font-weight: lighter;
-    -fx-background-fill: #5E7B8A;
+    -fx-background-fill: #261c61;
 }
 
 .list-view{
 	-fx-background-color: grey;
 }
 
-.list-cell:filled:hover, .menu-bar:hover, .menu-bar:selected, .menu-bar:focused, .list-cell:hover {
-	-fx-background-color: #5E7B8A;
+.list-cell:filled:hover, .menu-bar:selected, .menu-bar:focused, .list-cell:hover {
+	-fx-background-color: black;
 }
 
 /*The following are custom made presets, and must be applied in the actual code to apply.
@@ -85,7 +84,7 @@ for example:      buttonName.getStyleClass().add("smallButton");                
 }
 
 .smallButton:hover {
-    -fx-background-color: #872539;
+    -fx-background-color: #612c96;
 }
 
 
@@ -106,7 +105,7 @@ for example:      buttonName.getStyleClass().add("smallButton");                
 }
 
 .popupButton:hover {
-    -fx-background-color: #872539;
+    -fx-background-color: #612c96;
 }
 
 .hoverRed:hover {
@@ -256,7 +255,7 @@ for example:      buttonName.getStyleClass().add("smallButton");                
 
 .combo-box-base, .list-cell:filled:selected .text { 
 	/*-fx-shadow-highlight-color, -fx-outer-border, -fx-inner-border, -fx-body-color*/
-    -fx-background-color: #713E5F;
+    -fx-background-color: #196585;
     /*-fx-text-base-color*/
     -fx-fill: white;
 }
