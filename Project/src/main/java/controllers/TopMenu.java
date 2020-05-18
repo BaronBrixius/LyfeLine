@@ -7,28 +7,25 @@ import database.Timeline;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
 public class TopMenu {
 
-    private List<List<String>> timelineNames;
-    public Menu fileMenu;
-    MenuItem export = new MenuItem("Export");
+    @FXML
+    Menu fileMenu;
     @FXML
     MenuItem saveButton = new MenuItem();
     @FXML
     Menu loggedInStatus = new Menu();
+    MenuItem export = new MenuItem("Export");
 
     public void initialize() {
         updateLoggedInStatus();
@@ -36,21 +33,21 @@ public class TopMenu {
     }
 
     @FXML
-    public void saveFile(ActionEvent actionEvent) {
+    void saveFile(ActionEvent actionEvent) {
         System.out.println("Save");
     }
-    
+
     @FXML
-    public void styleDefaultPressed() {
-    	GUIManager.applyStyle("DefaultStyle");
-    }
-    
-    @FXML
-    public void styleNonePressed() {
-    	GUIManager.applyStyle("None");
+    void styleDefaultPressed() {
+        GUIManager.applyStyle("DefaultStyle");
     }
 
-    void showExportMenu(boolean show){
+    @FXML
+    void styleNonePressed() {
+        GUIManager.applyStyle("None");
+    }
+
+    void showExportMenu(boolean show) {
         if (fileMenu.getItems().contains(export) == show)        //check if file menu already contains export button
             return;
 
@@ -61,7 +58,7 @@ public class TopMenu {
     }
 
     @FXML
-    public void updateLoggedInStatus() {
+    void updateLoggedInStatus() {
         if (GUIManager.loggedInUser == null) {
             loggedInStatus.setText("Not logged in");
             loggedInStatus.setDisable(true);
@@ -72,7 +69,7 @@ public class TopMenu {
     }
 
     @FXML
-    public void logOutPressed() {
+    void logOutPressed() {
         GUIManager.loggedInUser = null;
         updateLoggedInStatus();
         try {
@@ -81,43 +78,35 @@ public class TopMenu {
 
         }
     }
-    boolean isduplicate(String name) throws SQLException {
-        timelineNames = DBM.getFromDB(DBM.conn.prepareStatement("SELECT * FROM timelines"),
-                rs -> Arrays.asList(rs.getString("TimelineName")));
-        for (int i = 0; i < timelineNames.size(); i++) {
-            if(timelineNames.get(i).contains(name)){
-                return true;
-            }
-        }
-        return false;
-    }
+
+    /*boolean isDuplicate(String name) throws SQLException {        //no need to prevent admins from uploading a duplicate timeline, they can do as they like
+        List<String> timelineNames = DBM.getFromDB(DBM.conn.prepareStatement("SELECT TimelineName FROM timelines"),
+                rs -> rs.getString("TimelineName"));
+        return timelineNames.contains(name);
+    }*/
+
     @FXML
-    void importFromJSON() throws FileNotFoundException, SQLException {
-     /*   timelineNames = DBM.getFromDB(DBM.conn.prepareStatement("SELECT * FROM timelines"),
-                rs -> Arrays.asList(rs.getString("TimelineName")));*/
-        String name = "Bronze Age Collapse";
-        if (isduplicate(name) == false){
-            Gson gson = new Gson();
-            File file = new File("D:\\Java\\java_courses\\1Dv508\\Project\\jsonTest.json");
-            Scanner inFile = new Scanner(file);
-            JSONTimeline readJson = gson.fromJson(inFile.nextLine(), JSONTimeline.class);
-            readJson.importToDB();
-            inFile.close();
-        }else
-            System.out.println("Error");
+    void importFromJSON() throws FileNotFoundException {
+        Gson gson = new Gson();
+        File file = new File("D:\\Java\\java_courses\\1Dv508\\Project\\jsonTest.json");
+        Scanner inFile = new Scanner(file);
+        JSONTimeline readJson = gson.fromJson(inFile.nextLine(), JSONTimeline.class);
+        readJson.importToDB();
+        inFile.close();
     }
 
-    void exportToJSON(Timeline timelineToExport) throws FileNotFoundException {
-        Gson gson = new Gson();
-        JSONTimeline exportable = new JSONTimeline(timelineToExport);
-        String out = gson.toJson(exportable);
+    void exportToJSON(Timeline timelineToExport) {
+        JSONTimeline exportable = new JSONTimeline(timelineToExport);       //gather all relevant information about a timeline into one object
+        String out = new Gson().toJson(exportable);                         //convert that to JSON-formatted String
         System.out.println(out + "\n");
-        String nameOfTimeline = timelineToExport.getName();
-        File file = new File(nameOfTimeline + ".json");
-        PrintWriter outFile = new PrintWriter(file);
-        outFile.println(out);
-        outFile.close();
-        System.out.println();
-        System.out.println("Exported successfully");
+
+        File file = new File(timelineToExport.getName() + ".json");
+        try (PrintWriter outFile = new PrintWriter(file)) {                 //write JSON-formatted info to file
+            outFile.println(out);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();                //TODO better exception handling once dev work is done
+        }
+
+        System.out.println("\nExported successfully");
     }
 }

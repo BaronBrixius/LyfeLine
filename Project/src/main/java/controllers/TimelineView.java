@@ -56,11 +56,7 @@ public class TimelineView {
         });
 
         GUIManager.menu.export.setOnAction(e-> {
-            try {
-                GUIManager.menu.exportToJSON(activeTimeline);
-            } catch (FileNotFoundException ex) {
-                ex.printStackTrace();
-            }
+            GUIManager.menu.exportToJSON(activeTimeline);
         });
         GUIManager.menu.showExportMenu(true);
     }
