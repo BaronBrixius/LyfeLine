@@ -16,11 +16,13 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
 public class TopMenu {
 
+    private List<List<String>> timelineNames;
     public Menu fileMenu;
     MenuItem export = new MenuItem("Export");
     @FXML
@@ -82,11 +84,22 @@ public class TopMenu {
 
     @FXML
     void importFromJSON() throws FileNotFoundException, SQLException {
-
-        //PreparedStatement stmt;
-        //stmt = DBM.conn.prepareStatement("SELECT TimelineName FROM timelines WHERE ");
-        //List<Timeline> timelines = DBM.getFromDB(stmt, new Timeline());
-        //System.out.println(timelines.get(0));
+        Gson gson = new Gson();
+        File file = new File("/Users/chris/Library/Mobile Documents/com~apple~CloudDocs/1DV508/data/Project/Bronze Age Collapse.json");
+        Scanner inFile = new Scanner(file);
+        timelineNames = DBM.getFromDB(DBM.conn.prepareStatement("SELECT * FROM timelines"),
+                rs -> Arrays.asList(rs.getString("TimelineName")));
+        System.out.println(timelineNames);
+        String name = "Bronze Age Collapse";
+        for (int i = 0; i < timelineNames.size(); i++) {
+            if(timelineNames.get(i).contains(name)){
+                System.out.println("duplicate");
+                break;
+            }
+            else{
+                System.out.println("Else triggered");
+            }
+        }
         /*Gson gson = new Gson();
         File file = new File("/Users/chris/Library/Mobile Documents/com~apple~CloudDocs/1DV508/data/Project/Bronze Age Collapse.json");
         Scanner inFile = new Scanner(file);
