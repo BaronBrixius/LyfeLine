@@ -1,32 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.Double?>
 <?import java.lang.String?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.shape.Polygon?>
 <?import javafx.scene.text.Font?>
 
-<GridPane fx:id="pane" gridLinesVisible="true" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="200.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.TimelineCell">
+<GridPane fx:id="pane" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.TimelineCell">
     <columnConstraints>
-        <ColumnConstraints maxWidth="-Infinity" minWidth="-Infinity" prefWidth="1000.0" />
-        <ColumnConstraints maxWidth="-Infinity" minWidth="-Infinity" prefWidth="200.0" />
+        <ColumnConstraints hgrow="ALWAYS" prefWidth="1100.0" />
+        <ColumnConstraints maxWidth="-Infinity" minWidth="-Infinity" prefWidth="150.0" />
     </columnConstraints>
     <rowConstraints>
-        <RowConstraints maxHeight="-Infinity" minHeight="0.0" vgrow="SOMETIMES" />
-      <RowConstraints minHeight="0.0" vgrow="ALWAYS" />
+        <RowConstraints maxHeight="-Infinity" minHeight="0.0" vgrow="ALWAYS" />
+      <RowConstraints maxHeight="290.0" minHeight="0.0" />
       <RowConstraints maxHeight="-Infinity" minHeight="0.0" vgrow="SOMETIMES" />
-        <RowConstraints maxHeight="-Infinity" minHeight="0.0" vgrow="SOMETIMES" />
+      <RowConstraints maxHeight="-Infinity" minHeight="0.0" vgrow="NEVER" />
+        <RowConstraints minHeight="0.0" vgrow="ALWAYS" />
+      <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="NEVER" />
     </rowConstraints>
     <styleClass>
         <String fx:value="paneBG" />
         <String fx:value="listCellBackground" />
     </styleClass>
-    <Label fx:id="title" styleClass="listCellText" text="Title" GridPane.halignment="LEFT" GridPane.valignment="CENTER">
+    <Label fx:id="title" styleClass="listCellText" text="xTitle" GridPane.columnSpan="2" GridPane.halignment="LEFT" GridPane.valignment="CENTER">
         <font>
           <Font size="14.0" />
         </font>
@@ -34,66 +36,31 @@
          <Insets left="1.0" />
       </GridPane.margin>
     </Label>
-   <Label fx:id="description" maxHeight="300.0" styleClass="listCellText" text="Description" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS">
+   <Label fx:id="description" minHeight="0.0" style="-fx-wrap-text: true;" styleClass="listCellText" text="Description" GridPane.columnSpan="2" GridPane.rowIndex="1">
       <font>
          <Font size="14.0" />
       </font>
    </Label>
-   <Label fx:id="keywords" styleClass="listCellText" text="Keywords" GridPane.rowIndex="2">
+   <Label fx:id="keywords" styleClass="listCellText" text="Keywords" GridPane.columnSpan="2" GridPane.rowIndex="2">
       <font>
          <Font size="14.0" />
       </font>
    </Label>
-   <Label fx:id="author" styleClass="listCellText" text="Author" GridPane.rowIndex="3">
+   <Label fx:id="author" styleClass="listCellText" text="Author" GridPane.columnSpan="2" GridPane.rowIndex="3" GridPane.valignment="TOP">
       <font>
          <Font size="14.0" />
       </font>
    </Label>
-    <HBox fx:id="ratingBox" alignment="BOTTOM_RIGHT" prefHeight="100.0" prefWidth="300.0" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="3" GridPane.valignment="CENTER">
+   <Region GridPane.columnSpan="2" GridPane.hgrow="ALWAYS" GridPane.rowIndex="4" GridPane.vgrow="ALWAYS" />
+    <HBox fx:id="ratingBox" alignment="BOTTOM_RIGHT" prefHeight="30.0" prefWidth="300.0" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="5" GridPane.valignment="CENTER">
         <padding>
             <Insets bottom="5.0" right="5.0" />
         </padding>
-        <Polygon fill="YELLOW" points="-50.0, 40.0, 50.0, 40.0, 0.0, -60.0" stroke="BLACK" strokeType="INSIDE" />
-        <Polygon fill="YELLOW" stroke="BLACK" strokeType="INSIDE">
-            <points>
-                <Double fx:value="-50.0" />
-                <Double fx:value="40.0" />
-                <Double fx:value="50.0" />
-                <Double fx:value="40.0" />
-                <Double fx:value="0.0" />
-                <Double fx:value="-60.0" />
-            </points>
-        </Polygon>
-        <Polygon fill="YELLOW" stroke="BLACK" strokeType="INSIDE">
-            <points>
-                <Double fx:value="-50.0" />
-                <Double fx:value="40.0" />
-                <Double fx:value="50.0" />
-                <Double fx:value="40.0" />
-                <Double fx:value="0.0" />
-                <Double fx:value="-60.0" />
-            </points>
-        </Polygon>
-        <Polygon fill="YELLOW" stroke="BLACK" strokeType="INSIDE">
-            <points>
-                <Double fx:value="-50.0" />
-                <Double fx:value="40.0" />
-                <Double fx:value="50.0" />
-                <Double fx:value="40.0" />
-                <Double fx:value="0.0" />
-                <Double fx:value="-60.0" />
-            </points>
-        </Polygon>
-        <Polygon fill="YELLOW" stroke="BLACK" strokeType="INSIDE">
-            <points>
-                <Double fx:value="-50.0" />
-                <Double fx:value="40.0" />
-                <Double fx:value="50.0" />
-                <Double fx:value="40.0" />
-                <Double fx:value="0.0" />
-                <Double fx:value="-60.0" />
-            </points>
-        </Polygon>
+        <Polygon fill="YELLOW" points="41.0, 40.0, 50.0, 40.0, 50.0, 31.0" stroke="BLACK" strokeType="INSIDE" />
+        <Polygon fill="YELLOW" points="50.0, 40.0, 50.0, 40.0, 56.0, 31.0" stroke="BLACK" strokeType="INSIDE" />
+        <Polygon fill="YELLOW" points="44.0, 40.0, 50.0, 40.0, 50.0, 31.0" stroke="BLACK" strokeType="INSIDE" />
+        <Polygon fill="YELLOW" points="37.0, 40.0, 50.0, 40.0, 28.0, 31.0" stroke="BLACK" strokeType="INSIDE" />
+        <Polygon fill="YELLOW" points="42.0, 40.0, 50.0, 40.0, 42.0, 26.0" stroke="BLACK" strokeType="INSIDE" />
     </HBox>
    <opaqueInsets>
       <Insets left="5.0" />

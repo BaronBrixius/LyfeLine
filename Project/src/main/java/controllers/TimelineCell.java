@@ -89,34 +89,36 @@ public class TimelineCell {
 
     public void update(double width) {
         if (timeline != null) {
-            title.setText("Title: " + timeline.getName());
-            author.setText(user.getUserName());
-
-            if (focused) {
-                int year = timeline.getCreationDate().getYear();
-                int month = timeline.getCreationDate().getMonth();
-                int day = timeline.getCreationDate().getDay();
-
-                StringBuilder keyWords = new StringBuilder();
-                for (String s : timeline.getKeywords())
-                    keyWords.append(s + ", ");
-                if (keyWords.length() >= 2)
-                    keyWords.delete(keyWords.length() - 2, keyWords.length());
-
-                description.setText("Description: " + timeline.getDescription());
-                //TODO start and end date here
-                keywords.setText("Keywords: " + keyWords);
-            } else {
-                description.setText("");
-                keywords.setText("");
-            }
-
-            description.setTextOverrun(OverrunStyle.CENTER_ELLIPSIS);
-
+            populateTimelineDetails();
             setBGImage(width);
             colorStarsByRating((int) Math.ceil(timeline.getRating()));
             ratingBox.setOpacity((timeline.getRating() > 1) ? 1 : 0);
         }
+    }
+
+    public void populateTimelineDetails() {
+        //if (title.getText().startsWith("x"))    //title is set to x by default, if it starts with x, none of the fields have been populated yet.
+        //{
+        title.setText("Title: " + timeline.getName());
+            author.setText("By: " + user.getUserName());
+            description.setText("Description: " + timeline.getDescription());
+            //TODO start and end date here
+
+            StringBuilder keyWords = new StringBuilder();
+            for (String s : timeline.getKeywords())
+                keyWords.append(s).append(", ");
+            if (keyWords.length() >= 2)
+                keyWords.delete(keyWords.length() - 2, keyWords.length());
+            keywords.setText("Keywords: " + keyWords);
+        //} //If you don't update the fields every time it's updated, then names get switched around
+
+        if (focused) {
+            if (!pane.getChildren().contains(description)) {    //If the cell is focused and doesn't show the description
+                pane.add(description, 0, 1);
+                pane.add(keywords, 0, 2);
+            }
+        } else if (pane.getChildren().contains(description))    //If the cell is not focused and is still showing the description
+            pane.getChildren().removeAll(description, keywords);
     }
 
     public Timeline getTimeline() {
@@ -145,7 +147,7 @@ public class TimelineCell {
             else
                 pane.setStyle(" -fx-background-image: url(" + imageURL + "); -fx-pref-height: 100px; -fx-background-size: " + ((int) (width + 1.0)) + "px;");
         } else {
-            pane.setStyle(" -fx-background-image: null;");
+            pane.setStyle(" -fx-background-image: null; -fx-pref-height: 100px;");
         }
     }
 }

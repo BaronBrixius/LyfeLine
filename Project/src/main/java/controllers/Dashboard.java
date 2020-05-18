@@ -490,7 +490,6 @@ public class Dashboard {
                 else
                     this.setStyle(" -fx-pref-height: 100px;");
                 cell.setBGImage(list.getWidth() - 30);
-                //-fx-pref-height: 400px;
             });
         }
 
