@@ -2,7 +2,7 @@
 
 /*.root applies to everything in a scene and overrides all other commands in this file. Use carefully.*/
 .root{
-    -fx-background-color: #FFFF00;
+    -fx-background-color: #3d3d3d;
 }
 
 /*Text applies to any free floating text (inc. TextField), does not apply to text in Buttons, etc.
@@ -12,52 +12,173 @@ Text{
 
 .label{
     -fx-font-weight: bold;
+	-fx-text-fill: white;
 }
 
 /*The following apply to any object of the corresponding name.*/
 .button, .toggle-button{
     -fx-font-weight: bold;
     -fx-text-fill: white;
-    -fx-background-color: #1aa9cd;
+    -fx-background-color: #d4862b;
     -fx-background-radius: 222px;
 }
+
+.menu{
+	-fx-background-color: #484848;
+}
+
+
+.textStyle{
+	-fx-fill: white;
+}
+
+.text-input {
+	-fx-text-fill: white;
+	-fx-cursor: DEFAULT ;
+}
+
+
+.scroll-pane .viewport, .list-view .corner{
+	-fx-background-color: #81817e;
+}
+
+
+stack-pane{
+	-fx-background-color: #81817e;
+	-fx-border-color: #3d3d3d;
+}
+
+border-pane{
+	-fx-background-color: #81817e;
+}
+
 
 
 /*This is what the button looks like when you hover over it*/
 .button:hover, .toggle-button:hover, .toggle-button:selected{
-    -fx-background-color: #126c82;
+    -fx-background-color: #d4862b;
 }
 
 .DisabledInvisible:disabled, .DisabledInvisible:disabled > * {
 }
 
 .text-field{
+	-fx-background-color: #81817e;
+	-fx-cursor: DEFAULT ;
+}
+
+.scroll-pane {
+    -fx-background-insets: 0;
+    -fx-background-color: transparent, #81817e, transparent, #81817e;
+    -fx-background-radius: 0, 0, 0, 0;
+
+    -fx-box-border: none;
+    -fx-focus-color: -fx-control-inner-background;
+    -fx-faint-focus-color: -fx-control-inner-background;
+    -fx-text-box-border: -fx-control-inner-background;
+    -fx-border-width: -1;
+}
+
+.scroll-pane .content {
+    -fx-background-color: transparent, #81817e, transparent, #81817e;
+	-fx-cursor: AUTO ;
 	
 }
 
-.text-area{
+.scroll-pane:focused {
+    -fx-highlight-fill: #d4862b;
+
+    -fx-background-insets: 0;
+    -fx-background-color: transparent, #81817e, transparent, #81817e;
+    -fx-background-radius: 0, 0, 0, 0;
+
+    -fx-focus-color: -fx-control-inner-background;
+    -fx-faint-focus-color: -fx-control-inner-background;
+    -fx-text-box-border: -fx-control-inner-background;
+    -fx-border-width: -1;
+}
+
+.text-area {
+    -fx-background-insets: 0;
+    -fx-background-color: transparent, #81817e, transparent, #81817e;
+    -fx-background-radius: 0, 0, 0, 0;
+
+    -fx-box-border: none;
+    -fx-focus-color: -fx-control-inner-background;
+    -fx-faint-focus-color: -fx-control-inner-background;
+    -fx-text-box-border: -fx-control-inner-background;
+    -fx-border-width: -1;
+}
+
+.text-area .content {
+    -fx-background-color: transparent, #81817e, transparent, #81817e;
+	-fx-cursor: AUTO ;
 	
 }
+
+.text-area:focused .content {
+    -fx-background-color: transparent, #81817e, transparent, #81817e;
+}
+
+.scroll-pane {
+}
+
+.viewport {
+    -fx-background-insets: 0;
+    -fx-background-color: transparent, #81817e, transparent, #81817e;
+    -fx-background-radius: 0, 0, 0, 0;
+
+    -fx-focus-color: -fx-control-inner-background;
+    -fx-faint-focus-color: -fx-control-inner-background;
+    -fx-text-box-border: -fx-control-inner-background;
+    -fx-border-width: -1;
+}
+
+.content {
+	
+}
+
+.text {
+}
+
+.text-area:focused {
+    -fx-highlight-fill: #d4862b;
+
+    -fx-background-insets: 0;
+    -fx-background-color: transparent, #81817e, transparent, #81817e;
+    -fx-background-radius: 0, 0, 0, 0;
+
+    -fx-focus-color: -fx-control-inner-background;
+    -fx-faint-focus-color: -fx-control-inner-background;
+    -fx-text-box-border: -fx-control-inner-background;
+    -fx-border-width: -1;
+}
+
 
 .smallTextArea{
-
+	-fx-background-color: #81817e;
 }
 
 .menu-item{
-
+	-fx-background-color: #81817e;
+	-fx-border-color: #81817e;
 }
 
 .menu-bar{
     -fx-font-weight: lighter;
+	-fx-background-color: #484848;
+	-fx-border-color: #81817e;
+}
+
+.context-menu{
+	-fx-background-color: #81817e;
+	-fx-border-color: #81817e;
 }
 
 .combo-box{
-
+	-fx-background-color: #d4862b;
 }
 
-.list-view{
-
-}
 
 
 /*The following are custom made presets, and must be applied in the actual code to apply.
@@ -74,7 +195,7 @@ for example:      buttonName.getStyleClass().add("smallButton");                
 }
 
 .smallButton:hover {
-    -fx-background-color: #126c82;
+    -fx-background-color: #d4862b;
 }
 
 
@@ -83,11 +204,11 @@ for example:      buttonName.getStyleClass().add("smallButton");                
 }
 
 .headertext{
-	
+	-fx-text-fill: white;
 }
 
 .smallText{
-	
+	-fx-text-fill: white;
 }
 
 .popupButton{
@@ -95,7 +216,7 @@ for example:      buttonName.getStyleClass().add("smallButton");                
 }
 
 .popupButton:hover {
-    -fx-background-color: #126c82;
+    -fx-background-color: #d4862b;
 }
 
 .hoverRed:hover {
@@ -103,15 +224,15 @@ for example:      buttonName.getStyleClass().add("smallButton");                
 }
 
 .mediumText{
-	
+	-fx-text-fill: white;
 }
 
 .eventEditor {
-    -fx-background-color: #FFFF00;
+    -fx-background-color: #535351;
 }
 
 .date-picker .label {
-
+	-fx-text-fill: white;
 }
 
 /*.button settings was making Date picker weird, so these are the default settings for it, slightly tweaked for consistency.*/
@@ -136,25 +257,38 @@ for example:      buttonName.getStyleClass().add("smallButton");                
 .eventNode {
     -fx-font-weight: bold;
     -fx-text-fill: white;
-    -fx-background-color: #1AA9CD;
-    -fx-effect: dropshadow(one-pass-box, #5969FF, 4, 0, 0, 0);
+    -fx-background-color: #d4862b;
+    -fx-effect: dropshadow(one-pass-box, #e3481c, 4, 0, 0, 0);
 }
 
 .eventNode:hover {
-    -fx-background-color: #1484a0;
+    -fx-background-color: #d4862b;
 }
 
 .eventNode:pressed {
-    -fx-background-color: #1795b5;
+    -fx-background-color: #d4862b;
 }
 
 .tooltip {
-    -fx-background-color: #0E5E72;
+    -fx-background-color: #d4862b;
 }
 
 .timeline {
-    -fx-background-color: #6C54F2;
-    -fx-effect: dropshadow(one-pass-box, #1AA9CD, 10, 0, 0, 0);
+    -fx-background-color: #d4862b;
+    -fx-effect: dropshadow(one-pass-box, #e3481c, 10, 0, 0, 0);
+}
+
+.list-view {
+	-fx-border-color: #81817e;
+	-fx-background-color: #81817e;
+}
+
+/*background color of the listview*/
+.list-view .list-cell:even {
+-fx-background-color: #81817e;
+}
+.list-view .list-cell:odd {
+-fx-background-color: #81817e;
 }
 
 .scroll-bar:horizontal.track,
@@ -165,36 +299,47 @@ for example:      buttonName.getStyleClass().add("smallButton");                
     -fx-border-radius: 1.5em;
 }
 
+.scroll-bar:vertical{
+	-fx-background-color: #81817e;
+}
+
+.scroll-bar:horizontal{
+	-fx-background-color: #81817e;
+}
+
+.scroll-bar:corner{
+	-fx-background-color: #81817e;
+}
 
 .scroll-bar:horizontal .increment-button ,
 .scroll-bar:horizontal .decrement-button {
-    -fx-background-color: #1AA9CD;
+    -fx-background-color: #d4862b;
     -fx-background-radius: 10px;
 }
 
 .scroll-bar:vertical .increment-button ,
 .scroll-bar:vertical .decrement-button {
-    -fx-background-color: #1AA9CD;
+    -fx-background-color: #d4862b;
 }
 
 .scroll-bar:horizontal .increment-button:hover ,
 .scroll-bar:horizontal .decrement-button:hover {
-    -fx-background-color: #126C82;
+    -fx-background-color: #d4862b;
 }
 
 .scroll-bar:vertical .increment-button:hover ,
 .scroll-bar:vertical .decrement-button:hover {
-    -fx-background-color: #126C82;
+    -fx-background-color: #d4862b;
 }
 
 .scroll-bar:horizontal .increment-button:pressed ,
 .scroll-bar:horizontal .decrement-button:pressed {
-    -fx-background-color: #1795b5;
+    -fx-background-color: #d4862b;
 }
 
 .scroll-bar:vertical .increment-button:pressed ,
 .scroll-bar:vertical .decrement-button:pressed {
-    -fx-background-color: #1795b5;
+    -fx-background-color: #d4862b
 }
 
 .scroll-bar .increment-arrow,
@@ -209,13 +354,13 @@ for example:      buttonName.getStyleClass().add("smallButton");                
 
 .scroll-bar:horizontal .thumb,
 .scroll-bar:vertical .thumb {
-    -fx-background-color: #1AA9CD;
+    -fx-background-color: #d4862b;
     -fx-background-radius: 2.0em;
 }
 
 .scroll-bar:horizontal .thumb:hover,
 .scroll-bar:vertical .thumb:hover {
-    -fx-background-color: #126C82;
+    -fx-background-color: #d4862b;
     -fx-background-radius: 2.0em;
 }
 
@@ -236,17 +381,22 @@ for example:      buttonName.getStyleClass().add("smallButton");                
 
 }
 .check-box .box {
-	-fx-background-color: white;
+	-fx-background-color: #81817e;
 	-fx-border-color:grey;
-	-fx-border-radius:3px; 
+	-fx-border-radius:3px;
+
+}
+
+.check-box {
+	-fx-text-fill: white;
 }
 
 .check-box:selected .mark {
-	-fx-background-color: white;
+	-fx-background-color: #81817e;
 }
 
 .check-box:selected .box {
-	-fx-background-color: #1AA9CD;
+	-fx-background-color: #d4862b;
 }
 
 .combo-box-base, .combo-box-base .list-cell {
@@ -254,8 +404,9 @@ for example:      buttonName.getStyleClass().add("smallButton");                
 }
 
 .paneBG{
-
+	-fx-background-color: #81817e;
 }
+
 
 .listCellText{
 	-fx-text-fill: white;
@@ -267,7 +418,7 @@ for example:      buttonName.getStyleClass().add("smallButton");                
 }
 
 .listCellBackground{
-	-fx-background-color: #1aa9cd;
+	-fx-background-color: #d4862b;
 }
 
 /*Here is a list of useful CSS commands:
