@@ -62,14 +62,16 @@ public class TimelineView {
         });
     }
 
-    public boolean isZoomed() {
-        if (timelineGrid.getScaleX() != 1)
-            return true;
+    public boolean isZoomed (){
+        if(timelineGrid.getScaleX() != 1 & timelineGrid.getScaleX() >= 0.25)
+        return true;
         else
             return false;
     }
 
-    public WritableImage snapshot() {
+
+
+    public WritableImage snapshot(){
         SnapshotParameters snapShotparams = new SnapshotParameters();
         //snapShotparams.setFill(Color.TRANSPARENT);  if we want transparent background instead of white
         if (isZoomed()) {
@@ -78,12 +80,12 @@ public class TimelineView {
                     new WritableImage((int) mainScrollPane.getLayoutBounds().getWidth(),
                             (int) mainScrollPane.getLayoutBounds().getHeight()));
             System.out.println(" zoom printout");
-
-            return temp;
-        }
-        WritableImage temp = timelineGrid.snapshot(snapShotparams,
-                new WritableImage((int) timelineGrid.getLayoutBounds().getWidth(),
-                        (int) timelineGrid.getLayoutBounds().getHeight()));
+            return temp;}
+       timelineGrid.setScaleX(1);
+        timelineGrid.setScaleY(1);
+        WritableImage  temp = timelineGrid.snapshot(snapShotparams,
+                    new WritableImage((int) timelineGrid.getLayoutBounds().getWidth(),
+                            (int) timelineGrid.getLayoutBounds().getHeight()));
         System.out.println("No zoom printout");
         return temp;
     }
