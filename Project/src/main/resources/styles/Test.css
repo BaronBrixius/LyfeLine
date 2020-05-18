@@ -54,13 +54,17 @@
 	-fx-background-color: #5E7B8A;
 }
 
-.menu-item:hover {
+.menu-item:hover, .menu:hover, .menu:showing, .menu-item:focused, .list-view:focused, .list-view:selected {
 	-fx-background-color: #445963;
 }
 
 .menu {
     -fx-font-weight: lighter;
     -fx-background-fill: #5E7B8A;
+}
+
+.context-menu {
+	-fx-background-color: #5E7B8A;
 }
 
 .list-view{
@@ -94,10 +98,6 @@ for example:      buttonName.getStyleClass().add("smallButton");                
 }
 
 .headertext{
-	
-}
-
-.smallText{
 	
 }
 
@@ -166,6 +166,10 @@ for example:      buttonName.getStyleClass().add("smallButton");                
 .timeline {
     -fx-background-color: #DB5572;
     -fx-effect: dropshadow(one-pass-box, #713E5F, 10, 0, 0, 0);
+}
+
+.scroll-pane .viewport, .scroll-bar {
+	
 }
 
 .scroll-bar:horizontal.track,
