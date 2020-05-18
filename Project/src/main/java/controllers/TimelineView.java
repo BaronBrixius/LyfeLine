@@ -7,15 +7,12 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
+import javafx.scene.control.MenuBar;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -40,7 +37,12 @@ public class TimelineView {
     @FXML
     private Button backButton;
 
+    TopMenu top = new TopMenu();
+
+
+
     public void initialize() {
+        top.setVisible();
         timelineEditorController.setParentController(this);
         eventSelectorController.setParentController(this);
         eventEditorController.setParentController(this);
@@ -57,6 +59,7 @@ public class TimelineView {
                 mainScrollPane.setHvalue(mainScrollPane.getHvalue() - e.getDeltaY() / mainScrollPane.getWidth());
             }*/
         });
+
     }
 
     public List<EventNode> getEventList() {

@@ -3,8 +3,10 @@ package controllers;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 
+import javax.swing.*;
 import java.io.IOException;
 
 public class TopMenu {
@@ -14,8 +16,17 @@ public class TopMenu {
     @FXML
     Menu loggedInStatus = new Menu();
 
+    public static Menu export = new Menu();
+
     public void initialize() {
         updateLoggedInStatus();
+    }
+
+
+
+    @FXML
+    public static void setVisible(){
+        export.setVisible(false);
     }
 
     @FXML
