@@ -337,5 +337,4 @@ public class TimelineEditor extends Editor {
             return false;
         }
     }
-
 }

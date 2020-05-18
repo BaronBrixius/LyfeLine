@@ -7,15 +7,12 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -24,7 +21,6 @@ import java.util.Collections;
 import java.util.List;
 
 public class TimelineView {
-
     private final List<EventNode> eventList = new ArrayList<>();
     public GridPane timelineGrid;
     public Timeline activeTimeline;
@@ -50,25 +46,20 @@ public class TimelineView {
 
         ScrollPane mainScrollPane = (ScrollPane) mainBorderPane.getCenter();
         mainScrollPane.setOnScroll(e -> {
-            timelineGrid.setScaleX(timelineGrid.getScaleX()*(1+e.getDeltaY()/200));     //if you want to do zoom you can start with this
-            timelineGrid.setScaleY(timelineGrid.getScaleY()*(1+e.getDeltaY()/200));     //it doesn't quite update the scrollbar/container size properly, and zooming in zooms slightly further than zooming out because of the 1+deltaY math (e.g. 0.8 * 1.2 = 0.96)
+            timelineGrid.setScaleX(timelineGrid.getScaleX() * (1 + e.getDeltaY() / 200));     //if you want to do zoom you can start with this
+            timelineGrid.setScaleY(timelineGrid.getScaleY() * (1 + e.getDeltaY() / 200));     //it doesn't quite update the scrollbar/container size properly, and zooming in zooms slightly further than zooming out because of the 1+deltaY math (e.g. 0.8 * 1.2 = 0.96)
             //setup horizontal scroll with mouse wheel
             /*if (e.getDeltaX() == 0 && e.getDeltaY() != 0) {
                 mainScrollPane.setHvalue(mainScrollPane.getHvalue() - e.getDeltaY() / mainScrollPane.getWidth());
             }*/
         });
+
+        GUIManager.menu.export.setOnAction(e->GUIManager.menu.exportToJSON(activeTimeline));
+        GUIManager.menu.showExportMenu(true);
     }
 
     public List<EventNode> getEventList() {
         return eventList;
-    }
-
-    public void goBackButton() {
-        try {
-            GUIManager.swapScene("Dashboard");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     // Call this method when swapping scenes
@@ -140,7 +131,7 @@ public class TimelineView {
         return mainLine;
     }
 
-    private void setupEventNodes(){
+    private void setupEventNodes() {
         eventList.clear();
         EventNode newNode;
         for (Event e : activeTimeline.getEventList()) {
@@ -192,6 +183,7 @@ public class TimelineView {
     }
 
     public void returnToDashboard() {
+        GUIManager.menu.showExportMenu(false);
         try {
             GUIManager.swapScene("Dashboard");
         } catch (IOException e) {

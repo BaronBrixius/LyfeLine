@@ -7,7 +7,7 @@ public abstract class TimelineObject<T> implements DBObject<T> {
     Date startDate = new Date();
     Date endDate = new Date();
     Date creationDate;
-    transient String imagePath;
+    String imagePath;
 
     public abstract int getID();
 

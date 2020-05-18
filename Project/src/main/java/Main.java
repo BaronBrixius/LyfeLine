@@ -45,6 +45,16 @@ class Main {
             JSONTimeline readJson = gson.fromJson(inFile.nextLine(), JSONTimeline.class);
             readJson.importToDB();
             inFile.close();
+
+            //long before = System.currentTimeMillis();
+
+            //for (int i = 0; i < 1000; i++) {
+            //    readJson.importRatings();
+            //}
+
+            //long after = System.currentTimeMillis();
+
+            //System.out.println(after-before);
 /*
             //Makes a list of event years from the DB and prints it
             //note: you can just prepare a statement right in the method parameters if there aren't any field values that need to be set
