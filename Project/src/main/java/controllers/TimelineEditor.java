@@ -6,7 +6,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -345,13 +344,19 @@ public class TimelineEditor extends Editor {
 
 	@FXML
 	private void imageExport() throws IOException {
+		parentController.snapshot();
+
 		Stage imageExport = new Stage();
 		imageExport.setTitle("Export Image");
 		imageExport.initOwner(GUIManager.mainStage);         //These two lines make sure you can't click back to the Start Window,
 		imageExport.initModality(Modality.WINDOW_MODAL);     //so you can't have 10 Login Windows open at once.
 
-		Parent root = FXMLLoader.load(GUIManager.class.getResource("../FXML/ImageExport.fxml"));
-		imageExport.setScene(new Scene(root));
+		FXMLLoader loader = new FXMLLoader(GUIManager.class.getResource("../FXML/ImageExport.fxml"));
+
+		imageExport.setScene(new Scene(loader.load()));
+		ImageExport imageExportObject = loader.getController();
+		imageExportObject.setUp(parentController.snapshot, parentController.activeTimeline);
+
 		imageExport.getScene().getStylesheets().add(GUIManager.mainStage.getScene().getStylesheets().get(0));
 		imageExport.show();
 	}
