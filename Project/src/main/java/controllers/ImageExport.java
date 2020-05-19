@@ -24,19 +24,25 @@ public class ImageExport {
     private Timeline activeTimeline;
 
 
-    public void setUp(WritableImage image, Timeline activeTimeline) {
-        this.image = image;
-        this.activeTimeline = activeTimeline;
-        imageView.setImage(this.image);
-        System.out.println(activeTimeline.getName());
-    }
-
-
-
     public void initialize() {
         choiceBoxAlignment.getItems().setAll("Top Left", "Top Right", "Bottom Left", "Bottom Right");
         choiceBoxAlignment.getSelectionModel().select(0);
     }
+
+    // Executes on startup (when export button is pressed when viewing a timeline)
+    public void setUp(WritableImage image, Timeline activeTimeline) {
+        this.image = image;
+        this.activeTimeline = activeTimeline;
+        imageView.setImage(this.image);
+    }
+
+    // Executes when "Export" button is pressed in the pop-up
+    public void export(ActionEvent actionEvent) {
+        fileChooser();
+    }
+
+
+
 
  public File fileChooser() {
   FileChooser fileChooser = new FileChooser();
@@ -60,7 +66,5 @@ public class ImageExport {
  }
 
 
-    public void export(ActionEvent actionEvent) {
-        fileChooser();
-    }
+
 }
