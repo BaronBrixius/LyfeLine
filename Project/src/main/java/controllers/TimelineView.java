@@ -36,7 +36,7 @@ public class TimelineView {
     public BorderPane mainBorderPane;
     public StackPane rightSidebar;
     public StackPane leftSidebar;
-    public StackPane stackFoo;
+    public StackPane centeringStack;
     @FXML
     TimelineEditor timelineEditorController;
     @FXML
@@ -54,7 +54,7 @@ public class TimelineView {
         leftSidebar.getChildren().add(timelineEditorController.editor);
         rightSidebar.getChildren().add(eventSelectorController.selector);
 
-        stackFoo.addEventFilter(ScrollEvent.ANY, this::scrollHandler);
+        centeringStack.addEventFilter(ScrollEvent.ANY, this::scrollHandler);
     }
 
     public boolean isZoomed() {
@@ -265,8 +265,8 @@ public class TimelineView {
             newScale = .001;    //TODO ask client if he's sure he wants no minimum zoom, even at this point each bar is less than a pixel tall, i.e. invisible
 
 
-        double hMousePosition = (event.getX() / stackFoo.getWidth());               //record mouse position for "zoom to mouse"
-        double vMousePosition = (event.getY() / stackFoo.getHeight());
+        double hMousePosition = (event.getX() / centeringStack.getWidth());               //record mouse position for "zoom to mouse"
+        double vMousePosition = (event.getY() / centeringStack.getHeight());
 
         double adjustedHValue = mainScrollPane.getHvalue() * oldScale / newScale    //snapshot scrollbar positions before resizing moves them
                 + hMousePosition * (1 - oldScale / newScale);                       //adjust snapshots based on mouse position, weighted average of old position and mouse position,
