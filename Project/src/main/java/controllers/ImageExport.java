@@ -42,7 +42,7 @@ public class ImageExport {
   String format = ".png";
   if(!rdbtnPng.isSelected())
     format = ".jpeg";
-  //fileChooser.setInitialFileName(activeTimeline.getName().replaceAll("\\s+", "_") + format); //We will add read format from dropdown or use png
+  fileChooser.setInitialFileName(activeTimeline.getName().replaceAll("\\s+", "_") + format); //We will add read format from dropdown or use png
   fileChooser.getExtensionFilters().addAll( //keep all formats now, easy to add to the popup
           new FileChooser.ExtensionFilter("All Images", "*.jpg", "*.jpeg", "*.png", "*.bmp", "*.gif", "*.wbmp"),
           new FileChooser.ExtensionFilter("JPG", "*.jpg"),
