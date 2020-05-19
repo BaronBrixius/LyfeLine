@@ -81,7 +81,7 @@ public class Dashboard {
 
     public void initialize() {
         //Set Up the Spinners for Start/End Inputs, would have bloated the .fxml and variable list a ton if these were in fxml
-        setupTimeInputStartAndEnd("Year", Integer.MIN_VALUE, Integer.MAX_VALUE, 0, 0, 0);
+        setupTimeInputStartAndEnd("Year", -1000000000, 999999999, 0, 0, 0);
         setupTimeInputStartAndEnd("Month", 0, 12, 1, 0, 1);
         setupTimeInputStartAndEnd("Day", 0, 31, 2, 0, 2);
         setupTimeInputStartAndEnd("Hour", -1, 23, 3, 0, 3);
@@ -211,24 +211,26 @@ public class Dashboard {
                 addToList = false;
             }
 
-            //Start LocalDateTime
-            LocalDateTime startDateSpinner = LocalDateTime.of(startInputs.get(0).getValue(), startInputs.get(1).getValue(), startInputs.get(2).getValue(),
-                    startInputs.get(3).getValue(), startInputs.get(4).getValue(), startInputs.get(5).getValue(), startInputs.get(6).getValue());
-            LocalDateTime startDateInDB = LocalDateTime.of(data.getInt("StartYear"), data.getInt("StartMonth"), data.getInt("StartDay"),
-                    data.getInt("StartHour"), data.getInt("StartMinute"), data.getInt("StartSecond"), data.getInt("StartMillisecond"));
+            if (dateSearchedBy(startInputs)) {
+                //Start LocalDateTime
+                LocalDateTime startDateSpinner = readTimeInputs(startInputs);
+                LocalDateTime startDateInDB = LocalDateTime.of(data.getInt("StartYear"), data.getInt("StartMonth"), data.getInt("StartDay"),
+                        data.getInt("StartHour"), data.getInt("StartMinute"), data.getInt("StartSecond"), data.getInt("StartMillisecond"));
 
-            if (dateSearchedBy(startInputs) && startDateInDB.compareTo(startDateSpinner) < 0) {
-                addToList = false;
+                if (startDateInDB.compareTo(startDateSpinner) < 0) {
+                    addToList = false;
+                }
             }
 
-            //End LocalDateTime
-            LocalDateTime endDateSpinner = LocalDateTime.of(endInputs.get(0).getValue(), endInputs.get(1).getValue(), endInputs.get(2).getValue(),
-                    endInputs.get(3).getValue(), endInputs.get(4).getValue(), endInputs.get(5).getValue(), endInputs.get(6).getValue());
-            LocalDateTime endDateInDB = LocalDateTime.of(data.getInt("EndYear"), data.getInt("EndMonth"), data.getInt("EndDay"),
-                    data.getInt("EndHour"), data.getInt("EndMinute"), data.getInt("EndSecond"), data.getInt("EndMillisecond"));
+            if (dateSearchedBy(endInputs)) {
+                //End LocalDateTime
+                LocalDateTime endDateSpinner = readTimeInputs(endInputs);
+                LocalDateTime endDateInDB = LocalDateTime.of(data.getInt("EndYear"), data.getInt("EndMonth"), data.getInt("EndDay"),
+                        data.getInt("EndHour"), data.getInt("EndMinute"), data.getInt("EndSecond"), data.getInt("EndMillisecond"));
 
-            if (dateSearchedBy(endInputs) && endDateInDB.compareTo(endDateSpinner) > 0) {
-                addToList = false;
+                if (endDateInDB.compareTo(endDateSpinner) > 0) {
+                    addToList = false;
+                }
             }
 
             //Rating
@@ -243,12 +245,23 @@ public class Dashboard {
         return out;
     }
 
-    boolean dateSearchedBy(List<Spinner<Integer>> inputs) {     //returns whether or not ANY inputs of either start or end dates are being used
-        for (Spinner<Integer> s: inputs) {
+    private boolean dateSearchedBy(List<Spinner<Integer>> inputs) {     //returns whether or not ANY inputs of either start or end dates are being used
+        for (Spinner<Integer> s : inputs) {
             if (s.getValue() != ((SpinnerValueFactory.IntegerSpinnerValueFactory) s.getValueFactory()).getMin())
                 return true;
         }
         return false;
+    }
+
+    private LocalDateTime readTimeInputs(List<Spinner<Integer>> inputs) {
+        return LocalDateTime.of(
+                (inputs.get(0).getValue() == -1000000000) ? 0 : inputs.get(0).getValue(),
+                Math.max(1, inputs.get(1).getValue()),
+                Math.max(1, inputs.get(2).getValue()),
+                Math.max(0, inputs.get(3).getValue()),
+                Math.max(0, inputs.get(4).getValue()),
+                Math.max(0, inputs.get(5).getValue()),
+                Math.max(0, inputs.get(6).getValue()));
     }
 
     @FXML
@@ -376,14 +389,14 @@ public class Dashboard {
             @Override
             public void increment(int steps) {
                 super.increment(steps);                         //makes blank years pretend to be 0 when using buttons, by incrementing to 1 and decrementing to -1
-                if (getValue() == Integer.MIN_VALUE + 1)
+                if (getValue() == -999999999)
                     setValue(1);
             }
 
             @Override
             public void decrement(int steps) {
                 super.decrement(steps);
-                if (getValue() == Integer.MAX_VALUE)
+                if (getValue() == 999999999)
                     setValue(-1);
             }
         };
