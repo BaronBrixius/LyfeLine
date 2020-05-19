@@ -19,7 +19,7 @@ public class ImageExport {
     public RadioButton rdbtnJpeg;
     public ToggleGroup format;
     public ImageView imageView;
-
+    private File filechooser;
     private WritableImage image;
     private Timeline activeTimeline;
 
@@ -44,7 +44,7 @@ public class ImageExport {
 
 
 
- public File fileChooser() {
+ public void fileChooser() {
   FileChooser fileChooser = new FileChooser();
   String format = ".png";
   if(!rdbtnPng.isSelected())
@@ -61,8 +61,8 @@ public class ImageExport {
   );
 
   //Show save file dialog
-  File file = fileChooser.showSaveDialog(GUIManager.mainStage);
-  return file;
+     filechooser = fileChooser.showSaveDialog(GUIManager.mainStage);
+
  }
 
 
