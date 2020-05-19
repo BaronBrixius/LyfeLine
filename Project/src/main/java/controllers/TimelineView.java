@@ -255,30 +255,33 @@ public class TimelineView {
 
 
     private void scrollHandler(ScrollEvent event) {
+        final double scaleFactor = 1.2;
+
         double oldScale = timelineGrid.getScaleX();
-        double newScale = event.getDeltaY() > 0 ? oldScale * 1.2 : oldScale / 1.2;  //calculate new scale based on old
+        double newScale = event.getDeltaY() > 0 ? oldScale * scaleFactor : oldScale / scaleFactor;  //calculate new scale based on old
         if (newScale > 100)                                                         //max zoom is 100x
             newScale = 100;
         if (newScale < .001)                                                        //min zoom is 1/100x
             newScale = .001;    //TODO ask client if he's sure he wants no minimum zoom, even at this point each bar is less than a pixel tall, i.e. invisible
 
-        double hScrollProportion = (event.getX() / stackFoo.getWidth());            //snapshot scrollbar positions before resizing content moves them
-        double vScrollProportion = (event.getY() / stackFoo.getHeight());
 
-        double newH = mainScrollPane.getHvalue() * oldScale / newScale              //adjust scrollbar snapshots based on mouse position, for "zoom to mouse"
-                + hScrollProportion * (1 - oldScale / newScale);
-        double newV = mainScrollPane.getVvalue() * oldScale / newScale
-                + vScrollProportion * (1 - oldScale / newScale);
+        double hMousePosition = (event.getX() / stackFoo.getWidth());               //record mouse position for "zoom to mouse"
+        double vMousePosition = (event.getY() / stackFoo.getHeight());
 
-        timelineGrid.setScaleX(newScale);                                           //apply scales
+        double adjustedHValue = mainScrollPane.getHvalue() * oldScale / newScale    //snapshot scrollbar positions before resizing moves them
+                + hMousePosition * (1 - oldScale / newScale);                       //adjust snapshots based on mouse position, weighted average of old position and mouse position,
+        double adjustedVValue = mainScrollPane.getVvalue() * oldScale / newScale    //while zooming in, old position is ~83% weight (1/1.2) and mouse position is ~17% (1-(1/1.2)) (assuming scaleFactor is still 1.2)
+                + vMousePosition * (1 - oldScale / newScale);                       //while "zooming out away from mouse", mouse position is applied negatively. original position is 120% weight and mouse position is -20%
+
+        timelineGrid.setScaleX(newScale);                                           //apply scaling/zooming
         timelineGrid.setScaleY(newScale);
 
         mainScrollPane.layout();                                                    //update contents based on new scale, which jumps the view around
 
-        mainScrollPane.setHvalue(newH);                                             //apply (adjusted) snapshots of scrollbar positions, overriding the above jumping
-        mainScrollPane.setVvalue(newV);
+        mainScrollPane.setHvalue(adjustedHValue);                                   //apply (adjusted) snapshots of scrollbar positions, overriding the above jumping
+        mainScrollPane.setVvalue(adjustedVValue);
 
-        event.consume();
+        event.consume();                                                            //consume the mouse event to prevent normal scrollbar functions
     }
 
     private void horizontalScroll(ScrollEvent scrollEvent) {    //might wanna add this back in when user is holding a button
