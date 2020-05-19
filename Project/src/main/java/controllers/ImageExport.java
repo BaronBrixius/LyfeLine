@@ -1,6 +1,7 @@
 package controllers;
 
 import database.Timeline;
+import javafx.event.ActionEvent;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
@@ -59,8 +60,7 @@ public class ImageExport {
  }
 
 
-
-    
-
-
+    public void export(ActionEvent actionEvent) {
+        fileChooser();
+    }
 }
