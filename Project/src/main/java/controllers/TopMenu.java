@@ -8,11 +8,9 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
+import javafx.stage.FileChooser;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Scanner;
@@ -26,6 +24,7 @@ public class TopMenu {
     @FXML
     Menu loggedInStatus = new Menu();
     MenuItem export = new MenuItem("Export");
+    private File FileChosen;
 
     public void initialize() {
         updateLoggedInStatus();
@@ -87,8 +86,14 @@ public class TopMenu {
 
     @FXML
     void importFromJSON() throws FileNotFoundException {
+        FileChooser chooser = new FileChooser();
+        chooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("JSON", "*.json"));
+        FileChosen = chooser.showOpenDialog(GUIManager.mainStage);
+
+
         Gson gson = new Gson();
-        File file = new File("D:\\Java\\java_courses\\1Dv508\\Project\\jsonTest.json");
+        File file = new File(String.valueOf(FileChosen));
         Scanner inFile = new Scanner(file);
         JSONTimeline readJson = gson.fromJson(inFile.nextLine(), JSONTimeline.class);
         readJson.importToDB();
@@ -96,6 +101,21 @@ public class TopMenu {
     }
 
     void exportToJSON(Timeline timelineToExport) {
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle("Save TimeLine as JSON");
+        chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON", "*.json"));
+        File file = chooser.showSaveDialog(null);
+        if ( file != null ) {
+            try {
+                Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file)));
+
+
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
         JSONTimeline exportable = new JSONTimeline(timelineToExport);       //gather all relevant information about a timeline into one object
         String out = new Gson().toJson(exportable);                         //convert that to JSON-formatted String
         System.out.println(out + "\n");
@@ -109,4 +129,6 @@ public class TopMenu {
 
         System.out.println("\nExported successfully");
     }
+
+
 }
