@@ -2,7 +2,7 @@
 
 /*.root applies to everything in a scene and overrides all other commands in this file. Use carefully.*/
 .root{
-    -fx-background-color: #3d3d3d;
+    -fx-background-color: #2c2c2c;
 }
 
 /*Text applies to any free floating text (inc. TextField), does not apply to text in Buttons, etc.
@@ -24,7 +24,7 @@ Text{
 }
 
 .menu{
-	-fx-background-color: #484848;
+	-fx-background-color: #3d3d3d;
 }
 
 
@@ -45,7 +45,7 @@ Text{
 
 stack-pane{
 	-fx-background-color: #81817e;
-	-fx-border-color: #3d3d3d;
+	-fx-border-color: #2c2c2c;
 }
 
 border-pane{
@@ -85,6 +85,7 @@ border-pane{
 	
 }
 
+
 .scroll-pane:focused {
     -fx-highlight-fill: #d4862b;
 
@@ -97,6 +98,7 @@ border-pane{
     -fx-text-box-border: -fx-control-inner-background;
     -fx-border-width: -1;
 }
+
 
 .text-area {
     -fx-background-insets: 0;
@@ -116,9 +118,11 @@ border-pane{
 	
 }
 
+
 .text-area:focused .content {
     -fx-background-color: transparent, #81817e, transparent, #81817e;
 }
+
 
 .scroll-pane {
 }
@@ -133,6 +137,7 @@ border-pane{
     -fx-text-box-border: -fx-control-inner-background;
     -fx-border-width: -1;
 }
+
 
 .content {
 	
@@ -166,7 +171,7 @@ border-pane{
 
 .menu-bar{
     -fx-font-weight: lighter;
-	-fx-background-color: #484848;
+	-fx-background-color: #3d3d3d;
 	-fx-border-color: #81817e;
 }
 
@@ -290,6 +295,11 @@ for example:      buttonName.getStyleClass().add("smallButton");                
 .list-view .list-cell:odd {
 -fx-background-color: #81817e;
 }
+
+.list-view .list-cell:focused {
+    -fx-background-color: #d4862b;
+}
+
 
 .scroll-bar:horizontal.track,
 .scroll-bar:vertical.track{
