@@ -6,6 +6,8 @@ import database.User;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.OverrunStyle;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundImage;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
@@ -127,12 +129,16 @@ public class TimelineCell {
 
     public void setTimeline(Timeline timeline, double width) {
         this.timeline = timeline;
-        try {
-            PreparedStatement stat = DBM.conn.prepareStatement("SELECT * FROM users WHERE UserID=?");
-            stat.setInt(1, timeline.getOwnerID());
-            user = DBM.getFromDB(stat, new User()).get(0);
-        } catch (SQLException e) {
+        if (user == null || user.getUserID() != timeline.getOwnerID())
+        {
+            try {
+                PreparedStatement stat = DBM.conn.prepareStatement("SELECT * FROM users WHERE UserID=?");
+                stat.setInt(1, timeline.getOwnerID());
+                user = DBM.getFromDB(stat, new User()).get(0);
+            } catch (SQLException e) {
+            }
         }
+
         pane.setPrefWidth(width);
         title.setMaxWidth(width);
         this.update(width);
@@ -145,7 +151,7 @@ public class TimelineCell {
             if (focused)
                 pane.setStyle(" -fx-background-image: url(" + imageURL + "); -fx-pref-height: 400px; -fx-background-size: " + ((int) (width + 1.0)) + ", stretch;");
             else
-                pane.setStyle(" -fx-background-image: url(" + imageURL + "); -fx-pref-height: 100px; -fx-background-size: " + ((int) (width + 1.0)) + "px;");
+                pane.setStyle(" -fx-background-image: url(" + imageURL + "); -fx-pref-height: 80px; -fx-background-size: " + ((int) (width + 1.0)) + "px;");
         } else {
             pane.setStyle(" -fx-background-image: null; -fx-pref-height: 100px;");
         }

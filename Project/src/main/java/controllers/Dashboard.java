@@ -107,6 +107,7 @@ public class Dashboard {
         // Search field
         cbOnlyViewPersonalLines.selectedProperty().addListener(this::simpleSearch);
         searchInput.textProperty().addListener(this::simpleSearch);
+
         list.getSelectionModel().selectedIndexProperty().addListener(e -> {
             activeTimeline = list.getSelectionModel().getSelectedItem();
             updateDisplays();
@@ -330,6 +331,7 @@ public class Dashboard {
     @FXML
     private void updateDisplays() {
         if (list.getSelectionModel().getSelectedItem() != null) {   //If a timeline is selected
+            list.scrollTo(list.getSelectionModel().getSelectedIndex() - 1);
             if (list.getSelectionModel().getSelectedItem().getOwnerID() == GUIManager.loggedInUser.getUserID()) {
                 btnDelete.setDisable(false);
                 btnEdit.setDisable(false);
@@ -338,7 +340,6 @@ public class Dashboard {
                 btnEdit.setDisable(true);
             }
             timelineViewButton.setDisable(false);
-            //displayTimelineDetails(list.getSelectionModel().getSelectedItem());
         } else {        //If a timeline is not selected
             timelineViewButton.setDisable(true);
             btnDelete.setDisable(true);
@@ -486,8 +487,10 @@ public class Dashboard {
             this.focusedProperty().addListener((observable, oldValue, newValue) -> {
                 cell.focused = newValue;
                 if (newValue)
+                    //this.resize(list.getWidth() - 30, 400);
                     this.setStyle(" -fx-pref-height: 400px;");
                 else
+                    //this.resize(list.getWidth() - 30, 100);
                     this.setStyle(" -fx-pref-height: 100px;");
                 cell.setBGImage(list.getWidth() - 30);
             });
