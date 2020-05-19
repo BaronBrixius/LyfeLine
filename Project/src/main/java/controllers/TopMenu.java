@@ -90,13 +90,23 @@ public class TopMenu {
         chooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("JSON", "*.json"));
         FileChosen = chooser.showOpenDialog(GUIManager.mainStage);
+        try {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Information");
+            alert.setHeaderText("Look, Your file now in Database");
+            alert.setContentText("You can use it now :)");
+            alert.showAndWait();
+        }catch (Exception e){
 
+        }
         Gson gson = new Gson();
         File file = new File(String.valueOf(FileChosen));
         Scanner inFile = new Scanner(file);
         JSONTimeline readJson = gson.fromJson(inFile.nextLine(), JSONTimeline.class);
         readJson.importToDB();
         inFile.close();
+
+
     }
 
     void exportToJSON(Timeline timelineToExport) {
@@ -114,7 +124,11 @@ public class TopMenu {
                 String out = new Gson().toJson(exportable);                         //convert that to JSON-formatted String
                 System.out.println(out + "\n");
                 chooser.setInitialDirectory(dir);
-                //File file1 = new File(dir+ ".json");
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Information");
+                alert.setHeaderText("Look, Your file now in the path!");
+                alert.setContentText("You check it right now in :"+"\n"+dir);
+                alert.showAndWait();
                 try (PrintWriter outFile = new PrintWriter(file)) {                 //write JSON-formatted info to file
                     outFile.println(out);
                 } catch (FileNotFoundException e) {
@@ -125,6 +139,8 @@ public class TopMenu {
             catch (Exception e) {
                 e.printStackTrace();
             }
+
+
         }
 
 
