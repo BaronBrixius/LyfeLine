@@ -107,6 +107,7 @@ public class TimelineView {
             snapshot= SwingFXUtils.toFXImage(backImage, null);
             System.out.println(backImage.getHeight() + " and width is " + backImage.getWidth());
             g.dispose();
+            mainScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
             }
         else{ //If not Zoomed or too much out zoom
         timelineGrid.setScaleX(1);
