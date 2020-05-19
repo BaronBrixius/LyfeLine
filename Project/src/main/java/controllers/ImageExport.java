@@ -1,7 +1,9 @@
 package controllers;
 
+import database.Timeline;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
 import javafx.stage.FileChooser;
 
 import java.io.File;
@@ -17,15 +19,22 @@ public class ImageExport {
     public ToggleGroup format;
     public ImageView imageView;
 
+    private WritableImage image;
+    private Timeline activeTimeline;
+
+
+    public void setUp(WritableImage image, Timeline activeTimeline) {
+        this.image = image;
+        this.activeTimeline = activeTimeline;
+        imageView.setImage(this.image);
+        System.out.println(activeTimeline.getName());
+    }
 
 
 
     public void initialize() {
-        /*
-        populate the image view
-
-        populate the choiceBox (top left, top right, bottom left bottom right)
-         */
+        choiceBoxAlignment.getItems().setAll("Top Left", "Top Right", "Bottom Left", "Bottom Right");
+        choiceBoxAlignment.getSelectionModel().select(0);
     }
 
  public File fileChooser() {

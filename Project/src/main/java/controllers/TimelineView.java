@@ -12,12 +12,9 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
-import javafx.stage.FileChooser;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -32,7 +29,7 @@ public class TimelineView {
     public GridPane timelineGrid;
     public ScrollPane mainScrollPane;
     public Timeline activeTimeline;
-    public BufferedImage snapshot;
+    public WritableImage snapshot;
     public BorderPane mainBorderPane;
     public StackPane rightSidebar;
     public StackPane leftSidebar;
@@ -107,10 +104,9 @@ public class TimelineView {
             g.fillRect(0, 0, width , height2);
             // Now overlay with image from offset
             g.drawImage(fromFXImage,0,offset,null);
-            snapshot=backImage;
+            snapshot= SwingFXUtils.toFXImage(backImage, null);
             System.out.println(backImage.getHeight() + " and width is " + backImage.getWidth());
             g.dispose();
-
             }
         else{ //If not Zoomed or too much out zoom
         timelineGrid.setScaleX(1);
@@ -141,7 +137,7 @@ public class TimelineView {
         // Now overlay with image from offset
         g.drawImage(fromFXImage,0,offset,null);
         System.out.println(backImage.getHeight() + " and width is " + backImage.getWidth());
-        snapshot = backImage;
+        snapshot= SwingFXUtils.toFXImage(backImage, null);
         g.dispose();}
     }
 
