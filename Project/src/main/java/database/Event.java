@@ -7,7 +7,7 @@ import java.sql.*;
 import java.time.LocalDateTime;
 
 public class Event extends TimelineObject<Event> {
-    private int eventID = 0;
+    private transient int eventID = 0;
     private int eventPriority = 0;
     private String eventName = "";
     private String eventDescription = "";

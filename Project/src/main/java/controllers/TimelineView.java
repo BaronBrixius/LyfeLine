@@ -3,28 +3,36 @@ package controllers;
 import database.DBM;
 import database.Event;
 import database.Timeline;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.image.WritableImage;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
-import utils.DateUtil;
+import javafx.stage.FileChooser;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.*;
 
 public class TimelineView {
-
     private final List<EventNode> eventList = new ArrayList<>();
     public GridPane timelineGrid;
+    public ScrollPane mainScrollPane;
     public Timeline activeTimeline;
     public BorderPane mainBorderPane;
     public StackPane rightSidebar;
     public StackPane leftSidebar;
+    public StackPane centeringStack;
     @FXML
     TimelineEditor timelineEditorController;
     @FXML
@@ -41,28 +49,43 @@ public class TimelineView {
 
         leftSidebar.getChildren().add(timelineEditorController.editor);
         rightSidebar.getChildren().add(eventSelectorController.selector);
-        
-        ScrollPane mainScrollPane = (ScrollPane) mainBorderPane.getCenter();
-        mainScrollPane.setOnScroll(e -> {
-            timelineGrid.setScaleX(timelineGrid.getScaleX()*(1+e.getDeltaY()/200));     //if you want to do zoom you can start with this
-            timelineGrid.setScaleY(timelineGrid.getScaleY()*(1+e.getDeltaY()/200));     //it doesn't quite update the scrollbar/container size properly, and zooming in zooms slightly further than zooming out because of the 1+deltaY math (e.g. 0.8 * 1.2 = 0.96)
-            //setup horizontal scroll with mouse wheel
-            /*if (e.getDeltaX() == 0 && e.getDeltaY() != 0) {
-                mainScrollPane.setHvalue(mainScrollPane.getHvalue() - e.getDeltaY() / mainScrollPane.getWidth());
-            }*/
-        });
+
+        GUIManager.menu.export.setOnAction(e -> GUIManager.menu.exportToJSON(activeTimeline));
+        GUIManager.menu.showExportMenu(true);
+
+        centeringStack.addEventFilter(ScrollEvent.ANY, this::scrollHandler);
+    }
+
+    public boolean isZoomed() {
+        if (timelineGrid.getScaleX() != 1 & timelineGrid.getScaleX() >= 0.25)
+            return true;
+        else
+            return false;
+    }
+
+
+    public WritableImage snapshot() {
+        SnapshotParameters snapShotparams = new SnapshotParameters();
+        //snapShotparams.setFill(Color.TRANSPARENT);  if we want transparent background instead of white
+        if (isZoomed()) {
+            mainScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+            WritableImage temp = mainScrollPane.snapshot(snapShotparams,
+                    new WritableImage((int) mainScrollPane.getLayoutBounds().getWidth(),
+                            (int) mainScrollPane.getLayoutBounds().getHeight()));
+            System.out.println(" zoom printout");
+            return temp;
+        }
+        timelineGrid.setScaleX(1);
+        timelineGrid.setScaleY(1);
+        WritableImage temp = timelineGrid.snapshot(snapShotparams,
+                new WritableImage((int) timelineGrid.getLayoutBounds().getWidth(),
+                        (int) timelineGrid.getLayoutBounds().getHeight()));
+        System.out.println("No zoom printout");
+        return temp;
     }
 
     public List<EventNode> getEventList() {
         return eventList;
-    }
-
-    public void goBackButton() {
-        try {
-            GUIManager.swapScene("Dashboard");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     // Call this method when swapping scenes
@@ -134,7 +157,7 @@ public class TimelineView {
         return mainLine;
     }
 
-    private void setupEventNodes(){
+    private void setupEventNodes() {
         eventList.clear();
         EventNode newNode;
         for (Event e : activeTimeline.getEventList()) {
@@ -185,11 +208,83 @@ public class TimelineView {
         rightSidebar.getChildren().add(eventSelectorController.selector);
     }
 
-    public void returnToDashboard() {
+    public void returnToDashboard() throws IOException {
         try {
             GUIManager.swapScene("Dashboard");
+            copy(snapshot()); //just method I used to see the snapshot output
+
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
+    private void scrollHandler(ScrollEvent event) {
+        final double scaleFactor = 1.2;
+
+        double oldScale = timelineGrid.getScaleX();
+        double newScale = event.getDeltaY() > 0 ? oldScale * scaleFactor : oldScale / scaleFactor;  //calculate new scale based on old
+        if (newScale > 100)                                                         //max zoom is 100x
+            newScale = 100;
+        if (newScale < .001)                                                        //min zoom is 1/100x
+            newScale = .001;    //TODO ask client if he's sure he wants no minimum zoom, even at this point each bar is less than a pixel tall, i.e. invisible
+
+
+        double hMousePosition = (event.getX() / centeringStack.getWidth());               //record mouse position for "zoom to mouse"
+        double vMousePosition = (event.getY() / centeringStack.getHeight());
+
+        double adjustedHValue = mainScrollPane.getHvalue() * oldScale / newScale    //snapshot scrollbar positions before resizing moves them
+                + hMousePosition * (1 - oldScale / newScale);                       //adjust snapshots based on mouse position, weighted average of old position and mouse position,
+        double adjustedVValue = mainScrollPane.getVvalue() * oldScale / newScale    //while zooming in, old position is ~83% weight (1/1.2) and mouse position is ~17% (1-(1/1.2)) (assuming scaleFactor is still 1.2)
+                + vMousePosition * (1 - oldScale / newScale);                       //while "zooming out away from mouse", mouse position is applied negatively. original position is 120% weight and mouse position is -20%
+
+        timelineGrid.setScaleX(newScale);                                           //apply scaling/zooming
+        timelineGrid.setScaleY(newScale);
+
+        mainScrollPane.layout();                                                    //update contents based on new scale, which jumps the view around
+
+        mainScrollPane.setHvalue(adjustedHValue);                                   //apply (adjusted) snapshots of scrollbar positions, overriding the above jumping
+        mainScrollPane.setVvalue(adjustedVValue);
+
+        event.consume();                                                            //consume the mouse event to prevent normal scrollbar functions
+    }
+
+    private void horizontalScroll(ScrollEvent scrollEvent) {    //might wanna add this back in when user is holding a button
+
+        //setup horizontal scroll with mouse wheel
+            /*if (e.getDeltaX() == 0 && e.getDeltaY() != 0) {
+                mainScrollPane.setHvalue(mainScrollPane.getHvalue() - e.getDeltaY() / mainScrollPane.getWidth());
+            }*/
+    }
+
+    public File fileChooser() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setInitialFileName(this.activeTimeline.getName().replaceAll("\\s+", "_") + ".png"); //We will add read format from dropdown or use png
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("All Images", "*.jpg", "*.jpeg", "*.png", "*.bmp", "*.gif", "*.wbmp"),
+                new FileChooser.ExtensionFilter("JPG", "*.jpg"),
+                new FileChooser.ExtensionFilter("JPEG", "*.jpeg"),
+                new FileChooser.ExtensionFilter("PNG", "*.png"),
+                new FileChooser.ExtensionFilter("BMP", "*.bmp"),
+                new FileChooser.ExtensionFilter("GIF", "*.gif"),
+                new FileChooser.ExtensionFilter("WBMP", "*.wbmp")
+        );
+
+        //Show save file dialog
+        File file = fileChooser.showSaveDialog(GUIManager.mainStage);
+        return file;
+    }
+
+    //Just a placeholder method that creates a image of the snapshot
+    public void copy(WritableImage temp) throws IOException {
+        BufferedImage fromFXImage = SwingFXUtils.fromFXImage(temp, null);
+        System.out.println(fromFXImage.getHeight() + " and width is " + fromFXImage.getWidth());
+        ImageIO.write(fromFXImage, "PNG", fileChooser());
+    }  //Printed under Project folder not images*/
 }
+
+
+
+
+
+
+

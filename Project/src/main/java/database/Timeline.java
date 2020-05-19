@@ -12,14 +12,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Timeline extends TimelineObject<Timeline> {
-    private int timelineID;
+    private transient int timelineID;
     private int scale;
     private String timelineName = "";
     private String theme;
     private String timelineDescription = "";
     private List<Event> eventList = new ArrayList<>();
     private List<String> keywords = new ArrayList<>();
-    private double rating;
+    private transient double rating;
 
     public Timeline() {
     }
@@ -44,13 +44,7 @@ public class Timeline extends TimelineObject<Timeline> {
         this.keywords = keywords;
         this.eventList = eventList;
         this.imagePath = imagePath;
-
-        try {
-            this.rating = calcRating();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-
+        this.rating = rating;
     }
 
     @Override
@@ -209,6 +203,15 @@ public class Timeline extends TimelineObject<Timeline> {
             stmt.setInt(1, timelineID);
             eventList = DBM.getFromDB(stmt, new Event());
         }
+
+        double rating = 0;
+
+        try {
+            rating = calcRating();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+
         return new Timeline(timelineID, timelineName, timelineDescription, scale, theme,
                 LocalDateTime.of(startYear, startMonth, startDay, startHour, startMinute, startSecond, startMillisecond*1000000),
                 LocalDateTime.of(endYear, endMonth, endDay, endHour, endMinute, endSecond, endMillisecond*1000000),

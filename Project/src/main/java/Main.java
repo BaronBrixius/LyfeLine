@@ -1,7 +1,6 @@
 import com.google.gson.Gson;
-import database.DBM;
-import database.Event;
-import database.Timeline;
+import database.*;
+import utils.Date;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -19,16 +18,17 @@ class Main {
         try {
             new DBM();
             DBM.setupSchema();       //destroys + remakes DB with default settings, can comment this out after first run if desired
-            time.addRating(5, 1);
 
 
             //Makes a list of events from the DB and prints it
-            stmt = DBM.conn.prepareStatement("SELECT * FROM events");
-            List<Event> eventList = DBM.getFromDB(stmt, new Event());           //blank object so functional interface method can be accessed
+            stmt = DBM.conn.prepareStatement("SELECT * FROM timelines");
+            List<Timeline> timelines = DBM.getFromDB(stmt, new Timeline());           //blank object so functional interface method can be accessed
 
 
-            Gson json = new Gson();
-            String out = json.toJson(eventList.get(0));
+
+            Gson gson = new Gson();
+            JSONTimeline exportable = new JSONTimeline(timelines.get(0));
+            String out = gson.toJson(exportable);
             System.out.println(out + "\n");
             File file = new File("jsonTest.json");
             PrintWriter outFile = new PrintWriter(file);
@@ -36,10 +36,19 @@ class Main {
             outFile.close();
 
             Scanner inFile = new Scanner(file);
-            Event readJson = json.fromJson(inFile.nextLine(), Event.class);
-            System.out.println(readJson + "\n");
-            System.out.println("Year: " + readJson.getStartDate().getYear());
+            JSONTimeline readJson = gson.fromJson(inFile.nextLine(), JSONTimeline.class);
+            readJson.importToDB();
             inFile.close();
+
+            //long before = System.currentTimeMillis();
+
+            //for (int i = 0; i < 1000; i++) {
+            //    readJson.importRatings();
+            //}
+
+            //long after = System.currentTimeMillis();
+
+            //System.out.println(after-before);
 /*
             //Makes a list of event years from the DB and prints it
             //note: you can just prepare a statement right in the method parameters if there aren't any field values that need to be set
