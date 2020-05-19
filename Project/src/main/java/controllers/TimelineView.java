@@ -12,6 +12,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -54,7 +55,9 @@ public class TimelineView {
             }*/
         });
 
-        GUIManager.menu.export.setOnAction(e->GUIManager.menu.exportToJSON(activeTimeline));
+        GUIManager.menu.export.setOnAction(e-> {
+            GUIManager.menu.exportToJSON(activeTimeline);
+        });
         GUIManager.menu.showExportMenu(true);
     }
 
