@@ -211,41 +211,15 @@ public class TimelineView {
         rightSidebar.getChildren().add(eventSelectorController.selector);
     }
 
-    public void returnToDashboard() {
-        GUIManager.menu.showExportMenu(false);
+    public void returnToDashboard() throws IOException {
         try {
             GUIManager.swapScene("Dashboard");
             copy(snapshot()); //just method I used to see the snapshot output
+
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
-    public File fileChooser() {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setInitialFileName(this.activeTimeline.getName().replaceAll("\\s+", "_") + ".png"); //We will add read format from dropdown or use png
-        fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("All Images", "*.jpg", "*.jpeg", "*.png", "*.bmp", "*.gif", "*.wbmp"),
-                new FileChooser.ExtensionFilter("JPG", "*.jpg"),
-                new FileChooser.ExtensionFilter("JPEG", "*.jpeg"),
-                new FileChooser.ExtensionFilter("PNG", "*.png"),
-                new FileChooser.ExtensionFilter("BMP", "*.bmp"),
-                new FileChooser.ExtensionFilter("GIF", "*.gif"),
-                new FileChooser.ExtensionFilter("WBMP", "*.wbmp")
-        );
-
-        //Show save file dialog
-        File file = fileChooser.showSaveDialog(GUIManager.mainStage);
-        return file;
-    }
-
-    //Just a placeholder method that creates a image of the snapshot
-    public void copy(WritableImage temp) throws IOException {
-        BufferedImage fromFXImage = SwingFXUtils.fromFXImage(temp, null);
-        System.out.println(fromFXImage.getHeight() + " and width is " + fromFXImage.getWidth());
-        ImageIO.write(fromFXImage, "PNG", fileChooser());
-    }  //Printed under Project folder not images*/
-
 
     private void scrollHandler(ScrollEvent event) {
         final double scaleFactor = 1.2;
@@ -284,10 +258,32 @@ public class TimelineView {
                 mainScrollPane.setHvalue(mainScrollPane.getHvalue() - e.getDeltaY() / mainScrollPane.getWidth());
             }*/
     }
+
+    public File fileChooser() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setInitialFileName(this.activeTimeline.getName().replaceAll("\\s+", "_") + ".png"); //We will add read format from dropdown or use png
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("All Images", "*.jpg", "*.jpeg", "*.png", "*.bmp", "*.gif", "*.wbmp"),
+                new FileChooser.ExtensionFilter("JPG", "*.jpg"),
+                new FileChooser.ExtensionFilter("JPEG", "*.jpeg"),
+                new FileChooser.ExtensionFilter("PNG", "*.png"),
+                new FileChooser.ExtensionFilter("BMP", "*.bmp"),
+                new FileChooser.ExtensionFilter("GIF", "*.gif"),
+                new FileChooser.ExtensionFilter("WBMP", "*.wbmp")
+        );
+
+        //Show save file dialog
+        File file = fileChooser.showSaveDialog(GUIManager.mainStage);
+        return file;
+    }
+
+    //Just a placeholder method that creates a image of the snapshot
+    public void copy(WritableImage temp) throws IOException {
+        BufferedImage fromFXImage = SwingFXUtils.fromFXImage(temp, null);
+        System.out.println(fromFXImage.getHeight() + " and width is " + fromFXImage.getWidth());
+        ImageIO.write(fromFXImage, "PNG", fileChooser());
+    }  //Printed under Project folder not images*/
 }
-
-
-
 
 
 
