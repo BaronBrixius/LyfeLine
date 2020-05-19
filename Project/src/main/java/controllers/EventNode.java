@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Pane;
+import utils.DateUtil;
 
 public class EventNode implements Comparable<EventNode> {
 
@@ -44,8 +45,8 @@ public class EventNode implements Comparable<EventNode> {
         this.activeEvent = event;
         this.parentController = parentController;
 
-        startColumn = activeTimeline.getStartDate().distanceTo(activeEvent.getStartDate(), activeTimeline.getScale());
-        columnSpan = Math.max(activeEvent.getStartDate().distanceTo(activeEvent.getEndDate(), activeTimeline.getScale()), 1);   //instant events still need 1 whole column
+        startColumn = DateUtil.distanceBetween(activeTimeline.getStartDate(),activeEvent.getStartDate(), activeTimeline.getScale());
+        columnSpan = Math.max(DateUtil.distanceBetween(activeEvent.getStartDate(),activeEvent.getEndDate(), activeTimeline.getScale()), 1);   //instant events still need 1 whole column
         eventNameDisplay.setText(activeEvent.getName());
     }
 
@@ -72,11 +73,10 @@ public class EventNode implements Comparable<EventNode> {
 
     @FXML
     public void openEventViewer() {       //upon clicking a node
-        parentController.rightSidebar.getChildren().clear();
+        //parentController.rightSidebar.getChildren().clear();
         //parentController.eventEditorController.close();
         parentController.eventEditorController.setEvent(activeEvent);
         parentController.eventEditorController.toggleEditable(false);
-        parentController.rightSidebar.getChildren().clear();
         parentController.rightSidebar.getChildren().add(parentController.eventEditorController.editor);
     }
 

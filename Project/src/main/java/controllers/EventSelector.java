@@ -56,7 +56,7 @@ public class EventSelector {
         populateDisplay();
 
 
-        sortBy.getItems().setAll("Alphabetic", "Reverse Alphabetic", "Creation Date", "Reverse Creation Date", "Priority");
+        sortBy.getItems().setAll("Alphabetic", "Reverse Alphabetic", "Creation LocalDateTime ", "Reverse Creation LocalDateTime ", "Priority");
         sortBy.getSelectionModel().selectedIndexProperty().addListener(ov -> sortEvents(sortBy.getSelectionModel().getSelectedIndex()));
 
         //formatting for timeline and event selectors

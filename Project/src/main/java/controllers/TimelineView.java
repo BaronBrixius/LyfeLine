@@ -1,4 +1,5 @@
 package controllers;
+
 import database.DBM;
 import database.Event;
 import database.Timeline;
@@ -10,6 +11,7 @@ import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.WritableImage;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 
@@ -18,13 +20,9 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class TimelineView {
-
     private final List<EventNode> eventList = new ArrayList<>();
     public GridPane timelineGrid;
     public ScrollPane mainScrollPane;
@@ -33,6 +31,7 @@ public class TimelineView {
     public BorderPane mainBorderPane;
     public StackPane rightSidebar;
     public StackPane leftSidebar;
+    public StackPane centeringStack;
     @FXML
     TimelineEditor timelineEditorController;
     @FXML
@@ -53,20 +52,15 @@ public class TimelineView {
         leftSidebar.getChildren().add(timelineEditorController.editor);
         rightSidebar.getChildren().add(eventSelectorController.selector);
 
-        mainScrollPane = (ScrollPane) mainBorderPane.getCenter();
-        mainScrollPane.setOnScroll(e -> {
-            timelineGrid.setScaleX(timelineGrid.getScaleX() * (1 + e.getDeltaY() / 200));     //if you want to do zoom you can start with this
-            timelineGrid.setScaleY(timelineGrid.getScaleY() * (1 + e.getDeltaY() / 200));     //it doesn't quite update the scrollbar/container size properly, and zooming in zooms slightly further than zooming out because of the 1+deltaY math (e.g. 0.8 * 1.2 = 0.96)
-            //setup horizontal scroll with mouse wheel
-            /*if (e.getDeltaX() == 0 && e.getDeltaY() != 0) {
-                mainScrollPane.setHvalue(mainScrollPane.getHvalue() - e.getDeltaY() / mainScrollPane.getWidth());
-            }*/
-        });
+        GUIManager.menu.export.setOnAction(e -> GUIManager.menu.exportToJSON(activeTimeline));
+        GUIManager.menu.showExportMenu(true);
+
+        centeringStack.addEventFilter(ScrollEvent.ANY, this::scrollHandler);
     }
 
-    public boolean isZoomed (){
-        if(timelineGrid.getScaleX() != 1 & timelineGrid.getScaleX() >= 0.25)
-        return true;
+    public boolean isZoomed() {
+        if (timelineGrid.getScaleX() != 1 & timelineGrid.getScaleX() >= 0.25)
+            return true;
         else
             return false;
     }
@@ -146,14 +140,6 @@ public class TimelineView {
         return eventList;
     }
 
-    public void goBackButton() {
-        try {
-            GUIManager.swapScene("Dashboard");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     // Call this method when swapping scenes
     public void setActiveTimeline(Timeline t) {
         this.activeTimeline = t;
@@ -190,7 +176,7 @@ public class TimelineView {
     Pane setupMainLine() {
         Pane mainLine = new Pane();
         mainLine.getStyleClass().add("timeline");
-        int numberOfCol = activeTimeline.getStartDate().distanceTo(activeTimeline.getEndDate(), activeTimeline.getScale());
+        int numberOfCol = DateUtil.distanceBetween(activeTimeline.getStartDate(), activeTimeline.getEndDate(), activeTimeline.getScale());
         int start = 1, frequency = 1;
 
         switch (activeTimeline.getScale()) {
@@ -282,7 +268,44 @@ public class TimelineView {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
 
+    private void scrollHandler(ScrollEvent event) {
+        final double scaleFactor = 1.2;
+
+        double oldScale = timelineGrid.getScaleX();
+        double newScale = event.getDeltaY() > 0 ? oldScale * scaleFactor : oldScale / scaleFactor;  //calculate new scale based on old
+        if (newScale > 100)                                                         //max zoom is 100x
+            newScale = 100;
+        if (newScale < .001)                                                        //min zoom is 1/100x
+            newScale = .001;    //TODO ask client if he's sure he wants no minimum zoom, even at this point each bar is less than a pixel tall, i.e. invisible
+
+
+        double hMousePosition = (event.getX() / centeringStack.getWidth());               //record mouse position for "zoom to mouse"
+        double vMousePosition = (event.getY() / centeringStack.getHeight());
+
+        double adjustedHValue = mainScrollPane.getHvalue() * oldScale / newScale    //snapshot scrollbar positions before resizing moves them
+                + hMousePosition * (1 - oldScale / newScale);                       //adjust snapshots based on mouse position, weighted average of old position and mouse position,
+        double adjustedVValue = mainScrollPane.getVvalue() * oldScale / newScale    //while zooming in, old position is ~83% weight (1/1.2) and mouse position is ~17% (1-(1/1.2)) (assuming scaleFactor is still 1.2)
+                + vMousePosition * (1 - oldScale / newScale);                       //while "zooming out away from mouse", mouse position is applied negatively. original position is 120% weight and mouse position is -20%
+
+        timelineGrid.setScaleX(newScale);                                           //apply scaling/zooming
+        timelineGrid.setScaleY(newScale);
+
+        mainScrollPane.layout();                                                    //update contents based on new scale, which jumps the view around
+
+        mainScrollPane.setHvalue(adjustedHValue);                                   //apply (adjusted) snapshots of scrollbar positions, overriding the above jumping
+        mainScrollPane.setVvalue(adjustedVValue);
+
+        event.consume();                                                            //consume the mouse event to prevent normal scrollbar functions
+    }
+
+    private void horizontalScroll(ScrollEvent scrollEvent) {    //might wanna add this back in when user is holding a button
+
+        //setup horizontal scroll with mouse wheel
+            /*if (e.getDeltaX() == 0 && e.getDeltaY() != 0) {
+                mainScrollPane.setHvalue(mainScrollPane.getHvalue() - e.getDeltaY() / mainScrollPane.getWidth());
+            }*/
     }
 
 

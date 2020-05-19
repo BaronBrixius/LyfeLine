@@ -9,6 +9,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
+import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -27,6 +28,7 @@ import java.util.Optional;
 public class TimelineEditor extends Editor {
 	private final ObservableList<String> keywords = FXCollections.observableArrayList();
 	public Timeline timeline;
+	public HBox keywordBox;
 	@FXML
 	ComboBox<String> timeInput;
 	@FXML
@@ -74,7 +76,7 @@ public class TimelineEditor extends Editor {
 
 	void toggleEditable(boolean editable) {
 		super.toggleEditable(editable);
-		keywordInput.setEditable(editable);
+		keywordBox.setDisable(!editable);
 		timeInput.setDisable(!editable);
 	}
 
@@ -341,7 +343,6 @@ public class TimelineEditor extends Editor {
         }
     }
 
-
 	@FXML
 	private void imageExport() throws IOException {
 		parentController.snapshot();
@@ -360,7 +361,4 @@ public class TimelineEditor extends Editor {
 		imageExport.getScene().getStylesheets().add(GUIManager.mainStage.getScene().getStylesheets().get(0));
 		imageExport.show();
 	}
-
-
-
 }
