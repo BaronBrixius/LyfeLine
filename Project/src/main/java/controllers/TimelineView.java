@@ -36,6 +36,7 @@ public class TimelineView {
     public BorderPane mainBorderPane;
     public StackPane rightSidebar;
     public StackPane leftSidebar;
+    public StackPane stackFoo;
     @FXML
     TimelineEditor timelineEditorController;
     @FXML
@@ -53,8 +54,7 @@ public class TimelineView {
         leftSidebar.getChildren().add(timelineEditorController.editor);
         rightSidebar.getChildren().add(eventSelectorController.selector);
 
-        mainScrollPane.addEventFilter(ScrollEvent.ANY, this::scrollHandler);
-        mainScrollPane.hvalueProperty().addListener((obs, oldv, newv) -> System.out.println(oldv + " " + newv));
+        stackFoo.addEventFilter(ScrollEvent.ANY, this::scrollHandler);
     }
 
     public boolean isZoomed() {
@@ -256,23 +256,27 @@ public class TimelineView {
 
     private void scrollHandler(ScrollEvent event) {
         double oldScale = timelineGrid.getScaleX();
-        double newScale = event.getDeltaY() > 0 ? oldScale * 1.2 : oldScale / 1.2;
-        if (newScale > 100)
+        double newScale = event.getDeltaY() > 0 ? oldScale * 1.2 : oldScale / 1.2;  //calculate new scale based on old
+        if (newScale > 100)                                                         //max zoom is 100x
             newScale = 100;
+        if (newScale < .001)                                                        //min zoom is 1/100x
+            newScale = .001;    //TODO ask client if he's sure he wants no minimum zoom, even at this point each bar is less than a pixel tall, i.e. invisible
 
-        timelineGrid.setScaleX(newScale);
+        double hScrollProportion = (event.getX() / stackFoo.getWidth());            //snapshot scrollbar positions before resizing content moves them
+        double vScrollProportion = (event.getY() / stackFoo.getHeight());
+
+        double newH = mainScrollPane.getHvalue() * oldScale / newScale              //adjust scrollbar snapshots based on mouse position, for "zoom to mouse"
+                + hScrollProportion * (1 - oldScale / newScale);
+        double newV = mainScrollPane.getVvalue() * oldScale / newScale
+                + vScrollProportion * (1 - oldScale / newScale);
+
+        timelineGrid.setScaleX(newScale);                                           //apply scales
         timelineGrid.setScaleY(newScale);
 
-        /*double adjustment = newScale / oldScale - 1;    //panning the mouse has to be calculated as though unscaled
-        double dx = (event.getSceneX() - (mainScrollPane.getBoundsInParent().getWidth() / 2 + mainScrollPane.getBoundsInParent().getMinX()));
-        double dy = (event.getSceneY() - (mainScrollPane.getBoundsInParent().getHeight() / 2 + mainScrollPane.getBoundsInParent().getMinY()));
+        mainScrollPane.layout();                                                    //update contents based on new scale, which jumps the view around
 
-        double endx =(mainScrollPane.getHvalue() + (adjustment * dx) / mainScrollPane.getHmax());
-        double endy = (mainScrollPane.getVvalue() + (adjustment * dy) / mainScrollPane.getVmax());*/
-
-
-        mainScrollPane.setHvalue(event.getX() / timelineGrid.getWidth() * newScale / oldScale);
-        mainScrollPane.setVvalue(event.getY() / timelineGrid.getHeight() * newScale / oldScale);
+        mainScrollPane.setHvalue(newH);                                             //apply (adjusted) snapshots of scrollbar positions, overriding the above jumping
+        mainScrollPane.setVvalue(newV);
 
         event.consume();
     }
