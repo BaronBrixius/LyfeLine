@@ -6,13 +6,13 @@ import database.JSONTimeline;
 import database.Timeline;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuItem;
+import javafx.scene.control.*;
 import javafx.stage.FileChooser;
 
 import java.io.*;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 import java.util.Scanner;
 
 public class TopMenu {
@@ -91,7 +91,6 @@ public class TopMenu {
                 new FileChooser.ExtensionFilter("JSON", "*.json"));
         FileChosen = chooser.showOpenDialog(GUIManager.mainStage);
 
-
         Gson gson = new Gson();
         File file = new File(String.valueOf(FileChosen));
         Scanner inFile = new Scanner(file);
@@ -103,31 +102,34 @@ public class TopMenu {
     void exportToJSON(Timeline timelineToExport) {
         FileChooser chooser = new FileChooser();
         chooser.setTitle("Save TimeLine as JSON");
+        chooser.setInitialFileName(timelineToExport.getName());
         chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON", "*.json"));
-        File file = chooser.showSaveDialog(null);
+        File file = chooser.showSaveDialog(GUIManager.mainStage);
+
         if ( file != null ) {
             try {
-                Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file)));
-
-
+                File dir = file.getParentFile();
+                chooser.setInitialDirectory(dir);
+                JSONTimeline exportable = new JSONTimeline(timelineToExport);       //gather all relevant information about a timeline into one object
+                String out = new Gson().toJson(exportable);                         //convert that to JSON-formatted String
+                System.out.println(out + "\n");
+                chooser.setInitialDirectory(dir);
+                //File file1 = new File(dir+ ".json");
+                try (PrintWriter outFile = new PrintWriter(file)) {                 //write JSON-formatted info to file
+                    outFile.println(out);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();                //TODO better exception handling once dev work is done
+                }
+                System.out.println("\nExported successfully");
             }
             catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
-        JSONTimeline exportable = new JSONTimeline(timelineToExport);       //gather all relevant information about a timeline into one object
-        String out = new Gson().toJson(exportable);                         //convert that to JSON-formatted String
-        System.out.println(out + "\n");
 
-        File file = new File(timelineToExport.getName() + ".json");
-        try (PrintWriter outFile = new PrintWriter(file)) {                 //write JSON-formatted info to file
-            outFile.println(out);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();                //TODO better exception handling once dev work is done
-        }
 
-        System.out.println("\nExported successfully");
+
     }
 
 
