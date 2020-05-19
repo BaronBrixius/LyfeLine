@@ -3,16 +3,21 @@ package controllers;
 import database.DBM;
 import database.Event;
 import database.Timeline;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Button;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
 
-import java.io.FileNotFoundException;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -24,6 +29,7 @@ import java.util.List;
 public class TimelineView {
     private final List<EventNode> eventList = new ArrayList<>();
     public GridPane timelineGrid;
+    public ScrollPane mainScrollPane;
     public Timeline activeTimeline;
     public BorderPane mainBorderPane;
     public StackPane rightSidebar;
@@ -45,7 +51,8 @@ public class TimelineView {
         leftSidebar.getChildren().add(timelineEditorController.editor);
         rightSidebar.getChildren().add(eventSelectorController.selector);
 
-        ScrollPane mainScrollPane = (ScrollPane) mainBorderPane.getCenter();
+        mainScrollPane = (ScrollPane) mainBorderPane.getCenter();
+
         mainScrollPane.setOnScroll(e -> {
             timelineGrid.setScaleX(timelineGrid.getScaleX() * (1 + e.getDeltaY() / 200));     //if you want to do zoom you can start with this
             timelineGrid.setScaleY(timelineGrid.getScaleY() * (1 + e.getDeltaY() / 200));     //it doesn't quite update the scrollbar/container size properly, and zooming in zooms slightly further than zooming out because of the 1+deltaY math (e.g. 0.8 * 1.2 = 0.96)
@@ -55,10 +62,38 @@ public class TimelineView {
             }*/
         });
 
-        GUIManager.menu.export.setOnAction(e-> {
+        GUIManager.menu.export.setOnAction(e -> {
             GUIManager.menu.exportToJSON(activeTimeline);
         });
         GUIManager.menu.showExportMenu(true);
+    }
+
+    public boolean isZoomed() {
+        if (timelineGrid.getScaleX() != 1 & timelineGrid.getScaleX() >= 0.25)
+            return true;
+        else
+            return false;
+    }
+
+
+    public WritableImage snapshot() {
+        SnapshotParameters snapShotparams = new SnapshotParameters();
+        //snapShotparams.setFill(Color.TRANSPARENT);  if we want transparent background instead of white
+        if (isZoomed()) {
+            mainScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+            WritableImage temp = mainScrollPane.snapshot(snapShotparams,
+                    new WritableImage((int) mainScrollPane.getLayoutBounds().getWidth(),
+                            (int) mainScrollPane.getLayoutBounds().getHeight()));
+            System.out.println(" zoom printout");
+            return temp;
+        }
+        timelineGrid.setScaleX(1);
+        timelineGrid.setScaleY(1);
+        WritableImage temp = timelineGrid.snapshot(snapShotparams,
+                new WritableImage((int) timelineGrid.getLayoutBounds().getWidth(),
+                        (int) timelineGrid.getLayoutBounds().getHeight()));
+        System.out.println("No zoom printout");
+        return temp;
     }
 
     public List<EventNode> getEventList() {
@@ -185,12 +220,52 @@ public class TimelineView {
         rightSidebar.getChildren().add(eventSelectorController.selector);
     }
 
+
     public void returnToDashboard() {
         GUIManager.menu.showExportMenu(false);
         try {
             GUIManager.swapScene("Dashboard");
+            copy(snapshot()); //just method I used to see the snapshot output
+
         } catch (IOException e) {
             e.printStackTrace();
         }
+
     }
+
+    public File fileChooser() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setInitialFileName(this.activeTimeline.getName().replaceAll("\\s+", "_") + ".png"); //We will add read format from dropdown or use png
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("All Images", "*.jpg", "*.jpeg", "*.png", "*.bmp", "*.gif", "*.wbmp"),
+                new FileChooser.ExtensionFilter("JPG", "*.jpg"),
+                new FileChooser.ExtensionFilter("JPEG", "*.jpeg"),
+                new FileChooser.ExtensionFilter("PNG", "*.png"),
+                new FileChooser.ExtensionFilter("BMP", "*.bmp"),
+                new FileChooser.ExtensionFilter("GIF", "*.gif"),
+                new FileChooser.ExtensionFilter("WBMP", "*.wbmp")
+        );
+
+        //Show save file dialog
+        File file = fileChooser.showSaveDialog(GUIManager.mainStage);
+        return file;
+    }
+
+    //Just a placeholder method that creates a image of the snapshot
+    public void copy(WritableImage temp) throws IOException {
+        BufferedImage fromFXImage = SwingFXUtils.fromFXImage(temp, null);
+        System.out.println(fromFXImage.getHeight() + " and width is " + fromFXImage.getWidth());
+        ImageIO.write(fromFXImage, "PNG", fileChooser());
+    }  //Printed under Project folder not images*/
+
 }
+
+
+
+
+
+
+
+
+
+
