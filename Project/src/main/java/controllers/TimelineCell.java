@@ -1,20 +1,13 @@
 package controllers;
 
-import database.DBM;
 import database.Timeline;
 import database.User;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import javafx.scene.control.OverrunStyle;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundImage;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
-
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -82,37 +75,33 @@ public class TimelineCell {
 
     private void colorStarsByRating(int rating) {
         for (int i = 0; i < 5; i++) {
-            if (i < rating)
-                ratingButtons.get(i).setFill(Color.YELLOW);     // yellow fill for lower stars
-            else
-                ratingButtons.get(i).setFill(Color.GREY);       // grey fill for stars above timeline's rank
+            Color starColor = i < rating ? Color.YELLOW : Color.GREY;   // yellow fill for lower stars
+            ratingButtons.get(i).setFill(starColor);                    // grey fill for stars above timeline's rank
         }
     }
 
-    public void update(double width) {
+    public void update() {
         if (timeline != null) {
             populateTimelineDetails();
-            setBGImage(width);
+            setBGImage();
             colorStarsByRating((int) Math.ceil(timeline.getRating()));
             ratingBox.setOpacity((timeline.getRating() > 1) ? 1 : 0);
         }
     }
 
     public void populateTimelineDetails() {
-        //if (title.getText().startsWith("x"))    //title is set to x by default, if it starts with x, none of the fields have been populated yet.
-        //{
         title.setText("Title: " + timeline.getName());
-            author.setText("By: " + user.getUserName());
-            description.setText("Description: " + timeline.getDescription());
-            //TODO start and end date here
+        author.setText("By: " + user.getUserName());
+        description.setText("Description: " + timeline.getDescription());
+        //TODO start and end date here
 
-            StringBuilder keyWords = new StringBuilder();
-            for (String s : timeline.getKeywords())
-                keyWords.append(s).append(", ");
-            if (keyWords.length() >= 2)
-                keyWords.delete(keyWords.length() - 2, keyWords.length());
-            keywords.setText("Keywords: " + keyWords);
-        //} //If you don't update the fields every time it's updated, then names get switched around
+        StringBuilder keyWords = new StringBuilder();
+        keyWords.append("Keywords: ");
+        for (String s : timeline.getKeywords())
+            keyWords.append(s).append(", ");
+        if (keyWords.length() >= 12)
+            keyWords.delete(keyWords.length() - 2, keyWords.length());
+        keywords.setText(keyWords.toString());
 
         if (focused) {
             if (!pane.getChildren().contains(description)) {    //If the cell is focused and doesn't show the description
@@ -127,33 +116,16 @@ public class TimelineCell {
         return timeline;
     }
 
-    public void setTimeline(Timeline timeline, double width) {
+    public void setTimeline(Timeline timeline) {
         this.timeline = timeline;
-        if (user == null || user.getUserID() != timeline.getOwnerID())
-        {
-            try {
-                PreparedStatement stat = DBM.conn.prepareStatement("SELECT * FROM users WHERE UserID=?");
-                stat.setInt(1, timeline.getOwnerID());
-                user = DBM.getFromDB(stat, new User()).get(0);
-            } catch (SQLException e) {
-            }
-        }
-
-        pane.setPrefWidth(width);
-        title.setMaxWidth(width);
-        this.update(width);
+        user = timeline.getOwner();
+        this.update();
     }
 
-    public void setBGImage(double width) {
-        String imageURL = timeline.getImagePath();
-        if (imageURL != null) {
-            imageURL = "file:" + imageURL;
-            if (focused)
-                pane.setStyle(" -fx-background-image: url(" + imageURL + "); -fx-pref-height: 400px; -fx-background-size: " + ((int) (width + 1.0)) + ", stretch;");
-            else
-                pane.setStyle(" -fx-background-image: url(" + imageURL + "); -fx-pref-height: 80px; -fx-background-size: " + ((int) (width + 1.0)) + "px;");
-        } else {
-            pane.setStyle(" -fx-background-image: null; -fx-pref-height: 100px;");
-        }
+    public void setBGImage() {
+        String imageURL = timeline.getImagePath() != null ? "url(file:" + timeline.getImagePath() + ")" : null;
+        int height = focused ? 400 : 80;
+        pane.setStyle(" -fx-background-image: " + imageURL + "; -fx-pref-height: " + height + "px; -fx-background-size: 1271px, stretch;");
     }
+
 }

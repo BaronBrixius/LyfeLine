@@ -3,7 +3,9 @@ package controllers;
 import database.DBM;
 import database.Timeline;
 import javafx.beans.Observable;
+import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableArray;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
@@ -344,25 +346,7 @@ public class Dashboard {
             timelineViewButton.setDisable(true);
             btnDelete.setDisable(true);
             btnEdit.setDisable(true);
-            //titleText.clear();
-            //fullPicture.setImage(null);
         }
-    }
-
-    private void displayTimelineDetails(Timeline timeline) {
-        int year = timeline.getCreationDate().getYear();
-        int month = timeline.getCreationDate().getMonth();
-        int day = timeline.getCreationDate().getDay();
-
-        StringBuilder keyWords = new StringBuilder();
-        for (String s : timeline.getKeywords())
-            keyWords.append(s + ", ");
-        if (keyWords.length() >= 2)
-            keyWords.delete(keyWords.length() - 2, keyWords.length());
-
-        titleText.setText("Title: " + timeline.getName() + "\nDescription: " + timeline.getDescription()
-                + "\nDate Created: " + year + "/" + month + "/" + day + "\nKeywords: " + keyWords);
-        fullPicture.setImage(new Image("file:" + timeline.getImagePath()));
     }
 
     private void setupTimeInputStartAndEnd(String timeSpinnerLabel, int minValue, int maxValue, int column, int row,
@@ -484,29 +468,25 @@ public class Dashboard {
             } catch (IOException e) {
                 System.err.println("Could not load TimelineCell.fxml");
             }
+
             this.focusedProperty().addListener((observable, oldValue, newValue) -> {
                 cell.focused = newValue;
-                if (newValue)
-                    //this.resize(list.getWidth() - 30, 400);
-                    this.setStyle(" -fx-pref-height: 400px;");
-                else
-                    //this.resize(list.getWidth() - 30, 100);
-                    this.setStyle(" -fx-pref-height: 100px;");
-                cell.setBGImage(list.getWidth() - 30);
+                int height = newValue ? 400 : 100;
+                this.resize(1270, height);
+                cell.setBGImage();
             });
         }
 
         @Override
         protected void updateItem(Timeline item, boolean empty) {
             super.updateItem(item, empty);
-            if (item != null && !empty) { //test for null item and empty parameter
+            if (item != null && !empty) //test for null item and empty parameter
+            {
                 setGraphic(cellNode);
-                if (!(cell == null)) {
-                    cell.setTimeline(item, list.getWidth() - 30);
-                }
-            } else {
+                if (cell != null)
+                    cell.setTimeline(item);
+            } else
                 setGraphic(null);
-            }
         }
     }
 }
