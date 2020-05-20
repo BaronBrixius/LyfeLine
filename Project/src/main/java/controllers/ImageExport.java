@@ -33,6 +33,7 @@ public class ImageExport {
 
 	private Timeline activeTimeline;
 	private WritableImage originalImage;
+	private WritableImage temp;
 	private File filechooser;
 	private String format;
 
@@ -47,10 +48,18 @@ public class ImageExport {
 	}
 
 	// Executes when "Export" button is pressed in the pop-up
-	public void export(ActionEvent actionEvent) {
-		fileChooser();
+	public void export(ActionEvent actionEvent) throws IOException {
+		saveImage();
+
 	}
 
+	public void saveImage() throws IOException {
+		String FinalFormat = "PNG";
+		if (!rdbtnPng.isSelected())
+			FinalFormat = "JPEG";
+		BufferedImage finalBuffer = SwingFXUtils.fromFXImage(temp, null);
+		ImageIO.write(finalBuffer, FinalFormat, fileChooser());
+	}
 	// execute when the checkbox is clicked
 
 	public void cbNameClicked(ActionEvent actionEvent) {
@@ -70,8 +79,9 @@ public class ImageExport {
 
 	}
 
+
 	private void burnIn() {
-		WritableImage temp = originalImage;
+		 temp = originalImage;
 
 		if (cbName.isSelected()) {
 			temp = burnName(temp);
@@ -174,7 +184,7 @@ public class ImageExport {
 		w.setComposite(alphaChannel);
 
 		// calculates the coordinate where the String is painted
-		int yPlacement = (burned.getHeight()) - ((burned.getHeight() / 10));
+		int yPlacement = (burned.getHeight()) - ((burned.getHeight() / 6));
 		// int yPlacement = (burned.getHeight() - burned.getHeight() / 30);
 		int xPlacement = (burned.getWidth() / 100);
 
@@ -221,8 +231,8 @@ public class ImageExport {
 	// at the moment resizes the logo to harcoded 100x100, seems to work well and
 	// the logo watermark should be reasonably small.
 	private BufferedImage resize(BufferedImage img) {
-		int width = 100;
-		int height = 100;
+		int width = 104;
+		int height = 40;
 		Image tmp = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
 		BufferedImage resized = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2d = resized.createGraphics();
@@ -231,9 +241,9 @@ public class ImageExport {
 		return resized;
 	}
 
-	public void fileChooser() {
+	public File fileChooser() throws IOException {
 		FileChooser fileChooser = new FileChooser();
-		String format = ".png";
+		 format = ".png";
 		if (!rdbtnPng.isSelected())
 			format = ".jpeg";
 		fileChooser.setInitialFileName(activeTimeline.getName().replaceAll("\\s+", "_") + format); // We will add read
@@ -247,7 +257,8 @@ public class ImageExport {
 				new FileChooser.ExtensionFilter("GIF", "*.gif"), new FileChooser.ExtensionFilter("WBMP", "*.wbmp"));
 
 		// Show save file dialog
-		filechooser = fileChooser.showSaveDialog(GUIManager.mainStage);
+		 return filechooser =  fileChooser.showSaveDialog(GUIManager.mainStage);
+
 
 	}
 
