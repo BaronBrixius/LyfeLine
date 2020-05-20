@@ -69,7 +69,7 @@ public class Timeline extends TimelineObject<Timeline> {
     }
 
     @Override
-    public PreparedStatement setQueryValues(PreparedStatement stmt) throws SQLException {
+    public void setQueryValues(PreparedStatement stmt) throws SQLException {
         stmt.setInt(1, scale);
         stmt.setString(2, timelineName);
         stmt.setString(3, timelineDescription);
@@ -100,7 +100,6 @@ public class Timeline extends TimelineObject<Timeline> {
         if (timelineID > 0)
             stmt.setInt(22, timelineID);
 
-        return stmt;
     }
 
     public void deleteOrphans() throws SQLException {

@@ -26,12 +26,13 @@ class Main {
             for (int i = 0; i < 7; i++) {
                 events.addAll(events);
             }
-
-
             for (Event t: events)
                 t.setID(0);
+            DBM.insertIntoDB(events);
+
+
             long before = System.currentTimeMillis();
-                DBM.insertIntoDB(events);
+                DBM.updateInDB(events);
             long after = System.currentTimeMillis();
             System.out.println(after-before);
 /*

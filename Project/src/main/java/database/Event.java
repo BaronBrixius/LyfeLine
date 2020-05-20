@@ -3,7 +3,10 @@ package database;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.sql.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.time.LocalDateTime;
 
 public class Event extends TimelineObject<Event> {
@@ -110,18 +113,22 @@ public class Event extends TimelineObject<Event> {
 
     @Override
     public PreparedStatement getInsertQuery() throws SQLException, RuntimeException {
-        return DBM.conn.prepareStatement("INSERT INTO `events` (`EventName` , `EventDescription` , `ImagePath`, `StartYear`,  `StartMonth`,  `StartDay`,  `StartHour`,  `StartMinute`, " +
-                " `StartSecond`,  `StartMillisecond`,    `EndYear`,  `EndMonth`,  `EndDay`,  `EndHour`,  `EndMinute`,  `EndSecond`,  `EndMillisecond`, `EventOwner`, `EventPriority`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);", Statement.RETURN_GENERATED_KEYS);
+        return DBM.conn.prepareStatement("INSERT INTO `events` (`EventName` , `EventDescription` , `ImagePath`, " +
+                "`StartYear`,  `StartMonth`,  `StartDay`,  `StartHour`,  `StartMinute`, `StartSecond`,  `StartMillisecond`, " +
+                "`EndYear`,  `EndMonth`,  `EndDay`,  `EndHour`,  `EndMinute`,  `EndSecond`,  `EndMillisecond`, `EventOwner`, " +
+                "`EventPriority`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);", Statement.RETURN_GENERATED_KEYS);
     }
 
     @Override
     public PreparedStatement getUpdateQuery() throws SQLException {
-        return DBM.conn.prepareStatement("UPDATE `events` SET `EventName` = ?, `EventDescription` = ?, `ImagePath` = ?, `StartYear` = ?,  `StartMonth` = ?,  `StartDay` = ?,  `StartHour` = ?,  `StartMinute` = ?,  " +
-                "`StartSecond` = ?,  `StartMillisecond` = ?,    `EndYear` = ?,  `EndMonth` = ?,  `EndDay` = ?,  `EndHour` = ?,  `EndMinute` = ?,  `EndSecond` = ?,  `EndMillisecond` = ?, `EventOwner` = ?, `EventPriority` = ?  WHERE (`EventID` = ?);");
+        return DBM.conn.prepareStatement("UPDATE `events` SET `EventName` = ?, `EventDescription` = ?, `ImagePath` = ?, " +
+                "`StartYear` = ?,  `StartMonth` = ?,  `StartDay` = ?,  `StartHour` = ?,  `StartMinute` = ?,  `StartSecond` = ?,  " +
+                "`StartMillisecond` = ?, `EndYear` = ?,  `EndMonth` = ?,  `EndDay` = ?,  `EndHour` = ?,  `EndMinute` = ?,  " +
+                "`EndSecond` = ?, `EndMillisecond` = ?, `EventOwner` = ?,  `EventPriority` = ?  WHERE (`EventID` = ?);");
     }
 
     @Override
-    public PreparedStatement setQueryValues(PreparedStatement stmt) throws SQLException {
+    public void setQueryValues(PreparedStatement stmt) throws SQLException {
         stmt.setString(1, eventName);
         stmt.setString(2, eventDescription);
         stmt.setString(3, imagePath);
@@ -143,8 +150,6 @@ public class Event extends TimelineObject<Event> {
         stmt.setInt(19, eventPriority);
         if (eventID > 0)
             stmt.setInt(20, eventID);
-
-        return stmt;
     }
 
     @Override

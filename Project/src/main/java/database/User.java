@@ -121,7 +121,7 @@ public class User implements DBObject<User> {
     }
 
     @Override
-    public PreparedStatement setQueryValues(PreparedStatement stmt) throws SQLException {
+    public void setQueryValues(PreparedStatement stmt) throws SQLException {
         stmt.setString(1, userName);
         stmt.setString(2, userEmail);
         stmt.setString(3, encryptedPass);
@@ -129,7 +129,6 @@ public class User implements DBObject<User> {
         stmt.setBoolean(5, admin);
         if (userID > 0)
             stmt.setInt(6, userID);
-        return stmt;
     }
 
     @Override
