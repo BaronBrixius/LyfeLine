@@ -16,6 +16,9 @@ import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 
 public class ImageExport {
 	public CheckBox cbName;
@@ -30,9 +33,7 @@ public class ImageExport {
 
 	private Timeline activeTimeline;
 	private WritableImage originalImage;
-
 	private File filechooser;
-	private WritableImage image;
 	private String format;
 
 	public void initialize() {
@@ -40,19 +41,15 @@ public class ImageExport {
 
 	// Executes on startup (when export button is pressed when viewing a timeline)
 	public void setUp(WritableImage image, Timeline activeTimeline) {
-		this.image = image;
 		this.activeTimeline = activeTimeline;
 		originalImage = image;
-		imageView.setImage(this.image);
+		imageView.setImage(this.originalImage);
 	}
 
 	// Executes when "Export" button is pressed in the pop-up
 	public void export(ActionEvent actionEvent) {
 		fileChooser();
 	}
-
-
-
 
 	// execute when the checkbox is clicked
 
@@ -70,11 +67,8 @@ public class ImageExport {
 
 	public void cbLogoClicked(ActionEvent actionEvent) {
 		burnIn();
-		// not yet implemented
+
 	}
-
-
-
 
 	private void burnIn() {
 		WritableImage temp = originalImage;
@@ -88,6 +82,14 @@ public class ImageExport {
 		if (cbCreator.isSelected()) {
 			temp = burnCreator(temp);
 		}
+		if (cbLogo.isSelected()) {
+			try {
+				temp = burnLogo(temp);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 
 		imageView.setImage(temp);
 
@@ -96,7 +98,7 @@ public class ImageExport {
 	private WritableImage burnName(WritableImage img) {
 		String text = activeTimeline.getName();
 		BufferedImage originalBuffer = SwingFXUtils.fromFXImage(img, null);
-		int defaultFont = originalBuffer.getHeight() / 15;
+		int defaultFont = (int) img.getHeight() / 30;
 		int font = defaultFont;
 
 		// determine image type and handle correct transparency
@@ -154,13 +156,39 @@ public class ImageExport {
 
 	}
 
-	private void burnLogo() {
+	private WritableImage burnLogo(WritableImage img) throws IOException {
+
+		BufferedImage originalBuffer = SwingFXUtils.fromFXImage(img, null);
+		// Logo settings
+		// File logo = new File("../resources/Logo.png");
+		File logo = new File("src/main/resources/Logo.png");
+		BufferedImage logoBuffer = resize(ImageIO.read(logo));
+		// determine image type and handle correct transparency
+		int imageType = "png".equalsIgnoreCase("png") ? BufferedImage.TYPE_INT_ARGB : BufferedImage.TYPE_INT_RGB;
+		BufferedImage burned = new BufferedImage(originalBuffer.getWidth(), originalBuffer.getHeight(), imageType);
+
+		// initializes necessary graphic properties
+		Graphics2D w = (Graphics2D) burned.getGraphics();
+		w.drawImage(originalBuffer, 0, 0, null);
+		AlphaComposite alphaChannel = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f);
+		w.setComposite(alphaChannel);
+
+		// calculates the coordinate where the String is painted
+		int yPlacement = (burned.getHeight()) - ((burned.getHeight() / 10));
+		// int yPlacement = (burned.getHeight() - burned.getHeight() / 30);
+		int xPlacement = (burned.getWidth() / 100);
+
+		// add text watermark to the image
+		w.drawImage(logoBuffer, xPlacement, yPlacement, null);
+		WritableImage imageBurned = SwingFXUtils.toFXImage(burned, null);
+		w.dispose();
+		return imageBurned;
 
 	}
 
 	private WritableImage burnCreator(WritableImage img) {
 
-		String text = "Made on LyfeLine by: " + GUIManager.loggedInUser.getUserName();
+		String text = "Made with LyfeLine by: " + GUIManager.loggedInUser.getUserName();
 
 		BufferedImage originalBuffer = SwingFXUtils.fromFXImage(img, null);
 		int defaultFont = originalBuffer.getHeight() / 30;
@@ -188,6 +216,19 @@ public class ImageExport {
 		w.dispose();
 		return imageBurned;
 
+	}
+
+	// at the moment resizes the logo to harcoded 100x100, seems to work well and
+	// the logo watermark should be reasonably small.
+	private BufferedImage resize(BufferedImage img) {
+		int width = 100;
+		int height = 100;
+		Image tmp = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+		BufferedImage resized = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g2d = resized.createGraphics();
+		g2d.drawImage(tmp, 0, 0, null);
+		g2d.dispose();
+		return resized;
 	}
 
 	public void fileChooser() {
