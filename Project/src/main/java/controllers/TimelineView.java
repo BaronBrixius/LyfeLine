@@ -260,7 +260,9 @@ public class TimelineView {
         rightSidebar.getChildren().add(eventSelectorController.selector);
     }
 
-    public void returnToDashboard() throws IOException {
+
+    public void returnToDashboard() {
+        GUIManager.menu.showExportMenu(false);
         try {
             GUIManager.swapScene("Dashboard");
            //copy(snapshot()); //just method I used to see the snapshot output
@@ -307,6 +309,15 @@ public class TimelineView {
                 mainScrollPane.setHvalue(mainScrollPane.getHvalue() - e.getDeltaY() / mainScrollPane.getWidth());
             }*/
     }
+
+    //Just a placeholder method that creates a image of the snapshot
+    public void copy(WritableImage temp) throws IOException {
+        BufferedImage fromFXImage = SwingFXUtils.fromFXImage(temp, null);
+        System.out.println(fromFXImage.getHeight() + " and width is " + fromFXImage.getWidth());
+        ImageIO.write(fromFXImage, "PNG", fileChooser());
+    }  //Printed under Project folder not images*/
+
+}
 
 
 
