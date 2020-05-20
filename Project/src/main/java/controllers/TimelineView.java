@@ -3,6 +3,7 @@ package controllers;
 import database.DBM;
 import database.Event;
 import database.Timeline;
+import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -71,8 +72,9 @@ public class TimelineView {
 
     public void snapshot() throws IOException {
         SnapshotParameters snapShotparams = new SnapshotParameters();
-        if (isZoomed()) {
 
+        snapShotparams.setFill(javafx.scene.paint.Paint.valueOf("#f4f4f4")); //TODO read from root background color
+        if (isZoomed()) {
             mainScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
             WritableImage temp = mainScrollPane.snapshot(snapShotparams,
                     new WritableImage((int) mainScrollPane.getLayoutBounds().getWidth(),
@@ -95,7 +97,7 @@ public class TimelineView {
             Graphics2D g = backImage.createGraphics();
 
             // Am setting the color to black to distinguish , otherwise it can be set to Color.white
-            g.setColor(new Color(244, 244, 244));
+            g.setColor(new Color(244, 244, 244)); //TODO read from root background color
             // Fill hte background with color
             g.fillRect(0, 0, width , height2);
             // Now overlay with image from offset
@@ -109,8 +111,8 @@ public class TimelineView {
         timelineGrid.setScaleX(1);
         timelineGrid.setScaleY(1);
         WritableImage  temp = timelineGrid.snapshot(snapShotparams,
-                    new WritableImage((int) timelineGrid.getLayoutBounds().getWidth()+200,
-                            (int) timelineGrid.getLayoutBounds().getHeight()+200));
+                    new WritableImage((int) timelineGrid.getLayoutBounds().getWidth(),
+                            (int) timelineGrid.getLayoutBounds().getHeight()));
         System.out.println("No zoom printout" + " and height is: " + temp.getHeight() + " and width is: " + temp.getWidth());
 
         //Now create buffered image and add 10% padding on top and bottom
@@ -128,7 +130,7 @@ public class TimelineView {
         Graphics2D g = backImage.createGraphics();
 
         // Am setting the color to black to distinguish , otherwise it can be set to Color.white
-        g.setColor(new Color(244, 244, 244));
+        g.setColor(new Color(244, 244, 244)); //TODO read from root background color
         // Fill hte background with color
         g.fillRect(0, 0, width , height2);
         // Now overlay with image from offset
