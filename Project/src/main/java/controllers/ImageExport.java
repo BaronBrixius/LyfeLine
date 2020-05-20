@@ -48,84 +48,54 @@ public class ImageExport {
 
 	// Executes when "Export" button is pressed in the pop-up
 	public void export(ActionEvent actionEvent) {
-
 		fileChooser();
 	}
 
+
+
+
+	// execute when the checkbox is clicked
+
 	public void cbNameClicked(ActionEvent actionEvent) {
-
 		burnIn();
-		System.out.println("hehe i got clicked");
-
-		// checks if the checkbox is selected. Use in if statements when burning in.
-
 	}
 
 	public void cbRangeClicked(ActionEvent actionEvent) {
 		burnIn();
-		System.out.println("hehe i got clicked");
 	}
 
 	public void cbCreatorClicked(ActionEvent actionEvent) {
 		burnIn();
-		System.out.println("hehe i got clicked");
 	}
 
 	public void cbLogoClicked(ActionEvent actionEvent) {
 		burnIn();
-		System.out.println("hehe i got clicked");
+		// not yet implemented
 	}
 
-	public void fileChooser() {
-		FileChooser fileChooser = new FileChooser();
-		String format = ".png";
-		if (!rdbtnPng.isSelected())
-			format = ".jpeg";
-		fileChooser.setInitialFileName(activeTimeline.getName().replaceAll("\\s+", "_") + format); // We will add read
-																									// format from
-																									// dropdown or use
-																									// png
-		fileChooser.getExtensionFilters().addAll( // keep all formats now, easy to add to the popup
-				new FileChooser.ExtensionFilter("All Images", "*.jpg", "*.jpeg", "*.png", "*.bmp", "*.gif", "*.wbmp"),
-				new FileChooser.ExtensionFilter("JPG", "*.jpg"), new FileChooser.ExtensionFilter("JPEG", "*.jpeg"),
-				new FileChooser.ExtensionFilter("PNG", "*.png"), new FileChooser.ExtensionFilter("BMP", "*.bmp"),
-				new FileChooser.ExtensionFilter("GIF", "*.gif"), new FileChooser.ExtensionFilter("WBMP", "*.wbmp"));
 
-		// Show save file dialog
-		filechooser = fileChooser.showSaveDialog(GUIManager.mainStage);
 
-	}
-
-	public void burnImage(WritableImage burnedImage) {
-		this.image = burnedImage;
-		imageView.setImage(this.image);
-	}
 
 	private void burnIn() {
 		WritableImage temp = originalImage;
 
 		if (cbName.isSelected()) {
-			burnName();
-			
+			temp = burnName(temp);
 		}
 		if (cbRange.isSelected()) {
-			burnRange();
-			
+			temp = burnRange(temp);
 		}
 		if (cbCreator.isSelected()) {
-			burnCreator();
-		
-		} else if (!cbCreator.isSelected() && !cbName.isSelected() && !cbRange.isSelected()) {
-			this.image = originalImage;
-			imageView.setImage(this.originalImage);
-
+			temp = burnCreator(temp);
 		}
+
+		imageView.setImage(temp);
 
 	}
 
-	private void burnName() {
+	private WritableImage burnName(WritableImage img) {
 		String text = activeTimeline.getName();
-		BufferedImage originalBuffer = SwingFXUtils.fromFXImage(this.image, null);
+		BufferedImage originalBuffer = SwingFXUtils.fromFXImage(img, null);
 		int defaultFont = originalBuffer.getHeight() / 15;
 		int font = defaultFont;
 
@@ -149,14 +119,14 @@ public class ImageExport {
 		w.drawString(text, xPlacement, yPlacement);
 		WritableImage imageBurned = SwingFXUtils.toFXImage(burned, null);
 		w.dispose();
-		burnImage(imageBurned);
+		return imageBurned;
 
 	}
 
-	private void burnRange() {
+	private WritableImage burnRange(WritableImage img) {
 		String text = DateUtil.ddmmyyToString(activeTimeline);
 
-		BufferedImage originalBuffer = SwingFXUtils.fromFXImage(this.image, null);
+		BufferedImage originalBuffer = SwingFXUtils.fromFXImage(img, null);
 		int defaultFont = originalBuffer.getHeight() / 30;
 		int font = defaultFont;
 
@@ -180,7 +150,7 @@ public class ImageExport {
 		w.drawString(text, xPlacement, yPlacement);
 		WritableImage imageBurned = SwingFXUtils.toFXImage(burned, null);
 		w.dispose();
-		burnImage(imageBurned);
+		return imageBurned;
 
 	}
 
@@ -188,11 +158,11 @@ public class ImageExport {
 
 	}
 
-	private void burnCreator() {
+	private WritableImage burnCreator(WritableImage img) {
 
 		String text = "Made on LyfeLine by: " + GUIManager.loggedInUser.getUserName();
 
-		BufferedImage originalBuffer = SwingFXUtils.fromFXImage(this.image, null);
+		BufferedImage originalBuffer = SwingFXUtils.fromFXImage(img, null);
 		int defaultFont = originalBuffer.getHeight() / 30;
 		int font = defaultFont;
 
@@ -216,7 +186,27 @@ public class ImageExport {
 		w.drawString(text, xPlacement, yPlacement);
 		WritableImage imageBurned = SwingFXUtils.toFXImage(burned, null);
 		w.dispose();
-		burnImage(imageBurned);
+		return imageBurned;
+
+	}
+
+	public void fileChooser() {
+		FileChooser fileChooser = new FileChooser();
+		String format = ".png";
+		if (!rdbtnPng.isSelected())
+			format = ".jpeg";
+		fileChooser.setInitialFileName(activeTimeline.getName().replaceAll("\\s+", "_") + format); // We will add read
+		// format from
+		// dropdown or use
+		// png
+		fileChooser.getExtensionFilters().addAll( // keep all formats now, easy to add to the popup
+				new FileChooser.ExtensionFilter("All Images", "*.jpg", "*.jpeg", "*.png", "*.bmp", "*.gif", "*.wbmp"),
+				new FileChooser.ExtensionFilter("JPG", "*.jpg"), new FileChooser.ExtensionFilter("JPEG", "*.jpeg"),
+				new FileChooser.ExtensionFilter("PNG", "*.png"), new FileChooser.ExtensionFilter("BMP", "*.bmp"),
+				new FileChooser.ExtensionFilter("GIF", "*.gif"), new FileChooser.ExtensionFilter("WBMP", "*.wbmp"));
+
+		// Show save file dialog
+		filechooser = fileChooser.showSaveDialog(GUIManager.mainStage);
 
 	}
 
