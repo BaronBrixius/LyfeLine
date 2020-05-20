@@ -16,6 +16,7 @@ import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import utils.DateUtil;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -312,18 +313,6 @@ public class TimelineView {
             }*/
     }
 
-    //Just a placeholder method that creates a image of the snapshot
-    public void copy(WritableImage temp) throws IOException {
-        BufferedImage fromFXImage = SwingFXUtils.fromFXImage(temp, null);
-        System.out.println(fromFXImage.getHeight() + " and width is " + fromFXImage.getWidth());
-        ImageIO.write(fromFXImage, "PNG", fileChooser());
-    }  //Printed under Project folder not images*/
-
-}
-
-
-
-
     /*
     public File fileChooser() {
         FileChooser fileChooser = new FileChooser();
@@ -371,8 +360,6 @@ public class TimelineView {
         System.out.println(backImage.getHeight() + " and width is " + backImage.getWidth());
         g.dispose();
     }*/
-
-
 }
 
 
