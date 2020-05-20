@@ -233,7 +233,7 @@ for example:      buttonName.getStyleClass().add("smallButton");                
 }
 
 .eventEditor {
-    -fx-background-color: #535351;
+    -fx-background-color: #2c2c2c;
 }
 
 .date-picker .label {
@@ -286,6 +286,10 @@ for example:      buttonName.getStyleClass().add("smallButton");                
 .list-view {
 	-fx-border-color: #81817e;
 	-fx-background-color: #81817e;
+}
+
+.list-cell {
+	-fx-text-fill: white;
 }
 
 /*background color of the listview*/
@@ -429,6 +433,10 @@ for example:      buttonName.getStyleClass().add("smallButton");                
 
 .listCellBackground{
 	-fx-background-color: #d4862b;
+}
+
+.smallText .axis { 
+	-fx-tick-label-fill: white;
 }
 
 /*Here is a list of useful CSS commands:

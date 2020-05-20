@@ -303,6 +303,11 @@ for example:      buttonName.getStyleClass().add("smallButton");                
 	-fx-background-color: #5E7B8A;
 }
 
+.context-menu{
+	-fx-background-color: #81817e;
+	-fx-border-color: #81817e;
+}
+
 /*Here is a list of useful CSS commands:
 -fx-text-fill: black; (sets text color)
 -fx-font-size: 1.5em; (sets text size)
