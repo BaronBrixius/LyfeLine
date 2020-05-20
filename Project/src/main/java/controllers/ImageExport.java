@@ -81,9 +81,12 @@ public class ImageExport {
 	}
 
 	private void burnIn() {
-		burnName();
-		burnRange();
-		burnCreator();
+
+		if (cbName.isSelected()) {
+
+		} else if (!cbLogo.isSelected() && !cbName.isSelected() && !cbRange.isSelected()) {
+			imageView.setImage(this.originalImage);
+		}
 
 	}
 
