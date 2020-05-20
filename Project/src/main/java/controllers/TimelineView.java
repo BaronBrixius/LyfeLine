@@ -122,17 +122,17 @@ public class TimelineView {
         // Calculate height width , offset
         int width = fromFXImage.getWidth();
         int height = fromFXImage.getHeight() ;
-        int height2 = (int) (height * 1.20);
+        // int height2 = (int) (height * 1.20);
         int offset = (int) (height * 0.1);
 
         // Create another image with new height & width
-        BufferedImage backImage = new BufferedImage( width, height2, BufferedImage.TYPE_INT_RGB);
+        BufferedImage backImage = new BufferedImage( width, height, BufferedImage.TYPE_INT_RGB);
         Graphics2D g = backImage.createGraphics();
 
         // Am setting the color to black to distinguish , otherwise it can be set to Color.white
         g.setColor(new Color(244, 244, 244)); //TODO read from root background color
         // Fill hte background with color
-        g.fillRect(0, 0, width , height2);
+        g.fillRect(0, 0, width , height);
         // Now overlay with image from offset
         g.drawImage(fromFXImage,0,offset,null);
         System.out.println(backImage.getHeight() + " and width is " + backImage.getWidth());
