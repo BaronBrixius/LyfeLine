@@ -55,9 +55,6 @@ public class TimelineView {
         leftSidebar.getChildren().add(timelineEditorController.editor);
         rightSidebar.getChildren().add(eventSelectorController.selector);
 
-        GUIManager.menu.export.setOnAction(e -> GUIManager.menu.exportToJSON(activeTimeline));
-        GUIManager.menu.showExportMenu(true);
-
         centeringStack.addEventFilter(ScrollEvent.ANY, this::scrollHandler);
     }
 
@@ -265,7 +262,6 @@ public class TimelineView {
 
 
     public void returnToDashboard() {
-        GUIManager.menu.showExportMenu(false);
         try {
             GUIManager.swapScene("Dashboard");
            //copy(snapshot()); //just method I used to see the snapshot output
