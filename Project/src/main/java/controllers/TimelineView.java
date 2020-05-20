@@ -72,15 +72,15 @@ public class TimelineView {
 
     public void snapshot() throws IOException {
         SnapshotParameters snapShotparams = new SnapshotParameters();
+        Color c = Color.decode("#" + timelineGrid.getBackground().getFills().get(0).getFill().toString().substring(2,8)); //Read the current color used for Timelinegrid background (root style) (FOR THE BURN IN PADDING)
+        snapShotparams.setFill(timelineGrid.getBackground().getFills().get(0).getFill());  //Read the current color used for Timelinegrid background (root style) (IF EXTRA UNUSED ARE IN THE WRITABLE IMAGE)
 
-        snapShotparams.setFill(javafx.scene.paint.Paint.valueOf("#f4f4f4")); //TODO read from root background color
-        if (isZoomed()) {
+        if (isZoomed()) { //snapshot just the Scrollpane
             mainScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
             WritableImage temp = mainScrollPane.snapshot(snapShotparams,
                     new WritableImage((int) mainScrollPane.getLayoutBounds().getWidth(),
                             (int) mainScrollPane.getLayoutBounds().getHeight()));
             System.out.println(" zoom printout");
-
 
             //Now create buffered image and add 10% padding on top and bottom
             BufferedImage fromFXImage = SwingFXUtils.fromFXImage(temp, null);
@@ -97,7 +97,7 @@ public class TimelineView {
             Graphics2D g = backImage.createGraphics();
 
             // Am setting the color to black to distinguish , otherwise it can be set to Color.white
-            g.setColor(new Color(244, 244, 244)); //TODO read from root background color
+            g.setColor(c);
             // Fill hte background with color
             g.fillRect(0, 0, width , height2);
             // Now overlay with image from offset
@@ -107,7 +107,9 @@ public class TimelineView {
             g.dispose();
             mainScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
             }
-        else{ //If not Zoomed or too much out zoom
+
+
+        else{ //If not Zoomed or too much out zoom - snapshot the whole timeline
         timelineGrid.setScaleX(1);
         timelineGrid.setScaleY(1);
         WritableImage  temp = timelineGrid.snapshot(snapShotparams,
@@ -130,7 +132,7 @@ public class TimelineView {
         Graphics2D g = backImage.createGraphics();
 
         // Am setting the color to black to distinguish , otherwise it can be set to Color.white
-        g.setColor(new Color(244, 244, 244)); //TODO read from root background color
+        g.setColor(c);
         // Fill hte background with color
         g.fillRect(0, 0, width , height);
         // Now overlay with image from offset
