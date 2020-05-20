@@ -38,7 +38,7 @@
                <children>
                   <Group>
                      <children>
-                            <GridPane fx:id="timelineGrid" alignment="CENTER" centerShape="true" gridLinesVisible="true" minHeight="300.0" minWidth="500.0" scaleShape="false" vgap="27.0">
+                            <GridPane fx:id="timelineGrid" alignment="CENTER" minHeight="300.0" minWidth="500.0" scaleShape="false" vgap="27.0">
                                 <columnConstraints>
                                     <ColumnConstraints hgrow="SOMETIMES" minWidth="-Infinity" prefWidth="100.0" />
                                 </columnConstraints>

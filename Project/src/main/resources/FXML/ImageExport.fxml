@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+
+<Pane fx:id="Popup_ExportImage" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="620.0" prefWidth="1024.0" stylesheets="@../styles/DefaultStyle.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.ImageExport">
+   <VBox fx:id="vboxChoices" layoutX="807.0" layoutY="164.0" prefHeight="293.0" prefWidth="165.0" spacing="10.0" style="-fx-border-style: solid;" stylesheets="@../styles/DefaultStyle.css">
+      <ChoiceBox fx:id="choiceBoxAlignment" prefHeight="32.0" prefWidth="169.0" />
+      <CheckBox fx:id="cbName" alignment="TOP_LEFT" contentDisplay="TOP" mnemonicParsing="false" prefHeight="18.0" prefWidth="165.0" stylesheets="@../styles/DefaultStyle.css" text="Name">
+         <VBox.margin>
+            <Insets />
+         </VBox.margin>
+         <padding>
+            <Insets left="5.0" />
+         </padding>
+      </CheckBox>
+      <CheckBox fx:id="cbRange" mnemonicParsing="false" prefHeight="18.0" prefWidth="165.0" text="Range">
+         <VBox.margin>
+            <Insets />
+         </VBox.margin>
+         <padding>
+            <Insets left="5.0" />
+         </padding>
+      </CheckBox>
+      <CheckBox fx:id="cbLogo" mnemonicParsing="false" prefHeight="18.0" prefWidth="165.0" text="Logo">
+         <VBox.margin>
+            <Insets />
+         </VBox.margin>
+         <padding>
+            <Insets left="5.0" />
+         </padding>
+      </CheckBox>
+      <opaqueInsets>
+         <Insets />
+      </opaqueInsets>
+   </VBox>
+   <Button fx:id="btnExport" layoutX="855.0" layoutY="564.0" onAction="#export" mnemonicParsing="false" scaleX="2.0" scaleY="2.0" styleClass="tinyButton" stylesheets="@../styles/DefaultStyle.css" text="Export" />
+   <RadioButton fx:id="rdbtnPng" layoutX="822.0" layoutY="518.0" mnemonicParsing="false" selected="true" text="png">
+      <toggleGroup>
+         <ToggleGroup fx:id="format" />
+      </toggleGroup></RadioButton>
+   <RadioButton fx:id="rdbtnJpeg" layoutX="914.0" layoutY="518.0" mnemonicParsing="false" text="jpeg" toggleGroup="$format" />
+   <ImageView fx:id="imageView" fitHeight="492.0" fitWidth="718.0" layoutX="70.0" layoutY="72.0" pickOnBounds="true" preserveRatio="true" />
+</Pane>

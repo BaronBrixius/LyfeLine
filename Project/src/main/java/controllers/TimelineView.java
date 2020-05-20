@@ -14,24 +14,20 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
-import javafx.stage.FileChooser;
 
-import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class TimelineView {
     private final List<EventNode> eventList = new ArrayList<>();
     public GridPane timelineGrid;
     public ScrollPane mainScrollPane;
     public Timeline activeTimeline;
+    public WritableImage snapshot;
     public BorderPane mainBorderPane;
     public StackPane rightSidebar;
     public StackPane leftSidebar;
@@ -43,6 +39,8 @@ public class TimelineView {
     @FXML
     EventEditor eventEditorController;
     @FXML
+    ImageExport imageExportController;
+    @FXML
     private Button backButton;
 
     public void initialize() {
@@ -50,8 +48,12 @@ public class TimelineView {
         eventSelectorController.setParentController(this);
         eventEditorController.setParentController(this);
 
+
         leftSidebar.getChildren().add(timelineEditorController.editor);
         rightSidebar.getChildren().add(eventSelectorController.selector);
+
+        GUIManager.menu.export.setOnAction(e -> GUIManager.menu.exportToJSON(activeTimeline));
+        GUIManager.menu.showExportMenu(true);
 
         centeringStack.addEventFilter(ScrollEvent.ANY, this::scrollHandler);
     }
@@ -64,24 +66,74 @@ public class TimelineView {
     }
 
 
-    public WritableImage snapshot() {
+
+    public void snapshot() throws IOException {
         SnapshotParameters snapShotparams = new SnapshotParameters();
-        //snapShotparams.setFill(Color.TRANSPARENT);  if we want transparent background instead of white
         if (isZoomed()) {
+
             mainScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
             WritableImage temp = mainScrollPane.snapshot(snapShotparams,
                     new WritableImage((int) mainScrollPane.getLayoutBounds().getWidth(),
                             (int) mainScrollPane.getLayoutBounds().getHeight()));
             System.out.println(" zoom printout");
-            return temp;
-        }
+
+
+            //Now create buffered image and add 10% padding on top and bottom
+            BufferedImage fromFXImage = SwingFXUtils.fromFXImage(temp, null);
+            System.out.println(fromFXImage.getHeight() + " and width is " + fromFXImage.getWidth());
+
+            // Calculate height width , offset
+            int width = fromFXImage.getWidth();
+            int height = fromFXImage.getHeight() ;
+            int height2 = (int) (height * 1.20);
+            int offset = (int) (height * 0.1);
+
+            // Create another image with new height & width
+            BufferedImage backImage = new BufferedImage( width, height2, BufferedImage.TYPE_INT_RGB);
+            Graphics2D g = backImage.createGraphics();
+
+            // Am setting the color to black to distinguish , otherwise it can be set to Color.white
+            g.setColor(Color.white);
+            // Fill hte background with color
+            g.fillRect(0, 0, width , height2);
+            // Now overlay with image from offset
+            g.drawImage(fromFXImage,0,offset,null);
+            snapshot= SwingFXUtils.toFXImage(backImage, null);
+            System.out.println(backImage.getHeight() + " and width is " + backImage.getWidth());
+            g.dispose();
+            mainScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+            }
+        else{ //If not Zoomed or too much out zoom
         timelineGrid.setScaleX(1);
         timelineGrid.setScaleY(1);
-        WritableImage temp = timelineGrid.snapshot(snapShotparams,
-                new WritableImage((int) timelineGrid.getLayoutBounds().getWidth(),
-                        (int) timelineGrid.getLayoutBounds().getHeight()));
-        System.out.println("No zoom printout");
-        return temp;
+        WritableImage  temp = timelineGrid.snapshot(snapShotparams,
+                    new WritableImage((int) timelineGrid.getLayoutBounds().getWidth()+200,
+                            (int) timelineGrid.getLayoutBounds().getHeight()+200));
+        System.out.println("No zoom printout" + " and height is: " + temp.getHeight() + " and width is: " + temp.getWidth());
+
+        //Now create buffered image and add 10% padding on top and bottom
+        BufferedImage fromFXImage = SwingFXUtils.fromFXImage(temp, null);
+        System.out.println(fromFXImage.getHeight() + " and width is " + fromFXImage.getWidth());
+
+        // Calculate height width , offset
+        int width = fromFXImage.getWidth();
+        int height = fromFXImage.getHeight() ;
+        int height2 = (int) (height * 1.20);
+        int offset = (int) (height * 0.1);
+
+        // Create another image with new height & width
+        BufferedImage backImage = new BufferedImage( width, height2, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g = backImage.createGraphics();
+
+        // Am setting the color to black to distinguish , otherwise it can be set to Color.white
+        g.setColor(Color.white);
+        // Fill hte background with color
+        g.fillRect(0, 0, width , height2);
+        // Now overlay with image from offset
+        g.drawImage(fromFXImage,0,offset,null);
+        System.out.println(backImage.getHeight() + " and width is " + backImage.getWidth());
+        snapshot= SwingFXUtils.toFXImage(backImage, null);
+        g.dispose();}
     }
 
     public List<EventNode> getEventList() {
@@ -124,7 +176,7 @@ public class TimelineView {
     Pane setupMainLine() {
         Pane mainLine = new Pane();
         mainLine.getStyleClass().add("timeline");
-        int numberOfCol = activeTimeline.getStartDate().distanceTo(activeTimeline.getEndDate(), activeTimeline.getScale());
+        int numberOfCol = DateUtil.distanceBetween(activeTimeline.getStartDate(), activeTimeline.getEndDate(), activeTimeline.getScale());
         int start = 1, frequency = 1;
 
         switch (activeTimeline.getScale()) {
@@ -213,39 +265,12 @@ public class TimelineView {
         GUIManager.menu.showExportMenu(false);
         try {
             GUIManager.swapScene("Dashboard");
-            copy(snapshot()); //just method I used to see the snapshot output
+           //copy(snapshot()); //just method I used to see the snapshot output
 
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
-
-    public File fileChooser() {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setInitialFileName(this.activeTimeline.getName().replaceAll("\\s+", "_") + ".png"); //We will add read format from dropdown or use png
-        fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("All Images", "*.jpg", "*.jpeg", "*.png", "*.bmp", "*.gif", "*.wbmp"),
-                new FileChooser.ExtensionFilter("JPG", "*.jpg"),
-                new FileChooser.ExtensionFilter("JPEG", "*.jpeg"),
-                new FileChooser.ExtensionFilter("PNG", "*.png"),
-                new FileChooser.ExtensionFilter("BMP", "*.bmp"),
-                new FileChooser.ExtensionFilter("GIF", "*.gif"),
-                new FileChooser.ExtensionFilter("WBMP", "*.wbmp")
-        );
-
-        //Show save file dialog
-        File file = fileChooser.showSaveDialog(GUIManager.mainStage);
-        return file;
-    }
-
-    //Just a placeholder method that creates a image of the snapshot
-    public void copy(WritableImage temp) throws IOException {
-        BufferedImage fromFXImage = SwingFXUtils.fromFXImage(temp, null);
-        System.out.println(fromFXImage.getHeight() + " and width is " + fromFXImage.getWidth());
-        ImageIO.write(fromFXImage, "PNG", fileChooser());
-    }  //Printed under Project folder not images*/
-
 
     private void scrollHandler(ScrollEvent event) {
         final double scaleFactor = 1.2;
@@ -284,7 +309,6 @@ public class TimelineView {
                 mainScrollPane.setHvalue(mainScrollPane.getHvalue() - e.getDeltaY() / mainScrollPane.getWidth());
             }*/
     }
-}
 
     //Just a placeholder method that creates a image of the snapshot
     public void copy(WritableImage temp) throws IOException {
@@ -297,6 +321,57 @@ public class TimelineView {
 
 
 
+
+    /*
+    public File fileChooser() {
+        FileChooser fileChooser = new FileChooser();
+        String format = ".png";
+
+        fileChooser.setInitialFileName(activeTimeline.getName().replaceAll("\\s+", "_") + format); //We will add read format from dropdown or use png
+        fileChooser.getExtensionFilters().addAll( //keep all formats now, easy to add to the popup
+                new FileChooser.ExtensionFilter("All Images", "*.jpg", "*.jpeg", "*.png", "*.bmp", "*.gif", "*.wbmp"),
+                new FileChooser.ExtensionFilter("JPG", "*.jpg"),
+                new FileChooser.ExtensionFilter("JPEG", "*.jpeg"),
+                new FileChooser.ExtensionFilter("PNG", "*.png"),
+                new FileChooser.ExtensionFilter("BMP", "*.bmp"),
+                new FileChooser.ExtensionFilter("GIF", "*.gif"),
+                new FileChooser.ExtensionFilter("WBMP", "*.wbmp")
+        );
+        //Show save file dialog
+        File file = fileChooser.showSaveDialog(GUIManager.mainStage);
+        return file;
+    }
+
+
+        //Just a placeholder method that creates a image of the snapshot
+    public void copy(WritableImage temp) throws IOException {
+        BufferedImage fromFXImage = SwingFXUtils.fromFXImage(temp, null);
+        System.out.println(fromFXImage.getHeight() + " and width is " + fromFXImage.getWidth());
+
+        // Calculate height width , offset
+        int width = fromFXImage.getWidth();
+        int height = fromFXImage.getHeight() ;
+        int height2 = (int) (height * 1.20);
+        int offset = (int) (height * 0.1);
+
+        // Create another image with new height & width
+        BufferedImage backImage = new BufferedImage( width, height2, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g = backImage.createGraphics();
+
+        // Am setting the color to black to distinguish , otherwise it can be set to Color.white
+        g.setColor(Color.white);
+        // Fill hte background with color
+        g.fillRect(0, 0, width , height2);
+        // Now overlay with image from offset
+        g.drawImage(fromFXImage,0,offset,null);
+        // write to the file
+        ImageIO.write(backImage, "PNG", fileChooser() );
+        System.out.println(backImage.getHeight() + " and width is " + backImage.getWidth());
+        g.dispose();
+    }*/
+
+
+}
 
 
 

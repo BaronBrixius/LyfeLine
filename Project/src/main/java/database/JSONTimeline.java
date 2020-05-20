@@ -139,19 +139,19 @@ public class JSONTimeline {
             stmt.setString(2, eventToImport.getName());
             stmt.setString(3, eventToImport.getDescription());
             stmt.setInt(4, eventToImport.getStartDate().getYear());
-            stmt.setInt(5, eventToImport.getStartDate().getMonth());
-            stmt.setInt(6, eventToImport.getStartDate().getDay());
+            stmt.setInt(5, eventToImport.getStartDate().getMonthValue());
+            stmt.setInt(6, eventToImport.getStartDate().getDayOfMonth());
             stmt.setInt(7, eventToImport.getStartDate().getHour());
             stmt.setInt(8, eventToImport.getStartDate().getMinute());
             stmt.setInt(9, eventToImport.getStartDate().getSecond());
-            stmt.setInt(10, eventToImport.getStartDate().getMillisecond());
+            stmt.setInt(10, eventToImport.getStartDate().getNano());
             stmt.setInt(11, eventToImport.getEndDate().getYear());
-            stmt.setInt(12, eventToImport.getEndDate().getMonth());
-            stmt.setInt(13, eventToImport.getEndDate().getDay());
+            stmt.setInt(12, eventToImport.getEndDate().getMonthValue());
+            stmt.setInt(13, eventToImport.getEndDate().getDayOfMonth());
             stmt.setInt(14, eventToImport.getEndDate().getHour());
             stmt.setInt(15, eventToImport.getEndDate().getMinute());
             stmt.setInt(16, eventToImport.getEndDate().getSecond());
-            stmt.setInt(17, eventToImport.getEndDate().getMillisecond());
+            stmt.setInt(17, eventToImport.getEndDate().getNano()*1000000);
 
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
