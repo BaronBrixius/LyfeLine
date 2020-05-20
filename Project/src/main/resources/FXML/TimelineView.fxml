@@ -1,18 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.Group?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
-<?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.layout.StackPane?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
-<BorderPane fx:id="mainBorderPane" prefHeight="900.0" prefWidth="1580.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.TimelineView">
+<BorderPane fx:id="mainBorderPane" prefHeight="900.0" prefWidth="1580.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.TimelineView">
     <fx:define>
         <fx:include fx:id="eventSelector" source="EventSelector.fxml" />
         <fx:include fx:id="eventEditor" source="EventEditor.fxml" />
@@ -38,7 +31,7 @@
                <children>
                   <Group>
                      <children>
-                            <GridPane fx:id="timelineGrid" alignment="CENTER" minHeight="300.0" minWidth="500.0" scaleShape="false" vgap="27.0">
+                            <GridPane fx:id="timelineGrid" alignment="CENTER" minHeight="300.0" minWidth="500.0" scaleShape="false" styleClass="root" vgap="27.0">
                                 <columnConstraints>
                                     <ColumnConstraints hgrow="SOMETIMES" minWidth="-Infinity" prefWidth="100.0" />
                                 </columnConstraints>
