@@ -144,7 +144,7 @@ for example:      buttonName.getStyleClass().add("smallButton");                
 
 }
 
-/*.button settings was making Date picker weird, so these are the default settings for it, slightly tweaked for consistency.*/
+/*.button settings was making LocalDateTime picker weird, so these are the default settings for it, slightly tweaked for consistency.*/
 .date-picker-popup .button {
     -fx-background-color: -fx-outer-border, -fx-inner-border, -fx-body-color;
     -fx-background-insets: 0, 1, 2;
@@ -274,6 +274,7 @@ for example:      buttonName.getStyleClass().add("smallButton");                
 .spinner .decrement-arrow-button .decrement-arrow {
     -fx-padding: 2 3 2 3;
 }
+
 .slider .axis{
     -fx-font-size: 7;
 }
@@ -315,11 +316,20 @@ for example:      buttonName.getStyleClass().add("smallButton");                
 	-fx-background-color: #1aa9cd;
 }
 
+.slider .axis > * {
+    -fx-opacity: 1 !important;
+}
+
+.slider:disabled .axis > * {
+    -fx-opacity: 1 !important;
+
+}
+
 /*Here is a list of useful CSS commands:
 -fx-text-fill: black; (sets text color)
 -fx-font-size: 1.5em; (sets text size)
 -fx-font-family: serif; (sets text font)
--fx-font-weight: bold; (sets hold bold the text is)
+-fx-font-weight: bold; (sets how bold the text is)
 -fx-font-style: italic; (sets text to be italic)
 -fx-background-color: black; (sets background color)
 -fx-border-color: black; (sets the color of the border for that object)

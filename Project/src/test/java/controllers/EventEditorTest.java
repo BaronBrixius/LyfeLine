@@ -18,10 +18,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.ApplicationExtension;
 import org.testfx.framework.junit5.Start;
-import utils.Date;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 
@@ -52,6 +52,7 @@ public class EventEditorTest {
         GUIManager.loggedInUser = new User();
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("../../classes/FXML/TimelineView.fxml"));
+        GUIManager.mainStage = stage;
         stage.setScene(new Scene(loader.load()));
         parent = loader.getController();
         parent.setActiveTimeline(DBM.getFromDB(DBM.conn.prepareStatement("SELECT * FROM timelines LIMIT 1"), new Timeline()).get(0));
@@ -189,7 +190,7 @@ public class EventEditorTest {
     void disableEndDateAndSave() throws InterruptedException {
         openEventFromSelector(1, true);
 
-        Date expected = sut.event.getStartDate();
+        LocalDateTime expected = sut.event.getStartDate();
         assertFalse(expected.compareTo(sut.event.getEndDate()) == 0);
 
         runLater(() -> {
@@ -277,7 +278,7 @@ public class EventEditorTest {
     void editStartDateAndSave() throws InterruptedException {
         openEventFromSelector(1, true);
         runLater(() -> {
-            Date readStart = new Date(sut.startInputs.get(0).getValue(), sut.startInputs.get(1).getValue(), sut.startInputs.get(2).getValue(),
+            LocalDateTime readStart = LocalDateTime.of(sut.startInputs.get(0).getValue(), sut.startInputs.get(1).getValue(), sut.startInputs.get(2).getValue(),
                     sut.startInputs.get(3).getValue(), sut.startInputs.get(4).getValue(), sut.startInputs.get(5).getValue(), sut.startInputs.get(6).getValue());
             assertTrue(readStart.compareTo(sut.event.getStartDate()) == 0);
         });
@@ -291,7 +292,7 @@ public class EventEditorTest {
             sut.startInputs.get(5).getValueFactory().setValue(59);
             sut.startInputs.get(6).getValueFactory().setValue(880);
 
-            Date readStart = new Date(sut.startInputs.get(0).getValue(), sut.startInputs.get(1).getValue(), sut.startInputs.get(2).getValue(),
+            LocalDateTime readStart = LocalDateTime.of(sut.startInputs.get(0).getValue(), sut.startInputs.get(1).getValue(), sut.startInputs.get(2).getValue(),
                     sut.startInputs.get(3).getValue(), sut.startInputs.get(4).getValue(), sut.startInputs.get(5).getValue(), sut.startInputs.get(6).getValue());
 
             assertFalse(readStart.compareTo(sut.event.getStartDate()) == 0);
@@ -300,7 +301,7 @@ public class EventEditorTest {
         runLater(() -> robot.clickOn(getDialogPane().lookupButton(ButtonType.OK)));
 
         runLater(() -> {
-            Date readStart = new Date(sut.startInputs.get(0).getValue(), sut.startInputs.get(1).getValue(), sut.startInputs.get(2).getValue(),
+            LocalDateTime readStart = LocalDateTime.of(sut.startInputs.get(0).getValue(), sut.startInputs.get(1).getValue(), sut.startInputs.get(2).getValue(),
                     sut.startInputs.get(3).getValue(), sut.startInputs.get(4).getValue(), sut.startInputs.get(5).getValue(), sut.startInputs.get(6).getValue());
             assertTrue(readStart.compareTo(sut.event.getStartDate()) == 0);
         });
@@ -310,7 +311,7 @@ public class EventEditorTest {
     void editEndDateAndSave() throws InterruptedException {
         openEventFromSelector(1, true);
         runLater(() -> {
-            Date readEnd = new Date(sut.endInputs.get(0).getValue(), sut.endInputs.get(1).getValue(), sut.endInputs.get(2).getValue(),
+            LocalDateTime readEnd = LocalDateTime.of(sut.endInputs.get(0).getValue(), sut.endInputs.get(1).getValue(), sut.endInputs.get(2).getValue(),
                     sut.endInputs.get(3).getValue(), sut.endInputs.get(4).getValue(), sut.endInputs.get(5).getValue(), sut.endInputs.get(6).getValue());
             assertTrue(readEnd.compareTo(sut.event.getEndDate()) == 0);
         });
@@ -324,7 +325,7 @@ public class EventEditorTest {
             sut.endInputs.get(5).getValueFactory().setValue(34);
             sut.endInputs.get(6).getValueFactory().setValue(0);
 
-            Date readEnd = new Date(sut.endInputs.get(0).getValue(), sut.endInputs.get(1).getValue(), sut.endInputs.get(2).getValue(),
+            LocalDateTime readEnd = LocalDateTime.of(sut.endInputs.get(0).getValue(), sut.endInputs.get(1).getValue(), sut.endInputs.get(2).getValue(),
                     sut.endInputs.get(3).getValue(), sut.endInputs.get(4).getValue(), sut.endInputs.get(5).getValue(), sut.endInputs.get(6).getValue());
 
             assertFalse(readEnd.compareTo(sut.event.getEndDate()) == 0);
@@ -333,7 +334,7 @@ public class EventEditorTest {
         runLater(() -> robot.clickOn(getDialogPane().lookupButton(ButtonType.OK)));
 
         runLater(() -> {
-            Date readEnd = new Date(sut.endInputs.get(0).getValue(), sut.endInputs.get(1).getValue(), sut.endInputs.get(2).getValue(),
+            LocalDateTime readEnd = LocalDateTime.of(sut.endInputs.get(0).getValue(), sut.endInputs.get(1).getValue(), sut.endInputs.get(2).getValue(),
                     sut.endInputs.get(3).getValue(), sut.endInputs.get(4).getValue(), sut.endInputs.get(5).getValue(), sut.endInputs.get(6).getValue());
             assertTrue(readEnd.compareTo(sut.event.getEndDate()) == 0);
         });
