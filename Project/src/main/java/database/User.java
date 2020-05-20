@@ -49,12 +49,12 @@ public class User implements DBObject<User> {
         return this.userEmail;
     }
 
-    public int getUserID(){
+    public int getID() {
         return userID;
     }
 
-    public boolean toggleAdmin(){
-        admin=!admin;
+    public boolean toggleAdmin() {
+        admin = !admin;
         return admin;
     }
 
@@ -75,7 +75,7 @@ public class User implements DBObject<User> {
         this.admin = admin;
     }
 
-    public boolean getAdmin(){
+    public boolean getAdmin() {
         return this.admin;
     }
 
@@ -90,7 +90,7 @@ public class User implements DBObject<User> {
 
 
     public String getUserName() { //Not sure about this one
-        return  this.userName;
+        return this.userName;
     }
 
 
@@ -110,38 +110,26 @@ public class User implements DBObject<User> {
         return new User(userID, name, email, encryptedPass, salt, admin);
     }
 
-
     @Override
     public PreparedStatement getInsertQuery() throws SQLException {
-        if (userID > 0)
-            throw new SQLIntegrityConstraintViolationException("User is already in DB.");
-
-        PreparedStatement out = DBM.conn.prepareStatement("INSERT INTO `users` (`UserName`, `UserEmail`, `Password`, `Salt`, `Admin`) VALUES (?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
-        out.setString(1, userName);
-        out.setString(2, userEmail);
-        out.setString(3, encryptedPass);
-        out.setString(4, salt);
-        out.setBoolean(5, admin);
-        return out;
-    }
-
-    @Override
-    public void setID(int id) {
-        this.userID = id;
+        return DBM.conn.prepareStatement("INSERT INTO `users` (`UserName`, `UserEmail`, `Password`, `Salt`, `Admin`) VALUES (?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
     }
 
     @Override
     public PreparedStatement getUpdateQuery() throws SQLException {
-        if (userID == 0)
-            throw new SQLDataException("User not in database cannot be updated.");
-        PreparedStatement out = DBM.conn.prepareStatement("UPDATE `users` SET `UserName` = ?, `UserEmail` = ?, `Password` = ?, `Salt` = ?, `Admin` = ? WHERE (`UserID` = ?)");
-        out.setString(1, userName);
-        out.setString(2, userEmail);
-        out.setString(3, encryptedPass);
-        out.setString(4, salt);
-        out.setBoolean(5, admin);
-        out.setInt(6, userID);
-        return out;
+        return DBM.conn.prepareStatement("UPDATE `users` SET `UserName` = ?, `UserEmail` = ?, `Password` = ?, `Salt` = ?, `Admin` = ? WHERE (`UserID` = ?)");
+    }
+
+    @Override
+    public PreparedStatement setQueryValues(PreparedStatement stmt) throws SQLException {
+        stmt.setString(1, userName);
+        stmt.setString(2, userEmail);
+        stmt.setString(3, encryptedPass);
+        stmt.setString(4, salt);
+        stmt.setBoolean(5, admin);
+        if (userID > 0)
+            stmt.setInt(6, userID);
+        return stmt;
     }
 
     @Override
@@ -154,26 +142,32 @@ public class User implements DBObject<User> {
     }
 
     @Override
+    public void setID(int id) {
+        this.userID = id;
+    }
+
+    @Override
     public String toString() {
         return "User ID: " + userID + " Name: " + userName + " Email: " + userEmail;
     }
-    
+
     //getters for pass and salt
-    public String getEncrypted(){
+    public String getEncrypted() {
         return this.encryptedPass;
     }
-    public String getSalt(){
+
+    public String getSalt() {
         return this.salt;
     }
 
     //Two methods for junit test only - if I set private, have to learn how to mock them if possible
-    public String getEncryptedForTest(){ //This method only when I am testing the getInsertQuery() and getUpdateQuery()
+    public String getEncryptedForTest() { //This method only when I am testing the getInsertQuery() and getUpdateQuery()
         return this.encryptedPass;
     }
-    public String getSaltForTest(){
+
+    public String getSaltForTest() {
         return this.salt;
     }
 
-    
-    
+
 }

@@ -137,9 +137,9 @@ public class Dashboard {
         btnCreate.setVisible(GUIManager.loggedInUser.getAdmin());
         btnCreate.setDisable(!GUIManager.loggedInUser.getAdmin());
         btnEdit.setVisible(GUIManager.loggedInUser.getAdmin());
-        btnEdit.setDisable(list.getSelectionModel().isEmpty() || list.getSelectionModel().getSelectedItem().getOwnerID() != GUIManager.loggedInUser.getUserID());
+        btnEdit.setDisable(list.getSelectionModel().isEmpty() || list.getSelectionModel().getSelectedItem().getOwnerID() != GUIManager.loggedInUser.getID());
         btnDelete.setVisible(GUIManager.loggedInUser.getAdmin());
-        btnDelete.setDisable(list.getSelectionModel().isEmpty() || list.getSelectionModel().getSelectedItem().getOwnerID() != GUIManager.loggedInUser.getUserID());
+        btnDelete.setDisable(list.getSelectionModel().isEmpty() || list.getSelectionModel().getSelectedItem().getOwnerID() != GUIManager.loggedInUser.getID());
         adminGUI.setVisible(GUIManager.loggedInUser.getAdmin());
         adminGUI.setDisable(!GUIManager.loggedInUser.getAdmin());
         timelineViewButton.setDisable(list.getSelectionModel().getSelectedItem() == null);
@@ -153,7 +153,7 @@ public class Dashboard {
             filteredTimelines.setPredicate(timeline -> timeline.getName().toLowerCase().contains(searchText.toLowerCase())
                     || timeline.getKeywords().stream().anyMatch(k -> k.toLowerCase().contains(searchText.toLowerCase())));
 
-        Predicate<Timeline> onlyPersonal = timeline -> timeline.getOwnerID() == GUIManager.loggedInUser.getUserID();
+        Predicate<Timeline> onlyPersonal = timeline -> timeline.getOwnerID() == GUIManager.loggedInUser.getID();
         if (cbOnlyViewPersonalLines.isSelected())
             filteredTimelines.setPredicate(onlyPersonal.and(filteredTimelines.getPredicate()));
         list.refresh();
@@ -313,7 +313,7 @@ public class Dashboard {
     @FXML
     public TimelineView createTimeline() {
         Timeline t = new Timeline();
-        t.setOwnerID(GUIManager.loggedInUser.getUserID());
+        t.setOwnerID(GUIManager.loggedInUser.getID());
         return openTimelineView(t, true);
     }
 
@@ -342,7 +342,7 @@ public class Dashboard {
     @FXML
     private void updateDisplays() {
         if (list.getSelectionModel().getSelectedItem() != null) {   //If a timeline is selected
-            if (list.getSelectionModel().getSelectedItem().getOwnerID() == GUIManager.loggedInUser.getUserID()) {
+            if (list.getSelectionModel().getSelectedItem().getOwnerID() == GUIManager.loggedInUser.getID()) {
                 btnDelete.setDisable(false);
                 btnEdit.setDisable(false);
             } else {

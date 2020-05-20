@@ -3,8 +3,6 @@ package controllers;
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
@@ -54,7 +52,7 @@ public class AdminRoleManager {
 				if (empty || item == null || item.getUserEmail() == null) {
 					setText(null);
 				} else {
-					setText("ID: " + item.getUserID() + " - " + item.getUserEmail());
+					setText("ID: " + item.getID() + " - " + item.getUserEmail());
 				}
 			}
 		});
@@ -80,10 +78,10 @@ public class AdminRoleManager {
 				userList.sort((t1, t2) -> (t2.getUserName().compareTo(t1.getUserName())));
 				break;
 			case 2:
-				userList.sort(Comparator.comparingInt(User::getUserID));
+				userList.sort(Comparator.comparingInt(User::getID));
 				break;
 			case 3:
-				userList.sort((t1, t2) -> (Integer.compare(t2.getUserID(), t1.getUserID())));
+				userList.sort((t1, t2) -> (Integer.compare(t2.getID(), t1.getID())));
 				break;
 			}
 		});

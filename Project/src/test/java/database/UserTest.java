@@ -149,7 +149,7 @@ class UserTest {
         DBM.updateInDB(users[1]); //Now I have updated the email for tester to lalli@hotmail.com, now I will call him by his userID and check if it is updated
         //Now I recreate that user and see if he has the new email
         PreparedStatement stmt1 = DBM.conn.prepareStatement("SELECT * FROM users  WHERE userID = ?");
-        stmt1.setInt(1, users[1].getUserID());
+        stmt1.setInt(1, users[1].getID());
         rs = stmt1.executeQuery();
         rs.next();
         users[1] = users[1].createFromDB(rs);
@@ -169,7 +169,7 @@ class UserTest {
         assertTrue(actualMessage.contains(expectedMessage));
 
         //Ended up comparing the strings from the PreparedStatement created with getInsertQuery and the one created manually by picking the fields from the same user
-        int userID = users[1].getUserID();
+        int userID = users[1].getID();
         String sql = "DELETE FROM `users` WHERE (`UserID` = " + userID + ")";
         PreparedStatement out = DBM.conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
         assertEquals(out.toString(), users[1].getDeleteQuery().toString());

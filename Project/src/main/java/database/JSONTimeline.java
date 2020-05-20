@@ -8,7 +8,6 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.PreparedStatement;
@@ -90,7 +89,7 @@ public class JSONTimeline {
             setOwnership(ownerID);
         else {                                  //otherwise add them to DB and pass newly generated ID to other objects
             importOwner();
-            setOwnership(owner.getUserID());
+            setOwnership(owner.getID());
         }
 
         importTimeline();

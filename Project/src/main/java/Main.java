@@ -20,11 +20,21 @@ class Main {
 
 
             //Makes a list of events from the DB and prints it
-            stmt = DBM.conn.prepareStatement("SELECT * FROM timelines");
-            List<Timeline> timelines = DBM.getFromDB(stmt, new Timeline());           //blank object so functional interface method can be accessed
+            stmt = DBM.conn.prepareStatement("SELECT * FROM events");
+            List<Event> events = DBM.getFromDB(stmt, new Event());           //blank object so functional interface method can be accessed
+
+            for (int i = 0; i < 7; i++) {
+                events.addAll(events);
+            }
 
 
-
+            for (Event t: events)
+                t.setID(0);
+            long before = System.currentTimeMillis();
+                DBM.insertIntoDB(events);
+            long after = System.currentTimeMillis();
+            System.out.println(after-before);
+/*
             Gson gson = new Gson();
             JSONTimeline exportable = new JSONTimeline(timelines.get(0));
             String out = gson.toJson(exportable);
@@ -38,7 +48,7 @@ class Main {
             JSONTimeline readJson = gson.fromJson(inFile.nextLine(), JSONTimeline.class);
             readJson.importToDB();
             inFile.close();
-
+*/
             //long before = System.currentTimeMillis();
 
             //for (int i = 0; i < 1000; i++) {

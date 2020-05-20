@@ -1,8 +1,6 @@
 package controllers;
 
-import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import database.DBM;
 import database.JSONTimeline;
 import database.Timeline;
@@ -18,7 +16,6 @@ import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.apache.commons.io.FileUtils;
-import utils.DateUtil;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
@@ -27,7 +24,6 @@ import java.io.*;
 import java.nio.charset.Charset;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -85,7 +81,7 @@ public class TimelineEditor extends Editor {
         this.timeline = timeline;
         itemInEditor = timeline;
         // Check if Admin
-        setOwner(GUIManager.loggedInUser.getUserID() == timeline.getOwnerID());
+        setOwner(GUIManager.loggedInUser.getID() == timeline.getOwnerID());
         return populateDisplay();
     }
 
