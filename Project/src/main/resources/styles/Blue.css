@@ -3,6 +3,7 @@
 /*.root applies to everything in a scene and overrides all other commands in this file. Use carefully.*/
 .root{
     -fx-background-color: #292991;
+    -fx-background-image: url("../images/swirly.gif");
 }
 
 /*Text applies to any free floating text (inc. TextField), does not apply to text in Buttons, etc.

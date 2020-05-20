@@ -426,7 +426,7 @@ for example:      buttonName.getStyleClass().add("smallButton");                
 	-fx-text-fill: white;
 }
 
-.listCellText .text{
+.listCellText .text {
 	-fx-stroke: black;
     -fx-effect: dropshadow(one-pass-box, black, 4, 0, 0, 0);
 }
