@@ -30,6 +30,7 @@ public class ImageExport {
 	public ImageView imageView;
 	private File filechooser;
 	private WritableImage image;
+	private WritableImage originalImage;
 	private Timeline activeTimeline;
 	private boolean logo, name, range, creator;
 	private String format;
@@ -43,13 +44,15 @@ public class ImageExport {
 	public void setUp(WritableImage image, Timeline activeTimeline) {
 		this.image = image;
 		this.activeTimeline = activeTimeline;
+		originalImage = image;
 		imageView.setImage(this.image);
 	}
 
 	// Executes when "Export" button is pressed in the pop-up
 	public void export(ActionEvent actionEvent) {
-		// fileChooser();
 		burnIn();
+		// fileChooser();
+
 	}
 
 	public void fileChooser() {
@@ -72,6 +75,11 @@ public class ImageExport {
 
 	}
 
+	public void burnImage(WritableImage burnedImage) {
+		this.image = burnedImage;
+		imageView.setImage(this.image);
+	}
+
 	private void burnIn() {
 		burnName();
 		burnRange();
@@ -81,62 +89,62 @@ public class ImageExport {
 
 	private void burnName() {
 		String text = activeTimeline.getName();
-		BufferedImage image = SwingFXUtils.fromFXImage(this.image, null);
-		int defaultFont = image.getHeight() / 15;
+		BufferedImage originalBuffer = SwingFXUtils.fromFXImage(this.image, null);
+		int defaultFont = originalBuffer.getHeight() / 15;
 		int font = defaultFont;
 
 		// determine image type and handle correct transparency
 		int imageType = "png".equalsIgnoreCase(format) ? BufferedImage.TYPE_INT_ARGB : BufferedImage.TYPE_INT_RGB;
-		BufferedImage burned = new BufferedImage(image.getWidth(), image.getHeight(), imageType);
+		BufferedImage burned = new BufferedImage(originalBuffer.getWidth(), originalBuffer.getHeight(), imageType);
 
 		// initializes necessary graphic properties
 		Graphics2D w = (Graphics2D) burned.getGraphics();
-		w.drawImage(image, 0, 0, null);
+		w.drawImage(originalBuffer, 0, 0, null);
 		w.setColor(Color.BLACK);
 		w.setFont(new Font(Font.SANS_SERIF, Font.BOLD, font));
 		FontMetrics fontMetrics = w.getFontMetrics();
 		Rectangle2D rect = fontMetrics.getStringBounds(text, w);
 
 		// calculate center of the image
-		int yPlacement = burned.getHeight() / 4;
+		int yPlacement = burned.getHeight() / 10;
 		int xPlacement = (burned.getWidth() - (int) rect.getWidth()) / 2;
 
 		// add text overlay to the image
 		w.drawString(text, xPlacement, yPlacement);
 		WritableImage imageBurned = SwingFXUtils.toFXImage(burned, null);
 		w.dispose();
-		setUp(imageBurned, activeTimeline);
+		burnImage(imageBurned);
 
 	}
 
 	private void burnRange() {
 		String text = DateUtil.ddmmyyToString(activeTimeline);
 
-		BufferedImage image = SwingFXUtils.fromFXImage(this.image, null);
-		int defaultFont = image.getHeight() / 30;
+		BufferedImage originalBuffer = SwingFXUtils.fromFXImage(this.image, null);
+		int defaultFont = originalBuffer.getHeight() / 30;
 		int font = defaultFont;
 
 		// determine image type and handle correct transparency
 		int imageType = "png".equalsIgnoreCase(format) ? BufferedImage.TYPE_INT_ARGB : BufferedImage.TYPE_INT_RGB;
-		BufferedImage burned = new BufferedImage(image.getWidth(), image.getHeight(), imageType);
+		BufferedImage burned = new BufferedImage(originalBuffer.getWidth(), originalBuffer.getHeight(), imageType);
 
 		// initializes necessary graphic properties
 		Graphics2D w = (Graphics2D) burned.getGraphics();
-		w.drawImage(image, 0, 0, null);
+		w.drawImage(originalBuffer, 0, 0, null);
 		w.setColor(Color.BLACK);
 		w.setFont(new Font(Font.SANS_SERIF, Font.BOLD, font));
 		FontMetrics fontMetrics = w.getFontMetrics();
 		Rectangle2D rect = fontMetrics.getStringBounds(text, w);
 
 		// calculate center of the image
-		int yPlacement = burned.getHeight() - burned.getHeight() / 4;
+		int yPlacement = (burned.getHeight() - burned.getHeight() / 30) - (int) rect.getHeight();
 		int xPlacement = (burned.getWidth() - (int) rect.getWidth()) / 2;
 
 		// add text overlay to the image
 		w.drawString(text, xPlacement, yPlacement);
 		WritableImage imageBurned = SwingFXUtils.toFXImage(burned, null);
 		w.dispose();
-		setUp(imageBurned, activeTimeline);
+		burnImage(imageBurned);
 
 	}
 
@@ -145,35 +153,34 @@ public class ImageExport {
 	}
 
 	private void burnCreator() {
-		
-		String text = "Made on LyfeLine by: " +GUIManager.loggedInUser.getUserName();
 
-		BufferedImage image = SwingFXUtils.fromFXImage(this.image, null);
-		int defaultFont = image.getHeight() / 30;
+		String text = "Made on LyfeLine by: " + GUIManager.loggedInUser.getUserName();
+
+		BufferedImage originalBuffer = SwingFXUtils.fromFXImage(this.image, null);
+		int defaultFont = originalBuffer.getHeight() / 30;
 		int font = defaultFont;
 
 		// determine image type and handle correct transparency
 		int imageType = "png".equalsIgnoreCase(format) ? BufferedImage.TYPE_INT_ARGB : BufferedImage.TYPE_INT_RGB;
-		BufferedImage burned = new BufferedImage(image.getWidth(), image.getHeight(), imageType);
+		BufferedImage burned = new BufferedImage(originalBuffer.getWidth(), originalBuffer.getHeight(), imageType);
 
 		// initializes necessary graphic properties
 		Graphics2D w = (Graphics2D) burned.getGraphics();
-		w.drawImage(image, 0, 0, null);
+		w.drawImage(originalBuffer, 0, 0, null);
 		w.setColor(Color.BLACK);
 		w.setFont(new Font(Font.SANS_SERIF, Font.BOLD, font));
 		FontMetrics fontMetrics = w.getFontMetrics();
 		Rectangle2D rect = fontMetrics.getStringBounds(text, w);
 
 		// calculate center of the image
-		int yPlacement = (burned.getHeight() - burned.getHeight() / 4) + (int) rect.getHeight();
+		int yPlacement = (burned.getHeight() - burned.getHeight() / 30);
 		int xPlacement = (burned.getWidth() - (int) rect.getWidth()) / 2;
 
 		// add text overlay to the image
 		w.drawString(text, xPlacement, yPlacement);
 		WritableImage imageBurned = SwingFXUtils.toFXImage(burned, null);
 		w.dispose();
-		setUp(imageBurned, activeTimeline);
-
+		burnImage(imageBurned);
 
 	}
 
