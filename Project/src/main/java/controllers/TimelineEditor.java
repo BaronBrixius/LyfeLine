@@ -1,6 +1,8 @@
 package controllers;
 
+import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import database.DBM;
 import database.JSONTimeline;
 import database.Timeline;
@@ -16,6 +18,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.apache.commons.io.FileUtils;
+import utils.DateUtil;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
@@ -24,6 +27,7 @@ import java.io.*;
 import java.nio.charset.Charset;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -372,8 +376,9 @@ public class TimelineEditor extends Editor {
             return;
 
         try {
+            Gson gson = JSONTimeline.getGson();
             JSONTimeline exportable = new JSONTimeline(parentController.activeTimeline);        //gather all relevant information about a timeline into one object
-            String outJSON = new Gson().toJson(exportable);                                     //convert that to JSON-formatted String
+            String outJSON = gson.toJson(exportable);                                     //convert that to JSON-formatted String
 
             FileUtils.writeStringToFile(outFile, outJSON, (Charset) null);                      //output
 
@@ -384,6 +389,5 @@ public class TimelineEditor extends Editor {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 }

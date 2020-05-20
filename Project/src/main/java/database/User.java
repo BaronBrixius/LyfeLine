@@ -7,8 +7,8 @@ import java.util.List;
 
 public class User implements DBObject<User> {
     private transient int userID = 0;
-    private String userName;
     private String userEmail;
+    private String userName;
     private String encryptedPass;
     private String salt;
     private boolean admin = false;

@@ -1,14 +1,20 @@
 package database;
 
+import com.google.gson.*;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonToken;
+import com.google.gson.stream.JsonWriter;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -16,10 +22,10 @@ import java.util.List;
 //Convenience class that gathers all relevant information about a timeline for easy JSON export/import
 public class JSONTimeline {
     private final Timeline timeline;            //Timelines hold their events in their own list, no need to duplicate here
-    private final String timelineImage;
-    private List<String> eventImages;
     private List<Rating> ratings;
     private User owner;
+    private final String timelineImage;
+    private List<String> eventImages;
 
     public JSONTimeline(Timeline timeline) {
         this.timeline = timeline;
@@ -151,7 +157,7 @@ public class JSONTimeline {
             stmt.setInt(14, eventToImport.getEndDate().getHour());
             stmt.setInt(15, eventToImport.getEndDate().getMinute());
             stmt.setInt(16, eventToImport.getEndDate().getSecond());
-            stmt.setInt(17, eventToImport.getEndDate().getNano()*1000000);
+            stmt.setInt(17, eventToImport.getEndDate().getNano() * 1000000);
 
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
@@ -259,6 +265,35 @@ public class JSONTimeline {
         for (int i = 0; i < timeline.getEventList().size(); i++) {
             timeline.getEventList().get(i).setOwnerID(ownerID);
         }
+    }
+
+
+    /////////JSON Serializers/Deserializers/////////////////
+    public static Gson getGson() {
+        return new GsonBuilder()
+                .setPrettyPrinting()
+                .registerTypeAdapter(LocalDateTime.class, getDateSerializer().nullSafe())
+                .setFieldNamingPolicy(FieldNamingPolicy.UPPER_CAMEL_CASE_WITH_SPACES)
+                .create();
+    }
+
+    public static TypeAdapter<LocalDateTime> getDateSerializer() {
+        return new TypeAdapter<>() {
+            @Override
+            public void write(JsonWriter jsonWriter, LocalDateTime localDateTime) throws IOException {
+                jsonWriter.value(localDateTime.toString());
+            }
+
+            @Override
+            public LocalDateTime read(JsonReader jsonReader) throws IOException {
+                if (jsonReader.peek() == JsonToken.NULL) {
+                    jsonReader.nextNull();
+                    return null;
+                }
+
+                return LocalDateTime.parse(jsonReader.nextString());
+            }
+        };
     }
 
     //Tiny private class to hold a rating with who rated it, email as identifier

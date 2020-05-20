@@ -1,6 +1,8 @@
 package controllers;
 
+import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import database.JSONTimeline;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -8,10 +10,14 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.stage.FileChooser;
+import org.apache.commons.io.FileUtils;
+import utils.DateUtil;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.time.LocalDateTime;
 import java.util.Scanner;
 
 public class TopMenu {
@@ -65,25 +71,23 @@ public class TopMenu {
     }
 
     @FXML
-    void importFromJSON() throws FileNotFoundException {
-        FileChooser chooser = new FileChooser();
-        chooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("JSON", "*.json"));
+    void importFromJSON() {
+        FileChooser chooser = new FileChooser();                                            //open FileChooser for user to pick import .json
+        chooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("JSON", "*.json"));
         File fileChosen = chooser.showOpenDialog(GUIManager.mainStage);
+
         try {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Information");
-            alert.setHeaderText("Look, Your file now in Database");
-            alert.setContentText("You can use it now :)");
+            String inJSON = FileUtils.readFileToString(fileChosen, (Charset) null);         //import Json from file
+            Gson gson = JSONTimeline.getGson();
+            JSONTimeline readJson = gson.fromJson(inJSON, JSONTimeline.class);              //parse Json with GSON object
+            readJson.importToDB();                                                          //add imported data to database
+
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);                           //inform user of success
+            alert.setTitle("File Import");
+            alert.setHeaderText("File has been successfully imported.");
             alert.showAndWait();
-        } catch (Exception e) {
-            e.printStackTrace();    //TODO better exception handling after dev work
+        } catch (IOException e) {
+            e.printStackTrace();     //TODO better exception handling after dev work
         }
-        Gson gson = new Gson();
-        File file = new File(String.valueOf(fileChosen));
-        Scanner inFile = new Scanner(file);
-        JSONTimeline readJson = gson.fromJson(inFile.nextLine(), JSONTimeline.class);
-        readJson.importToDB();
-        inFile.close();
     }
 }
