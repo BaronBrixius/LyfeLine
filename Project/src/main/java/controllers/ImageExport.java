@@ -28,15 +28,12 @@ public class ImageExport {
 	public ToggleGroup formatChoice;
 	public ImageView imageView;
 
-
-
 	private Timeline activeTimeline;
 	private WritableImage originalImage;
 
 	private File filechooser;
 	private WritableImage image;
-	private boolean logo, name, range, creator;
-    private String format;
+	private String format;
 
 	public void initialize() {
 	}
@@ -51,34 +48,33 @@ public class ImageExport {
 
 	// Executes when "Export" button is pressed in the pop-up
 	public void export(ActionEvent actionEvent) {
-		burnIn();
-		// fileChooser();
+
+		fileChooser();
 	}
 
-
 	public void cbNameClicked(ActionEvent actionEvent) {
+
+		burnIn();
 		System.out.println("hehe i got clicked");
 
-
 		// checks if the checkbox is selected. Use in if statements when burning in.
-//		if(cbName.isSelected()) {
-//
-//		}
+
 	}
 
 	public void cbRangeClicked(ActionEvent actionEvent) {
+		burnIn();
 		System.out.println("hehe i got clicked");
 	}
 
 	public void cbCreatorClicked(ActionEvent actionEvent) {
+		burnIn();
 		System.out.println("hehe i got clicked");
 	}
 
 	public void cbLogoClicked(ActionEvent actionEvent) {
+		burnIn();
 		System.out.println("hehe i got clicked");
 	}
-
-
 
 	public void fileChooser() {
 		FileChooser fileChooser = new FileChooser();
@@ -106,11 +102,23 @@ public class ImageExport {
 	}
 
 	private void burnIn() {
+		WritableImage temp = originalImage;
 
 		if (cbName.isSelected()) {
-
-		} else if (!cbLogo.isSelected() && !cbName.isSelected() && !cbRange.isSelected()) {
+			burnName();
+			
+		}
+		if (cbRange.isSelected()) {
+			burnRange();
+			
+		}
+		if (cbCreator.isSelected()) {
+			burnCreator();
+		
+		} else if (!cbCreator.isSelected() && !cbName.isSelected() && !cbRange.isSelected()) {
+			this.image = originalImage;
 			imageView.setImage(this.originalImage);
+
 		}
 
 	}
@@ -211,6 +219,5 @@ public class ImageExport {
 		burnImage(imageBurned);
 
 	}
-
 
 }
