@@ -14,6 +14,7 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
+import utils.DateUtil;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -21,6 +22,7 @@ import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.List;
 
 public class TimelineView {
     private final List<EventNode> eventList = new ArrayList<>();
@@ -59,7 +61,7 @@ public class TimelineView {
     }
 
     public boolean isZoomed() {
-        if (timelineGrid.getScaleX() != 1 & timelineGrid.getScaleX() >= 0.25)
+        if (timelineGrid.getScaleX() != 1 & timelineGrid.getScaleX() >= 0.1)
             return true;
         else
             return false;
@@ -93,7 +95,7 @@ public class TimelineView {
             Graphics2D g = backImage.createGraphics();
 
             // Am setting the color to black to distinguish , otherwise it can be set to Color.white
-            g.setColor(Color.white);
+            g.setColor(new Color(244, 244, 244));
             // Fill hte background with color
             g.fillRect(0, 0, width , height2);
             // Now overlay with image from offset
@@ -126,7 +128,7 @@ public class TimelineView {
         Graphics2D g = backImage.createGraphics();
 
         // Am setting the color to black to distinguish , otherwise it can be set to Color.white
-        g.setColor(Color.white);
+        g.setColor(new Color(244, 244, 244));
         // Fill hte background with color
         g.fillRect(0, 0, width , height2);
         // Now overlay with image from offset

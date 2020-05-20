@@ -41,7 +41,7 @@
          <Insets />
       </opaqueInsets>
    </VBox>
-   <Button fx:id="btnExport" layoutX="855.0" layoutY="564.0" onAction="#export" mnemonicParsing="false" scaleX="2.0" scaleY="2.0" styleClass="tinyButton" stylesheets="@../styles/DefaultStyle.css" text="Export" />
+   <Button fx:id="btnExport" layoutX="855.0" layoutY="564.0" mnemonicParsing="false" onAction="#export" scaleX="2.0" scaleY="2.0" styleClass="tinyButton" stylesheets="@../styles/DefaultStyle.css" text="Export" />
    <RadioButton fx:id="rdbtnPng" layoutX="822.0" layoutY="518.0" mnemonicParsing="false" selected="true" text="png">
       <toggleGroup>
          <ToggleGroup fx:id="format" />

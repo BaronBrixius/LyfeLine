@@ -386,4 +386,5 @@ public class Timeline extends TimelineObject<Timeline> {
         return this.timelineID == other.timelineID;
 
     }
+    
 }
