@@ -1,18 +1,32 @@
 package controllers;
 
+import database.DBM;
 import database.Timeline;
 import database.User;
+import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class TimelineCell {
 
+    @FXML
+    Button cellEditTimelineButton;
+    @FXML
+    Button cellDeleteTimelineButton;
+    @FXML
+    Button cellViewTimelineButton;
+    @FXML
+    VBox cellButtonBox;
     @FXML
     GridPane pane;
     @FXML
@@ -27,7 +41,9 @@ public class TimelineCell {
     Label author;
     List<Polygon> ratingButtons;
     Timeline timeline;
-    User user;
+    protected FilteredList<Timeline> filteredTimelines;
+    protected ListView<Timeline> list;
+    protected User user;
     boolean focused = false;
 
     public void initialize() {
@@ -44,6 +60,8 @@ public class TimelineCell {
             colorStarsByRating((int) Math.ceil(timeline.getRating()));  //return highlighting to normal
             ratingBox.setOpacity((timeline.getRating() > 1) ? 1 : 0);
         });
+        pane.getChildren().remove(cellButtonBox);
+        ratingBox.setDisable(true);
     }
 
     private void setupRatingButton(Polygon button, int index) {
@@ -125,7 +143,52 @@ public class TimelineCell {
     public void setBGImage() {
         String imageURL = timeline.getImagePath() != null ? "url(file:" + timeline.getImagePath() + ")" : null;
         int height = focused ? 400 : 80;
-        pane.setStyle(" -fx-background-image: " + imageURL + "; -fx-pref-height: " + height + "px; -fx-background-size: 1271px, stretch;");
+        pane.setStyle(" -fx-background-image: " + imageURL + "; -fx-pref-width: 1200px; -fx-pref-height: " + height + "px; -fx-background-size: 1270px, stretch;");
     }
 
+    @FXML
+    public boolean deleteTimeline() {
+        Alert confirmDeleteTimeline = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmDeleteTimeline.setTitle("Confirm Deletion");
+        confirmDeleteTimeline.setHeaderText("Are you sure you want to delete " + timeline.getName() + "?");
+        confirmDeleteTimeline.setContentText("This can not be undone.");
+
+        Optional<ButtonType> result = confirmDeleteTimeline.showAndWait();
+
+        if (result.get() == ButtonType.CANCEL)
+            return false;
+        else {
+            try {
+                timeline.deleteOrphans();
+                DBM.deleteFromDB(timeline);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            filteredTimelines.getSource().remove(timeline);
+            list.getSelectionModel().select(0);
+            return true;
+        }
+    }
+
+    @FXML
+    public TimelineView editTimeline() {
+        return openTimelineView(true);
+    }
+
+    @FXML
+    public TimelineView openTimeline() {
+        return openTimelineView(false);
+    }
+
+    private TimelineView openTimelineView(boolean editable) {
+        try {
+            TimelineView timelineView = GUIManager.swapScene("TimelineView");
+            timelineView.setActiveTimeline(timeline);
+            timelineView.timelineEditorController.toggleEditable(editable);
+            return timelineView;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }

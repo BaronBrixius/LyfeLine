@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 import org.apache.commons.io.FileUtils;
@@ -514,10 +513,10 @@ public class DashboardTest {
 
         reinitializeDashboard();
 
-        //Select the first timeline in the list that has an owner ID of the logged in user
-        sut.list.getSelectionModel().select(sut.list.getItems().stream().filter(t -> t.getOwnerID() == loginUserID).findFirst().get());
-
         Platform.runLater(() -> {
+            //Select the first timeline in the list that has an owner ID of the logged in user
+            sut.list.getSelectionModel().select(sut.list.getItems().stream().filter(t -> t.getOwnerID() == loginUserID).findFirst().get());
+
             TimelineView testView = sut.editTimeline();
             assertTrue(testView.timelineEditorController.editable); //Makes sure that the edit timeline screen starts in edit mode.
 
@@ -550,6 +549,7 @@ public class DashboardTest {
             expectedString = "None";
             assertEquals(expectedString, actualString);
         });
+
         waitForRunLater();
     }
 

@@ -3,16 +3,13 @@ package controllers;
 import database.DBM;
 import database.Timeline;
 import javafx.beans.Observable;
-import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableArray;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
@@ -33,6 +30,7 @@ public class Dashboard {
     public Label KeywordLabel;
     public Label RatingLabel;
     public StackPane stack;
+    public ScrollPane listScrollPane;
     @FXML
     protected Button timelineViewButton;
     @FXML
@@ -77,9 +75,9 @@ public class Dashboard {
     protected Hyperlink AdvancedSearch;
     @FXML
     ImageView fullPicture;
-    private Timeline activeTimeline;
-    private FilteredList<Timeline> filteredTimelines;
-    private SortedList<Timeline> sortedTimelines;
+    protected Timeline activeTimeline;
+    protected FilteredList<Timeline> filteredTimelines;
+    protected SortedList<Timeline> sortedTimelines;
 
     public void initialize() {
         //Set Up the Spinners for Start/End Inputs, would have bloated the .fxml and variable list a ton if these were in fxml
@@ -161,6 +159,8 @@ public class Dashboard {
         if (cbOnlyViewPersonalLines.isSelected())
             filteredTimelines.setPredicate(onlyPersonal.and(filteredTimelines.getPredicate()));
         list.refresh();
+        list.getSelectionModel().select(0);
+        list.setPrefHeight((list.getItems().size() * 87) +  340);
     }
 
     @FXML
@@ -169,6 +169,8 @@ public class Dashboard {
         try {
             List<Integer> listOfIDs = parseResultsForAdvancedSearch(data);
             filteredTimelines.setPredicate(timeline -> listOfIDs.contains(timeline.getID()));
+            list.getSelectionModel().select(0);
+            list.setPrefHeight((list.getItems().size() * 87) +  340);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -271,12 +273,14 @@ public class Dashboard {
 
     @FXML
     public void clearAdvancedSearch() {
+        Timeline currentlySelectedTimeline = list.getSelectionModel().getSelectedItem();
         searchTimelineName.clear();
         searchCreator.clear();
         searchKeywords.clear();
         searchInput.clear();
         cbOnlyViewPersonalLines.setSelected(false);
         filteredTimelines.setPredicate(t -> true);
+        list.getSelectionModel().select(currentlySelectedTimeline);
     }
 
     public void sortTimelines() {
@@ -332,8 +336,11 @@ public class Dashboard {
 
     @FXML
     private void updateDisplays() {
+        list.setPrefHeight((list.getItems().size() * 87) +  340);
         if (list.getSelectionModel().getSelectedItem() != null) {   //If a timeline is selected
-            list.scrollTo(list.getSelectionModel().getSelectedIndex() - 1);
+
+            listScrollPane.setVvalue((87 / ((87 * ((double)list.getItems().size())) - 255)) * (list.getSelectionModel().getSelectedIndex() - 1));
+
             if (list.getSelectionModel().getSelectedItem().getOwnerID() == GUIManager.loggedInUser.getUserID()) {
                 btnDelete.setDisable(false);
                 btnEdit.setDisable(false);
@@ -342,6 +349,7 @@ public class Dashboard {
                 btnEdit.setDisable(true);
             }
             timelineViewButton.setDisable(false);
+
         } else {        //If a timeline is not selected
             timelineViewButton.setDisable(true);
             btnDelete.setDisable(true);
@@ -349,19 +357,18 @@ public class Dashboard {
         }
     }
 
-    private void setupTimeInputStartAndEnd(String timeSpinnerLabel, int minValue, int maxValue, int column, int row,
-                                           int index) {    //applies equivalent setups to both start and end spinners
+    //applies equivalent setups to both start and end spinners
+    private void setupTimeInputStartAndEnd(String timeSpinnerLabel, int minValue, int maxValue, int column, int row, int index) {
         setupTimeInput(timeSpinnerLabel, minValue, maxValue, column, row, startInputs, startDates, index);
         setupTimeInput(timeSpinnerLabel, minValue, maxValue, column, row, endInputs, endDates, index);
     }
 
     //creates spinners to handle dates with appropriate min/max values and invalid input handling
-    private void setupTimeInput(String timeSpinnerLabel, int minValue, int maxValue, int column, int row, List<
-            Spinner<Integer>> spinnerList, GridPane spinnerDates, int index) {
+    private void setupTimeInput(String timeSpinnerLabel, int minValue, int maxValue, int column, int row, List<Spinner<Integer>> spinnerList, GridPane spinnerDates, int index) {
         SpinnerValueFactory.IntegerSpinnerValueFactory valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(minValue, maxValue, minValue) {
             @Override
             public void increment(int steps) {
-                super.increment(steps);                         //makes blank years pretend to be 0 when using buttons, by incrementing to 1 and decrementing to -1
+                super.increment(steps); //makes blank years pretend to be 0 when using buttons, by incrementing to 1 and decrementing to -1
                 if (getValue() == Integer.MIN_VALUE + 1)
                     setValue(1);
             }
@@ -373,7 +380,7 @@ public class Dashboard {
                     setValue(-1);
             }
         };
-        valueFactory.setConverter(new StringConverter<>() {                 //makes spinners revert to default values in case of invalid input
+        valueFactory.setConverter(new StringConverter<>() { //makes spinners revert to default values in case of invalid input
             @Override
             public String toString(Integer value) {     //called by spinner to update the displayed value in the box
                 if (value == null)
@@ -422,7 +429,7 @@ public class Dashboard {
     public boolean deleteConfirmation() {
         Alert confirmDeleteTimeline = new Alert(Alert.AlertType.CONFIRMATION);
         confirmDeleteTimeline.setTitle("Confirm Deletion");
-        confirmDeleteTimeline.setHeaderText("Are you sure you want to delete " + list.getSelectionModel().getSelectedItem().getName() + "?");
+        confirmDeleteTimeline.setHeaderText("Are you sure you want to delete " + activeTimeline.getName() + "?");
         confirmDeleteTimeline.setContentText("This can not be undone.");
 
         Optional<ButtonType> result = confirmDeleteTimeline.showAndWait();
@@ -431,13 +438,13 @@ public class Dashboard {
             return false;
         else {
             try {
-                list.getSelectionModel().getSelectedItem().deleteOrphans();
-                DBM.deleteFromDB(list.getSelectionModel().getSelectedItem());
+                activeTimeline.deleteOrphans();
+                DBM.deleteFromDB(activeTimeline);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-            filteredTimelines.getSource().remove(list.getSelectionModel().getSelectedItem());
-            list.getSelectionModel().select(null);
+            filteredTimelines.getSource().remove(activeTimeline);
+            list.getSelectionModel().select(0);
             return true;
         }
     }
@@ -468,12 +475,30 @@ public class Dashboard {
             } catch (IOException e) {
                 System.err.println("Could not load TimelineCell.fxml");
             }
+            cell.list = list;
+            cell.filteredTimelines = filteredTimelines;
 
             this.focusedProperty().addListener((observable, oldValue, newValue) -> {
                 cell.focused = newValue;
                 int height = newValue ? 400 : 100;
-                this.resize(1270, height);
+                this.resize(1200, height);
                 cell.setBGImage();
+                cell.ratingBox.setDisable(!newValue);
+
+                if (newValue)
+                {
+                    cell.pane.add(cell.cellButtonBox, 1, 0);
+
+                    if (cell.timeline.getOwnerID() == GUIManager.loggedInUser.getUserID()) {
+                        cell.cellDeleteTimelineButton.setDisable(false);
+                        cell.cellEditTimelineButton.setDisable(false);
+                    } else {
+                        cell.cellDeleteTimelineButton.setDisable(true);
+                        cell.cellEditTimelineButton.setDisable(true);
+                    }
+                }
+                else
+                    cell.pane.getChildren().remove(cell.cellButtonBox);
             });
         }
 
