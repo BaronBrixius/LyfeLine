@@ -3,41 +3,42 @@ package controllers;
 import database.Timeline;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.stage.FileChooser;
+import utils.DateUtil;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics2D;
+import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import utils.DateUtil;
-import javax.imageio.ImageIO;
 
 public class ImageExport {
-	public ChoiceBox choiceBoxAlignment;
 	public CheckBox cbName;
 	public CheckBox cbRange;
 	public CheckBox cbLogo;
+	public CheckBox cbCreator;
 	public Button btnExport;
 	public RadioButton rdbtnPng;
 	public RadioButton rdbtnJpeg;
 	public ToggleGroup formatChoice;
 	public ImageView imageView;
+
+
+
+	private Timeline activeTimeline;
+	private WritableImage originalImage;
+
 	private File filechooser;
 	private WritableImage image;
-	private WritableImage originalImage;
-	private Timeline activeTimeline;
 	private boolean logo, name, range, creator;
-	private String format;
+    private String format;
 
 	public void initialize() {
-		choiceBoxAlignment.getItems().setAll("Top Left", "Top Right", "Bottom Left", "Bottom Right");
-		choiceBoxAlignment.getSelectionModel().select(0);
 	}
 
 	// Executes on startup (when export button is pressed when viewing a timeline)
@@ -52,8 +53,32 @@ public class ImageExport {
 	public void export(ActionEvent actionEvent) {
 		burnIn();
 		// fileChooser();
-
 	}
+
+
+	public void cbNameClicked(ActionEvent actionEvent) {
+		System.out.println("hehe i got clicked");
+
+
+		// checks if the checkbox is selected. Use in if statements when burning in.
+//		if(cbName.isSelected()) {
+//
+//		}
+	}
+
+	public void cbRangeClicked(ActionEvent actionEvent) {
+		System.out.println("hehe i got clicked");
+	}
+
+	public void cbCreatorClicked(ActionEvent actionEvent) {
+		System.out.println("hehe i got clicked");
+	}
+
+	public void cbLogoClicked(ActionEvent actionEvent) {
+		System.out.println("hehe i got clicked");
+	}
+
+
 
 	public void fileChooser() {
 		FileChooser fileChooser = new FileChooser();
@@ -183,5 +208,6 @@ public class ImageExport {
 		burnImage(imageBurned);
 
 	}
+
 
 }
