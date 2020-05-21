@@ -1,8 +1,10 @@
 import com.google.gson.Gson;
 import database.*;
+import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -20,34 +22,35 @@ class Main {
 
 
             //Makes a list of events from the DB and prints it
-            stmt = DBM.conn.prepareStatement("SELECT * FROM timelines");
-            List<Timeline> timelines = DBM.getFromDB(stmt, new Timeline());           //blank object so functional interface method can be accessed
+            //stmt = DBM.conn.prepareStatement("SELECT * FROM timelines");
+            //List<Timeline> timelines = DBM.getFromDB(stmt, new Timeline());           //blank object so functional interface method can be accessed
 
 
 
-            Gson gson = new Gson();
-            JSONTimeline exportable = new JSONTimeline(timelines.get(0));
-            String out = gson.toJson(exportable);
-            System.out.println(out + "\n");
-            File file = new File("jsonTest.json");
-            PrintWriter outFile = new PrintWriter(file);
-            outFile.println(out);
-            outFile.close();
+            //Gson gson = new Gson();
+            //JSONTimeline exportable = new JSONTimeline(timelines.get(0));
+            //String out = gson.toJson(exportable);
+            //System.out.println(out + "\n");
+            File file = new File("json.json");
+            //PrintWriter outFile = new PrintWriter(file);
+            //outFile.println(out);
+            //outFile.close();
+            Gson gson = JSONTimeline.getGson();
 
-            Scanner inFile = new Scanner(file);
-            JSONTimeline readJson = gson.fromJson(inFile.nextLine(), JSONTimeline.class);
-            readJson.importToDB();
-            inFile.close();
 
-            //long before = System.currentTimeMillis();
+            JSONTimeline readJson = gson.fromJson(FileUtils.readFileToString(file, (String)null), JSONTimeline.class);
+            //readJson.importToDB();
 
-            //for (int i = 0; i < 1000; i++) {
-            //    readJson.importRatings();
-            //}
 
-            //long after = System.currentTimeMillis();
+            long before = System.currentTimeMillis();
 
-            //System.out.println(after-before);
+            for (int i = 0; i < 1000; i++) {
+                readJson.importRatings();
+            }
+
+            long after = System.currentTimeMillis();
+
+            System.out.println(after-before);
 /*
             //Makes a list of event years from the DB and prints it
             //note: you can just prepare a statement right in the method parameters if there aren't any field values that need to be set
@@ -113,6 +116,8 @@ class Main {
 
 
         } catch (SQLException | ClassNotFoundException | FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
             e.printStackTrace();
         } finally {
             try {

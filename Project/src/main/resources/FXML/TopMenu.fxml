@@ -16,13 +16,16 @@
             <MenuItem mnemonicParsing="false" text="Edit Mode"/>
         </Menu>
         <Menu mnemonicParsing="false" text="View">
-            <MenuItem mnemonicParsing="false" text="View Mode"/>
-            <Menu mnemonicParsing="false" text="Style">
-                <items>
-                    <MenuItem mnemonicParsing="false" onAction="#styleDefaultPressed" text="Default"/>
-                    <MenuItem mnemonicParsing="false" onAction="#styleNonePressed" text="None"/>
-                </items>
-            </Menu>
+          <MenuItem mnemonicParsing="false" text="View Mode" />
+         <Menu mnemonicParsing="false" text="Theme">
+           <items>
+             <MenuItem mnemonicParsing="false" onAction="#styleDefaultPressed" text="Default" />
+               <MenuItem mnemonicParsing="false" onAction="#styleBeigePressed" text="Beige" />
+               <MenuItem mnemonicParsing="false" onAction="#styleBluePressed" text="Blue" />
+               <MenuItem mnemonicParsing="false" onAction="#styleDarkPressed" text="Dark" />
+               <MenuItem mnemonicParsing="false" onAction="#styleMaroonPressed" text="Maroon" />
+           </items>
+         </Menu>
         </Menu>
     </MenuBar>
     <MenuBar nodeOrientation="RIGHT_TO_LEFT" prefHeight="25.0" prefWidth="334.0" HBox.hgrow="SOMETIMES">

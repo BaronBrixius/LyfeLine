@@ -451,7 +451,7 @@ public class Dashboard {
         confirmDeleteTimeline.setTitle("Confirm Deletion");
         confirmDeleteTimeline.setHeaderText("Are you sure you want to delete " + list.getSelectionModel().getSelectedItem().getName() + "?");
         confirmDeleteTimeline.setContentText("This can not be undone.");
-
+        
         Optional<ButtonType> result = confirmDeleteTimeline.showAndWait();
 
         if (result.get() == ButtonType.CANCEL)

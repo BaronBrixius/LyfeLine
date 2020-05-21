@@ -11,6 +11,7 @@ public class User implements DBObject<User> {
     private String userName;
     private String encryptedPass;
     private String salt;
+    private String theme;
     private boolean admin = false;
 
     public User() {             //default object
@@ -23,11 +24,12 @@ public class User implements DBObject<User> {
         setPassword(password);
     }
 
-    private User(int userID, String name, String email, String encryptedPass, String salt, Boolean admin) {      //For reading from database only, don't use for new user creation
+    private User(int userID, String name, String email, String encryptedPass, String salt, Boolean admin, String theme) {      //For reading from database only, don't use for new user creation
         setID(userID);
         setUserName(name);
         setUserEmail(email);
         setAdmin(admin);
+        setTheme(theme);
         this.encryptedPass = encryptedPass;
         this.salt = salt;
     }
@@ -79,6 +81,13 @@ public class User implements DBObject<User> {
         return this.admin;
     }
 
+    public void setTheme(String theme) {
+    	this.theme = theme;
+    }
+    
+    public String getTheme() {
+    	return theme;
+    }
 
     public void setPassword(String pass) throws IllegalArgumentException {
         //We can split the regex down to be more specific in the error handling - no need for all possibilities, just one at a time.
@@ -106,8 +115,9 @@ public class User implements DBObject<User> {
         String encryptedPass = rs.getString("Password");
         String salt = rs.getString("Salt");
         boolean admin = rs.getBoolean("Admin");
+        String theme = rs.getString("Theme");
 
-        return new User(userID, name, email, encryptedPass, salt, admin);
+        return new User(userID, name, email, encryptedPass, salt, admin, theme);
     }
 
 
@@ -116,12 +126,13 @@ public class User implements DBObject<User> {
         if (userID > 0)
             throw new SQLIntegrityConstraintViolationException("User is already in DB.");
 
-        PreparedStatement out = DBM.conn.prepareStatement("INSERT INTO `users` (`UserName`, `UserEmail`, `Password`, `Salt`, `Admin`) VALUES (?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
+        PreparedStatement out = DBM.conn.prepareStatement("INSERT INTO `users` (`UserName`, `UserEmail`, `Password`, `Salt`, `Admin`, `Theme`) VALUES (?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
         out.setString(1, userName);
         out.setString(2, userEmail);
         out.setString(3, encryptedPass);
         out.setString(4, salt);
         out.setBoolean(5, admin);
+        out.setString(6, theme);
         return out;
     }
 
@@ -134,13 +145,14 @@ public class User implements DBObject<User> {
     public PreparedStatement getUpdateQuery() throws SQLException {
         if (userID == 0)
             throw new SQLDataException("User not in database cannot be updated.");
-        PreparedStatement out = DBM.conn.prepareStatement("UPDATE `users` SET `UserName` = ?, `UserEmail` = ?, `Password` = ?, `Salt` = ?, `Admin` = ? WHERE (`UserID` = ?)");
+        PreparedStatement out = DBM.conn.prepareStatement("UPDATE `users` SET `UserName` = ?, `UserEmail` = ?, `Password` = ?, `Salt` = ?, `Admin` = ?, `Theme` = ? WHERE (`UserID` = ?)");
         out.setString(1, userName);
         out.setString(2, userEmail);
         out.setString(3, encryptedPass);
         out.setString(4, salt);
         out.setBoolean(5, admin);
-        out.setInt(6, userID);
+        out.setString(6, theme);
+        out.setInt(7, userID);
         return out;
     }
 

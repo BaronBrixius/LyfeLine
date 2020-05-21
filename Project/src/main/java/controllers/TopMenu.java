@@ -39,8 +39,19 @@ public class TopMenu {
     }
 
     @FXML
-    void styleDefaultPressed() {
-        GUIManager.applyStyle("DefaultStyle");
+    public void styleDefaultPressed() {
+    	GUIManager.applyStyle("Default");
+    }
+    
+    @FXML
+    public void styleBeigePressed() {
+    	GUIManager.applyStyle("Beige");
+    }
+    
+    @FXML
+    public void styleBluePressed() {
+    	GUIManager.applyStyle("Blue");
+
     }
 
     @FXML
@@ -49,7 +60,18 @@ public class TopMenu {
     }
 
     @FXML
-    void updateLoggedInStatus() {
+
+    public void styleDarkPressed() {
+    	GUIManager.applyStyle("Dark");
+    }
+    
+    @FXML
+    public void styleMaroonPressed() {
+    	GUIManager.applyStyle("Maroon");
+    }
+    
+    @FXML
+    public void updateLoggedInStatus() {
         if (GUIManager.loggedInUser == null) {
             loggedInStatus.setText("Not logged in");
             loggedInStatus.setDisable(true);
@@ -63,6 +85,7 @@ public class TopMenu {
     void logOutPressed() {
         GUIManager.loggedInUser = null;
         updateLoggedInStatus();
+        GUIManager.applyStyle("Default");
         try {
             GUIManager.swapScene("Welcome");
         } catch (IOException e) {
