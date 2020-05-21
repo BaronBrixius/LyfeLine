@@ -6,7 +6,7 @@ import java.sql.*;
 import java.util.List;
 
 public class User implements DBObject<User> {
-    private int userID = 0;
+    private transient int userID = 0;
     private String userName;
     private String userEmail;
     private String encryptedPass;

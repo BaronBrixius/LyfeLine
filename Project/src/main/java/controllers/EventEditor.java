@@ -2,6 +2,7 @@ package controllers;
 
 import database.Event;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.util.StringConverter;
 
@@ -75,7 +76,6 @@ public class EventEditor extends Editor {
     }
 
     boolean setEvent(Event event) {
-        //parentController.eventEditorController.close();
         parentController.rightSidebar.getChildren().remove(editor);
         this.event = event;
         itemInEditor = event;
@@ -144,8 +144,8 @@ public class EventEditor extends Editor {
 
     @FXML
     boolean close() {
-        parentController.rightSidebar.getChildren().remove(editor);
-        parentController.rightSidebar.getChildren().add(editor);    //This moves the editor to the top of the stack pane
+        //parentController.rightSidebar.getChildren().remove(editor);
+        //parentController.rightSidebar.getChildren().add(editor);    //This moves the editor to the top of the stack pane
         if (event != null && hasChanges())
             if (closeConfirm())          //do you wanna save and exit or just exit?
             {

@@ -70,7 +70,7 @@ class TimelineTest {
 
 	// int TimeLineID, String TimelineName, String TimelineDescription, int Scale,
 	// String Theme,
-	// Date StartDate, Date Enddate, Date DateCreated, int TimelineOwner,
+	// LocalDateTime StartDate, LocalDateTime Enddate, LocalDateTime LocalDateTime Created, int TimelineOwner,
 	// List<String> keywords, List<Event> eventList
 
 	@Test

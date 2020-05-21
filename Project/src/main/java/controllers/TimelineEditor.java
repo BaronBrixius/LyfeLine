@@ -5,10 +5,14 @@ import database.Timeline;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
@@ -24,6 +28,7 @@ import java.util.Optional;
 public class TimelineEditor extends Editor {
 	private final ObservableList<String> keywords = FXCollections.observableArrayList();
 	public Timeline timeline;
+	public HBox keywordBox;
 	@FXML
 	ComboBox<String> timeInput;
 	@FXML
@@ -71,7 +76,7 @@ public class TimelineEditor extends Editor {
 
 	void toggleEditable(boolean editable) {
 		super.toggleEditable(editable);
-		keywordInput.setEditable(editable);
+		keywordBox.setDisable(!editable);
 		timeInput.setDisable(!editable);
 	}
 
@@ -338,4 +343,22 @@ public class TimelineEditor extends Editor {
         }
     }
 
+	@FXML
+	private void imageExport() throws IOException {
+		parentController.snapshot();
+
+		Stage imageExport = new Stage();
+		imageExport.setTitle("Export Image");
+		imageExport.initOwner(GUIManager.mainStage);         //These two lines make sure you can't click back to the Start Window,
+		imageExport.initModality(Modality.WINDOW_MODAL);     //so you can't have 10 Login Windows open at once.
+
+		FXMLLoader loader = new FXMLLoader(GUIManager.class.getResource("../FXML/ImageExport.fxml"));
+
+		imageExport.setScene(new Scene(loader.load()));
+		ImageExport imageExportObject = loader.getController();
+		imageExportObject.setUp(parentController.snapshot, parentController.activeTimeline);
+
+		imageExport.getScene().getStylesheets().add(GUIManager.mainStage.getScene().getStylesheets().get(0));
+		imageExport.show();
+	}
 }
