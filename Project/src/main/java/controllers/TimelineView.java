@@ -3,40 +3,46 @@ package controllers;
 import database.DBM;
 import database.Event;
 import database.Timeline;
+import javafx.collections.ObservableList;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
+import utils.DateUtil;
 
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.*;
 import java.util.List;
 
 public class TimelineView {
-
     private final List<EventNode> eventList = new ArrayList<>();
     public GridPane timelineGrid;
+    public ScrollPane mainScrollPane;
     public Timeline activeTimeline;
+    public WritableImage snapshot;
     public BorderPane mainBorderPane;
     public StackPane rightSidebar;
     public StackPane leftSidebar;
+    public StackPane centeringStack;
     @FXML
     TimelineEditor timelineEditorController;
     @FXML
     EventSelector eventSelectorController;
     @FXML
     EventEditor eventEditorController;
+    @FXML
+    ImageExport imageExportController;
     @FXML
     private Button backButton;
 
@@ -45,30 +51,99 @@ public class TimelineView {
         eventSelectorController.setParentController(this);
         eventEditorController.setParentController(this);
 
+
         leftSidebar.getChildren().add(timelineEditorController.editor);
         rightSidebar.getChildren().add(eventSelectorController.selector);
-        
-        ScrollPane mainScrollPane = (ScrollPane) mainBorderPane.getCenter();
-        mainScrollPane.setOnScroll(e -> {
-            timelineGrid.setScaleX(timelineGrid.getScaleX()*(1+e.getDeltaY()/200));     //if you want to do zoom you can start with this
-            timelineGrid.setScaleY(timelineGrid.getScaleY()*(1+e.getDeltaY()/200));     //it doesn't quite update the scrollbar/container size properly, and zooming in zooms slightly further than zooming out because of the 1+deltaY math (e.g. 0.8 * 1.2 = 0.96)
-            //setup horizontal scroll with mouse wheel
-            /*if (e.getDeltaX() == 0 && e.getDeltaY() != 0) {
-                mainScrollPane.setHvalue(mainScrollPane.getHvalue() - e.getDeltaY() / mainScrollPane.getWidth());
-            }*/
-        });
+
+        GUIManager.menu.export.setOnAction(e -> GUIManager.menu.exportToJSON(activeTimeline));
+        GUIManager.menu.showExportMenu(true);
+
+        centeringStack.addEventFilter(ScrollEvent.ANY, this::scrollHandler);
+    }
+
+    public boolean isZoomed() {
+        if (timelineGrid.getScaleX() != 1 & timelineGrid.getScaleX() >= 0.1)
+            return true;
+        else
+            return false;
+    }
+
+
+
+    public void snapshot() throws IOException {
+        SnapshotParameters snapShotparams = new SnapshotParameters();
+        Color c = Color.decode("#" + timelineGrid.getBackground().getFills().get(0).getFill().toString().substring(2,8)); //Read the current color used for Timelinegrid background (root style) (FOR THE BURN IN PADDING)
+        snapShotparams.setFill(timelineGrid.getBackground().getFills().get(0).getFill());  //Read the current color used for Timelinegrid background (root style) (IF EXTRA UNUSED ARE IN THE WRITABLE IMAGE)
+
+        if (isZoomed()) { //snapshot just the Scrollpane
+            mainScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+            WritableImage temp = mainScrollPane.snapshot(snapShotparams,
+                    new WritableImage((int) mainScrollPane.getLayoutBounds().getWidth(),
+                            (int) mainScrollPane.getLayoutBounds().getHeight()));
+            System.out.println(" zoom printout");
+
+            //Now create buffered image and add 10% padding on top and bottom
+            BufferedImage fromFXImage = SwingFXUtils.fromFXImage(temp, null);
+            System.out.println(fromFXImage.getHeight() + " and width is " + fromFXImage.getWidth());
+
+            // Calculate height width , offset
+            int width = fromFXImage.getWidth();
+            int height = fromFXImage.getHeight() ;
+            int height2 = (int) (height * 1.20);
+            int offset = (int) (height * 0.1);
+
+            // Create another image with new height & width
+            BufferedImage backImage = new BufferedImage( width, height2, BufferedImage.TYPE_INT_RGB);
+            Graphics2D g = backImage.createGraphics();
+
+            // Am setting the color to black to distinguish , otherwise it can be set to Color.white
+            g.setColor(c);
+            // Fill hte background with color
+            g.fillRect(0, 0, width , height2);
+            // Now overlay with image from offset
+            g.drawImage(fromFXImage,0,offset,null);
+            snapshot= SwingFXUtils.toFXImage(backImage, null);
+            System.out.println(backImage.getHeight() + " and width is " + backImage.getWidth());
+            g.dispose();
+            mainScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+            }
+
+
+        else{ //If not Zoomed or too much out zoom - snapshot the whole timeline
+        timelineGrid.setScaleX(1);
+        timelineGrid.setScaleY(1);
+        WritableImage  temp = timelineGrid.snapshot(snapShotparams,
+                    new WritableImage((int) timelineGrid.getLayoutBounds().getWidth(),
+                            (int) timelineGrid.getLayoutBounds().getHeight()));
+        System.out.println("No zoom printout" + " and height is: " + temp.getHeight() + " and width is: " + temp.getWidth());
+
+        //Now create buffered image and add 10% padding on top and bottom
+        BufferedImage fromFXImage = SwingFXUtils.fromFXImage(temp, null);
+        System.out.println(fromFXImage.getHeight() + " and width is " + fromFXImage.getWidth());
+
+        // Calculate height width , offset
+        int width = fromFXImage.getWidth();
+        int height = fromFXImage.getHeight() ;
+        // int height2 = (int) (height * 1.20);
+        int offset = (int) (height * 0.1);
+
+        // Create another image with new height & width
+        BufferedImage backImage = new BufferedImage( width, height, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g = backImage.createGraphics();
+
+        // Am setting the color to black to distinguish , otherwise it can be set to Color.white
+        g.setColor(c);
+        // Fill hte background with color
+        g.fillRect(0, 0, width , height);
+        // Now overlay with image from offset
+        g.drawImage(fromFXImage,0,offset,null);
+        System.out.println(backImage.getHeight() + " and width is " + backImage.getWidth());
+        snapshot= SwingFXUtils.toFXImage(backImage, null);
+        g.dispose();}
     }
 
     public List<EventNode> getEventList() {
         return eventList;
-    }
-
-    public void goBackButton() {
-        try {
-            GUIManager.swapScene("Dashboard");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     // Call this method when swapping scenes
@@ -107,7 +182,7 @@ public class TimelineView {
     Pane setupMainLine() {
         Pane mainLine = new Pane();
         mainLine.getStyleClass().add("timeline");
-        int numberOfCol = activeTimeline.getStartDate().distanceTo(activeTimeline.getEndDate(), activeTimeline.getScale());
+        int numberOfCol = DateUtil.distanceBetween(activeTimeline.getStartDate(), activeTimeline.getEndDate(), activeTimeline.getScale());
         int start = 1, frequency = 1;
 
         switch (activeTimeline.getScale()) {
@@ -140,7 +215,7 @@ public class TimelineView {
         return mainLine;
     }
 
-    private void setupEventNodes(){
+    private void setupEventNodes() {
         eventList.clear();
         EventNode newNode;
         for (Event e : activeTimeline.getEventList()) {
@@ -192,11 +267,104 @@ public class TimelineView {
         rightSidebar.getChildren().add(eventSelectorController.selector);
     }
 
-    public void returnToDashboard() {
+    public void returnToDashboard() throws IOException {
         try {
             GUIManager.swapScene("Dashboard");
+           //copy(snapshot()); //just method I used to see the snapshot output
+
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
+    private void scrollHandler(ScrollEvent event) {
+        final double scaleFactor = 1.2;
+
+        double oldScale = timelineGrid.getScaleX();
+        double newScale = event.getDeltaY() > 0 ? oldScale * scaleFactor : oldScale / scaleFactor;  //calculate new scale based on old
+        if (newScale > 100)                                                         //max zoom is 100x
+            newScale = 100;
+        if (newScale < .001)                                                        //min zoom is 1/100x
+            newScale = .001;    //TODO ask client if he's sure he wants no minimum zoom, even at this point each bar is less than a pixel tall, i.e. invisible
+
+
+        double hMousePosition = (event.getX() / centeringStack.getWidth());               //record mouse position for "zoom to mouse"
+        double vMousePosition = (event.getY() / centeringStack.getHeight());
+
+        double adjustedHValue = mainScrollPane.getHvalue() * oldScale / newScale    //snapshot scrollbar positions before resizing moves them
+                + hMousePosition * (1 - oldScale / newScale);                       //adjust snapshots based on mouse position, weighted average of old position and mouse position,
+        double adjustedVValue = mainScrollPane.getVvalue() * oldScale / newScale    //while zooming in, old position is ~83% weight (1/1.2) and mouse position is ~17% (1-(1/1.2)) (assuming scaleFactor is still 1.2)
+                + vMousePosition * (1 - oldScale / newScale);                       //while "zooming out away from mouse", mouse position is applied negatively. original position is 120% weight and mouse position is -20%
+
+        timelineGrid.setScaleX(newScale);                                           //apply scaling/zooming
+        timelineGrid.setScaleY(newScale);
+
+        mainScrollPane.layout();                                                    //update contents based on new scale, which jumps the view around
+
+        mainScrollPane.setHvalue(adjustedHValue);                                   //apply (adjusted) snapshots of scrollbar positions, overriding the above jumping
+        mainScrollPane.setVvalue(adjustedVValue);
+
+        event.consume();                                                            //consume the mouse event to prevent normal scrollbar functions
+    }
+
+    private void horizontalScroll(ScrollEvent scrollEvent) {    //might wanna add this back in when user is holding a button
+
+        //setup horizontal scroll with mouse wheel
+            /*if (e.getDeltaX() == 0 && e.getDeltaY() != 0) {
+                mainScrollPane.setHvalue(mainScrollPane.getHvalue() - e.getDeltaY() / mainScrollPane.getWidth());
+            }*/
+    }
+
+
+
+
+    /*
+    public File fileChooser() {
+        FileChooser fileChooser = new FileChooser();
+        String format = ".png";
+
+        fileChooser.setInitialFileName(activeTimeline.getName().replaceAll("\\s+", "_") + format); //We will add read format from dropdown or use png
+        fileChooser.getExtensionFilters().addAll( //keep all formats now, easy to add to the popup
+                new FileChooser.ExtensionFilter("All Images", "*.jpg", "*.jpeg", "*.png", "*.bmp", "*.gif", "*.wbmp"),
+                new FileChooser.ExtensionFilter("JPG", "*.jpg"),
+                new FileChooser.ExtensionFilter("JPEG", "*.jpeg"),
+                new FileChooser.ExtensionFilter("PNG", "*.png"),
+                new FileChooser.ExtensionFilter("BMP", "*.bmp"),
+                new FileChooser.ExtensionFilter("GIF", "*.gif"),
+                new FileChooser.ExtensionFilter("WBMP", "*.wbmp")
+        );
+        //Show save file dialog
+        File file = fileChooser.showSaveDialog(GUIManager.mainStage);
+        return file;
+    }
+
+
+        //Just a placeholder method that creates a image of the snapshot
+    public void copy(WritableImage temp) throws IOException {
+        BufferedImage fromFXImage = SwingFXUtils.fromFXImage(temp, null);
+        System.out.println(fromFXImage.getHeight() + " and width is " + fromFXImage.getWidth());
+
+        // Calculate height width , offset
+        int width = fromFXImage.getWidth();
+        int height = fromFXImage.getHeight() ;
+        int height2 = (int) (height * 1.20);
+        int offset = (int) (height * 0.1);
+
+        // Create another image with new height & width
+        BufferedImage backImage = new BufferedImage( width, height2, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g = backImage.createGraphics();
+
+        // Am setting the color to black to distinguish , otherwise it can be set to Color.white
+        g.setColor(Color.white);
+        // Fill hte background with color
+        g.fillRect(0, 0, width , height2);
+        // Now overlay with image from offset
+        g.drawImage(fromFXImage,0,offset,null);
+        // write to the file
+        ImageIO.write(backImage, "PNG", fileChooser() );
+        System.out.println(backImage.getHeight() + " and width is " + backImage.getWidth());
+        g.dispose();
+    }*/
+
+
 }

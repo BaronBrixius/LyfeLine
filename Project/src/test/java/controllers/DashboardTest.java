@@ -9,7 +9,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.DialogPane;
-import javafx.scene.control.Spinner;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javafx.stage.Window;
@@ -18,14 +17,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.ApplicationExtension;
 import org.testfx.framework.junit5.Start;
-import utils.Date;
 
 import java.io.File;
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 import org.apache.commons.io.FileUtils;
@@ -81,10 +79,10 @@ public class DashboardTest {
         } catch (SQLException e) { System.out.println("Could not get test user from database"); }
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("../../classes/FXML/Dashboard.fxml"));
+        GUIManager.mainStage = stage;
         stage.setScene(new Scene(loader.load()));
         stage.getScene().getStylesheets().add("File:src/main/resources/styles/"+ StyleSheetName +".css");
         sut = loader.getController();
-        GUIManager.mainStage = stage;
         stage.show();
     }
 
@@ -960,10 +958,10 @@ public class DashboardTest {
         waitForRunLater();
 
         for (Timeline t : sut.list.getItems()) {
-            System.out.println(t.getStartDate().getMonth());
+            System.out.println(t.getStartDate().getMonthValue());
         }
 
-        assertTrue(sut.list.getItems().stream().allMatch(timeline -> timeline.getStartDate().getMonth() >= 10));
+        assertTrue(sut.list.getItems().stream().allMatch(timeline -> timeline.getStartDate().getMonthValue() >= 10));
         int actual = sut.list.getItems().size();
         int expected = 0;
         assertNotEquals(expected, actual); //If list is empty, then previous assert defaults to true
@@ -981,7 +979,7 @@ public class DashboardTest {
         });
         waitForRunLater();
 
-        assertTrue(sut.list.getItems().stream().allMatch(timeline -> timeline.getStartDate().getMonth() >= 30));
+        assertTrue(sut.list.getItems().stream().allMatch(timeline -> timeline.getStartDate().getMonthValue() >= 30));
         int actual = sut.list.getItems().size();
         int expected = 0;
         assertNotEquals(expected, actual); //If list is empty, then previous assert defaults to true
@@ -1110,8 +1108,8 @@ public class DashboardTest {
         newTimeline.setOwnerID(loginUserID);
         try {DBM.insertIntoDB(newTimeline);} catch (SQLException e) {e.printStackTrace();}
 
-        newTimeline.setStartDate(new Date(year, month, day, hour, minute, second, millisecond));
-        newTimeline.setEndDate(new Date(year + 1, 0, 0, 0, 0, 0, 0)); //Timelines must have an end date that is after the start date
+        newTimeline.setStartDate(LocalDateTime.of(year, month, day, hour, minute, second, millisecond*1000000));
+        newTimeline.setEndDate(LocalDateTime.of(year + 1, 0, 0, 0, 0, 0, 0)); //Timelines must have an end date that is after the start date
 
         try {DBM.updateInDB(newTimeline);} catch (SQLException e) {e.printStackTrace();}
     }
@@ -1122,8 +1120,8 @@ public class DashboardTest {
         newTimeline.setOwnerID(loginUserID);
         try {DBM.insertIntoDB(newTimeline);} catch (SQLException e) {e.printStackTrace();}
 
-        newTimeline.setStartDate(new Date(year - 1, 0, 0, 0, 0, 0, 0)); //Timelines must have an end date that is after the start date
-        newTimeline.setEndDate(new Date(year, month, day, hour, minute, second, millisecond));
+        newTimeline.setStartDate(LocalDateTime.of(year - 1, 0, 0, 0, 0, 0, 0)); //Timelines must have an end date that is after the start date
+        newTimeline.setEndDate(LocalDateTime.of(year, month, day, hour, minute, second, millisecond));
 
         try {DBM.updateInDB(newTimeline);} catch (SQLException e) {e.printStackTrace();}
     }

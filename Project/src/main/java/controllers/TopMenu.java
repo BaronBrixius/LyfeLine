@@ -1,14 +1,18 @@
 package controllers;
 
+import database.Timeline;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 
 import java.io.IOException;
 
 public class TopMenu {
 
+    public Menu fileMenu;
+    MenuItem export = new MenuItem("Export");
     @FXML
     MenuItem saveButton = new MenuItem();
     @FXML
@@ -16,6 +20,7 @@ public class TopMenu {
 
     public void initialize() {
         updateLoggedInStatus();
+        showExportMenu(false);
     }
 
     @FXML
@@ -36,6 +41,16 @@ public class TopMenu {
     @FXML
     public void styleBluePressed() {
     	GUIManager.applyStyle("Blue");
+    }
+
+    void showExportMenu(boolean show){
+        if (fileMenu.getItems().contains(export) == show)        //check if file menu already contains export button
+            return;
+
+        if (show)
+            fileMenu.getItems().add(export);
+        else
+            fileMenu.getItems().remove(export);
     }
 
     @FXML
@@ -69,5 +84,13 @@ public class TopMenu {
         } catch (IOException e) {
 
         }
+    }
+
+    @FXML
+    void importFromJSON() {
+    }
+
+    void exportToJSON(Timeline timelineToExport) {
+        System.out.println(timelineToExport.getName());
     }
 }

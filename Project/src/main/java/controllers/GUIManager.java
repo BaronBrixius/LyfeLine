@@ -78,4 +78,5 @@ public class GUIManager extends Application {
             e.printStackTrace();
         }
     }
+
 }
