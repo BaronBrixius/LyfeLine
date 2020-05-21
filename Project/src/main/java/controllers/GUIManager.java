@@ -1,6 +1,7 @@
 package controllers;
 
 import database.DBM;
+import database.Timeline;
 import database.User;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;

@@ -340,7 +340,8 @@ public class Dashboard {
         if (list.getSelectionModel().getSelectedItem() != null) {   //If a timeline is selected
 
             //Scroll to the timeline directly above the selected one
-            listScrollPane.setVvalue(( 85.75 / (list.getHeight() - listScrollPane.getHeight())) * (list.getSelectionModel().getSelectedIndex() - 1));
+            //The height of each cell is actually 85.9795 pixels. I know, I hate it too.
+            listScrollPane.setVvalue(( 85.9795 / (list.getHeight() - listScrollPane.getHeight())) * (list.getSelectionModel().getSelectedIndex() - 1));
 
             if (list.getSelectionModel().getSelectedItem().getOwnerID() == GUIManager.loggedInUser.getUserID()) {
                 btnDelete.setDisable(false);
