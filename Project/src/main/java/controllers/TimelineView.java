@@ -81,35 +81,34 @@ public class TimelineView {
 
 
         ObservableList<String> style = timelineGrid.getScene().getStylesheets();
-        for(int i = 0; i< style.size(); i++){
-            if(style.get(i).equals("File:src/main/resources/styles/Beige.css")){
+        for (String s : style) {
+            if (s.equals("File:src/main/resources/styles/Beige.css")) {
                 nopic = false;
                 beige = true;
             }
-            if(style.get(i).equals("File:src/main/resources/styles/Blue.css")){
-                nopic = false;;
+            if (s.equals("File:src/main/resources/styles/Blue.css")) {
+                nopic = false;
+                ;
                 blue = true;
             }
         }
-        if(nopic == false & beige){
+        if(!nopic & beige){
             snapShotparams.setFill(javafx.scene.paint.Paint.valueOf("#c7c3ad"));
-        Color beige2 =  Color.decode("#c7c3ad");
-        //timelineGrid.setBackground(new Background(new BackgroundFill(javafx.scene.paint.Paint.valueOf("#c7c3ad"), CornerRadii.EMPTY, Insets.EMPTY)));
+            //timelineGrid.setBackground(new Background(new BackgroundFill(javafx.scene.paint.Paint.valueOf("#c7c3ad"), CornerRadii.EMPTY, Insets.EMPTY)));
         //mainScrollPane.setBackground(new Background(new BackgroundFill(javafx.scene.paint.Paint.valueOf("#c7c3ad" ), CornerRadii.EMPTY, Insets.EMPTY)));
-        used = beige2;}
-        if(nopic == false & blue){
+        used = Color.decode("#c7c3ad");}
+        if(!nopic & blue){
             snapShotparams.setFill(javafx.scene.paint.Paint.valueOf("#4878FA"));
-        Color blue2 = Color.decode("#4878FA");
-            //timelineGrid.setBackground(new Background(new BackgroundFill(javafx.scene.paint.Paint.valueOf("#4878FA"), CornerRadii.EMPTY, Insets.EMPTY)));
-            //mainScrollPane.setBackground(new Background(new BackgroundFill(javafx.scene.paint.Paint.valueOf("#4878FA"), CornerRadii.EMPTY, Insets.EMPTY)));
-        used = blue2;}
+            timelineGrid.setBackground(new Background(new BackgroundFill(javafx.scene.paint.Paint.valueOf("#4878FA"), CornerRadii.EMPTY, Insets.EMPTY)));
+            mainScrollPane.setBackground(new Background(new BackgroundFill(javafx.scene.paint.Paint.valueOf("#4878FA"), CornerRadii.EMPTY, Insets.EMPTY)));
+        used = Color.decode("#4878FA");}
         if(nopic){
         Color c = Color.decode("#" + timelineGrid.getBackground().getFills().get(0).getFill().toString().substring(2,8)); //Read the current color used for Timelinegrid background (root style) (FOR THE BURN IN PADDING)
         snapShotparams.setFill(timelineGrid.getBackground().getFills().get(0).getFill());
         used = c;}  //Read the current color used for Timelinegrid background (root style) (IF EXTRA UNUSED ARE IN THE WRITABLE IMAGE)
 
         if (isZoomed()) { //snapshot just the Scrollpane
-            mainScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+            //mainScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
             WritableImage temp = timelineGrid.snapshot(snapShotparams,
                     new WritableImage((int) mainScrollPane.getLayoutBounds().getWidth(),
                             (int) timelineGrid.getLayoutBounds().getHeight()));
