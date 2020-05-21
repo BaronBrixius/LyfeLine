@@ -16,7 +16,7 @@
             <padding>
                 <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
             </padding>
-            <Button fx:id="backButton" alignment="CENTER" mnemonicParsing="false" onAction="#goBackButton" styleClass="smallButton" text="Back" HBox.hgrow="NEVER" />
+            <Button fx:id="backButton" alignment="CENTER" mnemonicParsing="false" onAction="#returnToDashboard" styleClass="smallButton" text="Back" HBox.hgrow="NEVER" />
             <Pane maxWidth="40.0" HBox.hgrow="NEVER" />
             <Button alignment="CENTER" mnemonicParsing="false" onAction="#openEventSelector" styleClass="smallButton" text="Events" HBox.hgrow="NEVER" />
         </HBox>
