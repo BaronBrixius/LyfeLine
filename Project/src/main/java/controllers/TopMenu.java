@@ -34,8 +34,13 @@ public class TopMenu {
     }
     
     @FXML
-    public void styleNonePressed() {
-    	GUIManager.applyStyle("Test");
+    public void styleBeigePressed() {
+    	GUIManager.applyStyle("Beige");
+    }
+    
+    @FXML
+    public void styleBluePressed() {
+    	GUIManager.applyStyle("Blue");
     }
 
     void showExportMenu(boolean show){
@@ -48,6 +53,16 @@ public class TopMenu {
             fileMenu.getItems().remove(export);
     }
 
+    @FXML
+    public void styleDarkPressed() {
+    	GUIManager.applyStyle("Dark");
+    }
+    
+    @FXML
+    public void styleMaroonPressed() {
+    	GUIManager.applyStyle("Maroon");
+    }
+    
     @FXML
     public void updateLoggedInStatus() {
         if (GUIManager.loggedInUser == null) {

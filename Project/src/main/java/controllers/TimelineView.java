@@ -261,6 +261,7 @@ public class TimelineView {
         timelineGrid.add(newNode.getDisplayPane(), newNode.getStartColumn(), row, newNode.getColumnSpan(), 1);
     }
 
+    @FXML
     public void openEventSelector() {
         rightSidebar.getChildren().remove(eventSelectorController.selector); // resets the event selector if it already exists
         rightSidebar.getChildren().add(eventSelectorController.selector);
