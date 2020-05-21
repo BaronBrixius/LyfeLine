@@ -151,7 +151,7 @@ public class JSONTimeline {
             stmt.setInt(14, eventToImport.getEndDate().getHour());
             stmt.setInt(15, eventToImport.getEndDate().getMinute());
             stmt.setInt(16, eventToImport.getEndDate().getSecond());
-            stmt.setInt(17, eventToImport.getEndDate().getNano()*1000000);
+            stmt.setInt(17, eventToImport.getEndDate().getNano() * 1000000);
 
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
@@ -179,17 +179,18 @@ public class JSONTimeline {
     }
 
     private String appendNumberIfDupe(String filePath) {
-        if (!Files.exists(Paths.get(filePath)))                       //quick check for the most common case, no dupes, before declaring more variables for looping
+        if (!Files.exists(Paths.get(filePath)))                       //quick check for the most common case, no dupes
             return filePath;
 
-        String extension = filePath.substring(filePath.lastIndexOf("."));
         String name = filePath.substring(0, filePath.lastIndexOf("."));
-        if (!name.matches(".+_\\d"))                            //if file doesn't have a number appended yet, add one
+        String extension = filePath.substring(filePath.lastIndexOf("."));
+        if (!name.matches(".+_\\d+"))                           //if file doesn't have a number appended yet, add one
             name = name + "_1";
 
-        int counter = 1;
+        int indexOfNumber;
         while (Files.exists(Paths.get(name + extension))) {     //increment number at end of file name until it's no longer a duplicate
-            name = name.substring(0, name.length() - 1) + ++counter;
+            indexOfNumber = name.lastIndexOf("_") + 1;
+            name = name.substring(0, indexOfNumber) + Integer.parseInt(name.substring(indexOfNumber)) + 1;        //set name to what it was but increment the number at the end
         }
 
         return name + extension;

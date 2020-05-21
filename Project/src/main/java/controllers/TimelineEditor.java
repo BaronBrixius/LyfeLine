@@ -359,7 +359,7 @@ public class TimelineEditor extends Editor {
 		ImageExport imageExportObject = loader.getController();
 		imageExportObject.setUp(parentController.snapshot, parentController.activeTimeline);
 
-		imageExport.getScene().getStylesheets().add(GUIManager.mainStage.getScene().getStylesheets().get(0));
+		imageExport.getScene().getStylesheets().addAll(GUIManager.mainStage.getScene().getStylesheets());
 		imageExport.show();
 	}
 }
