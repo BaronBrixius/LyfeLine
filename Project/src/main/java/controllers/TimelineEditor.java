@@ -29,7 +29,8 @@ public class TimelineEditor extends Editor {
 	private final ObservableList<String> keywords = FXCollections.observableArrayList();
 	public Timeline timeline;
 	public HBox keywordBox;
-	@FXML
+    public CheckBox zoom;
+    @FXML
 	ComboBox<String> timeInput;
 	@FXML
 	Button addKeywordButton;

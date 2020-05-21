@@ -67,7 +67,10 @@ public class TimelineView {
     }
 
     public boolean isZoomed() {
-        return timelineGrid.getScaleX() != 1 & timelineGrid.getScaleX() >= 0.1;
+        if (timelineEditorController.zoom.isSelected())
+            return true;
+        else
+            return false;
     }
 
 
@@ -123,23 +126,23 @@ public class TimelineView {
 
             // Calculate height width , offset
             int width = fromFXImage.getWidth();
-            int height = fromFXImage.getHeight();
-            int width2 = (int) (width * 1.80);
+            int height = fromFXImage.getHeight() ;
+            //int width2 = (int) (width * 1.80);
             int height2 = (int) (height * 1.20);
             int offset = (int) (height * 0.1);
-            int offsetWidth = (int) (width * 0.4);
+            //int offsetWidth = (int) (width * 0.4);
 
             // Create another image with new height & width
-            BufferedImage backImage = new BufferedImage(width2, height2, BufferedImage.TYPE_INT_RGB);
+            BufferedImage backImage = new BufferedImage( width, height2, BufferedImage.TYPE_INT_RGB);
             Graphics2D g = backImage.createGraphics();
 
             // Am setting the color to black to distinguish , otherwise it can be set to Color.white
             g.setColor(used);
             // Fill hte background with colorc
-            g.fillRect(0, 0, width2, height2);
+            g.fillRect(0, 0, width , height2);
             // Now overlay with image from offset
-            g.drawImage(fromFXImage, offsetWidth, offset, null);
-            snapshot = SwingFXUtils.toFXImage(backImage, null);
+            g.drawImage(fromFXImage,0,offset,null);
+            snapshot= SwingFXUtils.toFXImage(backImage, null);
             System.out.println(backImage.getHeight() + " and width is " + backImage.getWidth());
             g.dispose();
             mainScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
