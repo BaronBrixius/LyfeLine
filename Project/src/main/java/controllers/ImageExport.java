@@ -57,8 +57,12 @@ public class ImageExport {
 		String FinalFormat = "PNG";
 		if (!rdbtnPng.isSelected())
 			FinalFormat = "JPEG";
-		BufferedImage finalBuffer = SwingFXUtils.fromFXImage(temp, null);
-		ImageIO.write(finalBuffer, FinalFormat, fileChooser());
+		BufferedImage finalBuffer = SwingFXUtils.fromFXImage(originalImage, null);
+		if(temp == null)
+			ImageIO.write(finalBuffer, FinalFormat, fileChooser());
+		else{
+		 finalBuffer = SwingFXUtils.fromFXImage(temp, null);
+		ImageIO.write(finalBuffer, FinalFormat, fileChooser());}
 	}
 	// execute when the checkbox is clicked
 
