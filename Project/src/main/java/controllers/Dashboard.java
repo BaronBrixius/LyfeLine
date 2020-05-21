@@ -336,10 +336,11 @@ public class Dashboard {
 
     @FXML
     private void updateDisplays() {
-        list.setPrefHeight((list.getItems().size() * 87) +  340);
+        list.setPrefHeight((list.getItems().size() * 86) +  322);
         if (list.getSelectionModel().getSelectedItem() != null) {   //If a timeline is selected
 
-            listScrollPane.setVvalue((87 / ((87 * ((double)list.getItems().size())) - 255)) * (list.getSelectionModel().getSelectedIndex() - 1));
+            //Scroll to the timeline directly above the selected one
+            listScrollPane.setVvalue(( 85.75 / (list.getHeight() - listScrollPane.getHeight())) * (list.getSelectionModel().getSelectedIndex() - 1));
 
             if (list.getSelectionModel().getSelectedItem().getOwnerID() == GUIManager.loggedInUser.getUserID()) {
                 btnDelete.setDisable(false);
