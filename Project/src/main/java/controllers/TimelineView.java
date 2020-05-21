@@ -17,8 +17,10 @@ import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import utils.DateUtil;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -92,11 +94,13 @@ public class TimelineView {
             }
         }
         if(nopic == false & beige){
-            snapShotparams.setFill(javafx.scene.paint.Paint.valueOf("#c7c3ad"));
-        Color beige2 =  Color.decode("#c7c3ad");
+            picThemeSnapshot();
+            return;}
+            //snapShotparams.setFill(javafx.scene.paint.Paint.valueOf("#c7c3ad"));
+        //Color beige2 =  Color.decode("#c7c3ad");
         //timelineGrid.setBackground(new Background(new BackgroundFill(javafx.scene.paint.Paint.valueOf("#c7c3ad"), CornerRadii.EMPTY, Insets.EMPTY)));
         //mainScrollPane.setBackground(new Background(new BackgroundFill(javafx.scene.paint.Paint.valueOf("#c7c3ad" ), CornerRadii.EMPTY, Insets.EMPTY)));
-        used = beige2;}
+        //used = beige2;}
         if(nopic == false & blue){
             snapShotparams.setFill(javafx.scene.paint.Paint.valueOf("#4878FA"));
         Color blue2 = Color.decode("#4878FA");
@@ -341,7 +345,114 @@ public class TimelineView {
         mainScrollPane.setHvalue(adjustedHValue);                                   //apply (adjusted) snapshots of scrollbar positions, overriding the above jumping
         mainScrollPane.setVvalue(adjustedVValue);
 
-        event.consume();                                                            //consume the mouse event to prevent normal scrollbar functions
+        event.consume();//consume the mouse event to prevent normal scrollbar functions
+    }
+
+    public void picThemeSnapshot() throws IOException {
+        SnapshotParameters snapShotparams = new SnapshotParameters();
+        Color used = new Color(255,255,255);
+        boolean nopic = true;
+        boolean beige = false;
+        boolean blue = false;
+        Background originalTimelinegrid = timelineGrid.getBackground();
+        Background originalScrollgrid = mainScrollPane.getBackground();
+
+
+        ObservableList<String> style = timelineGrid.getScene().getStylesheets();
+        for(int i = 0; i< style.size(); i++){
+            if(style.get(i).equals("File:src/main/resources/styles/Beige.css")){
+                nopic = false;
+                beige = true;
+            }
+            if(style.get(i).equals("File:src/main/resources/styles/Blue.css")){
+                nopic = false;;
+                blue = true;
+            }
+        }
+        if(nopic == false & beige){
+            snapShotparams.setFill(javafx.scene.paint.Paint.valueOf("#c7c3ad"));
+            Color beige2 =  Color.decode("#c7c3ad");
+            //timelineGrid.setBackground(new Background(new BackgroundFill(javafx.scene.paint.Paint.valueOf("#c7c3ad"), CornerRadii.EMPTY, Insets.EMPTY)));
+            //mainScrollPane.setBackground(new Background(new BackgroundFill(javafx.scene.paint.Paint.valueOf("#c7c3ad" ), CornerRadii.EMPTY, Insets.EMPTY)));
+            used = beige2;}
+        if(nopic == false & blue){
+            snapShotparams.setFill(javafx.scene.paint.Paint.valueOf("#4878FA"));
+            Color blue2 = Color.decode("#4878FA");
+            //timelineGrid.setBackground(new Background(new BackgroundFill(javafx.scene.paint.Paint.valueOf("#4878FA"), CornerRadii.EMPTY, Insets.EMPTY)));
+            //mainScrollPane.setBackground(new Background(new BackgroundFill(javafx.scene.paint.Paint.valueOf("#4878FA"), CornerRadii.EMPTY, Insets.EMPTY)));
+            used = blue2;}
+        if(nopic){
+            Color c = Color.decode("#" + timelineGrid.getBackground().getFills().get(0).getFill().toString().substring(2,8)); //Read the current color used for Timelinegrid background (root style) (FOR THE BURN IN PADDING)
+            snapShotparams.setFill(timelineGrid.getBackground().getFills().get(0).getFill());
+            used = c;}  //Read the current color used for Timelinegrid background (root style) (IF EXTRA UNUSED ARE IN THE WRITABLE IMAGE)
+
+        if (isZoomed()) { //snapshot just the Scrollpane
+            mainScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+            WritableImage temp = timelineGrid.snapshot(snapShotparams,
+                    new WritableImage((int) mainScrollPane.getLayoutBounds().getWidth(),
+                            (int) timelineGrid.getLayoutBounds().getHeight()));
+            System.out.println(" zoom printout");
+
+            //Now create buffered image and add 10% padding on top and bottom
+            BufferedImage fromFXImage = SwingFXUtils.fromFXImage(temp, null);
+            System.out.println(fromFXImage.getHeight() + " and width is " + fromFXImage.getWidth());
+
+            // Calculate height width , offset
+            int width = fromFXImage.getWidth();
+            int height = fromFXImage.getHeight() ;
+            int width2 = (int) (width * 1.80);
+            int height2 = (int) (height * 1.20);
+            int offset = (int) (height * 0.1);
+            int offsetWidth = (int) (width * 0.4);
+
+            // Create another image with new height & width
+            BufferedImage backImage = new BufferedImage( width2, height2, BufferedImage.TYPE_INT_RGB);
+            Graphics2D g = backImage.createGraphics();
+
+            // Am setting the color to black to distinguish , otherwise it can be set to Color.white
+            g.setColor(used);
+            // Fill hte background with colorc
+            g.fillRect(0, 0, width2 , height2);
+            // Now overlay with image from offset
+            g.drawImage(fromFXImage,offsetWidth,offset,null);
+            snapshot= SwingFXUtils.toFXImage(backImage, null);
+            System.out.println(backImage.getHeight() + " and width is " + backImage.getWidth());
+            g.dispose();
+            mainScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+        }
+
+
+        else{ //If not Zoomed or too much out zoom - snapshot the whole timeline
+            timelineGrid.setScaleX(1);
+            timelineGrid.setScaleY(1);
+            WritableImage  temp = timelineGrid.snapshot(snapShotparams,
+                    new WritableImage((int) timelineGrid.getLayoutBounds().getWidth(),
+                            (int) timelineGrid.getLayoutBounds().getHeight()));
+            System.out.println("No zoom printout" + " and height is: " + temp.getHeight() + " and width is: " + temp.getWidth());
+
+            //Now create buffered image and add 10% padding on top and bottom
+            BufferedImage fromFXImage = SwingFXUtils.fromFXImage(temp, null);
+            System.out.println(fromFXImage.getHeight() + " and width is " + fromFXImage.getWidth());
+
+            // Calculate height width , offset
+            int width = fromFXImage.getWidth();
+            int height = fromFXImage.getHeight() ;
+             int height2 = (int) (height * 1.20);
+            int offset = (int) (height * 0.6);
+            int offsetWidth = (int) (width * 0.1);
+
+            // Create another image with new height & width
+            BufferedImage backImage = ImageIO.read(new File("/home/haraldur/Desktop/Skolinn/508/Project/src/main/resources/images/NAUI.png"));
+            Graphics2D g = backImage.createGraphics();
+
+            // Now overlay with image from offset
+            g.drawImage(fromFXImage,offsetWidth,offset,null);
+            System.out.println(backImage.getHeight() + " and width is " + backImage.getWidth());
+            snapshot= SwingFXUtils.toFXImage(backImage, null);
+            g.dispose();}
+        timelineGrid.setBackground(originalTimelinegrid);
+        mainScrollPane.setBackground(originalScrollgrid);
+
     }
 
     private void horizontalScroll(ScrollEvent scrollEvent) {    //might wanna add this back in when user is holding a button
