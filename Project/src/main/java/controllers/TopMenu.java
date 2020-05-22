@@ -1,19 +1,37 @@
 package controllers;
 
-import database.Timeline;
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import database.JSONTimeline;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
+
+import javafx.stage.FileChooser;
+import org.apache.commons.io.FileUtils;
+import utils.DateUtil;
+
 import javafx.scene.control.TextInputDialog;
 
+
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+
+import java.nio.charset.Charset;
+import java.time.LocalDateTime;
+import java.util.Scanner;
+
 import java.util.Optional;
+
 
 public class TopMenu {
 
-    public Menu fileMenu;
-    MenuItem export = new MenuItem("Export");
+    @FXML
+    Menu fileMenu;
     @FXML
     MenuItem saveButton = new MenuItem();
     @FXML
@@ -21,11 +39,10 @@ public class TopMenu {
 
     public void initialize() {
         updateLoggedInStatus();
-        showExportMenu(false);
     }
 
     @FXML
-    public void saveFile(ActionEvent actionEvent) {
+    void saveFile(ActionEvent actionEvent) {
         System.out.println("Save");
     }
 
@@ -41,20 +58,16 @@ public class TopMenu {
 
     @FXML
     public void styleBluePressed() {
-        GUIManager.applyStyle("Blue");
-    }
-
-    void showExportMenu(boolean show) {
-        if (fileMenu.getItems().contains(export) == show)        //check if file menu already contains export button
-            return;
-
-        if (show)
-            fileMenu.getItems().add(export);
-        else
-            fileMenu.getItems().remove(export);
+    	GUIManager.applyStyle("Blue");
     }
 
     @FXML
+    void styleNonePressed() {
+        GUIManager.applyStyle("None");
+    }
+
+    @FXML
+
     public void styleDarkPressed() {
         GUIManager.applyStyle("Dark");
     }
@@ -76,7 +89,7 @@ public class TopMenu {
     }
 
     @FXML
-    public void logOutPressed() {
+    void logOutPressed() {
         GUIManager.loggedInUser = null;
         updateLoggedInStatus();
         GUIManager.applyStyle("Default");
@@ -89,10 +102,23 @@ public class TopMenu {
 
     @FXML
     void importFromJSON() {
-    }
+        FileChooser chooser = new FileChooser();                                            //open FileChooser for user to pick import .json
+        chooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("JSON", "*.json"));
+        File fileChosen = chooser.showOpenDialog(GUIManager.mainStage);
 
-    void exportToJSON(Timeline timelineToExport) {
-        System.out.println(timelineToExport.getName());
+        try {
+            String inJSON = FileUtils.readFileToString(fileChosen, (Charset) null);         //import Json from file
+            Gson gson = JSONTimeline.getGson();
+            JSONTimeline readJson = gson.fromJson(inJSON, JSONTimeline.class);              //parse Json with GSON object
+            readJson.importToDB();                                                          //add imported data to database
+
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);                           //inform user of success
+            alert.setTitle("File Import");
+            alert.setHeaderText("File has been successfully imported.");
+            alert.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();     //TODO better exception handling after dev work
+        }
     }
 
     @FXML

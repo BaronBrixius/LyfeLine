@@ -1,9 +1,12 @@
 package database;
 
+import com.google.gson.FieldNamingStrategy;
+import com.google.gson.GsonBuilder;
 import controllers.GUIManager;
 import javafx.scene.control.Alert;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.*;
@@ -20,6 +23,8 @@ public class Timeline extends TimelineObject<Timeline> {
     private List<Event> eventList = new ArrayList<>();
     private List<String> keywords = new ArrayList<>();
     private transient double rating;
+    private GsonBuilder builder;
+
 
     public Timeline() {
     }
@@ -67,14 +72,14 @@ public class Timeline extends TimelineObject<Timeline> {
         out.setInt(8, startDate.getHour());
         out.setInt(9, startDate.getMinute());
         out.setInt(10, startDate.getSecond());
-        out.setInt(11, startDate.getNano()/1000000);
+        out.setInt(11, startDate.getNano() / 1000000);
         out.setInt(12, endDate.getYear());
         out.setInt(13, endDate.getMonthValue());
         out.setInt(14, endDate.getDayOfMonth());
         out.setInt(15, endDate.getHour());
         out.setInt(16, endDate.getMinute());
         out.setInt(17, endDate.getSecond());
-        out.setInt(18, endDate.getNano()/1000000);
+        out.setInt(18, endDate.getNano() / 1000000);
         out.setInt(19, ownerID);
         // keyword string generation from list
         StringBuilder sb = new StringBuilder();
@@ -107,14 +112,14 @@ public class Timeline extends TimelineObject<Timeline> {
         out.setInt(8, startDate.getHour());
         out.setInt(9, startDate.getMinute());
         out.setInt(10, startDate.getSecond());
-        out.setInt(11, startDate.getNano()/1000000);
+        out.setInt(11, startDate.getNano() / 1000000);
         out.setInt(12, endDate.getYear());
         out.setInt(13, endDate.getMonthValue());
         out.setInt(14, endDate.getDayOfMonth());
         out.setInt(15, endDate.getHour());
         out.setInt(16, endDate.getMinute());
         out.setInt(17, endDate.getSecond());
-        out.setInt(18, endDate.getNano()/1000000);
+        out.setInt(18, endDate.getNano() / 1000000);
         // keyword string generation from list
         StringBuilder sb = new StringBuilder();
         for (String s : keywords) {
@@ -213,10 +218,10 @@ public class Timeline extends TimelineObject<Timeline> {
         }
 
         return new Timeline(timelineID, timelineName, timelineDescription, scale, theme,
-                LocalDateTime.of(startYear, startMonth, startDay, startHour, startMinute, startSecond, startMillisecond*1000000),
-                LocalDateTime.of(endYear, endMonth, endDay, endHour, endMinute, endSecond, endMillisecond*1000000),
+                LocalDateTime.of(startYear, startMonth, startDay, startHour, startMinute, startSecond, startMillisecond * 1000000),
+                LocalDateTime.of(endYear, endMonth, endDay, endHour, endMinute, endSecond, endMillisecond * 1000000),
                 LocalDateTime.of(createdYear, createdMonth, createdDay, createdHour, createdMinute, createdSecond,
-                        createdMillisecond*1000000),
+                        createdMillisecond * 1000000),
                 timelineOwner, keywords, eventList, imagePath);
     }
 
@@ -386,5 +391,5 @@ public class Timeline extends TimelineObject<Timeline> {
         return this.timelineID == other.timelineID;
 
     }
-    
+
 }
