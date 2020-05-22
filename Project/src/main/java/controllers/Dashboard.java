@@ -509,10 +509,14 @@ public class Dashboard {
 
                         if (cell.timeline.getOwnerID() == GUIManager.loggedInUser.getUserID()) {
                             cell.cellDeleteTimelineButton.setDisable(false);
+                            cell.cellDeleteTimelineButton.setOpacity(1);
                             cell.cellEditTimelineButton.setDisable(false);
+                            cell.cellEditTimelineButton.setOpacity(1);
                         } else {
                             cell.cellDeleteTimelineButton.setDisable(true);
+                            cell.cellDeleteTimelineButton.setOpacity(0);
                             cell.cellEditTimelineButton.setDisable(true);
+                            cell.cellEditTimelineButton.setOpacity(0);
                         }
                     }
                     else

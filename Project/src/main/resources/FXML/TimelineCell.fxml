@@ -51,14 +51,13 @@
         <Polygon fill="YELLOW" points="37.0, 40.0, 50.0, 40.0, 28.0, 31.0" stroke="BLACK" strokeType="INSIDE" />
         <Polygon fill="YELLOW" points="42.0, 40.0, 50.0, 40.0, 42.0, 26.0" stroke="BLACK" strokeType="INSIDE" />
     </HBox>
-    <VBox fx:id="cellButtonBox" alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="5.0"
-          GridPane.columnIndex="1" GridPane.rowSpan="5">
+    <VBox fx:id="cellButtonBox" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="20.0" GridPane.columnIndex="1" GridPane.rowSpan="5">
         <GridPane.margin>
-            <Insets/>
+            <Insets />
         </GridPane.margin>
-        <Button fx:id="cellViewTimelineButton" mnemonicParsing="false" onAction="#openTimeline" text="View"/>
-        <Button fx:id="cellEditTimelineButton" mnemonicParsing="false" onAction="#editTimeline" text="Edit"/>
-        <Button fx:id="cellDeleteTimelineButton" mnemonicParsing="false" onAction="#deleteTimeline" text="Delete"/>
+        <Button fx:id="cellViewTimelineButton" mnemonicParsing="false" onAction="#openTimeline" style="-fx-pref-height: 10" text="View" />
+        <Button fx:id="cellEditTimelineButton" mnemonicParsing="false" onAction="#editTimeline" style="-fx-pref-height: 10" text="Edit" />
+        <Button fx:id="cellDeleteTimelineButton" mnemonicParsing="false" onAction="#deleteTimeline" style="-fx-pref-height: 10" text="Delete" />
     </VBox>
    <opaqueInsets>
       <Insets left="5.0" />
