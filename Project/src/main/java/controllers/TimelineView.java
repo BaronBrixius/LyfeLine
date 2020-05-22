@@ -66,7 +66,7 @@ public class TimelineView {
 		return timelineEditorController.zoom.isSelected();
 	}
 
-	public void snapshot() throws IOException {
+	public void snapshot() throws IOException {		//TODO fix cancelling in the filechooser
 		SnapshotParameters snapShotparams = new SnapshotParameters();
 		Color used = new Color(255, 255, 255);
 		boolean nopic = true;
@@ -97,15 +97,15 @@ public class TimelineView {
 			used = Color.decode("#c7c3ad");
 		}
 		if (!nopic & blue) {
-			snapShotparams.setFill(javafx.scene.paint.Paint.valueOf("#4878FA"));
+			snapShotparams.setFill(javafx.scene.paint.Paint.valueOf("#ffffff"));
 			timelineGrid.setBackground(new Background(
-					new BackgroundFill(javafx.scene.paint.Paint.valueOf("#4878FA"), CornerRadii.EMPTY, Insets.EMPTY)));
+					new BackgroundFill(javafx.scene.paint.Paint.valueOf("#ffffff"), CornerRadii.EMPTY, Insets.EMPTY)));
 			mainScrollPane.setBackground(new Background(
-					new BackgroundFill(javafx.scene.paint.Paint.valueOf("#4878FA"), CornerRadii.EMPTY, Insets.EMPTY)));
-			used = Color.decode("#4878FA");
+					new BackgroundFill(javafx.scene.paint.Paint.valueOf("#ffffff"), CornerRadii.EMPTY, Insets.EMPTY)));
+			used = Color.decode("#ffffff");
 		}
 		if (nopic) {
-			Color c = Color
+			Color c = Color			//TODO fix this, timelines don't have style root any more
 					.decode("#" + timelineGrid.getBackground().getFills().get(0).getFill().toString().substring(2, 8)); // Read
 																														// the
 																														// current

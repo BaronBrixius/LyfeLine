@@ -1,6 +1,7 @@
 package controllers;
 
 import database.DBM;
+import database.Timeline;
 import database.User;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -54,11 +55,20 @@ public class GUIManager extends Application {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        //loggedInUser = DBM.getFromDB(DBM.conn.prepareStatement("SELECT * FROM users"), new User()).get(0);  //delete when merging to dev
+        loggedInUser = DBM.getFromDB(DBM.conn.prepareStatement("SELECT * FROM users"), new User()).get(0);  //delete when merging to dev
         main = new BorderPane();
         loader = new FXMLLoader(getClass().getResource("../FXML/TopMenu.fxml"));
         main.setTop(loader.load());
         menu = loader.getController();
+
+        //for (int i = 0; i < 100; i++)
+        //{
+        //    Timeline newTimeline = new Timeline();
+        //    newTimeline.setName("test " + i);
+        //    newTimeline.setDescription("reetestree" + i);
+        //    newTimeline.setOwnerID(3);
+        //    try {DBM.insertIntoDB(newTimeline);} catch (SQLException e) {e.printStackTrace();}
+        //}
 
         mainStage = primaryStage;
         mainStage.setScene(new Scene(main));

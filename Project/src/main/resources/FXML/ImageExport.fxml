@@ -51,10 +51,10 @@
       </padding>
    </VBox>
    <Button fx:id="btnExport" layoutX="815.0" layoutY="548.0" mnemonicParsing="false" onAction="#saveImage" styleClass="smallButton" stylesheets="@../styles/Base.css" text="Export" />
-   <RadioButton fx:id="rdbtnPng" layoutX="822.0" layoutY="514.0" mnemonicParsing="false" selected="true" text="png">
+   <RadioButton fx:id="rdbtnPng" layoutX="822.0" layoutY="514.0" mnemonicParsing="false" selected="true" text="png" visible="false">
       <toggleGroup>
          <ToggleGroup fx:id="formatChoice" />
       </toggleGroup></RadioButton>
-   <RadioButton fx:id="rdbtnJpeg" layoutX="914.0" layoutY="514.0" mnemonicParsing="false" text="jpeg" toggleGroup="$formatChoice" />
+   <RadioButton fx:id="rdbtnJpeg" layoutX="914.0" layoutY="514.0" mnemonicParsing="false" text="jpeg" toggleGroup="$formatChoice" visible="false" />
    <ImageView fx:id="imageView" fitHeight="492.0" fitWidth="718.0" layoutX="70.0" layoutY="72.0" pickOnBounds="true" preserveRatio="true" />
 </Pane>
