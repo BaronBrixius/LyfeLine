@@ -73,6 +73,7 @@ public abstract class Editor {
 
     public void initialize() {
         editor.getStylesheets().add("styles/DisabledViewable.css");
+
         //Set Up the Spinners for Start/End Inputs, would have bloated the .fxml and variable list a ton if these were in fxml
         setupTimeInputStartAndEnd("Year", -999999999, 999999999, 0);
         setupTimeInputStartAndEnd("Month", 1, 12, 1);
@@ -102,7 +103,7 @@ public abstract class Editor {
             expandPane.getChildren().addAll(0, boxesToAddFrom);
 
         } else {                        //if contracting, add based on scale
-            if (scale == 1)             //don't try to convert to switch statement unless you're a genius, the overlaps made it ugly when I tried
+            if (scale == 1)
                 expandPane.getChildren().add(0, boxesToAddFrom.get(6)); //milliseconds
             if (scale <= 2)
                 expandPane.getChildren().add(0, boxesToAddFrom.get(5)); //seconds
@@ -126,7 +127,7 @@ public abstract class Editor {
 
     @FXML
     void saveEditButton() {
-        if (editable && hasChanges())   //if unsaved changes, try to save
+        if (editable && hasChanges())                   //if unsaved changes, try to save
             if (!validData() || !saveConfirm())         //if save cancelled, don't change mode
                 return;
         toggleEditable(!editable);

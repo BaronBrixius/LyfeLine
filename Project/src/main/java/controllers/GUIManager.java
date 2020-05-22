@@ -6,9 +6,11 @@ import database.User;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -77,6 +79,8 @@ public class GUIManager extends Application {
         //systemUnderDevelopment.setActiveTimeline(1);
         mainStage.getScene().getStylesheets().add("File:src/main/resources/styles/Base.css");
         mainStage.getScene().getStylesheets().add("File:src/main/resources/styles/Default.css");
+        FileInputStream icon = new FileInputStream("src/main/resources/LogoIcon.png");
+        mainStage.getIcons().add(new Image(icon));
         mainStage.show();
     }
 

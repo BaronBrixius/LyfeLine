@@ -203,9 +203,7 @@ public class EventEditorTest {
             DialogPane alert = getDialogPane();
             robot.clickOn(alert.lookupButton(ButtonType.OK));
         });
-        runLater(() -> {
-            assertTrue(expected.compareTo(sut.event.getEndDate()) == 0);
-        });
+        runLater(() -> assertEquals(0, expected.compareTo(sut.event.getEndDate())));
 
     }
 

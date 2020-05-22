@@ -1,6 +1,9 @@
 package database;
 
-import com.google.gson.*;
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
@@ -8,7 +11,6 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.PreparedStatement;
@@ -135,7 +137,7 @@ public class JSONTimeline {
         }
     }
 
-    private int matchEventInDB(Event eventToImport) {                              //checks if event is in DB, returns event's ID if it is
+    private int matchEventInDB(Event eventToImport) {                              //checks if identical event is in DB, returns event's ID if it is
         try (PreparedStatement stmt = DBM.conn.prepareStatement("SELECT e.EventID FROM events e " +
                 "INNER JOIN users u ON e.EventOwner = u.UserID " +
                 "WHERE u.UserEmail = ? AND e.EventName = ? AND e.EventDescription = ? " +
