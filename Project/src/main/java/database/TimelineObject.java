@@ -3,7 +3,7 @@ package database;
 import java.time.LocalDateTime;
 
 public abstract class TimelineObject<T> implements DBObject<T> {
-    int ownerID;
+    transient int ownerID;
     LocalDateTime startDate = LocalDateTime.of(0,1,1,0,0,0,0);
     LocalDateTime endDate = LocalDateTime.of(0,1,1,0,0,0,0);
     LocalDateTime creationDate;

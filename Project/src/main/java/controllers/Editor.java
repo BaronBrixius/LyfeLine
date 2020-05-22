@@ -204,11 +204,11 @@ public abstract class Editor {
     }
 
     boolean populateDisplay() {
-        if (itemInEditor.getImagePath() != null) {
+        if (itemInEditor.getImagePath() != null)
             image.setImage(new Image("File:" + itemInEditor.getImagePath()));
-        } else {
+        else
             image.setImage(null);
-        }
+
         imageFilePath = itemInEditor.getImagePath();
 
         titleInput.setText(itemInEditor.getName());

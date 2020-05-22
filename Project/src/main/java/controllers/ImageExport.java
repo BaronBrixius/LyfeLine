@@ -3,6 +3,7 @@ package controllers;
 import database.Timeline;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
@@ -12,13 +13,12 @@ import javafx.scene.image.WritableImage;
 import javafx.stage.FileChooser;
 import utils.DateUtil;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-
-import javax.imageio.ImageIO;
 
 public class ImageExport {
 	public CheckBox cbName;
@@ -41,47 +41,31 @@ public class ImageExport {
 	}
 
 	// Executes on startup (when export button is pressed when viewing a timeline)
-	public void setUp(WritableImage image, Timeline activeTimeline) {
+	void setUp(WritableImage image, Timeline activeTimeline) {
 		this.activeTimeline = activeTimeline;
 		originalImage = image;
 		imageView.setImage(this.originalImage);
 	}
 
 	// Executes when "Export" button is pressed in the pop-up
-	public void export(ActionEvent actionEvent) throws IOException {
-		saveImage();
-
-	}
-
-	public void saveImage() throws IOException {
+	@FXML
+	void saveImage() throws IOException {
 		String FinalFormat = "PNG";
 		if (!rdbtnPng.isSelected())
 			FinalFormat = "JPEG";
-		BufferedImage finalBuffer = SwingFXUtils.fromFXImage(temp, null);
-		ImageIO.write(finalBuffer, FinalFormat, fileChooser());
-	}
-	// execute when the checkbox is clicked
-
-	public void cbNameClicked(ActionEvent actionEvent) {
-		burnIn();
-	}
-
-	public void cbRangeClicked(ActionEvent actionEvent) {
-		burnIn();
+		BufferedImage finalBuffer = SwingFXUtils.fromFXImage(originalImage, null);
+		if (temp == null)
+			ImageIO.write(finalBuffer, FinalFormat, fileChooser());
+		else {
+			finalBuffer = SwingFXUtils.fromFXImage(temp, null);
+			ImageIO.write(finalBuffer, FinalFormat, fileChooser());
+		}
 	}
 
-	public void cbCreatorClicked(ActionEvent actionEvent) {
-		burnIn();
-	}
-
-	public void cbLogoClicked(ActionEvent actionEvent) {
-		burnIn();
-
-	}
-
-
-	private void burnIn() {
-		 temp = originalImage;
+	// execute when any checkbox is clicked
+	@FXML
+	void burnIn() {
+		temp = originalImage;
 
 		if (cbName.isSelected()) {
 			temp = burnName(temp);
@@ -102,14 +86,12 @@ public class ImageExport {
 		}
 
 		imageView.setImage(temp);
-
 	}
 
 	private WritableImage burnName(WritableImage img) {
 		String text = activeTimeline.getName();
 		BufferedImage originalBuffer = SwingFXUtils.fromFXImage(img, null);
-		int defaultFont = (int) img.getHeight() / 30;
-		int font = defaultFont;
+		int font = (int) img.getHeight() / 30;
 
 		// determine image type and handle correct transparency
 		int imageType = "png".equalsIgnoreCase(format) ? BufferedImage.TYPE_INT_ARGB : BufferedImage.TYPE_INT_RGB;
@@ -139,8 +121,7 @@ public class ImageExport {
 		String text = DateUtil.ddmmyyToString(activeTimeline);
 
 		BufferedImage originalBuffer = SwingFXUtils.fromFXImage(img, null);
-		int defaultFont = originalBuffer.getHeight() / 30;
-		int font = defaultFont;
+		int font = originalBuffer.getHeight() / 30;
 
 		// determine image type and handle correct transparency
 		int imageType = "png".equalsIgnoreCase(format) ? BufferedImage.TYPE_INT_ARGB : BufferedImage.TYPE_INT_RGB;
@@ -167,7 +148,6 @@ public class ImageExport {
 	}
 
 	private WritableImage burnLogo(WritableImage img) throws IOException {
-
 		BufferedImage originalBuffer = SwingFXUtils.fromFXImage(img, null);
 		// Logo settings
 		// File logo = new File("../resources/Logo.png");
@@ -184,8 +164,8 @@ public class ImageExport {
 		w.setComposite(alphaChannel);
 
 		// calculates the coordinate where the String is painted
-		int yPlacement = (burned.getHeight()) - ((burned.getHeight() / 6));
-		// int yPlacement = (burned.getHeight() - burned.getHeight() / 30);
+		// int yPlacement = (burned.getHeight()) - ((burned.getHeight() / 6));
+		int yPlacement = (burned.getHeight() - burned.getHeight() / 15);
 		int xPlacement = (burned.getWidth() / 100);
 
 		// add text watermark to the image
@@ -197,12 +177,10 @@ public class ImageExport {
 	}
 
 	private WritableImage burnCreator(WritableImage img) {
-
 		String text = "Made with LyfeLine by: " + GUIManager.loggedInUser.getUserName();
 
 		BufferedImage originalBuffer = SwingFXUtils.fromFXImage(img, null);
-		int defaultFont = originalBuffer.getHeight() / 30;
-		int font = defaultFont;
+		int font = originalBuffer.getHeight() / 30;
 
 		// determine image type and handle correct transparency
 		int imageType = "png".equalsIgnoreCase(format) ? BufferedImage.TYPE_INT_ARGB : BufferedImage.TYPE_INT_RGB;
@@ -228,7 +206,7 @@ public class ImageExport {
 
 	}
 
-	// at the moment resizes the logo to harcoded 100x100, seems to work well and
+	// at the moment resizes the logo to hardcoded 100x100, seems to work well and
 	// the logo watermark should be reasonably small.
 	private BufferedImage resize(BufferedImage img) {
 		int width = 104;
@@ -243,13 +221,11 @@ public class ImageExport {
 
 	public File fileChooser() throws IOException {
 		FileChooser fileChooser = new FileChooser();
-		 format = ".png";
+		format = ".png";
 		if (!rdbtnPng.isSelected())
 			format = ".jpeg";
 		fileChooser.setInitialFileName(activeTimeline.getName().replaceAll("\\s+", "_") + format); // We will add read
-		// format from
-		// dropdown or use
-		// png
+		// format from dropdown or use png
 		fileChooser.getExtensionFilters().addAll( // keep all formats now, easy to add to the popup
 				new FileChooser.ExtensionFilter("All Images", "*.jpg", "*.jpeg", "*.png", "*.bmp", "*.gif", "*.wbmp"),
 				new FileChooser.ExtensionFilter("JPG", "*.jpg"), new FileChooser.ExtensionFilter("JPEG", "*.jpeg"),
@@ -257,8 +233,7 @@ public class ImageExport {
 				new FileChooser.ExtensionFilter("GIF", "*.gif"), new FileChooser.ExtensionFilter("WBMP", "*.wbmp"));
 
 		// Show save file dialog
-		 return filechooser =  fileChooser.showSaveDialog(GUIManager.mainStage);
-
+		return filechooser = fileChooser.showSaveDialog(GUIManager.mainStage);
 
 	}
 
