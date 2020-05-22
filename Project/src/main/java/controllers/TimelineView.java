@@ -67,10 +67,7 @@ public class TimelineView {
     }
 
     public boolean isZoomed() {
-        if (timelineEditorController.zoom.isSelected())
-            return true;
-        else
-            return false;
+        return timelineEditorController.zoom.isSelected();
     }
 
 
