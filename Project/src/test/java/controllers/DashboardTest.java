@@ -34,7 +34,6 @@ import static org.junit.jupiter.api.Assertions.*;
 public class DashboardTest {
     static private int testCount = 0;
     Dashboard sut;
-    String StyleSheetName = "None";
     FxRobot robot = new FxRobot();
     int loginUserID;
     static File source = new File("src/main/resources/images/timeline");
@@ -82,7 +81,6 @@ public class DashboardTest {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("../../classes/FXML/Dashboard.fxml"));
         GUIManager.mainStage = stage;
         stage.setScene(new Scene(loader.load()));
-        stage.getScene().getStylesheets().add("File:src/main/resources/styles/"+ StyleSheetName +".css");
         sut = loader.getController();
         stage.show();
     }
