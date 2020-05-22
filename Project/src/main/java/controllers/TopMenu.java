@@ -1,30 +1,19 @@
 package controllers;
 
-import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import database.JSONTimeline;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
-
+import javafx.scene.control.TextInputDialog;
 import javafx.stage.FileChooser;
 import org.apache.commons.io.FileUtils;
-import utils.DateUtil;
-
-import javafx.scene.control.TextInputDialog;
-
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-
 import java.nio.charset.Charset;
-import java.time.LocalDateTime;
-import java.util.Scanner;
-
 import java.util.Optional;
 
 
@@ -58,7 +47,7 @@ public class TopMenu {
 
     @FXML
     public void styleBluePressed() {
-    	GUIManager.applyStyle("Blue");
+        GUIManager.applyStyle("Blue");
     }
 
     @FXML
@@ -133,11 +122,7 @@ public class TopMenu {
         zoomInput.setHeaderText("Enter Zoom%");
 
         Optional<String> result = zoomInput.showAndWait();
-
-
         result.ifPresent(e -> zoomTimeline(result.get()));
-
-
     }
 
     private void zoomTimeline(String string) {
@@ -151,7 +136,17 @@ public class TopMenu {
         if (zoomValue < 0.01)
             zoomValue = 0.01;
 
-        ((TimelineView) GUIManager.loader.getController()).timelineGrid.setScaleX(zoomValue);
-        ((TimelineView) GUIManager.loader.getController()).timelineGrid.setScaleY(zoomValue);
+        TimelineView view = GUIManager.loader.getController();
+
+        double Hvalue = view.mainScrollPane.getHvalue();
+        double Vvalue = view.mainScrollPane.getVvalue();
+
+        view.timelineGrid.setScaleX(zoomValue);
+        view.timelineGrid.setScaleY(zoomValue);
+
+        view.mainScrollPane.layout();
+
+        view.mainScrollPane.setHvalue(Hvalue);
+        view.mainScrollPane.setVvalue(Vvalue);
     }
 }
