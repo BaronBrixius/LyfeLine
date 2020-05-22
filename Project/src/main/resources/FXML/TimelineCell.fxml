@@ -11,7 +11,6 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Polygon?>
-<?import javafx.scene.text.Font?>
 
 <GridPane fx:id="pane" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="1270.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.TimelineCell">
     <columnConstraints>
@@ -31,27 +30,15 @@
         <String fx:value="listCellBackground" />
     </styleClass>
     <Label fx:id="title" styleClass="listCellText" text="xTitle" GridPane.halignment="LEFT" GridPane.valignment="CENTER">
-        <font>
-          <Font size="14.0" />
-        </font>
       <GridPane.margin>
          <Insets left="1.0" />
       </GridPane.margin>
     </Label>
    <Label fx:id="description" minHeight="0.0" style="-fx-wrap-text: true;" styleClass="listCellText" text="Description" GridPane.rowIndex="1">
-      <font>
-         <Font size="14.0" />
-      </font>
    </Label>
    <Label fx:id="keywords" styleClass="listCellText" text="Keywords" GridPane.rowIndex="2">
-      <font>
-         <Font size="14.0" />
-      </font>
    </Label>
    <Label fx:id="author" styleClass="listCellText" text="Author" GridPane.rowIndex="3" GridPane.valignment="TOP">
-      <font>
-         <Font size="14.0" />
-      </font>
    </Label>
    <Region GridPane.hgrow="ALWAYS" GridPane.rowIndex="4" GridPane.vgrow="ALWAYS" />
     <HBox fx:id="ratingBox" alignment="BOTTOM_RIGHT" prefHeight="30.0" prefWidth="300.0" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="5" GridPane.valignment="CENTER">
