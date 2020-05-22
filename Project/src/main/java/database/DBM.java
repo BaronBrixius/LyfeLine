@@ -2,6 +2,7 @@ package database;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.lang.reflect.ParameterizedType;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -169,13 +170,17 @@ public class DBM {
 
     public static <T> DBObject<T>[] asArray(List<T> list) {          //converts List to Array manually since java doesn't like generic arrays
         try {
-            DBObject<T>[] asArray = (DBObject<T>[]) java.lang.reflect.Array.newInstance(list.get(0).getClass(), list.size());
+            Class<?> t =(Class<?>) ((ParameterizedType) DBM.class.getMethod("asArray", List.class).getGenericParameterTypes()[0]).getActualTypeArguments()[0];
+
+            DBObject<T>[] asArray = (DBObject<T>[]) java.lang.reflect.Array.newInstance(t, list.size());
             for (int i = 0; i < list.size(); i++) {
                 asArray[i] = (DBObject<T>) list.get(i);
             }
             return asArray;
-        } catch (ClassCastException e) {
-            throw new ClassCastException("Class does not implement DBObject<T>");       //clearer exception message
+        } catch (ClassCastException | NoSuchMethodException e) {
+            e.printStackTrace();
+            return null;
+           // throw new ClassCastException("Class does not implement DBObject<T>");       //clearer exception message
         }
     }
 
