@@ -13,7 +13,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.util.StringConverter;
-import utils.Date;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
@@ -22,6 +21,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -74,7 +74,7 @@ public abstract class Editor {
     public void initialize() {
         editor.getStylesheets().add("styles/DisabledViewable.css");
         //Set Up the Spinners for Start/End Inputs, would have bloated the .fxml and variable list a ton if these were in fxml
-        setupTimeInputStartAndEnd("Year", Integer.MIN_VALUE + 1, Integer.MAX_VALUE, 0);
+        setupTimeInputStartAndEnd("Year", -999999999, 999999999, 0);
         setupTimeInputStartAndEnd("Month", 1, 12, 1);
         setupTimeInputStartAndEnd("Day", 1, 31, 2);
         setupTimeInputStartAndEnd("Hour", 0, 23, 3);
@@ -163,10 +163,10 @@ public abstract class Editor {
     }
 
     boolean validData() {
-        Date newStartDate = new Date(startInputs.get(0).getValue(), startInputs.get(1).getValue(), startInputs.get(2).getValue(),
+        LocalDateTime newStartDate = LocalDateTime.of(startInputs.get(0).getValue(), startInputs.get(1).getValue(), startInputs.get(2).getValue(),
                 startInputs.get(3).getValue(), startInputs.get(4).getValue(), startInputs.get(5).getValue(), startInputs.get(6).getValue());
 
-        Date newEndDate = new Date(endInputs.get(0).getValue(), endInputs.get(1).getValue(), endInputs.get(2).getValue(),
+        LocalDateTime newEndDate = LocalDateTime.of(endInputs.get(0).getValue(), endInputs.get(1).getValue(), endInputs.get(2).getValue(),
                 endInputs.get(3).getValue(), endInputs.get(4).getValue(), endInputs.get(5).getValue(), endInputs.get(6).getValue());
         boolean hasNoDuration = (this instanceof EventEditor && !((EventEditor) this).hasDuration.isSelected());
 
@@ -188,8 +188,8 @@ public abstract class Editor {
             return false;
         } else if (!hasNoDuration && newStartDate.compareTo(newEndDate) > 0) {
             Alert confirmDelete = new Alert(Alert.AlertType.INFORMATION);
-            confirmDelete.setTitle("Invalid Dates");
-            confirmDelete.setHeaderText("The End Date must be after the Start Date.");
+            confirmDelete.setTitle("Invalid LocalDateTime s");
+            confirmDelete.setHeaderText("The End LocalDateTime must be after the Start LocalDateTime .");
             confirmDelete.setContentText("Make sure to check your dates before saving.");
 
             confirmDelete.showAndWait();
@@ -216,12 +216,12 @@ public abstract class Editor {
 
         if (itemInEditor.getStartDate() != null) {
             startInputs.get(0).getValueFactory().setValue(itemInEditor.getStartDate().getYear());
-            startInputs.get(1).getValueFactory().setValue(itemInEditor.getStartDate().getMonth());
-            startInputs.get(2).getValueFactory().setValue(itemInEditor.getStartDate().getDay());
+            startInputs.get(1).getValueFactory().setValue(itemInEditor.getStartDate().getMonthValue());
+            startInputs.get(2).getValueFactory().setValue(itemInEditor.getStartDate().getDayOfMonth());
             startInputs.get(3).getValueFactory().setValue(itemInEditor.getStartDate().getHour());
             startInputs.get(4).getValueFactory().setValue(itemInEditor.getStartDate().getMinute());
             startInputs.get(5).getValueFactory().setValue(itemInEditor.getStartDate().getSecond());
-            startInputs.get(6).getValueFactory().setValue(itemInEditor.getStartDate().getMillisecond());
+            startInputs.get(6).getValueFactory().setValue(itemInEditor.getStartDate().getNano() / 1000000);
 
             populateEndInputs();
         }
@@ -233,12 +233,12 @@ public abstract class Editor {
 
     void populateEndInputs() {            //so that end dates can have their display toggled separately, useful for events
         endInputs.get(0).getValueFactory().setValue(itemInEditor.getEndDate().getYear());
-        endInputs.get(1).getValueFactory().setValue(itemInEditor.getEndDate().getMonth());
-        endInputs.get(2).getValueFactory().setValue(itemInEditor.getEndDate().getDay());
+        endInputs.get(1).getValueFactory().setValue(itemInEditor.getEndDate().getMonthValue());
+        endInputs.get(2).getValueFactory().setValue(itemInEditor.getEndDate().getDayOfMonth());
         endInputs.get(3).getValueFactory().setValue(itemInEditor.getEndDate().getHour());
         endInputs.get(4).getValueFactory().setValue(itemInEditor.getEndDate().getMinute());
         endInputs.get(5).getValueFactory().setValue(itemInEditor.getEndDate().getSecond());
-        endInputs.get(6).getValueFactory().setValue(itemInEditor.getEndDate().getMillisecond());
+        endInputs.get(6).getValueFactory().setValue(itemInEditor.getEndDate().getNano() / 1000000);
     }
 
     void updateItem() {                  //sets object's values based on input fields' values
@@ -254,11 +254,11 @@ public abstract class Editor {
         itemInEditor.setName(titleInput.getText());
         itemInEditor.setDescription(descriptionInput.getText().replaceAll("([^\r])\n", "$1\r\n"));
 
-        itemInEditor.setStartDate(new Date(startInputs.get(0).getValue(), startInputs.get(1).getValue(), startInputs.get(2).getValue(),
-                startInputs.get(3).getValue(), startInputs.get(4).getValue(), startInputs.get(5).getValue(), startInputs.get(6).getValue()));
+        itemInEditor.setStartDate(LocalDateTime.of(startInputs.get(0).getValue(), startInputs.get(1).getValue(), startInputs.get(2).getValue(),
+                startInputs.get(3).getValue(), startInputs.get(4).getValue(), startInputs.get(5).getValue(), startInputs.get(6).getValue()*1000000));
 
-        itemInEditor.setEndDate(new Date(endInputs.get(0).getValue(), endInputs.get(1).getValue(), endInputs.get(2).getValue(),
-                endInputs.get(3).getValue(), endInputs.get(4).getValue(), endInputs.get(5).getValue(), endInputs.get(6).getValue()));
+        itemInEditor.setEndDate(LocalDateTime.of(endInputs.get(0).getValue(), endInputs.get(1).getValue(), endInputs.get(2).getValue(),
+                endInputs.get(3).getValue(), endInputs.get(4).getValue(), endInputs.get(5).getValue(), endInputs.get(6).getValue()*1000000));
     }
 
     boolean hasChanges() {           //returns true if any input fields don't match the object's values
@@ -269,11 +269,11 @@ public abstract class Editor {
                 || !itemInEditor.getDescription().equals(descriptionInput.getText().replaceAll("([^\r])\n", "$1\r\n")))      //textArea tends to change the newline from \r\n to just \n which breaks some things)
             return true;
 
-        Date readStart = new Date(startInputs.get(0).getValue(), startInputs.get(1).getValue(), startInputs.get(2).getValue(),
-                startInputs.get(3).getValue(), startInputs.get(4).getValue(), startInputs.get(5).getValue(), startInputs.get(6).getValue());
+        LocalDateTime readStart = LocalDateTime.of(startInputs.get(0).getValue(), startInputs.get(1).getValue(), startInputs.get(2).getValue(),
+                startInputs.get(3).getValue(), startInputs.get(4).getValue(), startInputs.get(5).getValue(), startInputs.get(6).getValue()*1000000);
 
-        Date readEnd = new Date(endInputs.get(0).getValue(), endInputs.get(1).getValue(), endInputs.get(2).getValue(),
-                endInputs.get(3).getValue(), endInputs.get(4).getValue(), endInputs.get(5).getValue(), endInputs.get(6).getValue());
+        LocalDateTime readEnd = LocalDateTime.of(endInputs.get(0).getValue(), endInputs.get(1).getValue(), endInputs.get(2).getValue(),
+                endInputs.get(3).getValue(), endInputs.get(4).getValue(), endInputs.get(5).getValue(), endInputs.get(6).getValue()*1000000);
 
         return (
                 itemInEditor.getStartDate().compareTo(readStart) != 0
@@ -290,8 +290,8 @@ public abstract class Editor {
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
+            return false;
         }
-        return true;
     }
 
     private void setupTimeInputStartAndEnd(String timeSpinnerLabel, int minValue, int maxValue, int index) {    //applies equivalent setups to both start and end spinners

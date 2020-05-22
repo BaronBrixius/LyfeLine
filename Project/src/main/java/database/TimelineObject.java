@@ -1,12 +1,12 @@
 package database;
 
-import utils.Date;
+import java.time.LocalDateTime;
 
 public abstract class TimelineObject<T> implements DBObject<T> {
-    int ownerID;
-    Date startDate = new Date();
-    Date endDate = new Date();
-    Date creationDate;
+    transient int ownerID;
+    LocalDateTime startDate = LocalDateTime.of(0,1,1,0,0,0,0);
+    LocalDateTime endDate = LocalDateTime.of(0,1,1,0,0,0,0);
+    LocalDateTime creationDate;
     String imagePath;
 
     public abstract int getID();
@@ -19,23 +19,23 @@ public abstract class TimelineObject<T> implements DBObject<T> {
         this.ownerID = ownerID;
     }
 
-    public Date getStartDate() {
+    public LocalDateTime getStartDate() {
         return this.startDate;
     }
 
-    public void setStartDate(Date startDate) {
+    public void setStartDate(LocalDateTime startDate) {
         this.startDate = startDate;
     }
 
-    public Date getEndDate() {
+    public LocalDateTime getEndDate() {
         return this.endDate;
     }
 
-    public void setEndDate(Date endDate) {
+    public void setEndDate(LocalDateTime endDate) {
         this.endDate = endDate;
     }
 
-    public Date getCreationDate() {
+    public LocalDateTime getCreationDate() {
         return creationDate;
     }
 

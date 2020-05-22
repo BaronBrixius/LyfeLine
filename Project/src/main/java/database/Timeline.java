@@ -1,37 +1,42 @@
 package database;
 
+import com.google.gson.FieldNamingStrategy;
+import com.google.gson.GsonBuilder;
 import controllers.GUIManager;
 import javafx.scene.control.Alert;
-import utils.Date;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Timeline extends TimelineObject<Timeline> {
-    private int timelineID;
+    private transient int timelineID;
     private int scale;
     private String timelineName = "";
     private String theme;
     private String timelineDescription = "";
     private List<Event> eventList = new ArrayList<>();
     private List<String> keywords = new ArrayList<>();
-    private double rating;
+    private transient double rating;
+    private GsonBuilder builder;
+
 
     public Timeline() {
     }
 
     //Do we need this? We mostly create blank timelines and then use setters called from GUI fields for new timelines
-    public Timeline(String timelineName, String timelineDescription, int scale, String theme, Date startDate,
-                    Date endDate, List<String> keywords) {
+    public Timeline(String timelineName, String timelineDescription, int scale, String theme, LocalDateTime startDate,
+                    LocalDateTime endDate, List<String> keywords) {
         this(0, timelineName, timelineDescription, scale, theme, startDate, endDate, null, 0, keywords, null, null);
     }
 
     private Timeline(int timelineID, String timelineName, String timelineDescription, int scale, String theme,
-                     Date startDate, Date endDate, Date dateCreated, int timelineOwner, List<String> keywords, List<Event> eventList, String imagePath) {
+                     LocalDateTime startDate, LocalDateTime endDate, LocalDateTime dateCreated, int timelineOwner, List<String> keywords, List<Event> eventList, String imagePath) {
         this.timelineID = timelineID;
         this.timelineName = timelineName;
         this.scale = scale;
@@ -44,13 +49,7 @@ public class Timeline extends TimelineObject<Timeline> {
         this.keywords = keywords;
         this.eventList = eventList;
         this.imagePath = imagePath;
-
-        try {
-            this.rating = calcRating();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-
+        this.rating = rating;
     }
 
     @Override
@@ -68,19 +67,19 @@ public class Timeline extends TimelineObject<Timeline> {
         out.setString(3, timelineDescription);
         out.setString(4, theme);
         out.setInt(5, startDate.getYear());
-        out.setInt(6, startDate.getMonth());
-        out.setInt(7, startDate.getDay());
+        out.setInt(6, startDate.getMonthValue());
+        out.setInt(7, startDate.getDayOfMonth());
         out.setInt(8, startDate.getHour());
         out.setInt(9, startDate.getMinute());
         out.setInt(10, startDate.getSecond());
-        out.setInt(11, startDate.getMillisecond());
+        out.setInt(11, startDate.getNano() / 1000000);
         out.setInt(12, endDate.getYear());
-        out.setInt(13, endDate.getMonth());
-        out.setInt(14, endDate.getDay());
+        out.setInt(13, endDate.getMonthValue());
+        out.setInt(14, endDate.getDayOfMonth());
         out.setInt(15, endDate.getHour());
         out.setInt(16, endDate.getMinute());
         out.setInt(17, endDate.getSecond());
-        out.setInt(18, endDate.getMillisecond());
+        out.setInt(18, endDate.getNano() / 1000000);
         out.setInt(19, ownerID);
         // keyword string generation from list
         StringBuilder sb = new StringBuilder();
@@ -108,19 +107,19 @@ public class Timeline extends TimelineObject<Timeline> {
         out.setString(3, timelineDescription);
         out.setString(4, theme);
         out.setInt(5, startDate.getYear());
-        out.setInt(6, startDate.getMonth());
-        out.setInt(7, startDate.getDay());
+        out.setInt(6, startDate.getMonthValue());
+        out.setInt(7, startDate.getDayOfMonth());
         out.setInt(8, startDate.getHour());
         out.setInt(9, startDate.getMinute());
         out.setInt(10, startDate.getSecond());
-        out.setInt(11, startDate.getMillisecond());
+        out.setInt(11, startDate.getNano() / 1000000);
         out.setInt(12, endDate.getYear());
-        out.setInt(13, endDate.getMonth());
-        out.setInt(14, endDate.getDay());
+        out.setInt(13, endDate.getMonthValue());
+        out.setInt(14, endDate.getDayOfMonth());
         out.setInt(15, endDate.getHour());
         out.setInt(16, endDate.getMinute());
         out.setInt(17, endDate.getSecond());
-        out.setInt(18, endDate.getMillisecond());
+        out.setInt(18, endDate.getNano() / 1000000);
         // keyword string generation from list
         StringBuilder sb = new StringBuilder();
         for (String s : keywords) {
@@ -209,11 +208,20 @@ public class Timeline extends TimelineObject<Timeline> {
             stmt.setInt(1, timelineID);
             eventList = DBM.getFromDB(stmt, new Event());
         }
+
+        double rating = 0;
+
+        try {
+            rating = calcRating();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+
         return new Timeline(timelineID, timelineName, timelineDescription, scale, theme,
-                new Date(startYear, startMonth, startDay, startHour, startMinute, startSecond, startMillisecond),
-                new Date(endYear, endMonth, endDay, endHour, endMinute, endSecond, endMillisecond),
-                new Date(createdYear, createdMonth, createdDay, createdHour, createdMinute, createdSecond,
-                        createdMillisecond),
+                LocalDateTime.of(startYear, startMonth, startDay, startHour, startMinute, startSecond, startMillisecond * 1000000),
+                LocalDateTime.of(endYear, endMonth, endDay, endHour, endMinute, endSecond, endMillisecond * 1000000),
+                LocalDateTime.of(createdYear, createdMonth, createdDay, createdHour, createdMinute, createdSecond,
+                        createdMillisecond * 1000000),
                 timelineOwner, keywords, eventList, imagePath);
     }
 
@@ -383,4 +391,5 @@ public class Timeline extends TimelineObject<Timeline> {
         return this.timelineID == other.timelineID;
 
     }
+
 }

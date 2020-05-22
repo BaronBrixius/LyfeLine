@@ -1,25 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.String?>
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ListView?>
-<?import javafx.scene.control.TextArea?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.FlowPane?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Region?>
-<?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
-<?import javafx.scene.text.Text?>
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<HBox fx:id="editor" alignment="CENTER" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.TimelineEditor">
+<HBox fx:id="editor" alignment="CENTER" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.TimelineEditor">
    <VBox alignment="CENTER" spacing="5.0" HBox.hgrow="ALWAYS">
       <padding>
          <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
@@ -119,23 +107,37 @@
          <Label styleClass="smallText" text="Time Unit" GridPane.rowIndex="13" />
          <Text fx:id="errorMessage" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="smallText" GridPane.columnSpan="2" GridPane.rowIndex="14" />
          <ComboBox fx:id="timeInput" nodeOrientation="LEFT_TO_RIGHT" prefWidth="150.0" GridPane.rowIndex="14" />
+         <CheckBox fx:id="zoom" mnemonicParsing="false" text="Zoom" GridPane.columnIndex="1" GridPane.rowIndex="14" />
       </GridPane>
       <Region prefHeight="1.0" />
       <GridPane fx:id="controlButtons" hgap="5.0" vgap="5.0">
          <columnConstraints>
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" />
          </columnConstraints>
          <rowConstraints>
             <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
          </rowConstraints>
-         <Button fx:id="saveEditButton" alignment="CENTER" maxHeight="30" onAction="#saveEditButton" text="Edit" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+         <Button fx:id="exportButton" alignment="CENTER" maxHeight="30" onAction="#jsonExport" text="Export" GridPane.halignment="CENTER">
             <styleClass>
                <String fx:value="smallButton" />
                <String fx:value="DisabledInvisible" />
             </styleClass>
          </Button>
-         <Button fx:id="deleteButton" alignment="CENTER" maxHeight="30" onAction="#deleteTimeline" text="Delete" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+         <Button fx:id="snapshotButton" alignment="CENTER" maxHeight="30" onAction="#imageExport" text="Snapshot" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+         <styleClass>
+            <String fx:value="smallButton" />
+            <String fx:value="DisabledInvisible" />
+         </styleClass>
+         </Button>
+         <Button fx:id="saveEditButton" alignment="CENTER" maxHeight="30" onAction="#saveEditButton" text="Edit" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+            <styleClass>
+               <String fx:value="smallButton" />
+               <String fx:value="DisabledInvisible" />
+            </styleClass>
+         </Button>
+         <Button fx:id="deleteButton" alignment="CENTER" maxHeight="30" onAction="#deleteTimeline" text="Delete" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
             <styleClass>
                <String fx:value="smallButton" />
                <String fx:value="DisabledInvisible" />
@@ -143,4 +145,5 @@
          </Button>
       </GridPane>
    </VBox>
+
 </HBox>

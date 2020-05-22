@@ -15,12 +15,12 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.util.StringConverter;
-import utils.Date;
 
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Predicate;
 
@@ -81,7 +81,7 @@ public class Dashboard {
 
     public void initialize() {
         //Set Up the Spinners for Start/End Inputs, would have bloated the .fxml and variable list a ton if these were in fxml
-        setupTimeInputStartAndEnd("Year", Integer.MIN_VALUE, Integer.MAX_VALUE, 0, 0, 0);
+        setupTimeInputStartAndEnd("Year", -1000000000, 999999999, 0, 0, 0);
         setupTimeInputStartAndEnd("Month", 0, 12, 1, 0, 1);
         setupTimeInputStartAndEnd("Day", 0, 31, 2, 0, 2);
         setupTimeInputStartAndEnd("Hour", -1, 23, 3, 0, 3);
@@ -123,7 +123,8 @@ public class Dashboard {
     private void populateTimelineList() {
         try {
             PreparedStatement stmt = DBM.conn.prepareStatement("SELECT * FROM timelines");
-            filteredTimelines = new FilteredList<>(FXCollections.observableList(DBM.getFromDB(stmt, new Timeline())));
+            var foo = FXCollections.observableList(DBM.getFromDB(stmt, new Timeline()));
+            filteredTimelines = new FilteredList<>(foo);
             sortedTimelines = new SortedList<>(filteredTimelines);
             list.setItems(sortedTimelines);
         } catch (SQLException e) {
@@ -210,24 +211,26 @@ public class Dashboard {
                 addToList = false;
             }
 
-            //Start Date
-            Date startDateSpinner = new Date(startInputs.get(0).getValue(), startInputs.get(1).getValue(), startInputs.get(2).getValue(),
-                    startInputs.get(3).getValue(), startInputs.get(4).getValue(), startInputs.get(5).getValue(), startInputs.get(6).getValue());
-            Date startDateInDB = new Date(data.getInt("StartYear"), data.getInt("StartMonth"), data.getInt("StartDay"),
-                    data.getInt("StartHour"), data.getInt("StartMinute"), data.getInt("StartSecond"), data.getInt("StartMillisecond"));
+            if (dateSearchedBy(startInputs)) {
+                //Start LocalDateTime
+                LocalDateTime startDateSpinner = readTimeInputs(startInputs);
+                LocalDateTime startDateInDB = LocalDateTime.of(data.getInt("StartYear"), data.getInt("StartMonth"), data.getInt("StartDay"),
+                        data.getInt("StartHour"), data.getInt("StartMinute"), data.getInt("StartSecond"), data.getInt("StartMillisecond"));
 
-            if (dateSearchedBy(startInputs) && startDateInDB.compareTo(startDateSpinner) < 0) {
-                addToList = false;
+                if (startDateInDB.compareTo(startDateSpinner) < 0) {
+                    addToList = false;
+                }
             }
 
-            //End Date
-            Date endDateSpinner = new Date(endInputs.get(0).getValue(), endInputs.get(1).getValue(), endInputs.get(2).getValue(),
-                    endInputs.get(3).getValue(), endInputs.get(4).getValue(), endInputs.get(5).getValue(), endInputs.get(6).getValue());
-            Date endDateInDB = new Date(data.getInt("EndYear"), data.getInt("EndMonth"), data.getInt("EndDay"),
-                    data.getInt("EndHour"), data.getInt("EndMinute"), data.getInt("EndSecond"), data.getInt("EndMillisecond"));
+            if (dateSearchedBy(endInputs)) {
+                //End LocalDateTime
+                LocalDateTime endDateSpinner = readTimeInputs(endInputs);
+                LocalDateTime endDateInDB = LocalDateTime.of(data.getInt("EndYear"), data.getInt("EndMonth"), data.getInt("EndDay"),
+                        data.getInt("EndHour"), data.getInt("EndMinute"), data.getInt("EndSecond"), data.getInt("EndMillisecond"));
 
-            if (dateSearchedBy(endInputs) && endDateInDB.compareTo(endDateSpinner) > 0) {
-                addToList = false;
+                if (endDateInDB.compareTo(endDateSpinner) > 0) {
+                    addToList = false;
+                }
             }
 
             //Rating
@@ -242,12 +245,23 @@ public class Dashboard {
         return out;
     }
 
-    boolean dateSearchedBy(List<Spinner<Integer>> inputs) {     //returns whether or not ANY inputs of either start or end dates are being used
-        for (Spinner<Integer> s: inputs) {
+    private boolean dateSearchedBy(List<Spinner<Integer>> inputs) {     //returns whether or not ANY inputs of either start or end dates are being used
+        for (Spinner<Integer> s : inputs) {
             if (s.getValue() != ((SpinnerValueFactory.IntegerSpinnerValueFactory) s.getValueFactory()).getMin())
                 return true;
         }
         return false;
+    }
+
+    private LocalDateTime readTimeInputs(List<Spinner<Integer>> inputs) {
+        return LocalDateTime.of(
+                (inputs.get(0).getValue() == -1000000000) ? 0 : inputs.get(0).getValue(),
+                Math.max(1, inputs.get(1).getValue()),
+                Math.max(1, inputs.get(2).getValue()),
+                Math.max(0, inputs.get(3).getValue()),
+                Math.max(0, inputs.get(4).getValue()),
+                Math.max(0, inputs.get(5).getValue()),
+                Math.max(0, inputs.get(6).getValue()));
     }
 
     @FXML
@@ -348,8 +362,8 @@ public class Dashboard {
 
     private void displayTimelineDetails(Timeline timeline) {
         int year = timeline.getCreationDate().getYear();
-        int month = timeline.getCreationDate().getMonth();
-        int day = timeline.getCreationDate().getDay();
+        int month = timeline.getCreationDate().getMonthValue();
+        int day = timeline.getCreationDate().getDayOfMonth();
 
         StringBuilder keyWords = new StringBuilder();
         for (String s : timeline.getKeywords())
@@ -358,12 +372,12 @@ public class Dashboard {
             keyWords.delete(keyWords.length() - 2, keyWords.length());
 
         titleText.setText("Title: " + timeline.getName() + "\nDescription: " + timeline.getDescription()
-                + "\nDate Created: " + year + "/" + month + "/" + day + "\nKeywords: " + keyWords);
+                + "\nLocalDateTime Created: " + year + "/" + month + "/" + day + "\nKeywords: " + keyWords);
         fullPicture.setImage(new Image("file:" + timeline.getImagePath()));
     }
 
-    private void setupTimeInputStartAndEnd(String timeSpinnerLabel, int minValue, int maxValue, int column, int row,
-                                           int index) {    //applies equivalent setups to both start and end spinners
+    //apply equivalent setups to both start and end spinners
+    private void setupTimeInputStartAndEnd(String timeSpinnerLabel, int minValue, int maxValue, int column, int row, int index) {
         setupTimeInput(timeSpinnerLabel, minValue, maxValue, column, row, startInputs, startDates, index);
         setupTimeInput(timeSpinnerLabel, minValue, maxValue, column, row, endInputs, endDates, index);
     }
@@ -375,14 +389,14 @@ public class Dashboard {
             @Override
             public void increment(int steps) {
                 super.increment(steps);                         //makes blank years pretend to be 0 when using buttons, by incrementing to 1 and decrementing to -1
-                if (getValue() == Integer.MIN_VALUE + 1)
+                if (getValue() == -999999999)
                     setValue(1);
             }
 
             @Override
             public void decrement(int steps) {
                 super.decrement(steps);
-                if (getValue() == Integer.MAX_VALUE)
+                if (getValue() == 999999999)
                     setValue(-1);
             }
         };
@@ -437,7 +451,7 @@ public class Dashboard {
         confirmDeleteTimeline.setTitle("Confirm Deletion");
         confirmDeleteTimeline.setHeaderText("Are you sure you want to delete " + list.getSelectionModel().getSelectedItem().getName() + "?");
         confirmDeleteTimeline.setContentText("This can not be undone.");
-
+        
         Optional<ButtonType> result = confirmDeleteTimeline.showAndWait();
 
         if (result.get() == ButtonType.CANCEL)

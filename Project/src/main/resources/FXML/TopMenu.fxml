@@ -8,20 +8,24 @@
 
 <HBox xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.TopMenu">
     <MenuBar maxHeight="25.0">
-        <Menu mnemonicParsing="false" text="File">
-          <MenuItem fx:id="saveButton" mnemonicParsing="false" onAction="#saveFile" text="Save" />
-          <MenuItem mnemonicParsing="false" text="Delete" />
-          <MenuItem mnemonicParsing="false" text="Zoom" />
+        <Menu fx:id="fileMenu" mnemonicParsing="false" text="File">
+            <MenuItem fx:id="saveButton" mnemonicParsing="false" onAction="#saveFile" text="Save" />
+            <MenuItem mnemonicParsing="false" text="Delete" />
+            <MenuItem mnemonicParsing="false" onAction="#zoom" text="Zoom" />
+            <MenuItem mnemonicParsing="false" onAction="#importFromJSON" text="Import" />
         </Menu>
         <Menu mnemonicParsing="false" text="Edit">
-          <MenuItem mnemonicParsing="false" text="Edit Mode" />
+            <MenuItem mnemonicParsing="false" text="Edit Mode" />
         </Menu>
         <Menu mnemonicParsing="false" text="View">
           <MenuItem mnemonicParsing="false" text="View Mode" />
-         <Menu mnemonicParsing="false" text="Style">
+         <Menu mnemonicParsing="false" text="Theme">
            <items>
              <MenuItem mnemonicParsing="false" onAction="#styleDefaultPressed" text="Default" />
-               <MenuItem mnemonicParsing="false" onAction="#styleNonePressed" text="None" />
+               <MenuItem mnemonicParsing="false" onAction="#styleBeigePressed" text="Beige" />
+               <MenuItem mnemonicParsing="false" onAction="#styleBluePressed" text="Blue" />
+               <MenuItem mnemonicParsing="false" onAction="#styleDarkPressed" text="Dark" />
+               <MenuItem mnemonicParsing="false" onAction="#styleMaroonPressed" text="Maroon" />
            </items>
          </Menu>
         </Menu>
