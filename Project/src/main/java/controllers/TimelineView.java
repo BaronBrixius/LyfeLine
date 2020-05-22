@@ -114,7 +114,7 @@ public class TimelineView {
             //mainScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
             WritableImage temp = timelineGrid.snapshot(snapShotparams,
                     new WritableImage((int) mainScrollPane.getLayoutBounds().getWidth(),
-                            (int) timelineGrid.getLayoutBounds().getHeight()));
+                            (int) mainScrollPane.getLayoutBounds().getHeight()));
             System.out.println(" zoom printout");
 
             //Now create buffered image and add 10% padding on top and bottom
