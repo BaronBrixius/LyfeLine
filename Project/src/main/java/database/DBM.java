@@ -177,6 +177,7 @@ public class DBM {
             return asArray;
         } catch (ClassCastException e) {
             throw new ClassCastException("Class does not implement DBObject<T>");       //clearer exception message
+        }    
     }
 
     public static void dropSchema() throws SQLException {                                      //drop current schema
