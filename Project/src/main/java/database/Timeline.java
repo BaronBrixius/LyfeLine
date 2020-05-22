@@ -1,12 +1,10 @@
 package database;
 
-import com.google.gson.FieldNamingStrategy;
 import com.google.gson.GsonBuilder;
 import controllers.GUIManager;
 import javafx.scene.control.Alert;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.*;
@@ -16,7 +14,7 @@ import java.util.List;
 
 public class Timeline extends TimelineObject<Timeline> {
     private transient int timelineID;
-    private int scale;
+    private int scale = 8;
     private String timelineName = "";
     private String theme;
     private String timelineDescription = "";
@@ -139,12 +137,14 @@ public class Timeline extends TimelineObject<Timeline> {
                 "ON t.TimelineID = te.TimelineID " +            //destroys orphaned events (i.e. events where there are no
                 "LEFT JOIN events e " +                            //junction table records for them with a different TimelineID
                 "ON te.EventID = e.EventID AND e.EventID NOT IN (SELECT EventID FROM timelineevents WHERE TimelineID != ?) " +
-                "WHERE t.TimelineID = ? ");
+                "WHERE t.TimelineID = ? AND e.EventID IS NOT NULL");
 
         out.setInt(1, timelineID);
         out.setInt(2, timelineID);
 
-        DBM.deleteFromDB(DBM.getFromDB(out, new Event()));
+        List<Event> eventsToDelete = DBM.getFromDB(out, new Event());
+        if (!eventsToDelete.isEmpty())
+            DBM.deleteFromDB(eventsToDelete);
     }
 
     @Override
