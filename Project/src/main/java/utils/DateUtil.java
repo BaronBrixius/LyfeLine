@@ -53,7 +53,7 @@ public class DateUtil {
         return (int) from.until(to, unit);
     }
 
-    public static String ddmmyyToString(Timeline activeTimeline) {
+    public static String ddmmyyToString(Timeline activeTimeline) {  //TODO format
         String dateString = activeTimeline.getStartDate().getDayOfMonth() + "."
                 + activeTimeline.getStartDate().getMonthValue() + "." + activeTimeline.getStartDate().getYear() + " - "
                 + activeTimeline.getEndDate().getDayOfMonth() + "." + activeTimeline.getEndDate().getMonthValue() + "."

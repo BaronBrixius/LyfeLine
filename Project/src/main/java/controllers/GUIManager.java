@@ -51,11 +51,11 @@ public class GUIManager extends Application {
         // Used to establish connection to the DB.
         try {
             new DBM();//
-            //DBM.setupSchema();
+            DBM.setupSchema();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        loggedInUser = DBM.getFromDB(DBM.conn.prepareStatement("SELECT * FROM users"), new User()).get(0);  //delete when merging to dev
+        //loggedInUser = DBM.getFromDB(DBM.conn.prepareStatement("SELECT * FROM users"), new User()).get(0);  //delete when merging to dev
         main = new BorderPane();
         loader = new FXMLLoader(getClass().getResource("../FXML/TopMenu.fxml"));
         main.setTop(loader.load());
