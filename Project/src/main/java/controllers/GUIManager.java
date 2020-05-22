@@ -53,6 +53,15 @@ public class GUIManager extends Application {
         main.setTop(loader.load());
         menu = loader.getController();
 
+        //for (int i = 0; i < 100; i++)
+        //{
+        //    Timeline newTimeline = new Timeline();
+        //    newTimeline.setName("test " + i);
+        //    newTimeline.setDescription("reetestree" + i);
+        //    newTimeline.setOwnerID(3);
+        //    try {DBM.insertIntoDB(newTimeline);} catch (SQLException e) {e.printStackTrace();}
+        //}
+
         mainStage = primaryStage;
         mainStage.setScene(new Scene(main));
         swapScene("Welcome");

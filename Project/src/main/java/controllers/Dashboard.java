@@ -10,7 +10,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.util.StringConverter;
@@ -70,11 +69,7 @@ public class Dashboard {
     @FXML
     protected GridPane endDates;
     @FXML
-    protected TextArea titleText;
-    @FXML
     protected Hyperlink AdvancedSearch;
-    @FXML
-    ImageView fullPicture;
     protected Timeline activeTimeline;
     protected FilteredList<Timeline> filteredTimelines;
     protected SortedList<Timeline> sortedTimelines;
