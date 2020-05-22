@@ -106,7 +106,7 @@ public class TimelineView {
 		}
 		if (nopic) {
 			Color c = Color			//TODO fix this, timelines don't have style root any more
-					.decode("#" + timelineGrid.getBackground().getFills().get(0).getFill().toString().substring(2, 8)); // Read
+					.decode("#" + mainScrollPane.getBackground().getFills().get(1).getFill().toString().substring(2, 8)); // Read
 																														// the
 																														// current
 																														// color
@@ -121,7 +121,7 @@ public class TimelineView {
 																														// BURN
 																														// IN
 																														// PADDING)
-			snapShotparams.setFill(timelineGrid.getBackground().getFills().get(0).getFill());
+			snapShotparams.setFill(mainScrollPane.getBackground().getFills().get(1).getFill());
 			used = c;
 		} // Read the current color used for Timeline grid background (root style) (IF
 			// EXTRA UNUSED ARE IN THE WRITABLE IMAGE)
