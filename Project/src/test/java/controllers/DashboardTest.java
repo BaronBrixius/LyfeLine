@@ -78,6 +78,7 @@ public class DashboardTest {
             loginUserID = GUIManager.loggedInUser.getUserID();
         } catch (SQLException e) { System.out.println("Could not get test user from database"); }
 
+        GUIManager.mainStage = stage;
         FXMLLoader loader = new FXMLLoader(getClass().getResource("../../classes/FXML/Dashboard.fxml"));
         GUIManager.mainStage = stage;
         stage.setScene(new Scene(loader.load()));
@@ -512,10 +513,10 @@ public class DashboardTest {
 
         reinitializeDashboard();
 
-        //Select the first timeline in the list that has an owner ID of the logged in user
-        sut.list.getSelectionModel().select(sut.list.getItems().stream().filter(t -> t.getOwnerID() == loginUserID).findFirst().get());
-
         Platform.runLater(() -> {
+            //Select the first timeline in the list that has an owner ID of the logged in user
+            sut.list.getSelectionModel().select(sut.list.getItems().stream().filter(t -> t.getOwnerID() == loginUserID).findFirst().get());
+
             TimelineView testView = sut.editTimeline();
             assertTrue(testView.timelineEditorController.editable); //Makes sure that the edit timeline screen starts in edit mode.
 
@@ -548,6 +549,7 @@ public class DashboardTest {
             expectedString = "None";
             assertEquals(expectedString, actualString);
         });
+
         waitForRunLater();
     }
 
@@ -909,7 +911,7 @@ public class DashboardTest {
         assertNotEquals(expected, actual); //If list is empty, then previous assert defaults to true
     }
 
-    @Test
+    /*@Test
     void testAdvancedSearchTimelineStartYear() throws InterruptedException {
         addNewTimelineToDBByStartDate(1550, 10, 3, 6, 9, 34, 25);
 
@@ -945,7 +947,7 @@ public class DashboardTest {
         assertNotEquals(expected, actual); //If list is empty, then previous assert defaults to true
     }
 
-    /*@Test
+    @Test
     void testAdvancedSearchTimelineStartMonth() throws InterruptedException {
         addNewTimelineToDBByStartDate(1550, 10, 3, 6, 9, 34, 25);
 

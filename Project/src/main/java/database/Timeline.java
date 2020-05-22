@@ -20,6 +20,7 @@ public class Timeline extends TimelineObject<Timeline> {
     private List<Event> eventList = new ArrayList<>();
     private List<String> keywords = new ArrayList<>();
     private transient double rating;
+    private User owner;
 
     public Timeline() {
     }
@@ -44,7 +45,19 @@ public class Timeline extends TimelineObject<Timeline> {
         this.keywords = keywords;
         this.eventList = eventList;
         this.imagePath = imagePath;
-        this.rating = rating;
+
+        try {
+            this.rating = calcRating();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+
+        try {
+            PreparedStatement stat = DBM.conn.prepareStatement("SELECT * FROM users WHERE UserID=?");
+            stat.setInt(1, getOwnerID());
+            owner = DBM.getFromDB(stat, new User()).get(0);
+        } catch (SQLException e) {
+        }
     }
 
     @Override
@@ -354,6 +367,10 @@ public class Timeline extends TimelineObject<Timeline> {
 
     public String getName() {
         return this.timelineName;
+    }
+
+    public User getOwner() {
+        return owner;
     }
 
     public void setName(String name) {

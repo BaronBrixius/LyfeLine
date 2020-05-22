@@ -9,9 +9,9 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="620.0" prefWidth="1024.0" stylesheets="@../styles/DefaultStyle.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.ImageExport">
-   <VBox layoutX="807.0" layoutY="164.0" prefHeight="293.0" prefWidth="165.0" spacing="10.0" style="-fx-border-style: solid;" stylesheets="@../styles/DefaultStyle.css">
-      <CheckBox fx:id="cbName" alignment="TOP_LEFT" contentDisplay="TOP" mnemonicParsing="false" onAction="#cbNameClicked" prefHeight="18.0" prefWidth="165.0" stylesheets="@../styles/DefaultStyle.css" text="Name">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="620.0" prefWidth="1024.0" stylesheets="@../styles/Default.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.ImageExport">
+   <VBox layoutX="807.0" layoutY="164.0" prefHeight="293.0" prefWidth="165.0" spacing="10.0" style="-fx-border-style: solid;" stylesheets="@../styles/Default.css">
+      <CheckBox fx:id="cbName" alignment="TOP_LEFT" contentDisplay="TOP" mnemonicParsing="false" onAction="#cbNameClicked" prefHeight="18.0" prefWidth="165.0" stylesheets="@../styles/Default.css" text="Name">
          <VBox.margin>
             <Insets />
          </VBox.margin>
@@ -50,7 +50,7 @@
          <Insets top="10.0" />
       </padding>
    </VBox>
-   <Button fx:id="btnExport" layoutX="855.0" layoutY="564.0" mnemonicParsing="false" onAction="#export" scaleX="2.0" scaleY="2.0" styleClass="tinyButton" stylesheets="@../styles/DefaultStyle.css" text="Export" />
+   <Button fx:id="btnExport" layoutX="855.0" layoutY="564.0" mnemonicParsing="false" onAction="#export" scaleX="2.0" scaleY="2.0" styleClass="tinyButton" stylesheets="@../styles/Default.css" text="Export" />
    <RadioButton fx:id="rdbtnPng" layoutX="822.0" layoutY="518.0" mnemonicParsing="false" selected="true" text="png">
       <toggleGroup>
          <ToggleGroup fx:id="formatChoice" />

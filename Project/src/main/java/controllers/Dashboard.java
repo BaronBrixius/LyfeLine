@@ -2,6 +2,7 @@ package controllers;
 
 import database.DBM;
 import database.Timeline;
+import javafx.application.Platform;
 import javafx.beans.Observable;
 import javafx.collections.FXCollections;
 import javafx.collections.transformation.FilteredList;
@@ -10,8 +11,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.util.StringConverter;
@@ -31,6 +30,7 @@ public class Dashboard {
     public Label KeywordLabel;
     public Label RatingLabel;
     public StackPane stack;
+    public ScrollPane listScrollPane;
     @FXML
     protected Button timelineViewButton;
     @FXML
@@ -70,14 +70,10 @@ public class Dashboard {
     @FXML
     protected GridPane endDates;
     @FXML
-    protected TextArea titleText;
-    @FXML
     protected Hyperlink AdvancedSearch;
-    @FXML
-    ImageView fullPicture;
-    private Timeline activeTimeline;
-    private FilteredList<Timeline> filteredTimelines;
-    private SortedList<Timeline> sortedTimelines;
+    protected Timeline activeTimeline;
+    protected FilteredList<Timeline> filteredTimelines;
+    protected SortedList<Timeline> sortedTimelines;
 
     public void initialize() {
         //Set Up the Spinners for Start/End Inputs, would have bloated the .fxml and variable list a ton if these were in fxml
@@ -107,6 +103,7 @@ public class Dashboard {
         // Search field
         cbOnlyViewPersonalLines.selectedProperty().addListener(this::simpleSearch);
         searchInput.textProperty().addListener(this::simpleSearch);
+
         list.getSelectionModel().selectedIndexProperty().addListener(e -> {
             activeTimeline = list.getSelectionModel().getSelectedItem();
             updateDisplays();
@@ -117,6 +114,9 @@ public class Dashboard {
         searchRating.setButtonCell(new RatingsListCell());
         searchRating.setCellFactory(param -> new RatingsListCell());
 
+
+        list.setPrefHeight((list.getItems().size() * 87) +  340);
+        Platform.runLater(()->list.getSelectionModel().select(0));//TODO make the scroll pane focused more immediately
         GUIManager.mainStage.setTitle("Dashboard");
     }
 
@@ -157,6 +157,9 @@ public class Dashboard {
         if (cbOnlyViewPersonalLines.isSelected())
             filteredTimelines.setPredicate(onlyPersonal.and(filteredTimelines.getPredicate()));
         list.refresh();
+        if (!list.getItems().isEmpty())
+            list.getSelectionModel().select(0);
+        list.setPrefHeight((list.getItems().size() * 87) +  340);
     }
 
     @FXML
@@ -165,6 +168,8 @@ public class Dashboard {
         try {
             List<Integer> listOfIDs = parseResultsForAdvancedSearch(data);
             filteredTimelines.setPredicate(timeline -> listOfIDs.contains(timeline.getID()));
+            list.getSelectionModel().select(0);
+            list.setPrefHeight((list.getItems().size() * 87) +  340);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -280,12 +285,14 @@ public class Dashboard {
 
     @FXML
     public void clearAdvancedSearch() {
+        Timeline currentlySelectedTimeline = list.getSelectionModel().getSelectedItem();
         searchTimelineName.clear();
         searchCreator.clear();
         searchKeywords.clear();
         searchInput.clear();
         cbOnlyViewPersonalLines.setSelected(false);
         filteredTimelines.setPredicate(t -> true);
+        list.getSelectionModel().select(currentlySelectedTimeline);
     }
 
     public void sortTimelines() {
@@ -341,7 +348,13 @@ public class Dashboard {
 
     @FXML
     private void updateDisplays() {
+        list.setPrefHeight((list.getItems().size() * 86) +  322);
         if (list.getSelectionModel().getSelectedItem() != null) {   //If a timeline is selected
+
+            //Scroll to the timeline directly above the selected one
+            //The height of each cell is actually 85.9795 pixels. I know, I hate it too.
+            listScrollPane.setVvalue(( 85.9795 / (list.getHeight() - listScrollPane.getHeight())) * (list.getSelectionModel().getSelectedIndex() - 1));
+
             if (list.getSelectionModel().getSelectedItem().getOwnerID() == GUIManager.loggedInUser.getUserID()) {
                 btnDelete.setDisable(false);
                 btnEdit.setDisable(false);
@@ -350,41 +363,23 @@ public class Dashboard {
                 btnEdit.setDisable(true);
             }
             timelineViewButton.setDisable(false);
-            displayTimelineDetails(list.getSelectionModel().getSelectedItem());
+
         } else {        //If a timeline is not selected
             timelineViewButton.setDisable(true);
             btnDelete.setDisable(true);
             btnEdit.setDisable(true);
-            titleText.clear();
-            fullPicture.setImage(null);
         }
     }
 
-    private void displayTimelineDetails(Timeline timeline) {
-        int year = timeline.getCreationDate().getYear();
-        int month = timeline.getCreationDate().getMonthValue();
-        int day = timeline.getCreationDate().getDayOfMonth();
 
-        StringBuilder keyWords = new StringBuilder();
-        for (String s : timeline.getKeywords())
-            keyWords.append(s + ", ");
-        if (keyWords.length() >= 2)
-            keyWords.delete(keyWords.length() - 2, keyWords.length());
-
-        titleText.setText("Title: " + timeline.getName() + "\nDescription: " + timeline.getDescription()
-                + "\nLocalDateTime Created: " + year + "/" + month + "/" + day + "\nKeywords: " + keyWords);
-        fullPicture.setImage(new Image("file:" + timeline.getImagePath()));
-    }
-
-    //apply equivalent setups to both start and end spinners
+    //applies equivalent setups to both start and end spinners
     private void setupTimeInputStartAndEnd(String timeSpinnerLabel, int minValue, int maxValue, int column, int row, int index) {
         setupTimeInput(timeSpinnerLabel, minValue, maxValue, column, row, startInputs, startDates, index);
         setupTimeInput(timeSpinnerLabel, minValue, maxValue, column, row, endInputs, endDates, index);
     }
 
     //creates spinners to handle dates with appropriate min/max values and invalid input handling
-    private void setupTimeInput(String timeSpinnerLabel, int minValue, int maxValue, int column, int row, List<
-            Spinner<Integer>> spinnerList, GridPane spinnerDates, int index) {
+    private void setupTimeInput(String timeSpinnerLabel, int minValue, int maxValue, int column, int row, List<Spinner<Integer>> spinnerList, GridPane spinnerDates, int index) {
         SpinnerValueFactory.IntegerSpinnerValueFactory valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(minValue, maxValue, minValue) {
             @Override
             public void increment(int steps) {
@@ -400,7 +395,7 @@ public class Dashboard {
                     setValue(-1);
             }
         };
-        valueFactory.setConverter(new StringConverter<>() {                 //makes spinners revert to default values in case of invalid input
+        valueFactory.setConverter(new StringConverter<>() { //makes spinners revert to default values in case of invalid input
             @Override
             public String toString(Integer value) {     //called by spinner to update the displayed value in the box
                 if (value == null)
@@ -449,7 +444,7 @@ public class Dashboard {
     public boolean deleteConfirmation() {
         Alert confirmDeleteTimeline = new Alert(Alert.AlertType.CONFIRMATION);
         confirmDeleteTimeline.setTitle("Confirm Deletion");
-        confirmDeleteTimeline.setHeaderText("Are you sure you want to delete " + list.getSelectionModel().getSelectedItem().getName() + "?");
+        confirmDeleteTimeline.setHeaderText("Are you sure you want to delete " + activeTimeline.getName() + "?");
         confirmDeleteTimeline.setContentText("This can not be undone.");
         
         Optional<ButtonType> result = confirmDeleteTimeline.showAndWait();
@@ -458,13 +453,13 @@ public class Dashboard {
             return false;
         else {
             try {
-                list.getSelectionModel().getSelectedItem().deleteOrphans();
-                DBM.deleteFromDB(list.getSelectionModel().getSelectedItem());
+                activeTimeline.deleteOrphans();
+                DBM.deleteFromDB(activeTimeline);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-            filteredTimelines.getSource().remove(list.getSelectionModel().getSelectedItem());
-            list.getSelectionModel().select(null);
+            filteredTimelines.getSource().remove(activeTimeline);
+            list.getSelectionModel().select(0);
             return true;
         }
     }
@@ -492,23 +487,50 @@ public class Dashboard {
             try {
                 cellNode = loader.load();
                 cell = loader.getController();
-
             } catch (IOException e) {
                 System.err.println("Could not load TimelineCell.fxml");
             }
+            cell.list = list;
+            cell.filteredTimelines = filteredTimelines;
+
+            this.focusedProperty().addListener((observable, oldValue, newValue) -> {
+                cell.focused = newValue;
+                int height = newValue ? 400 : 100;
+                this.resize(1200, height);
+                cell.ratingBox.setDisable(!newValue);
+
+                if (cell.timeline != null)
+                {
+                    cell.setBGImage();
+
+                    if (newValue)
+                    {
+                        cell.pane.add(cell.cellButtonBox, 1, 0);
+
+                        if (cell.timeline.getOwnerID() == GUIManager.loggedInUser.getUserID()) {
+                            cell.cellDeleteTimelineButton.setDisable(false);
+                            cell.cellEditTimelineButton.setDisable(false);
+                        } else {
+                            cell.cellDeleteTimelineButton.setDisable(true);
+                            cell.cellEditTimelineButton.setDisable(true);
+                        }
+                    }
+                    else
+                        cell.pane.getChildren().remove(cell.cellButtonBox);
+                }
+            });
         }
 
         @Override
         protected void updateItem(Timeline item, boolean empty) {
             super.updateItem(item, empty);
-            if (item != null && !empty) { //test for null item and empty parameter
+            if (item != null && !empty) //test for null item and empty parameter
+            {
                 setGraphic(cellNode);
-                if (!(cell == null)) {
-                    cell.setTimeline(item, list.getWidth() - 30);
-                }
-            } else {
+                if (cell != null)
+                    cell.setTimeline(item);
+            } else
                 setGraphic(null);
-            }
         }
     }
 }
