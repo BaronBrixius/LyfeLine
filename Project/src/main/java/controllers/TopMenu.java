@@ -105,6 +105,8 @@ public class TopMenu {
         FileChooser chooser = new FileChooser();                                            //open FileChooser for user to pick import .json
         chooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("JSON", "*.json"));
         File fileChosen = chooser.showOpenDialog(GUIManager.mainStage);
+        if (fileChosen == null)
+            return;
 
         try {
             String inJSON = FileUtils.readFileToString(fileChosen, (Charset) null);         //import Json from file
