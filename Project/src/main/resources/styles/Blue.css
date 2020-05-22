@@ -309,15 +309,3 @@ for example:      buttonName.getStyleClass().add("smallButton");                
 	-fx-border-color: #81817e;
 }
 
-/*Here is a list of useful CSS commands:
--fx-text-fill: black; (sets text color)
--fx-font-size: 1.5em; (sets text size)
--fx-font-family: serif; (sets text font)
--fx-font-weight: bold; (sets hold bold the text is)
--fx-font-style: italic; (sets text to be italic)
--fx-background-color: black; (sets background color)
--fx-border-color: black; (sets the color of the border for that object)
--fx-border-width: 2em; (sets the width of the border)
--fx-border-style: dotted; (makes neat little patterns for the border)
--fx-focus-color: #000000; (sets the color that highlights the object when it has focus)
-*/
