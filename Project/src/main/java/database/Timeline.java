@@ -1,177 +1,48 @@
 package database;
 
-import com.google.gson.GsonBuilder;
 import controllers.GUIManager;
 import javafx.scene.control.Alert;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.sql.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Timeline extends TimelineObject<Timeline> {
     private transient int timelineID;
     private int scale = 8;
-    private String timelineName = "";
-    private String theme;
+    private String timelineName = "New Timeline";
     private String timelineDescription = "";
     private List<Event> eventList = new ArrayList<>();
     private List<String> keywords = new ArrayList<>();
-    private transient double rating;
+    private transient double rating;                //average rating, transient because entire ratings list is exported
     private User owner;
-
 
     public Timeline() {
     }
 
-    //Do we need this? We mostly create blank timelines and then use setters called from GUI fields for new timelines
-    public Timeline(String timelineName, String timelineDescription, int scale, String theme, LocalDateTime startDate,
-                    LocalDateTime endDate, List<String> keywords) {
-        this(0, timelineName, timelineDescription, scale, theme, startDate, endDate, null, 0, keywords, null, null);
-    }
-
-    private Timeline(int timelineID, String timelineName, String timelineDescription, int scale, String theme,
-                     LocalDateTime startDate, LocalDateTime endDate, LocalDateTime dateCreated, int timelineOwner, List<String> keywords, List<Event> eventList, String imagePath) {
+    private Timeline(int timelineID, String timelineName, String timelineDescription, int scale,
+                     LocalDateTime startDate, LocalDateTime endDate, LocalDateTime dateCreated, List<String> keywords,
+                     List<Event> eventList, String imagePath, double rating, User owner) {
         this.timelineID = timelineID;
         this.timelineName = timelineName;
         this.scale = scale;
         this.timelineDescription = timelineDescription;
-        this.theme = theme;
         this.startDate = startDate;
         this.endDate = endDate;
         this.creationDate = dateCreated;
-        this.ownerID = timelineOwner;
         this.keywords = keywords;
         this.eventList = eventList;
         this.imagePath = imagePath;
-
-        try {
-            this.rating = calcRating();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-
-        try {
-            PreparedStatement stat = DBM.conn.prepareStatement("SELECT * FROM users WHERE UserID=?");
-            stat.setInt(1, getOwnerID());
-            owner = DBM.getFromDB(stat, new User()).get(0);
-        } catch (SQLException e) {
-        }
-    }
-
-    @Override
-    public PreparedStatement getInsertQuery() throws SQLException {
-        if (timelineID > 0)
-            throw new SQLIntegrityConstraintViolationException("TimelineID is already in DB.");
-
-        PreparedStatement out = DBM.conn.prepareStatement(
-                "INSERT INTO `timelines` ( `Scale`,`TimelineName`, `TimelineDescription`,  `Theme`,`StartYear`,`StartMonth`,`StartDay`,`StartHour`"
-                        + ",`StartMinute`,`StartSecond`,`StartMillisecond`,`EndYear`,`EndMonth`,`EndDay`,`EndHour`,`EndMinute`,`EndSecond`,"
-                        + "`EndMillisecond`,`TimelineOwner`,`Keywords`,`ImagePath`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
-                Statement.RETURN_GENERATED_KEYS);
-        out.setInt(1, scale);
-        out.setString(2, timelineName);
-        out.setString(3, timelineDescription);
-        out.setString(4, theme);
-        out.setInt(5, startDate.getYear());
-        out.setInt(6, startDate.getMonthValue());
-        out.setInt(7, startDate.getDayOfMonth());
-        out.setInt(8, startDate.getHour());
-        out.setInt(9, startDate.getMinute());
-        out.setInt(10, startDate.getSecond());
-        out.setInt(11, startDate.getNano() / 1000000);
-        out.setInt(12, endDate.getYear());
-        out.setInt(13, endDate.getMonthValue());
-        out.setInt(14, endDate.getDayOfMonth());
-        out.setInt(15, endDate.getHour());
-        out.setInt(16, endDate.getMinute());
-        out.setInt(17, endDate.getSecond());
-        out.setInt(18, endDate.getNano() / 1000000);
-        out.setInt(19, ownerID);
-        // keyword string generation from list
-        StringBuilder sb = new StringBuilder();
-        for (String s : keywords) {
-            sb.append(s);
-            sb.append(",");
-        }
-        out.setString(20, sb.toString());
-        if (this.imagePath == null)
-            out.setNull(21, Types.INTEGER);
-        else
-            out.setString(21, this.imagePath);
-        return out;
-    }
-
-    @Override
-    public PreparedStatement getUpdateQuery() throws SQLException {
-        PreparedStatement out = DBM.conn.prepareStatement(
-                "UPDATE `timelines` SET `Scale` = ?, `TimelineName` = ?, `TimelineDescription` = ?,  `Theme` = ?,   "
-                        + "`StartYear` = ?,  `StartMonth` = ?,  `StartDay` = ?,  `StartHour` = ?,  `StartMinute` = ?,  `StartSecond` = ?,  "
-                        + "`StartMillisecond` = ?,    `EndYear` = ?,  `EndMonth` = ?,  `EndDay` = ?,  `EndHour` = ?,  `EndMinute` = ?,  "
-                        + "`EndSecond` = ?,  `EndMillisecond` = ?, `Keywords` = ?, `ImagePath` = ? WHERE (`TimelineID` = ?)");
-        out.setInt(1, scale);
-        out.setString(2, timelineName);
-        out.setString(3, timelineDescription);
-        out.setString(4, theme);
-        out.setInt(5, startDate.getYear());
-        out.setInt(6, startDate.getMonthValue());
-        out.setInt(7, startDate.getDayOfMonth());
-        out.setInt(8, startDate.getHour());
-        out.setInt(9, startDate.getMinute());
-        out.setInt(10, startDate.getSecond());
-        out.setInt(11, startDate.getNano() / 1000000);
-        out.setInt(12, endDate.getYear());
-        out.setInt(13, endDate.getMonthValue());
-        out.setInt(14, endDate.getDayOfMonth());
-        out.setInt(15, endDate.getHour());
-        out.setInt(16, endDate.getMinute());
-        out.setInt(17, endDate.getSecond());
-        out.setInt(18, endDate.getNano() / 1000000);
-        // keyword string generation from list
-        StringBuilder sb = new StringBuilder();
-        for (String s : keywords) {
-            sb.append(s);
-            sb.append(",");
-        }
-        out.setString(19, sb.toString());
-        out.setString(20, imagePath);
-        out.setInt(21, timelineID);
-
-        return out;
-    }
-
-    public void deleteOrphans() throws SQLException {
-        PreparedStatement out = DBM.conn.prepareStatement("SELECT e.* FROM `timelines` t " +
-                "LEFT JOIN timelineevents te " +
-                "ON t.TimelineID = te.TimelineID " +            //destroys orphaned events (i.e. events where there are no
-                "LEFT JOIN events e " +                            //junction table records for them with a different TimelineID
-                "ON te.EventID = e.EventID AND e.EventID NOT IN (SELECT EventID FROM timelineevents WHERE TimelineID != ?) " +
-                "WHERE t.TimelineID = ? AND e.EventID IS NOT NULL");
-
-        out.setInt(1, timelineID);
-        out.setInt(2, timelineID);
-
-        List<Event> eventsToDelete = DBM.getFromDB(out, new Event());
-        if (!eventsToDelete.isEmpty())
-            DBM.deleteFromDB(eventsToDelete);
-    }
-
-    @Override
-    public PreparedStatement getDeleteQuery() throws SQLException {
-        PreparedStatement out = DBM.conn.prepareStatement("DELETE FROM `timelines` WHERE (`TimelineID` = ?)");
-        out.setInt(1, timelineID);
-        // Deleting the images
-        if (getImagePath() != null) {
-            try {
-                Files.deleteIfExists(Paths.get(getImagePath()));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return out;
+        this.rating = rating;
+        this.owner = owner;
     }
 
     @Override
@@ -181,7 +52,6 @@ public class Timeline extends TimelineObject<Timeline> {
         String timelineName = rs.getString("TimelineName");
         String timelineDescription = rs.getString("TimelineDescription");
         String imagePath = rs.getString("ImagePath");
-        String theme = rs.getString("Theme");
         int startYear = rs.getInt("StartYear");
         int startMonth = rs.getInt("StartMonth");
         int startDay = rs.getInt("StartDay");
@@ -203,15 +73,17 @@ public class Timeline extends TimelineObject<Timeline> {
         int createdMinute = rs.getInt("CreatedMinute");
         int createdSecond = rs.getInt("CreatedSecond");
         int createdMillisecond = rs.getInt("CreatedMillisecond");
-        int timelineOwner = rs.getInt("TimelineOwner");
         String keywordString = rs.getString("Keywords");
 
+        LocalDateTime startDate = LocalDateTime.of(startYear, startMonth, startDay, startHour, startMinute, startSecond, startMillisecond * 1000000);
+        LocalDateTime endDate = LocalDateTime.of(endYear, endMonth, endDay, endHour, endMinute, endSecond, endMillisecond * 1000000);
+        LocalDateTime createdDate = LocalDateTime.of(createdYear, createdMonth, createdDay, createdHour, createdMinute, createdSecond,
+                createdMillisecond * 1000000);
+
         // keyword list generation from comma string
-        List<String> keywords = new ArrayList<String>();
         String[] words = keywordString.split(",");
-        for (String s : words) {
-            keywords.add(s);
-        }
+        List<String> keywords = new ArrayList<>(Arrays.asList(words));
+
         List<Event> eventList;
         try (PreparedStatement stmt = DBM.conn.prepareStatement("SELECT e.* FROM events e " +
                 "INNER JOIN timelineevents t " +
@@ -221,24 +93,99 @@ public class Timeline extends TimelineObject<Timeline> {
             eventList = DBM.getFromDB(stmt, new Event());
         }
 
-        double rating = 0;
+        double rating = calcRating();
 
-        try {
-            rating = calcRating();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
+        PreparedStatement stat = DBM.conn.prepareStatement("SELECT * FROM users WHERE UserID = ?");
+        stat.setInt(1, rs.getInt("TimelineOwner"));
+        User owner = DBM.getFromDB(stat, new User()).get(0);
 
-        return new Timeline(timelineID, timelineName, timelineDescription, scale, theme,
-                LocalDateTime.of(startYear, startMonth, startDay, startHour, startMinute, startSecond, startMillisecond * 1000000),
-                LocalDateTime.of(endYear, endMonth, endDay, endHour, endMinute, endSecond, endMillisecond * 1000000),
-                LocalDateTime.of(createdYear, createdMonth, createdDay, createdHour, createdMinute, createdSecond,
-                        createdMillisecond * 1000000),
-                timelineOwner, keywords, eventList, imagePath);
+        return new Timeline(timelineID, timelineName, timelineDescription, scale, startDate, endDate, createdDate,
+                keywords, eventList, imagePath, rating, owner);
     }
 
-    public void rateTimeline(int index) {
-        if (GUIManager.loggedInUser.getUserID() == this.ownerID) {
+    @Override
+    public PreparedStatement getInsertQuery() throws SQLException {
+        return DBM.conn.prepareStatement(
+                "INSERT INTO `timelines` ( `Scale`,`TimelineName`, `TimelineDescription`, `StartYear`,`StartMonth`,`StartDay`,`StartHour`"
+                        + ",`StartMinute`,`StartSecond`,`StartMillisecond`,`EndYear`,`EndMonth`,`EndDay`,`EndHour`,`EndMinute`,`EndSecond`,"
+                        + "`EndMillisecond`,`TimelineOwner`,`Keywords`,`ImagePath`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                Statement.RETURN_GENERATED_KEYS);
+    }
+
+    @Override
+    public PreparedStatement getUpdateQuery() throws SQLException {
+        return DBM.conn.prepareStatement(
+                "UPDATE `timelines` SET `Scale` = ?, `TimelineName` = ?, `TimelineDescription` = ?, "
+                        + "`StartYear` = ?,  `StartMonth` = ?,  `StartDay` = ?,  `StartHour` = ?,  `StartMinute` = ?,  `StartSecond` = ?,  "
+                        + "`StartMillisecond` = ?,    `EndYear` = ?,  `EndMonth` = ?,  `EndDay` = ?,  `EndHour` = ?,  `EndMinute` = ?,  "
+                        + "`EndSecond` = ?,  `EndMillisecond` = ?, `TimelineOwner` = ?, `Keywords` = ?, `ImagePath` = ? WHERE (`TimelineID` = ?)");
+    }
+
+    @Override
+    public void addToBatch(PreparedStatement stmt) throws SQLException {
+        stmt.clearParameters();
+
+        stmt.setInt(1, scale);
+        stmt.setString(2, timelineName);
+        stmt.setString(3, timelineDescription);
+        stmt.setInt(4, startDate.getYear());
+        stmt.setInt(5, startDate.getMonthValue());
+        stmt.setInt(6, startDate.getDayOfMonth());
+        stmt.setInt(7, startDate.getHour());
+        stmt.setInt(8, startDate.getMinute());
+        stmt.setInt(9, startDate.getSecond());
+        stmt.setInt(10, startDate.getNano() / 1000000);
+        stmt.setInt(11, endDate.getYear());
+        stmt.setInt(12, endDate.getMonthValue());
+        stmt.setInt(13, endDate.getDayOfMonth());
+        stmt.setInt(14, endDate.getHour());
+        stmt.setInt(15, endDate.getMinute());
+        stmt.setInt(16, endDate.getSecond());
+        stmt.setInt(17, endDate.getNano() / 1000000);
+        stmt.setInt(18, getOwnerID());
+        // keyword string generation from list
+        StringBuilder sb = new StringBuilder();
+        for (String s : keywords) {
+            sb.append(s);
+            sb.append(",");
+        }
+        stmt.setString(19, sb.toString());
+        stmt.setString(20, imagePath);
+        if (timelineID > 0)
+            stmt.setInt(21, timelineID);
+
+        stmt.addBatch();
+    }
+
+    @Override
+    public PreparedStatement getDeleteQuery() throws SQLException {
+        return DBM.conn.prepareStatement("DELETE FROM `timelines` WHERE (`TimelineID` = ?)");
+    }
+
+    public void deleteImage(){
+        if (getImagePath() != null) {
+            try {
+                Files.deleteIfExists(Paths.get(getImagePath()));
+            } catch (IOException e) {
+                System.err.println("Could not access Timeline's image path.");
+            }
+        }
+    }
+
+    public void deleteOrphans() throws SQLException {
+        PreparedStatement out = DBM.conn.prepareStatement("DELETE e.* FROM `timelines` t " +
+                "LEFT JOIN timelineevents te " +
+                "ON t.TimelineID = te.TimelineID " +                //destroys orphaned events (i.e. events where there are no
+                "LEFT JOIN events e " +                             //junction table records for them with a different TimelineID
+                "ON te.EventID = e.EventID AND e.EventID NOT IN (SELECT EventID FROM timelineevents WHERE TimelineID != ?) " +
+                "WHERE t.TimelineID = ? AND e.EventID IS NOT NULL");
+
+        out.setInt(1, timelineID);
+        out.setInt(2, timelineID);
+    }
+
+    public void rateTimeline(int index) throws SQLException {
+        if (GUIManager.loggedInUser.getID() == getOwnerID()) {
             Alert confirmDelete = new Alert(Alert.AlertType.INFORMATION);
             confirmDelete.setTitle("Rating Failed");
             confirmDelete.setHeaderText("You may not rate your own timeline.");
@@ -246,39 +193,33 @@ public class Timeline extends TimelineObject<Timeline> {
             confirmDelete.showAndWait();
             return;
         }
-        try {
-            if (checkRating()) {
-                updateRating(index, GUIManager.loggedInUser.getUserID());
-            } else {
-                addRating(index, GUIManager.loggedInUser.getUserID());
-            }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
+
+        if (checkIfRated()) {
+            updateRating(index, GUIManager.loggedInUser.getID());
+        } else {
+            addRating(index, GUIManager.loggedInUser.getID());
         }
     }
 
-    public PreparedStatement addRating(int rating, int userId) throws SQLException {
+    public void addRating(int rating, int userId) throws SQLException {
         PreparedStatement out = DBM.conn.prepareStatement("INSERT INTO ratings (`Rating`, `UserId`, `TimeLineID`) VALUES (?, ?, ?)");
         out.setInt(1, rating);
         out.setInt(2, userId);
         out.setInt(3, this.timelineID);
         out.execute();
-        return out;
     }
 
-    public PreparedStatement updateRating(int rating, int userId) throws SQLException {
-
-        PreparedStatement out = DBM.conn.prepareStatement("UPDATE ratings SET `Rating` = ? WHERE (`TimeLineID` = ? AND `UserId` = ?)");
+    public void updateRating(int rating, int userId) throws SQLException {
+        PreparedStatement out = DBM.conn.prepareStatement("UPDATE ratings SET `Rating` = ? WHERE (`UserId` = ? AND `TimeLineID` = ?)");
         out.setInt(1, rating);
-        out.setInt(2, this.timelineID);
-        out.setInt(3, userId);
+        out.setInt(2, userId);
+        out.setInt(3, this.timelineID);
         out.execute();
-        return out;
     }
 
-    public boolean checkRating() throws SQLException {
-        PreparedStatement rate = DBM.conn.prepareStatement("SELECT COUNT(*) FROM ratings WHERE UserID = ? AND TimeLineID = ? ");
-        rate.setInt(1, GUIManager.loggedInUser.getUserID());
+    public boolean checkIfRated() throws SQLException {
+        PreparedStatement rate = DBM.conn.prepareStatement("SELECT COUNT(*) FROM ratings WHERE UserID = ? AND TimeLineID = ?");
+        rate.setInt(1, GUIManager.loggedInUser.getID());
         rate.setInt(2, this.getID());
         ResultSet rs = rate.executeQuery();
         rs.next();
@@ -293,21 +234,8 @@ public class Timeline extends TimelineObject<Timeline> {
         return rs.getDouble(1);
     }
 
-    public double getRating() {
-        return rating;
-    }
-
-    public void updateRatingFromDB() {
-        try {
-            PreparedStatement rate = DBM.conn.prepareStatement("SELECT AVG(Rating) FROM ratings WHERE TimeLineID = ?");
-            rate.setInt(1, this.getID());
-            ResultSet rs = rate.executeQuery();
-            rs.next();
-            this.rating = rs.getDouble(1);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        ;
+    public void updateRatingFromDB() throws SQLException {
+        this.rating = calcRating();
     }
 
     @Override
@@ -315,42 +243,52 @@ public class Timeline extends TimelineObject<Timeline> {
         return "Name: " + timelineName + " Description: " + timelineDescription;
     }
 
-    // This method will set the name of the timeline if this user has not timeline
-    // with the same name already in the DB
-    public void setName(String name, int userID) throws SQLException, IllegalArgumentException {
-        if (validName(name, userID)) // uses this private method for validation
-            this.timelineName = name;
-        else
-            throw new IllegalArgumentException(
-                    "This user has already a timeline with this name, choose another name or remove the former timeline");
-    }
-    // This method takes the new timeline name and the userID that is creating the
-    // line and checks if the name is already in the DB, in relation with this user
-
-    boolean validName(String name, int user) throws SQLException {
-        PreparedStatement stmt = DBM.conn.prepareStatement("SELECT * FROM timelines WHERE TimelineOwner = ?");
-        stmt.setInt(1, user);
-        List<String> timelineNameList = DBM.getFromDB(stmt, rs -> rs.getString("TimelineName"));
-        // Then check if the new timeline name equals to any of the ones gotten from the
-        // DB
-        for (int i = 0; i < timelineNameList.size(); i++) {
-            if (name.equals(timelineNameList.get(i)))
-                return false;// this user has this name already as a timeline name in the DB
-        }
-        // If not found in the DB its good and returns true
-        return true;
-    }
-
-
-    // Getters
+    // Getters/Setters
     public int getID() {
         return this.timelineID;
     }
 
-    // Setters
     @Override
     public void setID(int id) {
         this.timelineID = id;
+    }
+
+    @Override
+    public int getOwnerID() {
+        return owner.getID();
+    }
+
+    @Override
+    public void setOwnerID(int ownerID) {
+        owner.setID(ownerID);
+    }
+
+    @Override
+    public String getDescription() {
+        return this.timelineDescription;
+    }
+
+    @Override
+    public void setDescription(String description) {
+        this.timelineDescription = description;
+    }
+
+    @Override
+    public String getName() {
+        return this.timelineName;
+    }
+
+    @Override
+    public void setName(String name) {
+        this.timelineName = name;
+    }
+
+    public double getRating() {
+        return rating;
+    }
+
+    public User getOwner() {
+        return owner;
     }
 
     public int getScale() {
@@ -359,34 +297,6 @@ public class Timeline extends TimelineObject<Timeline> {
 
     public void setScale(int scale) {
         this.scale = scale;
-    }
-
-    public String getDescription() {
-        return this.timelineDescription;
-    }
-
-    public void setDescription(String description) {
-        this.timelineDescription = description;
-    }
-
-    public String getName() {
-        return this.timelineName;
-    }
-
-    public User getOwner() {
-        return owner;
-    }
-
-    public void setName(String name) {
-        this.timelineName = name;
-    }
-
-    public String getTheme() {
-        return this.theme;
-    }
-
-    public void setTheme(String theme) {
-        this.theme = theme;
     }
 
     public List<String> getKeywords() {
@@ -405,7 +315,5 @@ public class Timeline extends TimelineObject<Timeline> {
         if (this.timelineID == 0)
             return false;
         return this.timelineID == other.timelineID;
-
     }
-
 }

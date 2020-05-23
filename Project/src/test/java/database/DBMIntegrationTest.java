@@ -28,7 +28,7 @@ public class DBMIntegrationTest {
 
     @AfterAll
     static void finish() throws SQLException {
-        DBM.conn.createStatement().execute("DROP DATABASE IF EXISTS test");
+        DBM.conn.createStatement().execute("DROP DATABASE IF EXISTS " + SCHEMA);
         DBM.conn.close();
     }
 
@@ -81,7 +81,7 @@ public class DBMIntegrationTest {
 
     @Test
     void insertNulls() throws SQLException {
-        int expected = 6;
+        int expected = 1 + DBM.getFromDB(DBM.conn.prepareStatement("SELECT COUNT(*) FROM events"), rs -> rs.getInt(1)).get(0);
 
         Event[] events = new Event[3];
         events[1] = new Event();

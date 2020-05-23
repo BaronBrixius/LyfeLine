@@ -82,7 +82,7 @@ public class TimelineEditor extends Editor {
         this.timeline = timeline;
         itemInEditor = timeline;
         // Check if Admin
-        setOwner(GUIManager.loggedInUser.getUserID() == timeline.getOwnerID());
+        setOwner(GUIManager.loggedInUser.getID() == timeline.getOwnerID());
         return populateDisplay();
     }
 

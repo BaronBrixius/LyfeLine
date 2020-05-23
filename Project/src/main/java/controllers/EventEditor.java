@@ -5,7 +5,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.util.StringConverter;
 
-import java.io.*;
 import java.sql.SQLException;
 import java.util.Optional;
 
@@ -79,8 +78,8 @@ public class EventEditor extends Editor {
         this.event = event;
         itemInEditor = event;
         if (this.event.getID() == 0)       //if new event, set current user as owner
-            this.event.setOwnerID(GUIManager.loggedInUser.getUserID());
-        setOwner(GUIManager.loggedInUser.getUserID() == this.event.getOwnerID());
+            this.event.setOwnerID(GUIManager.loggedInUser.getID());
+        setOwner(GUIManager.loggedInUser.getID() == this.event.getOwnerID());
         return populateDisplay();
     }
 

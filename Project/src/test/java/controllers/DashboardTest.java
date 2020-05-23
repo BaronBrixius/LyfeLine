@@ -74,7 +74,7 @@ public class DashboardTest {
             PreparedStatement stat = DBM.conn.prepareStatement("SELECT * FROM Users WHERE UserID=?");
             stat.setInt(1, 14);
             GUIManager.loggedInUser =  DBM.getFromDB(stat, new User()).get(0);
-            loginUserID = GUIManager.loggedInUser.getUserID();
+            loginUserID = GUIManager.loggedInUser.getID();
         } catch (SQLException e) { System.out.println("Could not get test user from database"); }
 
         GUIManager.mainStage = stage;
@@ -329,7 +329,7 @@ public class DashboardTest {
         int actual;
         int expected;
         for (Timeline timeline : timelinesList) {
-            expected = GUIManager.loggedInUser.getUserID();
+            expected = GUIManager.loggedInUser.getID();
             actual = timeline.getOwnerID();
 
             assertEquals(expected, actual);
@@ -363,7 +363,7 @@ public class DashboardTest {
         for (int i = 0; i < timelinesList.size(); i++) {
             higherTimelineOnList = timelinesList.get(i);
 
-            expected = GUIManager.loggedInUser.getUserID();
+            expected = GUIManager.loggedInUser.getID();
             actual = higherTimelineOnList.getOwnerID();
             assertEquals(expected, actual);     //Check that the timelines are owned by the user
 
@@ -485,7 +485,6 @@ public class DashboardTest {
             expectedInt = 0;
             assertEquals(expectedInt, actualInt);
 
-            assertNull(testView.activeTimeline.getTheme());
         });
         waitForRunLater();
     }
@@ -501,7 +500,6 @@ public class DashboardTest {
         newTimeline.setDescription("Description");
         newTimeline.getKeywords().add("Keyword");
         newTimeline.setScale(3);
-        newTimeline.setTheme("None");
         try {DBM.insertIntoDB(newTimeline);} catch (SQLException e) {e.printStackTrace();}
 
         Event testEvent = new Event();
@@ -542,10 +540,6 @@ public class DashboardTest {
             actualInt = testView.activeTimeline.getEventList().size();
             expectedInt = 1;
             assertEquals(expectedInt, actualInt);
-
-            actualString = testView.activeTimeline.getTheme();
-            expectedString = "None";
-            assertEquals(expectedString, actualString);
         });
 
         waitForRunLater();
@@ -588,10 +582,6 @@ public class DashboardTest {
             actualInt = testView.activeTimeline.getEventList().size();
             expectedInt = timelineSelected.getEventList().size();
             assertEquals(expectedInt, actualInt);
-
-            actualString = testView.activeTimeline.getTheme();
-            expectedString = timelineSelected.getTheme();
-            assertEquals(expectedString, actualString);
         });
         waitForRunLater();
     }
@@ -875,7 +865,7 @@ public class DashboardTest {
 
     @Test
     void testAdvancedSearchTimelineOwnerName() throws InterruptedException {
-        addNewTimelineToDBByOwnerId(GUIManager.loggedInUser.getUserID());
+        addNewTimelineToDBByOwnerId(GUIManager.loggedInUser.getID());
 
         Platform.runLater(() -> {
             sut.initialize();
@@ -885,7 +875,7 @@ public class DashboardTest {
         });
         waitForRunLater();
 
-        assertTrue(sut.list.getItems().stream().allMatch(timeline -> timeline.getOwnerID() == GUIManager.loggedInUser.getUserID()));
+        assertTrue(sut.list.getItems().stream().allMatch(timeline -> timeline.getOwnerID() == GUIManager.loggedInUser.getID()));
         int actual = sut.list.getItems().size();
         int expected = 0;
         assertNotEquals(expected, actual); //If list is empty, then previous assert defaults to true
@@ -987,7 +977,7 @@ public class DashboardTest {
 
     @Test
     void testAdvancedSearchTimelineNameAndOwner() throws InterruptedException {
-        addNewTimelineToDBByOwnerIdAndName("Please don't make a timeline with this name it will ruin my tests", GUIManager.loggedInUser.getUserID());
+        addNewTimelineToDBByOwnerIdAndName("Please don't make a timeline with this name it will ruin my tests", GUIManager.loggedInUser.getID());
 
         Platform.runLater(() -> {
             sut.initialize();
@@ -999,7 +989,7 @@ public class DashboardTest {
         waitForRunLater();
 
         assertTrue(sut.list.getItems().stream().allMatch(timeline -> timeline.getName().toLowerCase().contains(sut.searchTimelineName.getText().toLowerCase())));
-        assertTrue(sut.list.getItems().stream().allMatch(timeline -> timeline.getOwnerID() == GUIManager.loggedInUser.getUserID()));
+        assertTrue(sut.list.getItems().stream().allMatch(timeline -> timeline.getOwnerID() == GUIManager.loggedInUser.getID()));
         int actual = sut.list.getItems().size();
         int expected = 0;
         assertNotEquals(expected, actual); //If list is empty, then previous asserts defaults to true
@@ -1008,7 +998,7 @@ public class DashboardTest {
     @Test
     void testAdvancedSearchTimelineNameAndOwnerAndKeyword() throws InterruptedException {
         Timeline newTimeline = new Timeline();
-        newTimeline.setOwnerID(GUIManager.loggedInUser.getUserID());
+        newTimeline.setOwnerID(GUIManager.loggedInUser.getID());
         newTimeline.setName("Please don't make a timeline with this name it will ruin my tests");
         newTimeline.getKeywords().add("Please don't make a timeline with this keyword it will ruin my tests");
         try {DBM.insertIntoDB(newTimeline);} catch (SQLException e) {e.printStackTrace();}
@@ -1025,7 +1015,7 @@ public class DashboardTest {
         waitForRunLater();
 
         assertTrue(sut.list.getItems().stream().allMatch(timeline -> timeline.getName().toLowerCase().contains(sut.searchTimelineName.getText().toLowerCase())));
-        assertTrue(sut.list.getItems().stream().allMatch(timeline -> timeline.getOwnerID() == GUIManager.loggedInUser.getUserID()));
+        assertTrue(sut.list.getItems().stream().allMatch(timeline -> timeline.getOwnerID() == GUIManager.loggedInUser.getID()));
         assertTrue(sut.list.getItems().stream().allMatch(timeline -> timeline.getKeywords().stream().anyMatch(keyWord->keyWord.contains(sut.searchKeywords.getText().toLowerCase()))));
         int actual = sut.list.getItems().size();
         int expected = 0;

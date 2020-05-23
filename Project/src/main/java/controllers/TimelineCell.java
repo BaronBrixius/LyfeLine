@@ -1,12 +1,9 @@
 package controllers;
 
-import com.google.gson.Gson;
 import database.DBM;
-import database.JSONTimeline;
 import database.Timeline;
 import database.User;
 import javafx.collections.transformation.FilteredList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
@@ -14,12 +11,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
-import javafx.stage.FileChooser;
-import org.apache.commons.io.FileUtils;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -92,9 +85,13 @@ public class TimelineCell {
             angle += Math.PI / numPoints;            // simplified (2*PI / numPoints*2), rotates angle to calculate next tip/intersection
         }
 
-        button.setOnMouseClicked(e -> {
-            timeline.rateTimeline(index + 1);       //click a star to submit a rating and update its display value
-            timeline.updateRatingFromDB();
+        button.setOnMouseClicked(event -> {
+            try {
+                timeline.rateTimeline(index + 1);       //click a star to submit a rating and update its display value
+                timeline.updateRatingFromDB();
+            } catch (SQLException exception) {
+
+            }
             colorStarsByRating((int) Math.ceil(timeline.getRating()));
         });
     }
@@ -151,11 +148,11 @@ public class TimelineCell {
     public void setBGImage() {
         String imageURL = timeline.getImagePath() != null ? "url(file:" + timeline.getImagePath() + ")" : null;
         int height = focused ? 400 : 80;
-        pane.setStyle(" -fx-padding: 5px; -fx-background-image: " + imageURL + "; -fx-pref-width: "+ (list.getWidth() - 6) +"px; -fx-pref-height: " + height + "px;  -fx-background-size: "+ (list.getWidth() -6) +"px, stretch;");
+        pane.setStyle(" -fx-padding: 5px; -fx-background-image: " + imageURL + "; -fx-pref-width: " + (list.getWidth() - 6) + "px; -fx-pref-height: " + height + "px;  -fx-background-size: " + (list.getWidth() - 6) + "px, stretch;");
     }
 
     @FXML
-    public boolean deleteTimeline() {
+    boolean deleteTimeline() {
         Alert confirmDeleteTimeline = new Alert(Alert.AlertType.CONFIRMATION);
         confirmDeleteTimeline.setTitle("Confirm Deletion");
         confirmDeleteTimeline.setHeaderText("Are you sure you want to delete " + timeline.getName() + "?");
