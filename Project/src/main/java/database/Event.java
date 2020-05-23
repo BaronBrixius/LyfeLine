@@ -12,15 +12,11 @@ import java.time.LocalDateTime;
 public class Event extends TimelineObject<Event> {
     private transient int eventID = 0;
     private int eventPriority = 0;
-    private String eventName = "";
+    private String eventName = "New Event";
     private String eventDescription = "";
-
+    transient int ownerID;
 
     public Event() {
-    }
-
-    public Event(User user) {//defaults, bare minimum - only related to the logged in user, timeline working on and sets creation date
-        this.ownerID = user.getID();
     }
 
     private Event(int eventID, int ownerID, LocalDateTime startDate, LocalDateTime endDate, LocalDateTime creationDate, String title, String description, String imagePath, int eventPriority) {      //for reading from database
@@ -33,21 +29,6 @@ public class Event extends TimelineObject<Event> {
         this.eventDescription = description;
         this.imagePath = imagePath;
         this.eventPriority = eventPriority;
-    }
-
-    public boolean addToTimeline(int timelineID) throws SQLException {
-        PreparedStatement out = DBM.conn.prepareStatement("INSERT IGNORE INTO `timelineevents` (`TimelineID`, `EventID`) VALUES (?, ?);");
-        out.setInt(1, timelineID);
-        out.setInt(2, this.eventID);
-        return out.executeUpdate() > 0;
-
-    }
-
-    public boolean removeFromTimeline(int timelineID) throws SQLException {
-        PreparedStatement out = DBM.conn.prepareStatement("DELETE FROM `timelineevents` WHERE EventID = ? AND TimelineID = ?");
-        out.setInt(1, eventID);
-        out.setInt(2, timelineID);
-        return out.executeUpdate() > 0;
     }
 
     @Override
@@ -63,53 +44,29 @@ public class Event extends TimelineObject<Event> {
         int StartHour = rs.getInt("StartHour");
         int StartMinute = rs.getInt("StartMinute");
         int StartSecond = rs.getInt("StartSecond");
-        int StartMillisecond = rs.getInt("StartMillisecond");
+        int StartNano = rs.getInt("StartMillisecond") * 1000000;
         int EndYear = rs.getInt("EndYear");
         int EndMonth = rs.getInt("EndMonth");
         int EndDay = rs.getInt("EndDay");
         int EndHour = rs.getInt("EndHour");
         int EndMinute = rs.getInt("EndMinute");
         int EndSecond = rs.getInt("EndSecond");
-        int EndMillisecond = rs.getInt("EndMillisecond");
+        int EndNano = rs.getInt("EndMillisecond") * 1000000;
         int CreatedYear = rs.getInt("CreatedYear");
         int CreatedMonth = rs.getInt("CreatedMonth");
         int CreatedDay = rs.getInt("CreatedDay");
         int CreatedHour = rs.getInt("CreatedHour");
         int CreatedMinute = rs.getInt("CreatedMinute");
         int CreatedSecond = rs.getInt("CreatedSecond");
-        int CreatedMillisecond = rs.getInt("CreatedMillisecond");
-        LocalDateTime start = LocalDateTime.of(StartYear, StartMonth, StartDay, StartHour, StartMinute, StartSecond, StartMillisecond);
-        LocalDateTime end = LocalDateTime.of(EndYear, EndMonth, EndDay, EndHour, EndMinute, EndSecond, EndMillisecond);
-        LocalDateTime created = LocalDateTime.of(CreatedYear, CreatedMonth, CreatedDay, CreatedHour, CreatedMinute, CreatedSecond, CreatedMillisecond);
+        int CreatedNano = rs.getInt("CreatedMillisecond") * 1000000;
+        LocalDateTime start = LocalDateTime.of(StartYear, StartMonth, StartDay, StartHour, StartMinute, StartSecond, StartNano);
+        LocalDateTime end = LocalDateTime.of(EndYear, EndMonth, EndDay, EndHour, EndMinute, EndSecond, EndNano);
+        LocalDateTime created = LocalDateTime.of(CreatedYear, CreatedMonth, CreatedDay, CreatedHour, CreatedMinute, CreatedSecond, CreatedNano);
         int EventPriority = rs.getInt("EventPriority");
 
         return new Event(eventID, ownerID, start, end, created, eventName, eventDescription, imagePath, EventPriority);
     }
 
-    public int getID() {
-        return this.eventID;
-    }
-
-    @Override
-    public void setID(int id) {
-        this.eventID = id;
-    }
-
-    public String getDescription() {
-        return this.eventDescription;
-    }
-
-    public void setDescription(String description) {
-        this.eventDescription = description;
-    }
-
-    public String getName() {
-        return this.eventName;
-    }
-
-    public void setName(String name) {
-        this.eventName = name;
-    }
 
     @Override
     public PreparedStatement getInsertQuery() throws SQLException, RuntimeException {
@@ -128,7 +85,9 @@ public class Event extends TimelineObject<Event> {
     }
 
     @Override
-    public void setQueryValues(PreparedStatement stmt) throws SQLException {
+    public void addToBatch(PreparedStatement stmt) throws SQLException {
+        stmt.clearParameters();
+
         stmt.setString(1, eventName);
         stmt.setString(2, eventDescription);
         stmt.setString(3, imagePath);
@@ -150,13 +109,17 @@ public class Event extends TimelineObject<Event> {
         stmt.setInt(19, eventPriority);
         if (eventID > 0)
             stmt.setInt(20, eventID);
+
+        stmt.addBatch();
     }
 
     @Override
     public PreparedStatement getDeleteQuery() throws SQLException {
-        PreparedStatement out = DBM.conn.prepareStatement("DELETE FROM `events` WHERE (`EventID` = ?)");
-        out.setInt(1, eventID);
+        return DBM.conn.prepareStatement("DELETE FROM `events` WHERE (`EventID` = ?)");
+    }
 
+    @Override
+    public void deleteImage() {
         // Deleting the images
         if (getImagePath() != null) {
             try {
@@ -165,7 +128,53 @@ public class Event extends TimelineObject<Event> {
                 e.printStackTrace();
             }
         }
-        return out;
+    }
+
+    public boolean addToTimeline(int timelineID) throws SQLException {  //IGNORE suppresses warnings, adding a dupe simply fails and returns false
+        PreparedStatement out = DBM.conn.prepareStatement("INSERT IGNORE INTO `timelineevents` (`TimelineID`, `EventID`) VALUES (?, ?);");
+        out.setInt(1, timelineID);
+        out.setInt(2, this.eventID);
+        return out.executeUpdate() > 0;
+    }
+
+    @Override
+    public int getID() {
+        return this.eventID;
+    }
+
+    @Override
+    public void setID(int id) {
+        this.eventID = id;
+    }
+
+    @Override
+    public int getOwnerID() {
+        return ownerID;
+    }
+
+    @Override
+    public void setOwnerID(int ownerID) {
+        this.ownerID = ownerID;
+    }
+
+    @Override
+    public String getDescription() {
+        return this.eventDescription;
+    }
+
+    @Override
+    public void setDescription(String description) {
+        this.eventDescription = description;
+    }
+
+    @Override
+    public String getName() {
+        return this.eventName;
+    }
+
+    @Override
+    public void setName(String name) {
+        this.eventName = name;
     }
 
     public int getEventPriority() {

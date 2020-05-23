@@ -1,16 +1,12 @@
 package utils;
 
-import com.google.gson.TypeAdapter;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonToken;
-import com.google.gson.stream.JsonWriter;
 import database.Timeline;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
 
+//Utility class to hold a couple of date-related methods, since java.time.LocalDateTime is final and can't be extended
 public class DateUtil {
     public static int distanceBetween(LocalDateTime from, LocalDateTime to, int scale) {
         TemporalUnit unit = null;

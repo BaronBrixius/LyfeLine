@@ -96,9 +96,7 @@ VALUES (1, 'Milliseconds'),
        (8, 'Years'),
        (9, 'Decades'),
        (10, 'Centuries'),
-       (11, 'Millennia')
-;
-
+       (11, 'Millennia');
 
 
 CREATE TABLE `Images`
@@ -130,7 +128,7 @@ CREATE TABLE `users`
     `Password`  nvarchar(90)  NOT NULL,
     `Salt`      nvarchar(30)  NOT NULL,
     `Admin`     tinyint       DEFAULT '0',
-    `Theme`		nvarchar(20)  DEFAULT 'Default',
+    `Theme`     nvarchar(20)  DEFAULT 'Default',
     PRIMARY KEY (`UserID`),
     UNIQUE KEY `UserID_UNIQUE` (`UserID`),
     UNIQUE KEY `UserEmail_UNIQUE` (`UserEmail`)
@@ -147,7 +145,6 @@ CREATE TABLE `timelines`
     `TimelineName`        nvarchar(100)     DEFAULT NULL,
     `TimelineDescription` nvarchar(5000)    DEFAULT NULL,
     `ImagePath`           nvarchar(5000)    DEFAULT NULL,
-    `Theme`               nvarchar(100)     DEFAULT NULL,
     `StartYear`           bigint            NOT NULL,
     `StartMonth`          tinyint unsigned  NOT NULL,
     `StartDay`            tinyint unsigned  NOT NULL,
@@ -217,16 +214,16 @@ CREATE TABLE ratings
     `TimeLineID` int NOT NULL,
     `Rating`     int NOT NULL,
     KEY `UserID_idx` (`UserID`),
-    KEY `TimeLineID_idx` (`TimeLineID`)
-#     CONSTRAINT `TimeLineID` FOREIGN KEY (`TimeLineID`) REFERENCES `timelines` (`TimelineID`) ON DELETE CASCADE,
-#     CONSTRAINT `UserID` FOREIGN KEY (`UserID`) REFERENCES `users` (`UserID`) ON DELETE CASCADE
+    KEY `TimeLineID_idx` (`TimeLineID`),
+    CONSTRAINT `TimeLineID` FOREIGN KEY (`TimeLineID`) REFERENCES `timelines` (`TimelineID`) ON DELETE CASCADE,
+    CONSTRAINT `UserID` FOREIGN KEY (`UserID`) REFERENCES `users` (`UserID`) ON DELETE CASCADE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_general_ci;
 
 
 INSERT INTO `users`
-    (`UserID`, `UserName`, `UserEmail`, `Password`, `Salt`, `Admin`, `Theme`)
+(`UserID`, `UserName`, `UserEmail`, `Password`, `Salt`, `Admin`, `Theme`)
 VALUES ('1', 'Ben', 'Ben@gmail.com',
         'FPUpkk14h2EWAX9J7q18Ue6QJ/VSrs5ulnaw/Tggo23smYvqcLKihIUARNQcxUpDSGXOGBsGo4gjKTikDfrpxw==',
         'hXEFj6Yy9hanXVOUyACANrUi1eZs4f', '1', 'Default'),
@@ -273,48 +270,48 @@ VALUES ('1', 'Ben', 'Ben@gmail.com',
 
 INSERT INTO `timelines`
 (`TimelineID`,
- `Scale`, `TimelineName`, `TimelineDescription`, `Theme`, `StartYear`, `StartMonth`, `StartDay`, `StartHour`,
+ `Scale`, `TimelineName`, `TimelineDescription`, `StartYear`, `StartMonth`, `StartDay`, `StartHour`,
  `StartMinute`, `StartSecond`, `StartMillisecond`, `EndYear`, `EndMonth`, `EndDay`, `EndHour`, `EndMinute`, `EndSecond`,
  `EndMillisecond`, `CreatedYear`, `CreatedMonth`, `CreatedDay`, `CreatedHour`, `CreatedMinute`, `CreatedSecond`,
  `CreatedMillisecond`, `TimelineOwner`, `Keywords`, `ImagePath`)
-VALUES (01, 8, 'Fall of Rome', 'Out with a whimper, not a bang', 'dark', 45, 5, 20, 4, 43, 32, 213, 201, 5, 20, 4,
+VALUES (01, 8, 'Fall of Rome', 'Out with a whimper, not a bang', 45, 5, 20, 4, 43, 32, 213, 201, 5, 20, 4,
         43, 32, 213, 2000, 5, 20, 4, 43,
         32, 213, 1, 'Caesar,Rome,', 'src/main/resources/images/timeline/fall_of_rome.jpg'),
-       (02, 2, 'New Timeline', '', 'dark', 2000, 5, 20, 4, 43, 20, 213, 2000, 5, 20, 4, 43, 32, 213, 2003, 5, 20, 4,
+       (02, 2, 'New Timeline', '', 2000, 5, 20, 4, 43, 20, 213, 2000, 5, 20, 4, 43, 32, 213, 2003, 5, 20, 4,
         43, 32, 213, 1, 'stuff,things,test,test1,test3,test4,test5,test6,',
         null),
-       (03, 4, 'Hound of Baskervilles', 'Investigation of an attempted murder', 'light', 2006, 5, 19, 4, 43, 32, 213,
+       (03, 4, 'Hound of Baskervilles', 'Investigation of an attempted murder', 2006, 5, 19, 4, 43, 32, 213,
         2006, 5, 20, 4, 43, 32, 213, 2003, 5, 20, 3,
         43, 32, 213, 2, 'murder,death,', 'src/main/resources/images/timeline/hound.jpg'),
-       (04, 5, 'Dr. Strangelove', 'A dark comedy on nuclear war', 'dark', 2007, 5, 18, 4, 43, 32, 213, 2007, 5, 20, 4,
+       (04, 5, 'Dr. Strangelove', 'A dark comedy on nuclear war', 2007, 5, 18, 4, 43, 32, 213, 2007, 5, 20, 4,
         43, 32, 213, 2007, 5, 20, 4, 43,
         32, 213, 2, 'war,nuclear,', 'src/main/resources/images/timeline/strangelove.jpg'),
-       (05, 6, 'Incredibly, Wastefully Long Timeline Name', '', 'light', 2009, 2, 20, 4, 43, 32, 213, 2009, 5, 20, 4,
+       (05, 6, 'Incredibly, Wastefully Long Timeline Name', '', 2009, 2, 20, 4, 43, 32, 213, 2009, 5, 20, 4,
         43, 32, 213, 2008, 5, 20, 4,
         43, 32, 213, 3, 'testing,123,', 'src/main/resources/images/timeline/rainbow_waves.jpg'),
-       (06, 11, 'Bronze Age Collapse', 'When civilization reset', 'light', -13000, 5, 20, 4, 43, 32, 213, 2020, 5, 20,
+       (06, 11, 'Bronze Age Collapse', 'When civilization reset', -13000, 5, 20, 4, 43, 32, 213, 2020, 5, 20,
         4,
         43, 32, 213, 2009, 5, 20, 4,
         43, 32, 213, 4, 'bronze,collapse,', 'src/main/resources/images/timeline/BronzeAge_Collapse.jpg'),
-       (07, 8, 'Life of Bacillus', 'Life and times of a bacterium', 'mad', 1450, 5, 20, 4, 43, 32, 213, 1505, 5, 20, 4,
+       (07, 8, 'Life of Bacillus', 'Life and times of a bacterium', 1450, 5, 20, 4, 43, 32, 213, 1505, 5, 20, 4,
         43, 32, 213, 2000, 5, 20, 4, 46,
         32, 213, 5, 'basillus,life,', 'src/main/resources/images/timeline/transistor.jpg'),
-       (08, 5, 'Decay of Ununoctium', 'Radioactive decay - a study', 'dark', 2000, 4, 20, 4, 43, 32, 213, 2000, 5, 20,
+       (08, 5, 'Decay of Ununoctium', 'Radioactive decay - a study', 2000, 4, 20, 4, 43, 32, 213, 2000, 5, 20,
         4, 43, 32, 213, 1550, 5, 20, 4, 43,
         32, 213, 6, 'decay,long,', 'src/main/resources/images/timeline/ununoctium.jpg'),
-       (09, 8, 'Owner: Max - Dummy timeline 9', 'A timeline meant for testing years', 'dark', 50, 4, 20, 4, 43, 32, 213,
+       (09, 8, 'Owner: Max - Dummy timeline 9', 'A timeline meant for testing years', 50, 4, 20, 4, 43, 32, 213,
         100, 5, 20,
         4, 43, 32, 213, 1550, 5, 20, 4, 43,
         32, 213, 2, 'testing, 2, fifty', 'src/main/resources/images/timeline/art_andre_kutscherauer.jpg'),
-       (10, 2, 'Owner: Max - Dummy timeline 10', 'A timeline meant for testing seconds', 'dark', 0, 1, 1, 0, 0, 1, 0, 0,
+       (10, 2, 'Owner: Max - Dummy timeline 10', 'A timeline meant for testing seconds', 0, 1, 1, 0, 0, 1, 0, 0,
         1, 1,
         0, 0, 59, 0, 1550, 5, 20, 4, 43,
         32, 213, 2, 'testing, 2, sixty', 'src/main/resources/images/timeline/colette.jpg'),
        (11, 2, 'Owner: Max - Dummy timeline 11',
-        'A timeline meant for testing the upper bounds of seconds (1 min 10 sec)', 'dark', 0, 1, 1, 0, 0, 1, 0, 0, 1, 1,
+        'A timeline meant for testing the upper bounds of seconds (1 min 10 sec)', 0, 1, 1, 0, 0, 1, 0, 0, 1, 1,
         0, 1, 10, 0, 1550, 5, 20, 4, 43,
         32, 213, 2, 'testing, 2, sixty', null),
-       (12, 6, 'Owner: Max - Dummy timeline 12', 'A timeline meant for testing weeks', 'dark', 50, 4, 20, 4, 43, 32,
+       (12, 6, 'Owner: Max - Dummy timeline 12', 'A timeline meant for testing weeks', 50, 4, 20, 4, 43, 32,
         213, 50, 8, 20,
         4, 43, 32, 213, 1550, 5, 20, 4, 43,
         32, 213, 2, 'testing, 2, fifty', 'src/main/resources/images/timeline/lady_of_the_lake.jpg');
@@ -515,16 +512,12 @@ VALUES ('1', '1', '3'),
        ('10', '5', '1'),
        ('10', '12', '4'),
        ('1', '1', '3'),
-       ('1', '1', '3'),
-       ('1', '1', '3'),
-       ('1', '1', '3'),
-       ('1', '1', '3'),
-       ('1', '1', '3'),
-       ('1', '1', '3'),
-       ('1', '1', '3'),
-       ('1', '1', '3'),
-       ('1', '1', '3'),
-       ('1', '1', '3'),
-       ('1', '1', '3'),
-       ('1', '1', '3'),
-       ('1', '1', '3');
+       ('2', '1', '3'),
+       ('4', '1', '3'),
+       ('5', '1', '3'),
+       ('6', '1', '3'),
+       ('7', '1', '3'),
+       ('8', '1', '3'),
+       ('9', '1', '3'),
+       ('10', '1', '3'),
+       ('11', '1', '3');

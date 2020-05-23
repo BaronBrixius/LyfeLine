@@ -1,19 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckBox?>
-<?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.ListView?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.text.Text?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.AdminRoleManager">
+<BorderPane xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.AdminRoleManager">
    <center>
       <GridPane alignment="CENTER" hgap="10.0" prefHeight="363.0" prefWidth="670.0" vgap="20.0">
           <columnConstraints>
@@ -36,7 +28,7 @@
             </opaqueInsets>
            </HBox>
            <ComboBox fx:id="sortBy" nodeOrientation="LEFT_TO_RIGHT" prefHeight="25.0" prefWidth="328.0" promptText="Sort by" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-           <TextField fx:id="searchInput" prefWidth="440.0" promptText="Search here.." GridPane.rowIndex="1" />
+           <TextField fx:id="searchInput" onKeyReleased="#search" prefWidth="440.0" promptText="Search here.." GridPane.rowIndex="1" />
            <ListView fx:id="listView" maxHeight="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" prefHeight="324.0" prefWidth="290.0" GridPane.columnSpan="2" GridPane.rowIndex="2" />
             <CheckBox fx:id="toggle" mnemonicParsing="false" onAction="#toggleClicked" styleClass="mediumText" text="Admin" GridPane.columnIndex="1" />
       </GridPane>

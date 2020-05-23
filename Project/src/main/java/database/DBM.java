@@ -2,7 +2,6 @@ package database;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.lang.reflect.ParameterizedType;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -135,8 +134,7 @@ public class DBM {
                 if (t.getID() > 0)                                  //if something has an ID it already exists in DB
                     throw new SQLException("Cannot update " + t.getClass().getSimpleName() + " not in database.");
 
-                t.setQueryValues(stmt);                             //get the values of each T and
-                stmt.addBatch();                                    //add them to the statement in a batch
+                t.addToBatch(stmt);                             //get the values of each T and add them to the batch
             }
             if (stmt == null)
                 return;
@@ -176,8 +174,7 @@ public class DBM {
                 if (t.getID() == 0)                                 //if something has no ID it doesn't exist in DB
                     throw new SQLException(t.getClass().getSimpleName() + " is already in database");
 
-                t.setQueryValues(stmt);                             //get the values of each T and
-                stmt.addBatch();                                    //add them to the statement in a batch
+                t.addToBatch(stmt);                             //get the values of each T and add them to the batch
             }
             if (stmt != null)
                 stmt.executeBatch();                                //run the batch
@@ -203,7 +200,8 @@ public class DBM {
                     stmt = t.getDeleteQuery();
 
                 stmt.setInt(1, t.getID());              //get the ID of each T and
-                stmt.addBatch();                                    //add them to the statement in a batch
+                stmt.addBatch();                                    //add it to the batch
+                t.deleteImage();                                    //delete images along with database info
             }
 
             if (stmt != null)
@@ -215,16 +213,17 @@ public class DBM {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public static <T> DBObject<T>[] asArray(List<T> list) {         //converts List to Array manually since java doesn't like generic arrays
-        try {
+        try {                                                       //don't mix types, and if in doubt just convert to a typed array yourself
             DBObject<T>[] asArray = (DBObject<T>[]) java.lang.reflect.Array.newInstance(list.get(0).getClass(), list.size());
-            for (int i = 0; i < list.size(); i++) {
+            for (int i = 0; i < list.size(); i++) {                 //don't try to run empty Lists either, if this method gets abused I'm removing it
                 asArray[i] = (DBObject<T>) list.get(i);
             }
             return asArray;
         } catch (ClassCastException e) {
             throw new ClassCastException("Class does not implement DBObject<T>");       //clearer exception message
-        }    
+        }
     }
 
     public static void dropSchema() throws SQLException {                                      //drop current schema
