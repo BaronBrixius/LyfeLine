@@ -44,34 +44,6 @@ class DBMUnitTest {
     }
 
     @Test
-    void createDB() {
-    }
-
-    @Test
-    void testCreateDB() {
-    }
-
-    @Test
-    void getFromDB() {
-    }
-
-    @Test
-    void updateInDB() {
-    }
-
-    @Test
-    void insertIntoDB() {
-    }
-
-    @Test
-    void useSchema() {
-    }
-
-    @Test
-    void dropSchema() {
-    }
-
-    @Test
     void close() throws SQLException, ClassNotFoundException {
         DBM.conn.close();
 

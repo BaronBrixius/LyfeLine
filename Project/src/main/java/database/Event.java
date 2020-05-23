@@ -3,7 +3,10 @@ package database;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.sql.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.time.LocalDateTime;
 
 public class Event extends TimelineObject<Event> {
@@ -17,7 +20,7 @@ public class Event extends TimelineObject<Event> {
     }
 
     public Event(User user) {//defaults, bare minimum - only related to the logged in user, timeline working on and sets creation date
-        this.ownerID = user.getUserID();
+        this.ownerID = user.getID();
     }
 
     private Event(int eventID, int ownerID, LocalDateTime startDate, LocalDateTime endDate, LocalDateTime creationDate, String title, String description, String imagePath, int eventPriority) {      //for reading from database
@@ -30,41 +33,6 @@ public class Event extends TimelineObject<Event> {
         this.eventDescription = description;
         this.imagePath = imagePath;
         this.eventPriority = eventPriority;
-    }
-
-    @Override
-    public PreparedStatement getInsertQuery() throws SQLException, RuntimeException {
-        if (eventID > 0)
-            throw new SQLIntegrityConstraintViolationException("Event is already in DB.");
-
-        PreparedStatement out = DBM.conn.prepareStatement("INSERT INTO `events` (`EventName`, `EventDescription`,`StartYear`,`StartMonth`,`StartDay`,`StartHour`, " +
-                "`StartMinute`,`StartSecond`,`StartMillisecond`,`EndYear`,`EndMonth`,`EndDay`,`EndHour`,`EndMinute`,`EndSecond`, " +
-                "`EndMillisecond`,`EventOwner`, `ImagePath`, `EventPriority`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);", Statement.RETURN_GENERATED_KEYS);
-        out.setString(1, eventName);
-        out.setString(2, eventDescription);
-        out.setInt(3, startDate.getYear());
-        out.setInt(4, startDate.getMonthValue());
-        out.setInt(5, startDate.getDayOfMonth());
-        out.setInt(6, startDate.getHour());
-        out.setInt(7, startDate.getMinute());
-        out.setInt(8, startDate.getSecond());
-        out.setInt(9, startDate.getNano() / 1000000);
-        out.setInt(10, endDate.getYear());
-        out.setInt(11, endDate.getMonthValue());
-        out.setInt(12, endDate.getDayOfMonth());
-        out.setInt(13, endDate.getHour());
-        out.setInt(14, endDate.getMinute());
-        out.setInt(15, endDate.getSecond());
-        out.setInt(16, endDate.getNano() / 1000000);
-        out.setInt(17, ownerID);
-        if (this.imagePath == null)
-            out.setNull(18, Types.INTEGER);
-        else
-            out.setString(18, this.imagePath);
-
-        out.setInt(19, eventPriority);
-
-        return out;
     }
 
     public boolean addToTimeline(int timelineID) throws SQLException {
@@ -144,32 +112,44 @@ public class Event extends TimelineObject<Event> {
     }
 
     @Override
+    public PreparedStatement getInsertQuery() throws SQLException, RuntimeException {
+        return DBM.conn.prepareStatement("INSERT INTO `events` (`EventName` , `EventDescription` , `ImagePath`, " +
+                "`StartYear`,  `StartMonth`,  `StartDay`,  `StartHour`,  `StartMinute`, `StartSecond`,  `StartMillisecond`, " +
+                "`EndYear`,  `EndMonth`,  `EndDay`,  `EndHour`,  `EndMinute`,  `EndSecond`,  `EndMillisecond`, `EventOwner`, " +
+                "`EventPriority`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);", Statement.RETURN_GENERATED_KEYS);
+    }
+
+    @Override
     public PreparedStatement getUpdateQuery() throws SQLException {
-        if (eventID == 0)
-            throw new SQLDataException("Event not in database cannot be updated.");
-        PreparedStatement out = DBM.conn.prepareStatement("UPDATE `events` SET `EventName` = ?, `EventDescription` = ?, `ImagePath` = ?, `StartYear` = ?,  `StartMonth` = ?,  `StartDay` = ?,  `StartHour` = ?,  `StartMinute` = ?,  " +
-                "`StartSecond` = ?,  `StartMillisecond` = ?,    `EndYear` = ?,  `EndMonth` = ?,  `EndDay` = ?,  `EndHour` = ?,  `EndMinute` = ?,  `EndSecond` = ?,  `EndMillisecond` = ?, `EventOwner` = ?, `EventPriority` = ?  WHERE (`EventID` = ?);");
-        out.setString(1, eventName);
-        out.setString(2, eventDescription);
-        out.setString(3, imagePath);
-        out.setInt(4, startDate.getYear());
-        out.setInt(5, startDate.getMonthValue());
-        out.setInt(6, startDate.getDayOfMonth());
-        out.setInt(7, startDate.getHour());
-        out.setInt(8, startDate.getMinute());
-        out.setInt(9, startDate.getSecond());
-        out.setInt(10, startDate.getNano() / 1000000);
-        out.setInt(11, endDate.getYear());
-        out.setInt(12, endDate.getMonthValue());
-        out.setInt(13, endDate.getDayOfMonth());
-        out.setInt(14, endDate.getHour());
-        out.setInt(15, endDate.getMinute());
-        out.setInt(16, endDate.getSecond());
-        out.setInt(17, endDate.getNano() / 1000000);
-        out.setInt(18, ownerID);
-        out.setInt(19, eventPriority);
-        out.setInt(20, eventID);
-        return out;
+        return DBM.conn.prepareStatement("UPDATE `events` SET `EventName` = ?, `EventDescription` = ?, `ImagePath` = ?, " +
+                "`StartYear` = ?,  `StartMonth` = ?,  `StartDay` = ?,  `StartHour` = ?,  `StartMinute` = ?,  `StartSecond` = ?,  " +
+                "`StartMillisecond` = ?, `EndYear` = ?,  `EndMonth` = ?,  `EndDay` = ?,  `EndHour` = ?,  `EndMinute` = ?,  " +
+                "`EndSecond` = ?, `EndMillisecond` = ?, `EventOwner` = ?,  `EventPriority` = ?  WHERE (`EventID` = ?);");
+    }
+
+    @Override
+    public void setQueryValues(PreparedStatement stmt) throws SQLException {
+        stmt.setString(1, eventName);
+        stmt.setString(2, eventDescription);
+        stmt.setString(3, imagePath);
+        stmt.setInt(4, startDate.getYear());
+        stmt.setInt(5, startDate.getMonthValue());
+        stmt.setInt(6, startDate.getDayOfMonth());
+        stmt.setInt(7, startDate.getHour());
+        stmt.setInt(8, startDate.getMinute());
+        stmt.setInt(9, startDate.getSecond());
+        stmt.setInt(10, startDate.getNano() / 1000000);
+        stmt.setInt(11, endDate.getYear());
+        stmt.setInt(12, endDate.getMonthValue());
+        stmt.setInt(13, endDate.getDayOfMonth());
+        stmt.setInt(14, endDate.getHour());
+        stmt.setInt(15, endDate.getMinute());
+        stmt.setInt(16, endDate.getSecond());
+        stmt.setInt(17, endDate.getNano() / 1000000);
+        stmt.setInt(18, ownerID);
+        stmt.setInt(19, eventPriority);
+        if (eventID > 0)
+            stmt.setInt(20, eventID);
     }
 
     @Override

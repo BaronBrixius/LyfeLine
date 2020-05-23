@@ -83,7 +83,7 @@ public class EventSelector {
                 if (timelineComboBox.getSelectionModel().getSelectedIndex() < 0) {     //no deleting from null timeline
                     deleteButton.setDisable(true);
                 } else {        //only owner can delete
-                    deleteButton.setDisable(GUIManager.loggedInUser.getUserID() != timelineComboBox.getSelectionModel().getSelectedItem().getOwnerID());
+                    deleteButton.setDisable(GUIManager.loggedInUser.getID() != timelineComboBox.getSelectionModel().getSelectedItem().getOwnerID());
                 }
             }
         });
@@ -181,7 +181,7 @@ public class EventSelector {
             }
         }
         //disable adding new event if not owner
-        newButton.setDisable(GUIManager.loggedInUser.getUserID()
+        newButton.setDisable(GUIManager.loggedInUser.getID()
                 != parentController.activeTimeline.getOwnerID());
     }
 

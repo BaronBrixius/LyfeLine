@@ -92,7 +92,7 @@ public class JSONTimeline {
             setOwnership(ownerID);
         else {                                  //otherwise add them to DB and pass newly generated ID to other objects
             importOwner();
-            setOwnership(owner.getUserID());
+            setOwnership(owner.getID());
         }
 
         importTimeline();

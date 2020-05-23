@@ -25,6 +25,12 @@ class Main {
             //stmt = DBM.conn.prepareStatement("SELECT * FROM timelines");
             //List<Timeline> timelines = DBM.getFromDB(stmt, new Timeline());           //blank object so functional interface method can be accessed
 
+            for (int i = 0; i < 7; i++) {
+                events.addAll(events);
+            }
+            for (Event t: events)
+                t.setID(0);
+            DBM.insertIntoDB(events);
 
 
             //Gson gson = new Gson();
