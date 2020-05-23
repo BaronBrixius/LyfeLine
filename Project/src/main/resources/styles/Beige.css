@@ -2,7 +2,7 @@
 
 /*.root applies to everything in a scene and overrides all other commands in this file. Use carefully.*/
 .root {
-    -fx-background-image: url("../images/NAUI.png");
+    -fx-background-image: url("../images/tnaui.png");
     -fx-background-size: cover;
 }
 

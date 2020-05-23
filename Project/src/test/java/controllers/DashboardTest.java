@@ -428,7 +428,7 @@ public class DashboardTest {
         reinitializeDashboard();
 
         //Select the first timeline in the list that has an owner ID of the logged in user
-        sut.list.getSelectionModel().select(sut.list.getItems().stream().filter(t -> t.getOwnerID() == loginUserID).findFirst().get());
+        Platform.runLater(() -> sut.list.getSelectionModel().select(sut.list.getItems().stream().filter(t -> t.getOwnerID() == loginUserID).findFirst().get()));
         int initialListSize = sut.list.getItems().size();
 
         Platform.runLater(() -> robot.clickOn("#btnDelete"));
