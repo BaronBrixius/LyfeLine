@@ -79,7 +79,7 @@ class TimelineTest {
 		// data in test class
 		String sql = "INSERT INTO `timelines` ( `Scale`,`TimelineName`, `TimelineDescription`, `Theme`,`StartYear`,`StartMonth`,`StartDay`,`StartHour`"
 				+ ",`StartMinute`,`StartSecond`,`StartMillisecond`,`EndYear`,`EndMonth`,`EndDay`,`EndHour`,`EndMinute`,`EndSecond`,"
-				+ "`EndMillisecond`,`Private`,`TimelineOwner`,`Keywords`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+				+ "`EndMillisecond`,`TimelineOwner`,`Keywords`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		PreparedStatement out = DBM.conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 		for (int i = 0; i < timelines.length; i++) {
 			assertEquals(out.toString(), timelines[i].getInsertQuery().toString());
@@ -143,14 +143,6 @@ class TimelineTest {
 			timelines[i].setName("A Different name");
 			assertFalse(oldName.equals(timelines[i].getName()));
 		}
-	}
-
-	@Test
-	void validNameTest() throws SQLException {
-		// validName is private in timeline, need to see if can be public and refactord
-		// to validTimelineName
-		Boolean actual = timelines[0].validName("Normal name", 1);
-		assertFalse(actual);
 	}
 
 	@Test

@@ -485,7 +485,6 @@ public class DashboardTest {
             expectedInt = 0;
             assertEquals(expectedInt, actualInt);
 
-            assertNull(testView.activeTimeline.getTheme());
         });
         waitForRunLater();
     }
@@ -501,7 +500,6 @@ public class DashboardTest {
         newTimeline.setDescription("Description");
         newTimeline.getKeywords().add("Keyword");
         newTimeline.setScale(3);
-        newTimeline.setTheme("None");
         try {DBM.insertIntoDB(newTimeline);} catch (SQLException e) {e.printStackTrace();}
 
         Event testEvent = new Event();
@@ -542,10 +540,6 @@ public class DashboardTest {
             actualInt = testView.activeTimeline.getEventList().size();
             expectedInt = 1;
             assertEquals(expectedInt, actualInt);
-
-            actualString = testView.activeTimeline.getTheme();
-            expectedString = "None";
-            assertEquals(expectedString, actualString);
         });
 
         waitForRunLater();
@@ -588,10 +582,6 @@ public class DashboardTest {
             actualInt = testView.activeTimeline.getEventList().size();
             expectedInt = timelineSelected.getEventList().size();
             assertEquals(expectedInt, actualInt);
-
-            actualString = testView.activeTimeline.getTheme();
-            expectedString = timelineSelected.getTheme();
-            assertEquals(expectedString, actualString);
         });
         waitForRunLater();
     }

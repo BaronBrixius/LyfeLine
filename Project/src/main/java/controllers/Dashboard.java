@@ -128,7 +128,7 @@ public class Dashboard {
             sortedTimelines = new SortedList<>(filteredTimelines);
             list.setItems(sortedTimelines);
         } catch (SQLException e) {
-            System.err.println("Could not get timelines from database.");
+            e.printStackTrace();
         }
     }
 
@@ -239,7 +239,7 @@ public class Dashboard {
             }
 
             //Rating
-            if (searchRating.getSelectionModel().getSelectedIndex() > 0 && Math.ceil(data.getDouble("Rating")) < searchRating.getSelectionModel().getSelectedIndex())      //TODO implement after ratings
+            if (searchRating.getSelectionModel().getSelectedIndex() > 0 && Math.ceil(data.getDouble("Rating")) < searchRating.getSelectionModel().getSelectedIndex())
                 addToList = false;
 
             if (addToList)
@@ -270,7 +270,7 @@ public class Dashboard {
     }
 
     @FXML
-    public void toggleAdvancedSearch() {
+    void toggleAdvancedSearch() {
         if (stack.getChildren().size() > 0) {
             stack.getChildren().remove(advancedSearchView);
             searchInput.setDisable(false);
@@ -284,7 +284,7 @@ public class Dashboard {
     }
 
     @FXML
-    public void clearAdvancedSearch() {
+    void clearAdvancedSearch() {
         Timeline currentlySelectedTimeline = list.getSelectionModel().getSelectedItem();
         searchTimelineName.clear();
         searchCreator.clear();
@@ -295,7 +295,7 @@ public class Dashboard {
         list.getSelectionModel().select(currentlySelectedTimeline);
     }
 
-    public void sortTimelines() {
+    void sortTimelines() {
         switch (sortBy.getSelectionModel().getSelectedIndex()) {
             case 0:
                 sortedTimelines.setComparator((t1, t2) -> (t1.getName().compareToIgnoreCase(t2.getName())));
@@ -313,24 +313,24 @@ public class Dashboard {
     }
 
     @FXML
-    public void adminScreen() throws IOException {
+    void adminScreen() throws IOException {
         GUIManager.swapScene("AdminRoleManager");
     }
 
     @FXML
-    public TimelineView createTimeline() {
+    TimelineView createTimeline() {
         Timeline t = new Timeline();
         t.setOwnerID(GUIManager.loggedInUser.getID());
         return openTimelineView(t, true);
     }
 
     @FXML
-    public TimelineView editTimeline() {
+    TimelineView editTimeline() {
         return openTimelineView(this.activeTimeline, true);
     }
 
     @FXML
-    public TimelineView openTimeline() {
+    TimelineView openTimeline() {
         return openTimelineView(list.getSelectionModel().getSelectedItem(), false);
     }
 
@@ -355,7 +355,7 @@ public class Dashboard {
             //The height of each cell is actually 85.9795 pixels. I know, I hate it too.
             listScrollPane.setVvalue(( 85.9795 / (list.getHeight() - listScrollPane.getHeight())) * (list.getSelectionModel().getSelectedIndex() - 1));
 
-            if (list.getSelectionModel().getSelectedItem().getOwnerID() == GUIManager.loggedInUser.getUserID()) {
+            if (list.getSelectionModel().getSelectedItem().getOwnerID() == GUIManager.loggedInUser.getID()) {
                 btnDelete.setDisable(false);
                 btnEdit.setDisable(false);
             } else {
@@ -441,7 +441,7 @@ public class Dashboard {
 
     // open DeletePopUp
     @FXML
-    public boolean deleteConfirmation() {
+    boolean deleteConfirmation() {
         Alert confirmDeleteTimeline = new Alert(Alert.AlertType.CONFIRMATION);
         confirmDeleteTimeline.setTitle("Confirm Deletion");
         confirmDeleteTimeline.setHeaderText("Are you sure you want to delete " + activeTimeline.getName() + "?");
@@ -507,7 +507,7 @@ public class Dashboard {
                     {
                         cell.pane.add(cell.cellButtonBox, 1, 0);
 
-                        if (cell.timeline.getOwnerID() == GUIManager.loggedInUser.getUserID()) {
+                        if (cell.timeline.getOwnerID() == GUIManager.loggedInUser.getID()) {
                             cell.cellDeleteTimelineButton.setDisable(false);
                             cell.cellDeleteTimelineButton.setOpacity(1);
                             cell.cellEditTimelineButton.setDisable(false);

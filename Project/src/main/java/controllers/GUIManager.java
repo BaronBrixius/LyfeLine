@@ -1,7 +1,6 @@
 package controllers;
 
 import database.DBM;
-import database.Timeline;
 import database.User;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -14,7 +13,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.SQLException;
 
-public class GUIManager extends Application {
+public class GUIManager {
 
     //currently logged in user, null if no log in
     public static User loggedInUser;
@@ -22,10 +21,6 @@ public class GUIManager extends Application {
     public static TopMenu menu;
     public static BorderPane main;
     public static FXMLLoader loader;
-
-    public static void main(String[] args) {
-        launch(args);
-    }
 
     public static <T> T swapScene(String fxml) throws IOException {
         loader = new FXMLLoader(GUIManager.class.getResource("../FXML/" + fxml + ".fxml"));
@@ -46,51 +41,20 @@ public class GUIManager extends Application {
         }
     }
 
-    //default window set up
-    @Override
-    public void start(Stage primaryStage) throws Exception {
-
-        // Used to establish connection to the DB.
-        try {
-            new DBM();//
-            DBM.setupSchema();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        //loggedInUser = DBM.getFromDB(DBM.conn.prepareStatement("SELECT * FROM users"), new User()).get(0);  //delete when merging to dev
+    public static void start(Stage stage) throws Exception {
         main = new BorderPane();
-        loader = new FXMLLoader(getClass().getResource("../FXML/TopMenu.fxml"));
+        loader = new FXMLLoader(GUIManager.class.getResource("../FXML/TopMenu.fxml"));
         main.setTop(loader.load());
         menu = loader.getController();
 
-        //for (int i = 0; i < 100; i++)
-        //{
-        //    Timeline newTimeline = new Timeline();
-        //    newTimeline.setName("test " + i);
-        //    newTimeline.setDescription("reetestree" + i);
-        //    newTimeline.setOwnerID(3);
-        //    try {DBM.insertIntoDB(newTimeline);} catch (SQLException e) {e.printStackTrace();}
-        //}
-
-        mainStage = primaryStage;
+        mainStage = stage;
         mainStage.setScene(new Scene(main));
         swapScene("Welcome");
-        //TimelineView systemUnderDevelopment = swapScene("TimelineView");        //delete when merging to dev
-        //systemUnderDevelopment.setActiveTimeline(1);
+
         mainStage.getScene().getStylesheets().add("File:src/main/resources/styles/Base.css");
-        mainStage.getScene().getStylesheets().add("File:src/main/resources/styles/Default.css");
+        mainStage.getScene().getStylesheets().add("File:src/main/resources/styles/Beige.css");
         FileInputStream icon = new FileInputStream("src/main/resources/LogoIcon.png");
         mainStage.getIcons().add(new Image(icon));
         mainStage.show();
     }
-
-    @Override
-    public void stop() {
-        try {
-            DBM.close();        //closes the database connection when mainStage is closed
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
 }

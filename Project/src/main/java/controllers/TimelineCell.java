@@ -11,6 +11,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
+
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -84,9 +85,13 @@ public class TimelineCell {
             angle += Math.PI / numPoints;            // simplified (2*PI / numPoints*2), rotates angle to calculate next tip/intersection
         }
 
-        button.setOnMouseClicked(e -> {
-            timeline.rateTimeline(index + 1);       //click a star to submit a rating and update its display value
-            timeline.updateRatingFromDB();
+        button.setOnMouseClicked(event -> {
+            try {
+                timeline.rateTimeline(index + 1);       //click a star to submit a rating and update its display value
+                timeline.updateRatingFromDB();
+            } catch (SQLException exception) {
+
+            }
             colorStarsByRating((int) Math.ceil(timeline.getRating()));
         });
     }
@@ -147,7 +152,7 @@ public class TimelineCell {
     }
 
     @FXML
-    public boolean deleteTimeline() {
+    boolean deleteTimeline() {
         Alert confirmDeleteTimeline = new Alert(Alert.AlertType.CONFIRMATION);
         confirmDeleteTimeline.setTitle("Confirm Deletion");
         confirmDeleteTimeline.setHeaderText("Are you sure you want to delete " + timeline.getName() + "?");
