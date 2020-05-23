@@ -1,6 +1,9 @@
 package database;
 
-import com.google.gson.*;
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
@@ -134,7 +137,7 @@ public class JSONTimeline {
         }
     }
 
-    private int matchEventInDB(Event eventToImport) {                              //checks if event is in DB, returns event's ID if it is
+    private int matchEventInDB(Event eventToImport) {                              //checks if identical event is in DB, returns event's ID if it is
         try (PreparedStatement stmt = DBM.conn.prepareStatement("SELECT e.EventID FROM events e " +
                 "INNER JOIN users u ON e.EventOwner = u.UserID " +
                 "WHERE u.UserEmail = ? AND e.EventName = ? AND e.EventDescription = ? " +
@@ -184,17 +187,18 @@ public class JSONTimeline {
     }
 
     private String appendNumberIfDupe(String filePath) {
-        if (!Files.exists(Paths.get(filePath)))                       //quick check for the most common case, no dupes, before declaring more variables for looping
+        if (!Files.exists(Paths.get(filePath)))                       //quick check for the most common case, no dupes
             return filePath;
 
-        String extension = filePath.substring(filePath.lastIndexOf("."));
         String name = filePath.substring(0, filePath.lastIndexOf("."));
-        if (!name.matches(".+_\\d"))                            //if file doesn't have a number appended yet, add one
+        String extension = filePath.substring(filePath.lastIndexOf("."));
+        if (!name.matches(".+_\\d+"))                           //if file doesn't have a number appended yet, add one
             name = name + "_1";
 
-        int counter = 1;
+        int indexOfNumber;
         while (Files.exists(Paths.get(name + extension))) {     //increment number at end of file name until it's no longer a duplicate
-            name = name.substring(0, name.length() - 1) + ++counter;
+            indexOfNumber = name.lastIndexOf("_") + 1;
+            name = name.substring(0, indexOfNumber) + Integer.parseInt(name.substring(indexOfNumber)) + 1;        //set name to what it was but increment the number at the end
         }
 
         return name + extension;

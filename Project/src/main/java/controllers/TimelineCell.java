@@ -3,30 +3,48 @@ package controllers;
 import database.DBM;
 import database.Timeline;
 import database.User;
+import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
-
-import java.sql.PreparedStatement;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class TimelineCell {
 
-    public HBox ratingBox;
-    public Timeline timeline;
-    public User user;
+    @FXML
+    Button cellEditTimelineButton;
+    @FXML
+    Button cellDeleteTimelineButton;
+    @FXML
+    Button cellViewTimelineButton;
+    @FXML
+    VBox cellButtonBox;
+    @FXML
+    GridPane pane;
+    @FXML
+    HBox ratingBox;
+    @FXML
+    Label title;
+    @FXML
+    Label description;
+    @FXML
+    Label keywords;
+    @FXML
+    Label author;
     List<Polygon> ratingButtons;
-    @FXML
-    private GridPane pane;
-    @FXML
-    private Label title;
-    @FXML
-    private Label author;
+    Timeline timeline;
+    protected FilteredList<Timeline> filteredTimelines;
+    protected ListView<Timeline> list;
+    protected User user;
+    boolean focused = false;
 
     public void initialize() {
         // Ratings
@@ -42,6 +60,8 @@ public class TimelineCell {
             colorStarsByRating((int) Math.ceil(timeline.getRating()));  //return highlighting to normal
             ratingBox.setOpacity((timeline.getRating() > 1) ? 1 : 0);
         });
+        pane.getChildren().remove(cellButtonBox);
+        ratingBox.setDisable(true);
     }
 
     private void setupRatingButton(Polygon button, int index) {
@@ -73,49 +93,102 @@ public class TimelineCell {
 
     private void colorStarsByRating(int rating) {
         for (int i = 0; i < 5; i++) {
-            if (i < rating)
-                ratingButtons.get(i).setFill(Color.YELLOW);     // yellow fill for lower stars
-            else
-                ratingButtons.get(i).setFill(Color.GREY);       // grey fill for stars above timeline's rank
+            Color starColor = i < rating ? Color.YELLOW : Color.GREY;   // yellow fill for lower stars
+            ratingButtons.get(i).setFill(starColor);                    // grey fill for stars above timeline's rank
         }
     }
 
-    public void update(double width) {
+    public void update() {
         if (timeline != null) {
-            title.setText(timeline.getName());
-            author.setText("By " + user.getUserName());
-            setBGImage(width);
+            populateTimelineDetails();
+            setBGImage();
             colorStarsByRating((int) Math.ceil(timeline.getRating()));
             ratingBox.setOpacity((timeline.getRating() > 1) ? 1 : 0);
         }
+    }
+
+    public void populateTimelineDetails() {
+        title.setText("Title: " + timeline.getName());
+        author.setText("By: " + user.getUserName());
+        description.setText("Description: " + timeline.getDescription());
+        //TODO start and end date here
+
+        StringBuilder keyWords = new StringBuilder();
+        keyWords.append("Keywords: ");
+        for (String s : timeline.getKeywords())
+            keyWords.append(s).append(", ");
+        if (keyWords.length() >= 12)
+            keyWords.delete(keyWords.length() - 2, keyWords.length());
+        keywords.setText(keyWords.toString());
+
+        if (focused) {
+            if (!pane.getChildren().contains(description)) {    //If the cell is focused and doesn't show the description
+                pane.add(description, 0, 1);
+                pane.add(keywords, 0, 2);
+            }
+        } else if (pane.getChildren().contains(description))    //If the cell is not focused and is still showing the description
+            pane.getChildren().removeAll(description, keywords);
     }
 
     public Timeline getTimeline() {
         return timeline;
     }
 
-    public void setTimeline(Timeline timeline, double width) {
+    public void setTimeline(Timeline timeline) {
         this.timeline = timeline;
+        user = timeline.getOwner();
+        this.update();
+    }
+
+    public void setBGImage() {
+        String imageURL = timeline.getImagePath() != null ? "url(file:" + timeline.getImagePath() + ")" : null;
+        int height = focused ? 400 : 80;
+        pane.setStyle(" -fx-background-image: " + imageURL + "; -fx-pref-width: 1200px; -fx-pref-height: " + height + "px; -fx-background-size: 1270px, stretch;");
+    }
+
+    @FXML
+    public boolean deleteTimeline() {
+        Alert confirmDeleteTimeline = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmDeleteTimeline.setTitle("Confirm Deletion");
+        confirmDeleteTimeline.setHeaderText("Are you sure you want to delete " + timeline.getName() + "?");
+        confirmDeleteTimeline.setContentText("This can not be undone.");
+
+        Optional<ButtonType> result = confirmDeleteTimeline.showAndWait();
+
+        if (result.get() == ButtonType.CANCEL)
+            return false;
+        else {
+            try {
+                timeline.deleteOrphans();
+                DBM.deleteFromDB(timeline);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            filteredTimelines.getSource().remove(timeline);
+            list.getSelectionModel().select(0);
+            return true;
+        }
+    }
+
+    @FXML
+    public TimelineView editTimeline() {
+        return openTimelineView(true);
+    }
+
+    @FXML
+    public TimelineView openTimeline() {
+        return openTimelineView(false);
+    }
+
+    private TimelineView openTimelineView(boolean editable) {
         try {
-            PreparedStatement stat = DBM.conn.prepareStatement("SELECT * FROM users WHERE UserID=?");
-            stat.setInt(1, timeline.getOwnerID());
-            user = DBM.getFromDB(stat, new User()).get(0);
-        } catch (SQLException e) {
-        }
-        pane.setPrefWidth(width);
-        title.setMaxWidth(width);
-        this.update(width);
-    }
-
-    public void setBGImage(double width) {
-        String imageURL = timeline.getImagePath();
-        if (imageURL != null) {
-            imageURL = "file:" + imageURL;
-            pane.setStyle("-fx-background-image: url(" + imageURL + "); -fx-background-size: " + ((int) (width + 1.0))
-                    + "px;");
-        } else {
-            pane.setStyle("-fx-background-image: null");
+            TimelineView timelineView = GUIManager.swapScene("TimelineView");
+            timelineView.setActiveTimeline(timeline);
+            timelineView.timelineEditorController.toggleEditable(editable);
+            return timelineView;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
         }
     }
-
 }

@@ -182,7 +182,7 @@ class TimelineCellTest {
 		// Should not be able to have a bg image of 0 width
 		for (int i = 0; i < 500; i++) {
 			TimelineCell testingCell = new TimelineCell();
-			testingCell.update(i);
+			testingCell.update();
 		}
 	}
 
@@ -191,7 +191,7 @@ class TimelineCellTest {
 		// this is kinda a joke
 		TimelineCell testingCell = new TimelineCell();
 		assertThrows(NullPointerException.class, () -> {
-			testingCell.update((Double) null);
+			testingCell.update();
 		});
 	}
 
@@ -226,7 +226,7 @@ class TimelineCellTest {
 		TimelineCell tc1 = new TimelineCell();
 		List<Timeline> timelineList = DBM.getFromDB(
 				DBM.conn.prepareStatement("SELECT * FROM timelines WHERE TimelineID = " + 1), new Timeline());
-		tc1.setTimeline(timelineList.get(0), 50);
+		tc1.setTimeline(timelineList.get(0));
 	}
 
 	void changeSortBy(int selection) throws InterruptedException {

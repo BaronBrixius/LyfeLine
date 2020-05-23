@@ -230,7 +230,7 @@ public class EventSelector {
         parentController.rightSidebar.getChildren().remove(selector);
     }
 
-    public void addToTimeline() {
+    public void addToTimeline() {   //TODO make this work with multiple selections?
         try {
             if (eventListView.getSelectionModel().getSelectedItem().addToTimeline(parentController.activeTimeline.getID())) {
                 parentController.activeTimeline.getEventList().add(eventListView.getSelectionModel().getSelectedItem());

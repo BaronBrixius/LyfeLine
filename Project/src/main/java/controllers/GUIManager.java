@@ -1,13 +1,16 @@
 package controllers;
 
 import database.DBM;
+import database.Timeline;
 import database.User;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -31,8 +34,16 @@ public class GUIManager extends Application {
     }
 
     public static void applyStyle(String style) {
-        mainStage.getScene().getStylesheets().remove(0);
+        mainStage.getScene().getStylesheets().remove(1);
         mainStage.getScene().getStylesheets().add("File:src/main/resources/styles/" + style + ".css");
+        if (loggedInUser != null) {
+	        loggedInUser.setTheme(style);
+	        try {
+				DBM.updateInDB(loggedInUser);
+			} catch (SQLException e) {
+				
+			}
+        }
     }
 
     //default window set up
@@ -52,12 +63,24 @@ public class GUIManager extends Application {
         main.setTop(loader.load());
         menu = loader.getController();
 
+        //for (int i = 0; i < 100; i++)
+        //{
+        //    Timeline newTimeline = new Timeline();
+        //    newTimeline.setName("test " + i);
+        //    newTimeline.setDescription("reetestree" + i);
+        //    newTimeline.setOwnerID(3);
+        //    try {DBM.insertIntoDB(newTimeline);} catch (SQLException e) {e.printStackTrace();}
+        //}
+
         mainStage = primaryStage;
         mainStage.setScene(new Scene(main));
         swapScene("Welcome");
         //TimelineView systemUnderDevelopment = swapScene("TimelineView");        //delete when merging to dev
         //systemUnderDevelopment.setActiveTimeline(1);
-        mainStage.getScene().getStylesheets().add("File:src/main/resources/styles/DefaultStyle.css");
+        mainStage.getScene().getStylesheets().add("File:src/main/resources/styles/Base.css");
+        mainStage.getScene().getStylesheets().add("File:src/main/resources/styles/Default.css");
+        FileInputStream icon = new FileInputStream("src/main/resources/LogoIcon.png");
+        mainStage.getIcons().add(new Image(icon));
         mainStage.show();
     }
 

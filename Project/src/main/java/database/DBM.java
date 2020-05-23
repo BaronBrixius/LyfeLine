@@ -2,6 +2,7 @@ package database;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.lang.reflect.ParameterizedType;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -223,7 +224,7 @@ public class DBM {
             return asArray;
         } catch (ClassCastException e) {
             throw new ClassCastException("Class does not implement DBObject<T>");       //clearer exception message
-        }
+        }    
     }
 
     public static void dropSchema() throws SQLException {                                      //drop current schema

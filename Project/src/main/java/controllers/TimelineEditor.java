@@ -31,6 +31,7 @@ import java.util.Optional;
 
 public class TimelineEditor extends Editor {
     private final ObservableList<String> keywords = FXCollections.observableArrayList();
+    public CheckBox zoom;
     public Timeline timeline;
     public HBox keywordBox;
     @FXML
@@ -101,7 +102,6 @@ public class TimelineEditor extends Editor {
             keywords.sort(String::compareTo);
         } else
             timeline.setKeywords(FXCollections.observableArrayList());
-
         timeInput.getSelectionModel().select(timeline.getScale() > 0 ? timeline.getScale() - 1 : 4);
         return true;
     }
