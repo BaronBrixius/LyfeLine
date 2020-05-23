@@ -315,7 +315,5 @@ public class Timeline extends TimelineObject<Timeline> {
         if (this.timelineID == 0)
             return false;
         return this.timelineID == other.timelineID;
-
     }
-
 }

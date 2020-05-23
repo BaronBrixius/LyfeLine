@@ -38,33 +38,33 @@ public class Event extends TimelineObject<Event> {
         int ownerID = rs.getInt("EventOwner");
         String eventName = rs.getString("EventName");
         String eventDescription = rs.getString("EventDescription");
-        int StartYear = rs.getInt("StartYear");
-        int StartMonth = rs.getInt("StartMonth");
-        int StartDay = rs.getInt("StartDay");
-        int StartHour = rs.getInt("StartHour");
-        int StartMinute = rs.getInt("StartMinute");
-        int StartSecond = rs.getInt("StartSecond");
-        int StartNano = rs.getInt("StartMillisecond") * 1000000;
-        int EndYear = rs.getInt("EndYear");
-        int EndMonth = rs.getInt("EndMonth");
-        int EndDay = rs.getInt("EndDay");
-        int EndHour = rs.getInt("EndHour");
-        int EndMinute = rs.getInt("EndMinute");
-        int EndSecond = rs.getInt("EndSecond");
-        int EndNano = rs.getInt("EndMillisecond") * 1000000;
-        int CreatedYear = rs.getInt("CreatedYear");
-        int CreatedMonth = rs.getInt("CreatedMonth");
-        int CreatedDay = rs.getInt("CreatedDay");
-        int CreatedHour = rs.getInt("CreatedHour");
-        int CreatedMinute = rs.getInt("CreatedMinute");
-        int CreatedSecond = rs.getInt("CreatedSecond");
-        int CreatedNano = rs.getInt("CreatedMillisecond") * 1000000;
-        LocalDateTime start = LocalDateTime.of(StartYear, StartMonth, StartDay, StartHour, StartMinute, StartSecond, StartNano);
-        LocalDateTime end = LocalDateTime.of(EndYear, EndMonth, EndDay, EndHour, EndMinute, EndSecond, EndNano);
-        LocalDateTime created = LocalDateTime.of(CreatedYear, CreatedMonth, CreatedDay, CreatedHour, CreatedMinute, CreatedSecond, CreatedNano);
+        int startYear = rs.getInt("StartYear");
+        int startMonth = rs.getInt("StartMonth");
+        int startDay = rs.getInt("StartDay");
+        int startHour = rs.getInt("StartHour");
+        int startMinute = rs.getInt("StartMinute");
+        int startSecond = rs.getInt("StartSecond");
+        int startNano = rs.getInt("StartMillisecond") * 1000000;
+        int endYear = rs.getInt("EndYear");
+        int endMonth = rs.getInt("EndMonth");
+        int endDay = rs.getInt("EndDay");
+        int endHour = rs.getInt("EndHour");
+        int endMinute = rs.getInt("EndMinute");
+        int endSecond = rs.getInt("EndSecond");
+        int endNano = rs.getInt("EndMillisecond") * 1000000;
+        int createdYear = rs.getInt("CreatedYear");
+        int createdMonth = rs.getInt("CreatedMonth");
+        int createdDay = rs.getInt("CreatedDay");
+        int createdHour = rs.getInt("CreatedHour");
+        int createdMinute = rs.getInt("CreatedMinute");
+        int createdSecond = rs.getInt("CreatedSecond");
+        int createdNano = rs.getInt("CreatedMillisecond") * 1000000;
+        LocalDateTime startDate = LocalDateTime.of(startYear, startMonth, startDay, startHour, startMinute, startSecond, startNano);
+        LocalDateTime endDate = LocalDateTime.of(endYear, endMonth, endDay, endHour, endMinute, endSecond, endNano);
+        LocalDateTime createdDate = LocalDateTime.of(createdYear, createdMonth, createdDay, createdHour, createdMinute, createdSecond, createdNano);
         int EventPriority = rs.getInt("EventPriority");
 
-        return new Event(eventID, ownerID, start, end, created, eventName, eventDescription, imagePath, EventPriority);
+        return new Event(eventID, ownerID, startDate, endDate, createdDate, eventName, eventDescription, imagePath, EventPriority);
     }
 
 
