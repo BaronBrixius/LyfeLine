@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import database.DBM;
 import database.JSONTimeline;
 import database.Timeline;
-import javafx.application.Platform;
 import javafx.beans.Observable;
 import javafx.collections.FXCollections;
 import javafx.collections.transformation.FilteredList;
@@ -42,13 +41,7 @@ public class Dashboard {
     public VBox greetingBox;
     public StackPane rightStack;
     @FXML
-    protected Button timelineViewButton;
-    @FXML
     protected Button adminGUI;
-    @FXML
-    protected Button btnDelete;
-    @FXML
-    protected Button btnEdit;
     @FXML
     protected Button btnCreate;
     @FXML
@@ -72,15 +65,11 @@ public class Dashboard {
     @FXML
     protected ComboBox<String> sortBy;
     @FXML
-    protected GridPane gridButtons;
-    @FXML
     protected GridPane advancedSearchView;
     @FXML
     protected GridPane startDates;
     @FXML
     protected GridPane endDates;
-    @FXML
-    protected Hyperlink AdvancedSearch;
     protected Timeline activeTimeline;
     protected FilteredList<Timeline> filteredTimelines;
     protected SortedList<Timeline> sortedTimelines;
@@ -96,9 +85,6 @@ public class Dashboard {
         setupTimeInputStartAndEnd("Millisecond", -1, 999, 2, 2, 6);
 
         initializeButtons();
-
-        // Initialised sorting
-        sortBy.getSelectionModel().select(0);
 
         // Fill ListView with the timelines
         populateTimelineList();
@@ -124,12 +110,7 @@ public class Dashboard {
         searchRating.setButtonCell(new RatingsListCell());
         searchRating.setCellFactory(param -> new RatingsListCell());
 
-
-        list.setPrefHeight((list.getItems().size() * 87) + 340);
-        Platform.runLater(() -> list.getSelectionModel().select(0));//TODO make the scroll pane focused more immediately
-
-        list.setOnMousePressed(e -> System.out.println(e.getTarget()));
-
+        updateDisplays();
         GUIManager.mainStage.setTitle("Dashboard");
     }
 
@@ -147,13 +128,8 @@ public class Dashboard {
 
     private void initializeButtons() {
         stack.getChildren().remove(advancedSearchView);
-        //rightStack.getChildren().remove(greetingBox);
-        //stack.getChildren().set(0, greetingBox);
-        btnCreate.setVisible(GUIManager.loggedInUser.getAdmin());
         btnCreate.setDisable(!GUIManager.loggedInUser.getAdmin());
-        adminGUI.setVisible(GUIManager.loggedInUser.getAdmin());
         adminGUI.setDisable(!GUIManager.loggedInUser.getAdmin());
-        //timelineViewButton.setDisable(list.getSelectionModel().getSelectedItem() == null);
     }
 
     private void simpleSearch(Observable obs) {
@@ -167,10 +143,9 @@ public class Dashboard {
         Predicate<Timeline> onlyPersonal = timeline -> timeline.getOwnerID() == GUIManager.loggedInUser.getID();
         if (cbOnlyViewPersonalLines.isSelected())
             filteredTimelines.setPredicate(onlyPersonal.and(filteredTimelines.getPredicate()));
-        list.refresh();
-        if (!list.getItems().isEmpty())
-            list.getSelectionModel().select(0);
-        list.setPrefHeight((list.getItems().size() * 87) + 340);
+        //TODO decide how to handle auto scrolling when searching timelines
+        list.getSelectionModel().clearSelection();
+        updateDisplays();
     }
 
     @FXML
@@ -179,8 +154,8 @@ public class Dashboard {
         try {
             List<Integer> listOfIDs = parseResultsForAdvancedSearch(data);
             filteredTimelines.setPredicate(timeline -> listOfIDs.contains(timeline.getID()));
-            list.getSelectionModel().select(0);
-            list.setPrefHeight((list.getItems().size() * 87) + 340);
+            list.getSelectionModel().clearSelection();
+            updateDisplays();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -284,15 +259,11 @@ public class Dashboard {
     void toggleAdvancedSearch() {
         if (rightStack.getChildren().contains(advancedSearchView)) {
             rightStack.getChildren().set(0, greetingBox);
-            //stack.getChildren().remove(advancedSearchView);
-            //stack.getChildren().add(greetingBox);
             searchInput.setDisable(false);
             cbOnlyViewPersonalLines.setDisable(false);
         } else {
             clearAdvancedSearch();
             rightStack.getChildren().set(0, advancedSearchView);
-            //stack.getChildren().remove(greetingBox);
-            //stack.getChildren().add(advancedSearchView);
             searchInput.setDisable(true);
             cbOnlyViewPersonalLines.setDisable(true);
         }
@@ -386,13 +357,10 @@ public class Dashboard {
 
     @FXML
     private void updateDisplays() {
-        list.setPrefHeight((list.getItems().size() * 86) + 322);
-        if (list.getSelectionModel().getSelectedItem() != null) {   //If a timeline is selected
-
+        list.setPrefHeight((list.getItems().size() * 84) + (322 * list.getSelectionModel().getSelectedIndices().size()));
+        if (list.getSelectionModel().getSelectedItem() != null)  //If a timeline is selected
             //Scroll to the timeline directly above the selected one
-            //The height of each cell is actually 85.9795 pixels. I know, I hate it too.
-            listScrollPane.setVvalue((85.9795 / (list.getHeight() - listScrollPane.getHeight())) * (list.getSelectionModel().getSelectedIndex() - 1));
-        }
+            listScrollPane.setVvalue((84 / (list.getHeight() - listScrollPane.getHeight())) * (list.getSelectionModel().getSelectedIndex() - 1));
     }
 
 
@@ -463,31 +431,6 @@ public class Dashboard {
         spinnerDates.add(spinnerList.get(index), column, row + 1);
     }
 
-    // open DeletePopUp
-    @FXML
-    boolean deleteConfirmation() {
-        Alert confirmDeleteTimeline = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmDeleteTimeline.setTitle("Confirm Deletion");
-        confirmDeleteTimeline.setHeaderText("Are you sure you want to delete " + activeTimeline.getName() + "?");
-        confirmDeleteTimeline.setContentText("This can not be undone.");
-
-        Optional<ButtonType> result = confirmDeleteTimeline.showAndWait();
-
-        if (result.get() == ButtonType.CANCEL)
-            return false;
-        else {
-            try {
-                activeTimeline.deleteOrphans();
-                DBM.deleteFromDB(activeTimeline);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            filteredTimelines.getSource().remove(activeTimeline);
-            list.getSelectionModel().select(0);
-            return true;
-        }
-    }
-
     private static class RatingsListCell extends ListCell<Integer> {    //for displaying ratings in combobox
         @Override
         protected void updateItem(Integer item, boolean empty) {
@@ -517,7 +460,7 @@ public class Dashboard {
             cell.list = list;
             cell.filteredTimelines = filteredTimelines;
 
-            this.setStyle("-fx-padding: 0px; -fx-border-width: 2px; -fx-border-color: white; -fx-border-style: solid;");
+            this.setStyle("-fx-padding: 0px; -fx-border-width: 2px; -fx-border-color: transparent; -fx-border-style: solid;");
 
             this.focusedProperty().addListener((observable, oldValue, newValue) -> {
                 cell.focused = newValue;
@@ -528,18 +471,9 @@ public class Dashboard {
 
                     if (newValue) {
                         cell.pane.add(cell.cellButtonBox, 1, 0);
-
-                        if (cell.timeline.getOwnerID() == GUIManager.loggedInUser.getID()) {
-                            cell.cellDeleteTimelineButton.setDisable(false);
-                            cell.cellDeleteTimelineButton.setOpacity(1);
-                            cell.cellEditTimelineButton.setDisable(false);
-                            cell.cellEditTimelineButton.setOpacity(1);
-                        } else {
-                            cell.cellDeleteTimelineButton.setDisable(true);
-                            cell.cellDeleteTimelineButton.setOpacity(0);
-                            cell.cellEditTimelineButton.setDisable(true);
-                            cell.cellEditTimelineButton.setOpacity(0);
-                        }
+                        boolean notOwnedByUser = (cell.timeline.getOwnerID() != GUIManager.loggedInUser.getID());
+                        cell.cellDeleteTimelineButton.setDisable(notOwnedByUser);
+                        cell.cellEditTimelineButton.setDisable(notOwnedByUser);
                     } else
                         cell.pane.getChildren().remove(cell.cellButtonBox);
                 }

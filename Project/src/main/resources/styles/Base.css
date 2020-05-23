@@ -75,6 +75,12 @@ for example:      buttonName.getStyleClass().add("smallButton");                
 
 }
 
+.tinyDashboard {
+    -fx-pref-height: 25px;
+    -fx-pref-width: 180px;
+    -fx-font-size: 14px;
+}
+
 .tinyButton{
     -fx-pref-width: 90px;
     -fx-pref-height: 25px;
@@ -285,21 +291,18 @@ for example:      buttonName.getStyleClass().add("smallButton");                
     -fx-opacity: 1 !important;
 }
 
-/*.noScrollingListView .list-view .scroll-bar:vertical,
+.noScrollingListView .list-view .scroll-bar:vertical,
 .noScrollingListView .list-view .scroll-bar:horizontal,
 .noScrollingListView .list-view .scroll-bar:horizontal .increment-arrow,
 .noScrollingListView .list-view .scroll-bar:horizontal .decrement-arrow,
 .noScrollingListView .list-view .scroll-bar:horizontal .increment-button,
 .noScrollingListView .list-view .scroll-bar:horizontal .decrement-button {
-    -fx-padding:0;
+    -fx-padding: -10;
     -fx-min-height: 0;
     -fx-pref-height: 0;
     -fx-max-height: 0;
     -fx-opacity: 1;
     -fx-scale-x: 0;
     -fx-scale-y: 0;
-}*/
-
-.noScrollingListView .list-view {
-
 }
+
