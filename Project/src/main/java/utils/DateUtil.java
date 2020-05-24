@@ -50,10 +50,9 @@ public class DateUtil {
     }
 
     public static String ddmmyyToString(Timeline activeTimeline) {  //TODO format
-        String dateString = activeTimeline.getStartDate().getDayOfMonth() + "."
+        return activeTimeline.getStartDate().getDayOfMonth() + "."
                 + activeTimeline.getStartDate().getMonthValue() + "." + activeTimeline.getStartDate().getYear() + " - "
                 + activeTimeline.getEndDate().getDayOfMonth() + "." + activeTimeline.getEndDate().getMonthValue() + "."
                 + activeTimeline.getEndDate().getYear();
-        return dateString;
     }
 }

@@ -149,7 +149,7 @@ public class Dashboard {
     }
 
     @FXML
-    void searchAdvanced() {         //get list of IDs that satisfy search conditions, and apply as predicate to filteredlist
+    void searchAdvanced() {         //get list of IDs that satisfy search conditions, and apply as predicate to filtered list
         ResultSet data = advancedResultSet();
         try {
             List<Integer> listOfIDs = parseResultsForAdvancedSearch(data);
@@ -306,7 +306,7 @@ public class Dashboard {
     @FXML
     TimelineView createTimeline() {
         Timeline t = new Timeline();
-        t.setOwnerID(GUIManager.loggedInUser.getID());
+        t.setOwner(GUIManager.loggedInUser);
         return openTimelineView(t, true);
     }
 

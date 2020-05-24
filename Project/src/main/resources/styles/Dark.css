@@ -82,9 +82,7 @@ border-pane{
 .scroll-pane .content {
     -fx-background-color: transparent, #81817e, transparent, #81817e;
 	-fx-cursor: AUTO ;
-	
 }
-
 
 .scroll-pane:focused {
     -fx-highlight-fill: #d4862b;
@@ -98,7 +96,6 @@ border-pane{
     -fx-text-box-border: -fx-control-inner-background;
     -fx-border-width: -1;
 }
-
 
 .text-area {
     -fx-background-insets: 0;
@@ -117,7 +114,6 @@ border-pane{
 	-fx-cursor: AUTO ;
 	
 }
-
 
 .text-area:focused .content {
     -fx-background-color: transparent, #81817e, transparent, #81817e;
@@ -365,8 +361,8 @@ for example:      buttonName.getStyleClass().add("smallButton");                
 	
 }
 .slider .axis{
-
 }
+
 .check-box .box {
 	-fx-background-color: #81817e;
 	-fx-border-color:grey;
