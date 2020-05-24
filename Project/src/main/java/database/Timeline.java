@@ -93,7 +93,7 @@ public class Timeline extends TimelineObject<Timeline> {
             eventList = DBM.getFromDB(stmt, new Event());
         }
 
-        double rating = calcRating();
+        double rating = calcRating(timelineID);
 
         PreparedStatement stat = DBM.conn.prepareStatement("SELECT * FROM users WHERE UserID = ?");
         stat.setInt(1, rs.getInt("TimelineOwner"));
@@ -226,16 +226,20 @@ public class Timeline extends TimelineObject<Timeline> {
         return rs.getInt(1) > 0;
     }
 
+    public void updateRatingFromDB() throws SQLException {
+        this.rating = calcRating();
+    }
+
     double calcRating() throws SQLException {
+        return calcRating(getID());
+    }
+
+    double calcRating(int id) throws SQLException {
         PreparedStatement rate = DBM.conn.prepareStatement("SELECT AVG(Rating) FROM ratings WHERE TimeLineID = ?");
-        rate.setInt(1, this.getID());
+        rate.setInt(1, id);
         ResultSet rs = rate.executeQuery();
         rs.next();
         return rs.getDouble(1);
-    }
-
-    public void updateRatingFromDB() throws SQLException {
-        this.rating = calcRating();
     }
 
     @Override
