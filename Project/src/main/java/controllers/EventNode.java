@@ -1,4 +1,5 @@
 package controllers;
+
 import database.Event;
 import database.Timeline;
 import javafx.fxml.FXML;
@@ -10,34 +11,30 @@ import utils.DateUtil;
 public class EventNode implements Comparable<EventNode> {
 
     @FXML
-    public Pane displayPane;
+    Pane displayPane;
     @FXML
-    private Label eventNameDisplay;
+    Label eventNameDisplay;
+    @FXML
+    Tooltip hoverFlag;
+    private TimelineView parentController;
     private Event activeEvent;
     private int startColumn;
     private int columnSpan;
     private int row;
-    private TimelineView parentController;
-    @FXML
-    private Tooltip hoverFlag;
-
-    public Pane getDisplayPane() {
-        return displayPane;
-    }
 
     public void initialize() {
         hoverFlag.setShowDelay(hoverFlag.getShowDelay().divide(8));
     }
 
-    public Event getActiveEvent() {
-        return activeEvent;
+    Pane getDisplayPane() {
+        return displayPane;
     }
 
-    public void setStartColumn(int startColumn) {
+    void setStartColumn(int startColumn) {
         this.startColumn = startColumn;
     }
 
-    public void setColumnSpan(int columnSpan) {
+    void setColumnSpan(int columnSpan) {
         this.columnSpan = columnSpan;
     }
 
@@ -45,43 +42,43 @@ public class EventNode implements Comparable<EventNode> {
         this.activeEvent = event;
         this.parentController = parentController;
 
-        startColumn = DateUtil.distanceBetween(activeTimeline.getStartDate(),activeEvent.getStartDate(), activeTimeline.getScale());
-        columnSpan = Math.max(DateUtil.distanceBetween(activeEvent.getStartDate(),activeEvent.getEndDate(), activeTimeline.getScale()), 1);   //instant events still need 1 whole column
+        setStartColumn(DateUtil.distanceBetween(activeTimeline.getStartDate(), activeEvent.getStartDate(), activeTimeline.getScale()));
+        setColumnSpan(Math.max(DateUtil.distanceBetween(activeEvent.getStartDate(), activeEvent.getEndDate(), activeTimeline.getScale()), 1));   //instant events still need 1 whole column
         eventNameDisplay.setText(activeEvent.getName());
     }
 
-    public int getRow() {
+    int getRow() {
         return row;
     }
 
-    public void setRow(int row) {
+    void setRow(int row) {
         this.row = row;
     }
 
-    public int getStartColumn() {
+    int getStartColumn() {
         return startColumn;
     }
 
-    public int getColumnSpan() {
+    int getColumnSpan() {
         return columnSpan;
     }
 
     @FXML
-    public void openDetails() {
+    void openDetails() {
         hoverFlag.setText(activeEvent.getName() + "\n" + activeEvent.getDescription());
     }
 
     @FXML
-    public void openEventViewer() {       //upon clicking a node
-        //parentController.rightSidebar.getChildren().clear();
-        //parentController.eventEditorController.close();
+    void openEventViewer() {       //upon clicking a node
         parentController.eventEditorController.setEvent(activeEvent);
         parentController.eventEditorController.toggleEditable(false);
         parentController.rightSidebar.getChildren().add(parentController.eventEditorController.editor);
     }
 
     @Override
-    public int compareTo(EventNode o) {     //sorts by earlier start, then by longest span as tiebreaker
+    public int compareTo(EventNode o) {     //sorts by highest priority first, then earlier start, then by longest span as tiebreakers
+        if (this.activeEvent.getEventPriority() != o.activeEvent.getEventPriority())
+            return o.activeEvent.getEventPriority() - this.activeEvent.getEventPriority();
         if (this.startColumn != o.startColumn)
             return this.startColumn - o.startColumn;
         return o.columnSpan - this.columnSpan;

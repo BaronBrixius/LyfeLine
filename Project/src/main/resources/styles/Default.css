@@ -1,3 +1,8 @@
+.root {
+    -fx-background-image: url(../images/tnaui.png);
+    -fx-background-size: cover;
+}
+
 .button, .toggle-button {
     -fx-background-color: #4E4B42;
     -fx-font-weight: bold;
@@ -87,11 +92,6 @@
 .menu-bar, .menu-item, .menu-bar .text, .combo-box-base {
     -fx-background-color: #4E4B42;
     -fx-fill: #FFF;
-}
-
-.root {
-    -fx-background-image: url(../images/tnaui.png);
-    -fx-background-size: cover;
 }
 
 .scroll-bar:horizontal .increment-button, .scroll-bar:horizontal .decrement-button {

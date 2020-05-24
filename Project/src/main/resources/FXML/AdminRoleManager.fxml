@@ -34,20 +34,19 @@
       </GridPane>
    </center>
    <bottom>
-      <GridPane BorderPane.alignment="CENTER">
-         <columnConstraints>
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="304.0" minWidth="10.0" prefWidth="250.0" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="386.0" minWidth="10.0" prefWidth="250.0" />
-         </columnConstraints>
-         <rowConstraints>
-            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-         </rowConstraints>
-         <children>
-              <Button alignment="CENTER" mnemonicParsing="false" onAction="#back" styleClass="dashBoard" text="Back" GridPane.halignment="CENTER" />
-         </children>
-         <padding>
-            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-         </padding>
-      </GridPane>
+       <GridPane BorderPane.alignment="CENTER">
+           <columnConstraints>
+               <ColumnConstraints hgrow="SOMETIMES" maxWidth="304.0" minWidth="10.0" prefWidth="250.0"/>
+               <ColumnConstraints hgrow="SOMETIMES" maxWidth="386.0" minWidth="10.0" prefWidth="250.0"/>
+           </columnConstraints>
+           <rowConstraints>
+               <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
+           </rowConstraints>
+           <padding>
+               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+           </padding>
+           <Button alignment="CENTER" mnemonicParsing="false" onAction="#back" styleClass="dashBoard" text="Back"
+                   GridPane.halignment="CENTER"/>
+       </GridPane>
    </bottom>
 </BorderPane>
