@@ -342,19 +342,16 @@ public class TimelineEditor extends Editor {
     }
 
     @FXML
-    private void imageExport() throws IOException {
-        parentController.snapshot();
-
+    void imageExport() throws IOException {
         Stage imageExport = new Stage();
         imageExport.setTitle("Export Image");
         imageExport.initOwner(GUIManager.mainStage);         //These two lines make sure you can't click back to the timeline window,
         imageExport.initModality(Modality.WINDOW_MODAL);     //so you can't have 10 windows open at once.
 
         FXMLLoader loader = new FXMLLoader(GUIManager.class.getResource("../FXML/ImageExport.fxml"));
-
         imageExport.setScene(new Scene(loader.load()));
         ImageExport imageExportObject = loader.getController();
-        imageExportObject.setUp(parentController.snapshot, parentController.activeTimeline);
+        imageExportObject.setUp(parentController.snapshot(zoom.isSelected()), parentController.activeTimeline);
 
         imageExport.getScene().getStylesheets().addAll(GUIManager.mainStage.getScene().getStylesheets());
         imageExport.show();

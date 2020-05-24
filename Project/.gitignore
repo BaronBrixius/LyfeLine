@@ -10,33 +10,24 @@ local.properties
 .settings/
 .loadpath
 .recommenders
-
-
-### Eclipse ###
-# Eclipse Core
 .project
 *.launch
-
-# JDT-specific (Eclipse Java Development Tools)
 .classpath
 
 
 ### Intellij ###
 .idea/*
 *.iml
-
 out/
 
 
 ### Java ###
 # Compiled class file
 *.class
+/target/
 
 # Log file
 *.log
-
-# BlueJ files
-*.ctxt
 
 # Package Files #
 *.jar
@@ -59,5 +50,4 @@ buildNumber.properties
 .mvn/*
 .flattened-pom.xml
 
-# End of https://www.gitignore.io/api/java,maven,eclipse,intellij
-/target/
+

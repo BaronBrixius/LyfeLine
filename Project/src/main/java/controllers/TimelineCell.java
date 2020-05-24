@@ -73,16 +73,16 @@ public class TimelineCell {
         double angle = 0;
         double distance;
 
-        for (int i = 0; i < numPoints * 2; i++) {   // calculate position of each point on star, starting from top and going clockwise
+        for (int i = 0; i < numPoints * 2; i++) {   //calculate position of each point on star, starting from top and going clockwise
             if (i % 2 == 0)
                 distance = starSize;                //tips stick out further
             else
                 distance = starSize / 2;            //intersections don't stick out as much, increase number to increase how "sharp" the star is
 
-            button.getPoints().addAll(Math.sin(angle) * distance, // trig to find point position, easier to adjust than manual point placement
+            button.getPoints().addAll(Math.sin(angle) * distance, //trig to find point position, easier to adjust than manual point placement
                     Math.cos(angle) * distance * -1);
 
-            angle += Math.PI / numPoints;            // simplified (2*PI / numPoints*2), rotates angle to calculate next tip/intersection
+            angle += Math.PI / numPoints;            //simplified (2*PI / numPoints*2), rotates angle to calculate next tip or intersection
         }
 
         button.setOnMouseClicked(event -> {
@@ -90,7 +90,7 @@ public class TimelineCell {
                 timeline.rateTimeline(index + 1);       //click a star to submit a rating and update its display value
                 timeline.updateRatingFromDB();
             } catch (SQLException exception) {
-
+                System.err.println("Could not access rating from database.");
             }
             colorStarsByRating((int) Math.ceil(timeline.getRating()));
         });
@@ -98,8 +98,7 @@ public class TimelineCell {
 
     private void colorStarsByRating(int rating) {
         for (int i = 0; i < 5; i++) {
-            Color starColor = i < rating ? Color.YELLOW : Color.GREY;   // yellow fill for lower stars
-            ratingButtons.get(i).setFill(starColor);                    // grey fill for stars above timeline's rank
+            ratingButtons.get(i).setFill((i < rating) ? Color.YELLOW : Color.GREY);   //yellow stars until rating reached, then grey
         }
     }
 

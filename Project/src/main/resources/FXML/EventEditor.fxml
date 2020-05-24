@@ -28,24 +28,6 @@
             <ColumnConstraints prefWidth="150" />
             <ColumnConstraints prefWidth="150" />
          </columnConstraints>
-         <rowConstraints>
-            <RowConstraints />
-            <RowConstraints />
-            <RowConstraints />
-            <RowConstraints />
-            <RowConstraints />
-            <RowConstraints />
-            <RowConstraints />
-            <RowConstraints />
-            <RowConstraints />
-            <RowConstraints />
-            <RowConstraints />
-            <RowConstraints />
-            <RowConstraints />
-            <RowConstraints />
-            <RowConstraints />
-            <RowConstraints />
-         </rowConstraints>
          <ImageView fx:id="image" fitHeight="200.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" GridPane.columnSpan="2" GridPane.halignment="CENTER" />
          <Button fx:id="uploadImageButton" alignment="CENTER" onAction="#uploadImage" prefWidth="80.0" style=":disabled -fx-opacity: 0;" text="Upload img" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
             <GridPane.margin>

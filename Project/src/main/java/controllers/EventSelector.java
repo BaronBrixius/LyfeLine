@@ -226,10 +226,6 @@ public class EventSelector {
                             && e.getID() == te.get(1)));                                                //and returns whether each event is on that timeline
     }
 
-    public void close() {
-        parentController.rightSidebar.getChildren().remove(selector);
-    }
-
     public void addToTimeline() {   //TODO make this work with multiple selections?
         try {
             if (eventListView.getSelectionModel().getSelectedItem().addToTimeline(parentController.activeTimeline.getID())) {
