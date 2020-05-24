@@ -92,8 +92,8 @@ public class AdminRoleManager {
         try {
             String sql = "SELECT * FROM users WHERE UserName LIKE '" + searchInput.getText() + "%' OR UserEmail LIKE'" + searchInput.getText() + "%'";
             PreparedStatement search = DBM.conn.prepareStatement(sql);
-            List<User> userlist = DBM.getFromDB(search, new User());
-            listView.setItems(FXCollections.observableArrayList(userlist));
+            List<User> userList = DBM.getFromDB(search, new User());
+            listView.setItems(FXCollections.observableArrayList(userList));
         } catch (SQLException e) {
             System.err.println("Could not access users database.");
         }

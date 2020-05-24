@@ -5,7 +5,6 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.ScrollPane?>
@@ -18,32 +17,70 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
 <BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.Dashboard">
     <center>
         <VBox minHeight="400.0" minWidth="600.0">
             <HBox fx:id="Simple" alignment="CENTER_LEFT" spacing="10.0">
-                <VBox prefWidth="412.0" spacing="40.0">
-                    <GridPane hgap="5.0" vgap="5.0">
-                        <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="229.0" minWidth="10.0" prefWidth="202.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="207.0" minWidth="10.0" prefWidth="90.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="207.0" minWidth="10.0" prefWidth="102.0" />
-                        </columnConstraints>
-                        <rowConstraints>
-                            <RowConstraints vgrow="SOMETIMES" />
-                            <RowConstraints vgrow="SOMETIMES" />
-                            <RowConstraints vgrow="SOMETIMES" />
-                        </rowConstraints>
-                        <padding>
-                            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                        </padding>
-                        <TextField fx:id="searchInput" prefHeight="31.0" prefWidth="376.0" promptText="Search here..." style="-fx-font-size: 1.3em;" GridPane.columnSpan="2147483647" />
-                        <ComboBox fx:id="sortBy" prefHeight="31.0" prefWidth="201.0" promptText="Sort By" style="-fx-font-size: 1.3em;" GridPane.columnSpan="2" GridPane.rowIndex="1" />
-                        <CheckBox fx:id="cbOnlyViewPersonalLines" alignment="CENTER" mnemonicParsing="false" prefHeight="33.0" prefWidth="195.0" style="-fx-font-size: 1.3em;" text="Only Show My Timelines" GridPane.rowIndex="2" />
-                        <Hyperlink fx:id="AdvancedSearch" alignment="CENTER" contentDisplay="CENTER" onAction="#toggleAdvancedSearch" prefHeight="31.0" prefWidth="109.0" text="Advanced Search" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                    </GridPane>
-                </VBox>
+            <Button fx:id="importButton" mnemonicParsing="false" onAction="#importFromJSON" text="Import">
+               <styleClass>
+                  <String fx:value="dashBoard" />
+                  <String fx:value="smallButton" />
+               </styleClass>
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin></Button>
+                <Button fx:id="adminGUI" alignment="CENTER" mnemonicParsing="false" onAction="#adminScreen" prefWidth="297.0" text="Admin Manager" textAlignment="CENTER">
+                    <opaqueInsets>
+                        <Insets />
+                    </opaqueInsets>
+               <styleClass>
+                  <String fx:value="dashBoard" />
+                  <String fx:value="DisabledInvisible" />
+                  <String fx:value="smallButton" />
+               </styleClass>
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+                </Button>
+               <Button fx:id="btnCreate" mnemonicParsing="false" onAction="#createTimeline" text="Create">
+               <styleClass>
+                  <String fx:value="dashBoard" />
+                  <String fx:value="DisabledInvisible" />
+                  <String fx:value="smallButton" />
+               </styleClass>
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin></Button>
+            <Region prefHeight="0.0" prefWidth="1.0" HBox.hgrow="ALWAYS" />
+                 <GridPane hgap="5.0" vgap="5.0">
+                     <columnConstraints>
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="229.0" minWidth="10.0" prefWidth="202.0" />
+                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="229.0" minWidth="10.0" prefWidth="202.0" />
+                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="207.0" minWidth="10.0" prefWidth="90.0" />
+                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="207.0" minWidth="10.0" prefWidth="102.0" />
+                     </columnConstraints>
+                     <rowConstraints>
+                         <RowConstraints vgrow="SOMETIMES" />
+                         <RowConstraints vgrow="SOMETIMES" />
+                         <RowConstraints vgrow="SOMETIMES" />
+                     </rowConstraints>
+                     <padding>
+                         <Insets bottom="5.0" left="5.0" right="20.0" top="5.0" />
+                     </padding>
+                     <TextField fx:id="searchInput" prefHeight="31.0" prefWidth="376.0" promptText="Search here..." style="-fx-font-size: 1.3em;" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.rowIndex="1" />
+                     <ComboBox fx:id="sortBy" prefHeight="31.0" prefWidth="201.0" promptText="Sort By" style="-fx-font-size: 1.3em;" GridPane.columnSpan="2" GridPane.rowIndex="1" />
+                     <CheckBox fx:id="cbOnlyViewPersonalLines" alignment="CENTER" mnemonicParsing="false" prefHeight="33.0" prefWidth="195.0" style="-fx-font-size: 1.3em;" text="Only Show My Timelines" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+               <Button maxHeight="-Infinity" maxWidth="-Infinity" mnemonicParsing="false" onAction="#toggleAdvancedSearch" prefHeight="25.0" prefWidth="150.0" styleClass="tinyDashboard" text="Advanced Search" textAlignment="CENTER" wrapText="true" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+                  <font>
+                     <Font size="10.0" />
+                  </font>
+               </Button>
+                 </GridPane>
+            <VBox.margin>
+               <Insets top="10.0" />
+            </VBox.margin>
             </HBox>
             <GridPane hgap="10.0" prefHeight="500.0" VBox.vgrow="SOMETIMES">
                 <columnConstraints>
@@ -55,8 +92,14 @@
                     <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" vgrow="SOMETIMES" />
                <RowConstraints maxHeight="1.7976931348623157E308" vgrow="SOMETIMES" />
                 </rowConstraints>
-                <ScrollPane fx:id="listScrollPane" prefWidth="1250.0" GridPane.columnSpan="2" GridPane.hgrow="ALWAYS" GridPane.rowSpan="2" GridPane.vgrow="ALWAYS">
-                    <ListView fx:id="list" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" minWidth="-Infinity" onMouseClicked="#updateDisplays" prefHeight="700.0" prefWidth="1220.0" />
+                <ScrollPane fx:id="listScrollPane" prefWidth="1295.0" styleClass="noScrollingListView" GridPane.columnSpan="2" GridPane.hgrow="ALWAYS" GridPane.rowSpan="2" GridPane.vgrow="ALWAYS">
+                    <padding>
+                        <Insets />
+                    </padding>
+                    <ListView fx:id="list" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" minWidth="-Infinity" onMouseClicked="#updateDisplays" prefHeight="700.0" prefWidth="1280.0" styleClass="noScrollingListView">
+                  <opaqueInsets>
+                     <Insets />
+                  </opaqueInsets></ListView>
                 </ScrollPane>
             </GridPane>
             <padding>
@@ -167,44 +210,23 @@
             </GridPane>
         </StackPane>
     </left>
-    <bottom>
-        <GridPane alignment="TOP_CENTER" BorderPane.alignment="CENTER">
-            <columnConstraints>
-                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="250.0" />
-                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="250.0" />
-                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="250.0" />
-                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="250.0" />
-                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="250.0" />
-            </columnConstraints>
-            <rowConstraints>
-                <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-            </rowConstraints>
-            <Button fx:id="btnCreate" mnemonicParsing="false" onAction="#createTimeline" styleClass="dashBoard" text="Create" />
-            <Button fx:id="btnEdit" mnemonicParsing="false" onAction="#editTimeline" styleClass="dashBoard" text="Edit" GridPane.columnIndex="1" />
-            <Button fx:id="btnDelete" mnemonicParsing="false" onAction="#deleteConfirmation" text="Delete" GridPane.columnIndex="2">
-                <styleClass>
-                    <String fx:value="hoverRed" />
-                    <String fx:value="dashBoard" />
-                </styleClass>
-            </Button>
-            <GridPane fx:id="gridButtons" alignment="TOP_CENTER" prefHeight="85.0" prefWidth="515.0" GridPane.columnIndex="3" GridPane.columnSpan="2147483647" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
-                <columnConstraints>
-                    <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" />
-                    <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" />
-                </columnConstraints>
-                <rowConstraints>
-                    <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                </rowConstraints>
-                <Button fx:id="adminGUI" alignment="CENTER" mnemonicParsing="false" onAction="#adminScreen" prefWidth="297.0" styleClass="dashBoard" text="Admin Manager" textAlignment="CENTER">
-                    <GridPane.margin>
-                        <Insets />
-                    </GridPane.margin>
-                    <opaqueInsets>
-                        <Insets />
-                    </opaqueInsets>
-                </Button>
-                <Button fx:id="timelineViewButton" mnemonicParsing="false" onAction="#openTimeline" styleClass="dashBoard" text="View Timeline" GridPane.columnIndex="1" />
-            </GridPane>
-        </GridPane>
-    </bottom>
+   <right>
+       <StackPane fx:id="rightStack" BorderPane.alignment="CENTER_LEFT">
+           <padding>
+               <Insets left="-20.0" right="10.0"/>
+           </padding>
+           <VBox fx:id="greetingBox" alignment="CENTER" prefWidth="275.0" StackPane.alignment="CENTER_LEFT">
+               <Label alignment="CENTER"
+                      text="Welcome to LyfeLine! Browse any of our user made Timelines from the list here, or look for a specific one in the top left."
+                      wrapText="true">
+                   <VBox.margin>
+                       <Insets left="5.0"/>
+                   </VBox.margin>
+               </Label>
+           </VBox>
+       </StackPane>
+   </right>
+   <bottom>
+      <Region prefHeight="20.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+   </bottom>
 </BorderPane>

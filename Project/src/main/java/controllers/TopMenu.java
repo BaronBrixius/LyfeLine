@@ -31,38 +31,32 @@ public class TopMenu {
     }
 
     @FXML
-    void saveFile(ActionEvent actionEvent) {
+    void saveFile() {
         System.out.println("Save");
     }
 
     @FXML
-    public void styleDefaultPressed() {
+    void styleDefaultPressed() {
         GUIManager.applyStyle("Default");
     }
 
     @FXML
-    public void styleBeigePressed() {
-        GUIManager.applyStyle("Beige");
+    void styleLightPressed() {
+        GUIManager.applyStyle("Light");
     }
 
     @FXML
-    public void styleBluePressed() {
+    void styleBluePressed() {
         GUIManager.applyStyle("Blue");
     }
 
     @FXML
-    void styleNonePressed() {
-        GUIManager.applyStyle("None");
-    }
-
-    @FXML
-
-    public void styleDarkPressed() {
+    void styleDarkPressed() {
         GUIManager.applyStyle("Dark");
     }
 
     @FXML
-    public void styleMaroonPressed() {
+    void styleMaroonPressed() {
         GUIManager.applyStyle("Maroon");
     }
 

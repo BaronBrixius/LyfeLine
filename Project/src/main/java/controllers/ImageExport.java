@@ -2,12 +2,8 @@ package controllers;
 
 import database.Timeline;
 import javafx.embed.swing.SwingFXUtils;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.stage.FileChooser;
@@ -21,220 +17,135 @@ import java.io.File;
 import java.io.IOException;
 
 public class ImageExport {
-	public CheckBox cbName;
-	public CheckBox cbRange;
-	public CheckBox cbLogo;
-	public CheckBox cbCreator;
-	public Button btnExport;
-	public RadioButton rdbtnPng;
-	public RadioButton rdbtnJpeg;
-	public ToggleGroup formatChoice;
-	public ImageView imageView;
+    @FXML
+    CheckBox cbName;
+    @FXML
+    CheckBox cbRange;
+    @FXML
+    CheckBox cbCreator;
+    @FXML
+    CheckBox cbLogo;
+    @FXML
+    ImageView imageView;
+    private Timeline activeTimeline;
+    private WritableImage originalImage;
+    private WritableImage previewImage;
 
-	private Timeline activeTimeline;
-	private WritableImage originalImage;
-	private WritableImage temp;
-	private File filechooser;
-	private String format;
+    // Executes on startup (when export button is pressed when viewing a timeline)
+    void setUp(WritableImage image, Timeline activeTimeline) {
+        this.activeTimeline = activeTimeline;
+        originalImage = image;
+        burnIn();                     //defaults to having LyfeLine logo watermarked, can be toggled by user
+    }
 
-	public void initialize() {
-	}
+    // Executes when "Export" button is pressed in the pop-up
+    @FXML
+    void saveImage() throws IOException {
+        BufferedImage finalBuffer = SwingFXUtils.fromFXImage(previewImage, null);
+        File outputFile = fileChooser();
+        if (outputFile != null)
+            ImageIO.write(finalBuffer, "png", outputFile);
+    }
 
-	// Executes on startup (when export button is pressed when viewing a timeline)
-	void setUp(WritableImage image, Timeline activeTimeline) {
-		this.activeTimeline = activeTimeline;
-		originalImage = image;
-		imageView.setImage(this.originalImage);
-	}
+    // execute when any checkbox is clicked
+    @FXML
+    void burnIn() {
+        previewImage = originalImage;
 
-	// Executes when "Export" button is pressed in the pop-up
-	@FXML
-	void saveImage() throws IOException {
-		String FinalFormat = "PNG";
-		if (!rdbtnPng.isSelected())
-			FinalFormat = "JPEG";
-		BufferedImage finalBuffer = SwingFXUtils.fromFXImage(originalImage, null);
-		if (temp == null)
-			ImageIO.write(finalBuffer, FinalFormat, fileChooser());
-		else {
-			finalBuffer = SwingFXUtils.fromFXImage(temp, null);
-			ImageIO.write(finalBuffer, FinalFormat, fileChooser());
-		}
-	}
+        if (cbName.isSelected())
+            burnName();
+        if (cbRange.isSelected())
+            burnRange();
+        if (cbCreator.isSelected())
+            burnCreator();
+        if (cbLogo.isSelected())
+            burnLogo();
 
-	// execute when any checkbox is clicked
-	@FXML
-	void burnIn() {
-		temp = originalImage;
+        imageView.setImage(previewImage);
+    }
 
-		if (cbName.isSelected()) {
-			temp = burnName(temp);
-		}
-		if (cbRange.isSelected()) {
-			temp = burnRange(temp);
-		}
-		if (cbCreator.isSelected()) {
-			temp = burnCreator(temp);
-		}
-		if (cbLogo.isSelected()) {
-			try {
-				temp = burnLogo(temp);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+    private void burnName() {
+        String text = activeTimeline.getName();
+        burnText(text, 1.0 / 10, false);
+    }
 
-		imageView.setImage(temp);
-	}
+    private void burnCreator() {
+        String text = "Made with LyfeLine by: " + GUIManager.loggedInUser.getUserName();
+        burnText(text, 29.0 / 30, false);
+    }
 
-	private WritableImage burnName(WritableImage img) {
-		String text = activeTimeline.getName();
-		BufferedImage originalBuffer = SwingFXUtils.fromFXImage(img, null);
-		int font = (int) img.getHeight() / 30;
+    private void burnRange() {
+        String text = DateUtil.ddmmyyToString(activeTimeline);
+        burnText(text, 29.0 / 30, true);
+    }
 
-		// determine image type and handle correct transparency
-		int imageType = "png".equalsIgnoreCase(format) ? BufferedImage.TYPE_INT_ARGB : BufferedImage.TYPE_INT_RGB;
-		BufferedImage burned = new BufferedImage(originalBuffer.getWidth(), originalBuffer.getHeight(), imageType);
+    private void burnText(String text, double yPlacementRatio, boolean adjustDown) {
+        //initializes necessary graphic properties
+        BufferedImage originalBuffer = SwingFXUtils.fromFXImage(previewImage, null);
+        Graphics2D workingImage = (Graphics2D) originalBuffer.getGraphics();
+        workingImage.drawImage(originalBuffer, 0, 0, null);
+        workingImage.setColor(Color.BLACK);
+        workingImage.setFont(new Font(Font.SANS_SERIF, Font.BOLD, originalBuffer.getHeight() / 30));
+        Rectangle2D rect = workingImage.getFontMetrics().getStringBounds(text, workingImage);
 
-		// initializes necessary graphic properties
-		Graphics2D w = (Graphics2D) burned.getGraphics();
-		w.drawImage(originalBuffer, 0, 0, null);
-		w.setColor(Color.BLACK);
-		w.setFont(new Font(Font.SANS_SERIF, Font.BOLD, font));
-		FontMetrics fontMetrics = w.getFontMetrics();
-		Rectangle2D rect = fontMetrics.getStringBounds(text, w);
+        //calculate position of text
+        int xPlacement = (int) (previewImage.getWidth() - rect.getWidth()) / 2;     //centered
+        int yPlacement = (int) (previewImage.getHeight() * yPlacementRatio);
+        if (adjustDown)   //when placing two fields near each other, one should be adjusted downwards so they don't overlap
+            yPlacement -= rect.getHeight();
 
-		// calculate center of the image
-		int yPlacement = burned.getHeight() / 10;
-		int xPlacement = (burned.getWidth() - (int) rect.getWidth()) / 2;
+        //add text overlay to the image
+        workingImage.drawString(text, xPlacement, yPlacement);
+        previewImage = SwingFXUtils.toFXImage(originalBuffer, null);
+        workingImage.dispose();
+    }
 
-		// add text overlay to the image
-		w.drawString(text, xPlacement, yPlacement);
-		WritableImage imageBurned = SwingFXUtils.toFXImage(burned, null);
-		w.dispose();
-		return imageBurned;
+    private void burnLogo() {
+        try {
+            //Logo settings
+            BufferedImage logoBuffer = resize(ImageIO.read(new File("src/main/resources/Logo.png")));
 
-	}
+            //initializes necessary graphic properties
+            BufferedImage originalBuffer = SwingFXUtils.fromFXImage(previewImage, null);
+            Graphics2D workingImage = (Graphics2D) originalBuffer.getGraphics();
+            workingImage.drawImage(originalBuffer, 0, 0, null);
+            workingImage.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
 
-	private WritableImage burnRange(WritableImage img) {
-		String text = DateUtil.ddmmyyToString(activeTimeline);
+            //calculates the coordinate where the String is painted
+            int yPlacement = (originalBuffer.getHeight() - originalBuffer.getHeight() / 15);
+            int xPlacement = (originalBuffer.getWidth() / 100);
 
-		BufferedImage originalBuffer = SwingFXUtils.fromFXImage(img, null);
-		int font = originalBuffer.getHeight() / 30;
+            //add text watermark to the image
+            workingImage.drawImage(logoBuffer, xPlacement, yPlacement, null);
+            previewImage = SwingFXUtils.toFXImage(originalBuffer, null);
+            workingImage.dispose();
+        } catch (IOException e) {
+            System.err.println("Logo.png file not found.");
+        }
+    }
 
-		// determine image type and handle correct transparency
-		int imageType = "png".equalsIgnoreCase(format) ? BufferedImage.TYPE_INT_ARGB : BufferedImage.TYPE_INT_RGB;
-		BufferedImage burned = new BufferedImage(originalBuffer.getWidth(), originalBuffer.getHeight(), imageType);
+    //at the moment resizes the logo to hardcoded 100x100, seems to work well and the logo watermark should be reasonably small.
+    private BufferedImage resize(BufferedImage img) {
+        final int width = 104;
+        final int height = 40;
+        Image tmp = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+        BufferedImage resized = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = resized.createGraphics();
+        g2d.drawImage(tmp, 0, 0, null);
+        g2d.dispose();
+        return resized;
+    }
 
-		// initializes necessary graphic properties
-		Graphics2D w = (Graphics2D) burned.getGraphics();
-		w.drawImage(originalBuffer, 0, 0, null);
-		w.setColor(Color.BLACK);
-		w.setFont(new Font(Font.SANS_SERIF, Font.BOLD, font));
-		FontMetrics fontMetrics = w.getFontMetrics();
-		Rectangle2D rect = fontMetrics.getStringBounds(text, w);
+    public File fileChooser() {
+        FileChooser fileChooser = new FileChooser();                                             //removes illegal chars for file name from default name
+        fileChooser.setInitialFileName(activeTimeline.getName().replaceAll("\\s+", "_").replaceAll("[/:*?\"<>|\\\\]", ""));
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("All Images", "*.jpg", "*.jpeg", "*.png", "*.bmp", "*.gif", "*.wbmp"),
+                new FileChooser.ExtensionFilter("JPG", "*.jpg"), new FileChooser.ExtensionFilter("JPEG", "*.jpeg"),
+                new FileChooser.ExtensionFilter("PNG", "*.png"), new FileChooser.ExtensionFilter("BMP", "*.bmp"),
+                new FileChooser.ExtensionFilter("GIF", "*.gif"), new FileChooser.ExtensionFilter("WBMP", "*.wbmp"));
 
-		// calculate center of the image
-		int yPlacement = (burned.getHeight() - burned.getHeight() / 30) - (int) rect.getHeight();
-		int xPlacement = (burned.getWidth() - (int) rect.getWidth()) / 2;
-
-		// add text overlay to the image
-		w.drawString(text, xPlacement, yPlacement);
-		WritableImage imageBurned = SwingFXUtils.toFXImage(burned, null);
-		w.dispose();
-		return imageBurned;
-
-	}
-
-	private WritableImage burnLogo(WritableImage img) throws IOException {
-		BufferedImage originalBuffer = SwingFXUtils.fromFXImage(img, null);
-		// Logo settings
-		// File logo = new File("../resources/Logo.png");
-		File logo = new File("src/main/resources/Logo.png");
-		BufferedImage logoBuffer = resize(ImageIO.read(logo));
-		// determine image type and handle correct transparency
-		int imageType = "png".equalsIgnoreCase("png") ? BufferedImage.TYPE_INT_ARGB : BufferedImage.TYPE_INT_RGB;
-		BufferedImage burned = new BufferedImage(originalBuffer.getWidth(), originalBuffer.getHeight(), imageType);
-
-		// initializes necessary graphic properties
-		Graphics2D w = (Graphics2D) burned.getGraphics();
-		w.drawImage(originalBuffer, 0, 0, null);
-		AlphaComposite alphaChannel = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f);
-		w.setComposite(alphaChannel);
-
-		// calculates the coordinate where the String is painted
-		// int yPlacement = (burned.getHeight()) - ((burned.getHeight() / 6));
-		int yPlacement = (burned.getHeight() - burned.getHeight() / 15);
-		int xPlacement = (burned.getWidth() / 100);
-
-		// add text watermark to the image
-		w.drawImage(logoBuffer, xPlacement, yPlacement, null);
-		WritableImage imageBurned = SwingFXUtils.toFXImage(burned, null);
-		w.dispose();
-		return imageBurned;
-
-	}
-
-	private WritableImage burnCreator(WritableImage img) {
-		String text = "Made with LyfeLine by: " + GUIManager.loggedInUser.getUserName();
-
-		BufferedImage originalBuffer = SwingFXUtils.fromFXImage(img, null);
-		int font = originalBuffer.getHeight() / 30;
-
-		// determine image type and handle correct transparency
-		int imageType = "png".equalsIgnoreCase(format) ? BufferedImage.TYPE_INT_ARGB : BufferedImage.TYPE_INT_RGB;
-		BufferedImage burned = new BufferedImage(originalBuffer.getWidth(), originalBuffer.getHeight(), imageType);
-
-		// initializes necessary graphic properties
-		Graphics2D w = (Graphics2D) burned.getGraphics();
-		w.drawImage(originalBuffer, 0, 0, null);
-		w.setColor(Color.BLACK);
-		w.setFont(new Font(Font.SANS_SERIF, Font.BOLD, font));
-		FontMetrics fontMetrics = w.getFontMetrics();
-		Rectangle2D rect = fontMetrics.getStringBounds(text, w);
-
-		// calculate center of the image
-		int yPlacement = (burned.getHeight() - burned.getHeight() / 30);
-		int xPlacement = (burned.getWidth() - (int) rect.getWidth()) / 2;
-
-		// add text overlay to the image
-		w.drawString(text, xPlacement, yPlacement);
-		WritableImage imageBurned = SwingFXUtils.toFXImage(burned, null);
-		w.dispose();
-		return imageBurned;
-
-	}
-
-	// at the moment resizes the logo to hardcoded 100x100, seems to work well and
-	// the logo watermark should be reasonably small.
-	private BufferedImage resize(BufferedImage img) {
-		int width = 104;
-		int height = 40;
-		Image tmp = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
-		BufferedImage resized = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-		Graphics2D g2d = resized.createGraphics();
-		g2d.drawImage(tmp, 0, 0, null);
-		g2d.dispose();
-		return resized;
-	}
-
-	public File fileChooser() throws IOException {
-		FileChooser fileChooser = new FileChooser();
-		format = ".png";
-		if (!rdbtnPng.isSelected())
-			format = ".jpeg";
-		fileChooser.setInitialFileName(activeTimeline.getName().replaceAll("\\s+", "_") + format); // We will add read
-		// format from dropdown or use png
-		fileChooser.getExtensionFilters().addAll( // keep all formats now, easy to add to the popup
-				new FileChooser.ExtensionFilter("All Images", "*.jpg", "*.jpeg", "*.png", "*.bmp", "*.gif", "*.wbmp"),
-				new FileChooser.ExtensionFilter("JPG", "*.jpg"), new FileChooser.ExtensionFilter("JPEG", "*.jpeg"),
-				new FileChooser.ExtensionFilter("PNG", "*.png"), new FileChooser.ExtensionFilter("BMP", "*.bmp"),
-				new FileChooser.ExtensionFilter("GIF", "*.gif"), new FileChooser.ExtensionFilter("WBMP", "*.wbmp"));
-
-		// Show save file dialog
-		return filechooser = fileChooser.showSaveDialog(GUIManager.mainStage);
-
-	}
-
+        // Show save file dialog
+        return fileChooser.showSaveDialog(GUIManager.mainStage);
+    }
 }

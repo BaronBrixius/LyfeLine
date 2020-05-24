@@ -52,9 +52,10 @@ public class GUIManager {
         swapScene("Welcome");
 
         mainStage.getScene().getStylesheets().add("File:src/main/resources/styles/Base.css");
-        mainStage.getScene().getStylesheets().add("File:src/main/resources/styles/Beige.css");
+        mainStage.getScene().getStylesheets().add("File:src/main/resources/styles/Default.css");
         FileInputStream icon = new FileInputStream("src/main/resources/LogoIcon.png");
         mainStage.getIcons().add(new Image(icon));
+        icon.close();
         mainStage.show();
     }
 }

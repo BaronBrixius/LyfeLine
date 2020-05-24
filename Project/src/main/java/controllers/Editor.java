@@ -355,7 +355,6 @@ public abstract class Editor {
             FileChooser chooser = new FileChooser(); //For the file directory
             chooser.setTitle("Upload image");
 
-            //All the image formats supported by java.imageio https://docs.oracle.com/javase/7/docs/api/javax/imageio/package-summary.html
             chooser.getExtensionFilters().addAll(
                     new FileChooser.ExtensionFilter("All Images", "*.jpg", "*.jpeg", "*.png", "*.bmp", "*.gif", "*.wbmp"),
                     new FileChooser.ExtensionFilter("JPG", "*.jpg"),

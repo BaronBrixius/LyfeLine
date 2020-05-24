@@ -148,7 +148,7 @@ public class TimelineCell {
     public void setBGImage() {
         String imageURL = timeline.getImagePath() != null ? "url(file:" + timeline.getImagePath() + ")" : null;
         int height = focused ? 400 : 80;
-        pane.setStyle(" -fx-background-image: " + imageURL + "; -fx-pref-width: 1200px; -fx-pref-height: " + height + "px; -fx-background-size: 1270px, stretch;");
+        pane.setStyle(" -fx-padding: 5px; -fx-background-image: " + imageURL + "; -fx-pref-width: " + (list.getWidth() - 6) + "px; -fx-pref-height: " + height + "px;  -fx-background-size: " + (list.getWidth() - 6) + "px, stretch;");
     }
 
     @FXML

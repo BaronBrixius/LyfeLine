@@ -1,8 +1,9 @@
 package controllers;
 
+import com.google.gson.Gson;
 import database.DBM;
+import database.JSONTimeline;
 import database.Timeline;
-import javafx.application.Platform;
 import javafx.beans.Observable;
 import javafx.collections.FXCollections;
 import javafx.collections.transformation.FilteredList;
@@ -13,9 +14,14 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import javafx.util.StringConverter;
+import org.apache.commons.io.FileUtils;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -31,14 +37,11 @@ public class Dashboard {
     public Label RatingLabel;
     public StackPane stack;
     public ScrollPane listScrollPane;
-    @FXML
-    protected Button timelineViewButton;
+    public Button importButton;
+    public VBox greetingBox;
+    public StackPane rightStack;
     @FXML
     protected Button adminGUI;
-    @FXML
-    protected Button btnDelete;
-    @FXML
-    protected Button btnEdit;
     @FXML
     protected Button btnCreate;
     @FXML
@@ -62,15 +65,11 @@ public class Dashboard {
     @FXML
     protected ComboBox<String> sortBy;
     @FXML
-    protected GridPane gridButtons;
-    @FXML
     protected GridPane advancedSearchView;
     @FXML
     protected GridPane startDates;
     @FXML
     protected GridPane endDates;
-    @FXML
-    protected Hyperlink AdvancedSearch;
     protected Timeline activeTimeline;
     protected FilteredList<Timeline> filteredTimelines;
     protected SortedList<Timeline> sortedTimelines;
@@ -86,9 +85,6 @@ public class Dashboard {
         setupTimeInputStartAndEnd("Millisecond", -1, 999, 2, 2, 6);
 
         initializeButtons();
-
-        // Initialised sorting
-        sortBy.getSelectionModel().select(0);
 
         // Fill ListView with the timelines
         populateTimelineList();
@@ -114,9 +110,7 @@ public class Dashboard {
         searchRating.setButtonCell(new RatingsListCell());
         searchRating.setCellFactory(param -> new RatingsListCell());
 
-
-        list.setPrefHeight((list.getItems().size() * 87) +  340);
-        Platform.runLater(()->list.getSelectionModel().select(0));//TODO make the scroll pane focused more immediately
+        updateDisplays();
         GUIManager.mainStage.setTitle("Dashboard");
     }
 
@@ -134,15 +128,8 @@ public class Dashboard {
 
     private void initializeButtons() {
         stack.getChildren().remove(advancedSearchView);
-        btnCreate.setVisible(GUIManager.loggedInUser.getAdmin());
         btnCreate.setDisable(!GUIManager.loggedInUser.getAdmin());
-        btnEdit.setVisible(GUIManager.loggedInUser.getAdmin());
-        btnEdit.setDisable(list.getSelectionModel().isEmpty() || list.getSelectionModel().getSelectedItem().getOwnerID() != GUIManager.loggedInUser.getID());
-        btnDelete.setVisible(GUIManager.loggedInUser.getAdmin());
-        btnDelete.setDisable(list.getSelectionModel().isEmpty() || list.getSelectionModel().getSelectedItem().getOwnerID() != GUIManager.loggedInUser.getID());
-        adminGUI.setVisible(GUIManager.loggedInUser.getAdmin());
         adminGUI.setDisable(!GUIManager.loggedInUser.getAdmin());
-        timelineViewButton.setDisable(list.getSelectionModel().getSelectedItem() == null);
     }
 
     private void simpleSearch(Observable obs) {
@@ -156,20 +143,19 @@ public class Dashboard {
         Predicate<Timeline> onlyPersonal = timeline -> timeline.getOwnerID() == GUIManager.loggedInUser.getID();
         if (cbOnlyViewPersonalLines.isSelected())
             filteredTimelines.setPredicate(onlyPersonal.and(filteredTimelines.getPredicate()));
-        list.refresh();
-        if (!list.getItems().isEmpty())
-            list.getSelectionModel().select(0);
-        list.setPrefHeight((list.getItems().size() * 87) +  340);
+        //TODO decide how to handle auto scrolling when searching timelines
+        list.getSelectionModel().clearSelection();
+        updateDisplays();
     }
 
     @FXML
-    void searchAdvanced() {         //get list of IDs that satisfy search conditions, and apply as predicate to filteredlist
+    void searchAdvanced() {         //get list of IDs that satisfy search conditions, and apply as predicate to filtered list
         ResultSet data = advancedResultSet();
         try {
             List<Integer> listOfIDs = parseResultsForAdvancedSearch(data);
             filteredTimelines.setPredicate(timeline -> listOfIDs.contains(timeline.getID()));
-            list.getSelectionModel().select(0);
-            list.setPrefHeight((list.getItems().size() * 87) +  340);
+            list.getSelectionModel().clearSelection();
+            updateDisplays();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -271,13 +257,13 @@ public class Dashboard {
 
     @FXML
     void toggleAdvancedSearch() {
-        if (stack.getChildren().size() > 0) {
-            stack.getChildren().remove(advancedSearchView);
+        if (rightStack.getChildren().contains(advancedSearchView)) {
+            rightStack.getChildren().set(0, greetingBox);
             searchInput.setDisable(false);
             cbOnlyViewPersonalLines.setDisable(false);
         } else {
             clearAdvancedSearch();
-            stack.getChildren().add(advancedSearchView);
+            rightStack.getChildren().set(0, advancedSearchView);
             searchInput.setDisable(true);
             cbOnlyViewPersonalLines.setDisable(true);
         }
@@ -320,7 +306,7 @@ public class Dashboard {
     @FXML
     TimelineView createTimeline() {
         Timeline t = new Timeline();
-        t.setOwnerID(GUIManager.loggedInUser.getID());
+        t.setOwner(GUIManager.loggedInUser);
         return openTimelineView(t, true);
     }
 
@@ -347,28 +333,34 @@ public class Dashboard {
     }
 
     @FXML
-    private void updateDisplays() {
-        list.setPrefHeight((list.getItems().size() * 86) +  322);
-        if (list.getSelectionModel().getSelectedItem() != null) {   //If a timeline is selected
+    void importFromJSON() {
+        FileChooser chooser = new FileChooser();                                            //open FileChooser for user to pick import .json
+        chooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("JSON", "*.json"));
+        File fileChosen = chooser.showOpenDialog(GUIManager.mainStage);
+        if (fileChosen == null)
+            return;
 
-            //Scroll to the timeline directly above the selected one
-            //The height of each cell is actually 85.9795 pixels. I know, I hate it too.
-            listScrollPane.setVvalue(( 85.9795 / (list.getHeight() - listScrollPane.getHeight())) * (list.getSelectionModel().getSelectedIndex() - 1));
+        try {
+            String inJSON = FileUtils.readFileToString(fileChosen, (Charset) null);         //import Json from file
+            Gson gson = JSONTimeline.getGson();
+            JSONTimeline readJson = gson.fromJson(inJSON, JSONTimeline.class);              //parse Json with GSON object
+            readJson.importToDB();                                                          //add imported data to database
 
-            if (list.getSelectionModel().getSelectedItem().getOwnerID() == GUIManager.loggedInUser.getID()) {
-                btnDelete.setDisable(false);
-                btnEdit.setDisable(false);
-            } else {
-                btnDelete.setDisable(true);
-                btnEdit.setDisable(true);
-            }
-            timelineViewButton.setDisable(false);
-
-        } else {        //If a timeline is not selected
-            timelineViewButton.setDisable(true);
-            btnDelete.setDisable(true);
-            btnEdit.setDisable(true);
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);                           //inform user of success
+            alert.setTitle("File Import");
+            alert.setHeaderText("File has been successfully imported.");
+            alert.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();     //TODO better exception handling after dev work
         }
+    }
+
+    @FXML
+    private void updateDisplays() {
+        list.setPrefHeight((list.getItems().size() * 84) + (322 * list.getSelectionModel().getSelectedIndices().size()));
+        if (list.getSelectionModel().getSelectedItem() != null)  //If a timeline is selected
+            //Scroll to the timeline directly above the selected one
+            listScrollPane.setVvalue((84 / (list.getHeight() - listScrollPane.getHeight())) * (list.getSelectionModel().getSelectedIndex() - 1));
     }
 
 
@@ -439,31 +431,6 @@ public class Dashboard {
         spinnerDates.add(spinnerList.get(index), column, row + 1);
     }
 
-    // open DeletePopUp
-    @FXML
-    boolean deleteConfirmation() {
-        Alert confirmDeleteTimeline = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmDeleteTimeline.setTitle("Confirm Deletion");
-        confirmDeleteTimeline.setHeaderText("Are you sure you want to delete " + activeTimeline.getName() + "?");
-        confirmDeleteTimeline.setContentText("This can not be undone.");
-        
-        Optional<ButtonType> result = confirmDeleteTimeline.showAndWait();
-
-        if (result.get() == ButtonType.CANCEL)
-            return false;
-        else {
-            try {
-                activeTimeline.deleteOrphans();
-                DBM.deleteFromDB(activeTimeline);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            filteredTimelines.getSource().remove(activeTimeline);
-            list.getSelectionModel().select(0);
-            return true;
-        }
-    }
-
     private static class RatingsListCell extends ListCell<Integer> {    //for displaying ratings in combobox
         @Override
         protected void updateItem(Integer item, boolean empty) {
@@ -493,33 +460,21 @@ public class Dashboard {
             cell.list = list;
             cell.filteredTimelines = filteredTimelines;
 
+            this.setStyle("-fx-padding: 0px; -fx-border-width: 2px; -fx-border-color: transparent; -fx-border-style: solid;");
+
             this.focusedProperty().addListener((observable, oldValue, newValue) -> {
                 cell.focused = newValue;
-                int height = newValue ? 400 : 100;
-                this.resize(1200, height);
                 cell.ratingBox.setDisable(!newValue);
 
-                if (cell.timeline != null)
-                {
+                if (cell.timeline != null) {
                     cell.setBGImage();
 
-                    if (newValue)
-                    {
+                    if (newValue) {
                         cell.pane.add(cell.cellButtonBox, 1, 0);
-
-                        if (cell.timeline.getOwnerID() == GUIManager.loggedInUser.getID()) {
-                            cell.cellDeleteTimelineButton.setDisable(false);
-                            cell.cellDeleteTimelineButton.setOpacity(1);
-                            cell.cellEditTimelineButton.setDisable(false);
-                            cell.cellEditTimelineButton.setOpacity(1);
-                        } else {
-                            cell.cellDeleteTimelineButton.setDisable(true);
-                            cell.cellDeleteTimelineButton.setOpacity(0);
-                            cell.cellEditTimelineButton.setDisable(true);
-                            cell.cellEditTimelineButton.setOpacity(0);
-                        }
-                    }
-                    else
+                        boolean notOwnedByUser = (cell.timeline.getOwnerID() != GUIManager.loggedInUser.getID());
+                        cell.cellDeleteTimelineButton.setDisable(notOwnedByUser);
+                        cell.cellEditTimelineButton.setDisable(notOwnedByUser);
+                    } else
                         cell.pane.getChildren().remove(cell.cellButtonBox);
                 }
             });
