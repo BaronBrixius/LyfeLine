@@ -306,7 +306,7 @@ VALUES (01, 8, 'Fall of Rome', 'Out with a whimper, not a bang', 45, 5, 20, 4, 4
        (10, 2, 'Owner: Max - Dummy timeline 10', 'A timeline meant for testing seconds', 0, 1, 1, 0, 0, 1, 0, 0,
         1, 1,
         0, 0, 59, 0, 1550, 5, 20, 4, 43,
-        32, 213, 2, 'testing, 2, sixty', 'src/main/resources/images/timeline/colette.jpg'),
+        32, 213, 2, 'testing, 2, sixty', 'src/main/resources/images/timeline/watchman.jpg'),
        (11, 2, 'Owner: Max - Dummy timeline 11',
         'A timeline meant for testing the upper bounds of seconds (1 min 10 sec)', 0, 1, 1, 0, 0, 1, 0, 0, 1, 1,
         0, 1, 10, 0, 1550, 5, 20, 4, 43,
@@ -314,7 +314,7 @@ VALUES (01, 8, 'Fall of Rome', 'Out with a whimper, not a bang', 45, 5, 20, 4, 4
        (12, 6, 'Owner: Max - Dummy timeline 12', 'A timeline meant for testing weeks', 50, 4, 20, 4, 43, 32,
         213, 50, 8, 20,
         4, 43, 32, 213, 1550, 5, 20, 4, 43,
-        32, 213, 2, 'testing, 2, fifty', 'src/main/resources/images/timeline/lady_of_the_lake.jpg');
+        32, 213, 2, 'testing, 2, fifty', 'src/main/resources/images/timeline/neverknowsbest.png');
 
 
 INSERT INTO `events` (`EventOwner`, `EventPriority`, `EventName`, `EventDescription`, `StartYear`, `StartMonth`,
