@@ -1,6 +1,6 @@
 .root {
     -fx-background-image: url(../images/tnaui.png);
-    -fx-background-size: cover;
+    -fx-background-size: stretch;
 }
 
 .button, .toggle-button {

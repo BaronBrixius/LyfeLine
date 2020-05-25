@@ -96,7 +96,7 @@ public abstract class Editor {
         setExpansion(endPane, endBoxes, endExpanded, parentController.activeTimeline.getScale());
     }
 
-    int setExpansion(FlowPane expandPane, List<VBox> boxesToAddFrom, boolean expanding, int scale) {
+    void setExpansion(FlowPane expandPane, List<VBox> boxesToAddFrom, boolean expanding, int scale) {
         expandPane.getChildren().removeAll(boxesToAddFrom);         //clear out the current contents except the expansion button
 
         if (expanding) {                //if expanding, add everything in
@@ -118,7 +118,7 @@ public abstract class Editor {
             if (scale >= 5)
                 expandPane.getChildren().add(0, boxesToAddFrom.get(0)); //years
         }
-        return expandPane.getChildren().size();
+        expandPane.getChildren();
     }
 
     void setParentController(TimelineView parentController) {
@@ -204,7 +204,7 @@ public abstract class Editor {
         deleteButton.setDisable(!owner);
     }
 
-    boolean populateDisplay() {
+    void populateDisplay() {
         if (itemInEditor.getImagePath() != null)
             image.setImage(new Image("File:" + itemInEditor.getImagePath()));
         else
@@ -229,7 +229,6 @@ public abstract class Editor {
 
         setExpansion(startPane, startBoxes, false, parentController.activeTimeline.getScale());
         setExpansion(endPane, endBoxes, false, parentController.activeTimeline.getScale());
-        return true;
     }
 
     void populateEndInputs() {            //so that end dates can have their display toggled separately, useful for events
@@ -344,7 +343,7 @@ public abstract class Editor {
     ////////////////////==================================Common image handling========================================////////////////////
 
     @FXML
-    protected void uploadImage() throws IOException {
+    void uploadImage() throws IOException {
         boolean confirm = true;
 
         if (itemInEditor.getImagePath() != null) {
@@ -382,7 +381,7 @@ public abstract class Editor {
     }
 
     @FXML
-    protected boolean ImageSaveConfirm() {
+    boolean ImageSaveConfirm() {
         Alert confirmSaveImage = new Alert(Alert.AlertType.CONFIRMATION);
         confirmSaveImage.setTitle("Confirm Change");
         confirmSaveImage.setHeaderText("Replacing or removing an image will permanently delete it from the system.");
@@ -394,7 +393,7 @@ public abstract class Editor {
     }
 
     //Method that returns the image format as a string i.e sun.png == "png"
-    protected String getFormat(File f) throws IOException {
+    String getFormat(File f) throws IOException {
         ImageInputStream iis = ImageIO.createImageInputStream(f);
         Iterator<ImageReader> imageReaders = ImageIO.getImageReaders(iis);
         String type = "";
@@ -405,7 +404,7 @@ public abstract class Editor {
         return type;
     }
 
-    protected String copyImage(File image, String filename) throws IOException { //Takes the file chosen and the name of it
+    String copyImage(File image, String filename) throws IOException { //Takes the file chosen and the name of it
         String imageName = filename;
         imageName = imageName.replaceAll("\\s", "_");
         InputStream is = null;
@@ -446,7 +445,7 @@ public abstract class Editor {
     }
 
     //Method to check if the image folder has this name already to avoid duplicates overriding earlier uploads
-    protected boolean folderHasImage(String path) {
+    boolean folderHasImage(String path) {
         File folder = new File(outPath);
         File[] listOfFiles = folder.listFiles();
         List<String> images = new ArrayList<>();

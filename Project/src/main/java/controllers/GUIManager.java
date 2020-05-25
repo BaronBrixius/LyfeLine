@@ -50,9 +50,9 @@ public class GUIManager {
 
         mainStage = stage;
         mainStage.setScene(new Scene(main));
-        swapScene("LoginAndRegistration");
-        //TimelineView systemUnderDevelopment = swapScene("TimelineView");        //TODO delete for final
-        //systemUnderDevelopment.setActiveTimeline(DBM.getFromDB(DBM.conn.prepareStatement("SELECT * FROM timelines"), new Timeline()).get(0));
+        //swapScene("LoginAndRegistration");
+        TimelineView systemUnderDevelopment = swapScene("TimelineView");        //TODO delete for final
+        systemUnderDevelopment.setActiveTimeline(DBM.getFromDB(DBM.conn.prepareStatement("SELECT * FROM timelines"), new Timeline()).get(0));
         mainStage.getScene().getStylesheets().add("File:src/main/resources/styles/Base.css");
         mainStage.getScene().getStylesheets().add("File:src/main/resources/styles/Default.css");
         FileInputStream icon = new FileInputStream("src/main/resources/LogoIcon.png");

@@ -9,6 +9,7 @@
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.FlowPane?>
@@ -105,6 +106,9 @@
                <FlowPane.margin>
                   <Insets left="7.0" top="18.0" />
                </FlowPane.margin>
+               <tooltip>
+                  <Tooltip text="Display more/fewer date fields." />
+               </tooltip>
             </Button>
          </FlowPane>
          <HBox alignment="BOTTOM_LEFT" spacing="5.0" GridPane.rowIndex="11" GridPane.valignment="BOTTOM">
@@ -115,6 +119,9 @@
                <FlowPane.margin>
                   <Insets left="7.0" top="18.0" />
                </FlowPane.margin>
+               <tooltip>
+                  <Tooltip text="Display more/fewer date fields." />
+               </tooltip>
             </Button>
          </FlowPane>
          <Label styleClass="smallText" text="Time Unit" GridPane.rowIndex="13" />

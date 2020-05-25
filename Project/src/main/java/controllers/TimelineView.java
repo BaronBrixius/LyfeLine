@@ -8,6 +8,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Slider;
+import javafx.scene.control.TextField;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.*;
@@ -24,6 +26,10 @@ import java.util.List;
 
 public class TimelineView {
     private final List<EventNode> eventList = new ArrayList<>();
+    @FXML
+    Slider zoomSlider;
+    @FXML
+    TextField zoomLabel;
     @FXML
     GridPane timelineGrid;
     @FXML
@@ -52,9 +58,16 @@ public class TimelineView {
         leftSidebar.getChildren().add(timelineEditorController.editor);
         rightSidebar.getChildren().add(eventSelectorController.selector);
 
-        centeringStack.addEventFilter(ScrollEvent.ANY, e -> {
-            if (e.isControlDown())
-                zoom(e);
+        centeringStack.addEventFilter(ScrollEvent.ANY, event -> {
+            if (event.isControlDown())              //zoom when control + scrolling
+                scrollHandler(event);
+        });
+
+        zoomSlider.valueProperty().addListener(e -> zoomSlider());
+
+        zoomLabel.textProperty().addListener((obs, oldV, newV) -> { //enforces zoom label formatting to percent
+            if (!newV.matches("[\\d]*%"))
+                zoomLabel.setText(oldV);
         });
     }
 
@@ -221,32 +234,75 @@ public class TimelineView {
         }
     }
 
-    private void zoom(ScrollEvent event) {
-        final double scaleFactor = 1.2;
-
-        double oldScale = timelineGrid.getScaleX();
-        double newScale = event.getDeltaY() > 0 ? oldScale * scaleFactor : oldScale / scaleFactor; //calculate new scale based on old
-        if (newScale > 100)                 //max zoom is 100x
-            newScale = 100;
-        if (newScale < .001)                //min zoom is 1/100x
-            newScale = .001;
-
-        double hMousePosition = (event.getX() / centeringStack.getWidth());        //record mouse position for "zoom to mouse"
-        double vMousePosition = (event.getY() / centeringStack.getHeight());
-
-        double adjustedHValue = mainScrollPane.getHvalue() * oldScale / newScale    //snapshot scrollbar positions before resizing moves them
-                + hMousePosition * (1 - oldScale / newScale);                       //adjust snapshots based on mouse position, weighted average of old position and mouse position,
-        double adjustedVValue = mainScrollPane.getVvalue() * oldScale / newScale    //while zooming in, old position is ~83% weight (1/1.2) and mouse position is ~17% (1-(1/1.2))(assuming scaleFactor is still 1.2)
-                + vMousePosition * (1 - oldScale / newScale);                       //while "zooming out away from mouse", mouse position is applied negatively. original position is 120% weight and mouse position is -20%
-
+    void zoom(double newScale, double scrollHvalue, double scrollVvalue) {
         timelineGrid.setScaleX(newScale);                                           //apply scaling/zooming
         timelineGrid.setScaleY(newScale);
 
         mainScrollPane.layout();                                                    //update contents based on new scale, which automatically jumps the view around
 
-        mainScrollPane.setHvalue(adjustedHValue);                                   //apply (adjusted) snapshots of scrollbar positions, overriding the jumping
-        mainScrollPane.setVvalue(adjustedVValue);
+        mainScrollPane.setHvalue(scrollHvalue);                                     //apply (adjusted) snapshots of scrollbar positions, overriding the jumping
+        mainScrollPane.setVvalue(scrollVvalue);
+
+        zoomLabel.setText((int) (newScale * 100) + "%");                  //update zoom label when zoom changes
+        zoomSlider.setValue(newScale * 100);
+    }
+
+    private void scrollHandler(ScrollEvent event) {
+        final double scaleFactor = 1.2;
+
+        double oldScale = timelineGrid.getScaleX();
+        double newScale = event.getDeltaY() > 0 ? oldScale * scaleFactor : oldScale / scaleFactor; //calculate new scale based on old
+        newScale = clampScale(newScale);
 
         event.consume();                                                            //consume the mouse event to prevent normal scrollbar functions
+
+        double hMousePosition = (event.getX() / centeringStack.getWidth());        //record mouse position for "zoom to mouse"
+        double vMousePosition = (event.getY() / centeringStack.getHeight());
+
+        double adjustedHvalue = mainScrollPane.getHvalue() * oldScale / newScale    //snapshot scrollbar positions before resizing moves them
+                + hMousePosition * (1 - oldScale / newScale);                       //adjust snapshots based on mouse position, weighted average of old position and mouse position,
+        double adjustedVvalue = mainScrollPane.getVvalue() * oldScale / newScale    //while zooming in, old position is ~83% weight (1/1.2) and mouse position is ~17% (1-(1/1.2))(assuming scaleFactor is still 1.2)
+                + vMousePosition * (1 - oldScale / newScale);                       //while "zooming out away from mouse", mouse position is applied negatively. original position is 120% weight and mouse position is -20%
+
+        zoom(newScale, adjustedHvalue, adjustedVvalue);
+    }
+
+    private void zoomSlider() {
+        double newScale = clampScale(zoomSlider.getValue() / 100);          //values are displayed as percent to user
+        double Hvalue = mainScrollPane.getHvalue();
+        double Vvalue = mainScrollPane.getVvalue();
+
+        zoom(newScale, Hvalue, Vvalue);
+    }
+
+    @FXML
+    void decrementZoom() {
+        zoomSlider.decrement();
+    }
+
+    @FXML
+    void incrementZoom() {
+        zoomSlider.increment();
+    }
+
+    @FXML
+    void zoomLabel() {                  //type to input zoom level
+        String zoomString = (zoomLabel.getText().replace("%", ""));
+        if (zoomString.isEmpty())
+            zoomString = "100";
+
+        double newScale = clampScale(Double.parseDouble(zoomString) / 100);          //values are displayed as percent to user
+        double Hvalue = mainScrollPane.getHvalue();
+        double Vvalue = mainScrollPane.getVvalue();
+
+        zoom(newScale, Hvalue, Vvalue);
+    }
+
+    private double clampScale(double scale) {
+        if (scale > 5)                      //max zoom is 5x
+            return 5;
+        if (scale < .001)                   //min zoom is 1/100x
+            return .001;
+        return scale;
     }
 }

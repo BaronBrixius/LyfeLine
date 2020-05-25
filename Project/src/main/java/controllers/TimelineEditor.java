@@ -31,9 +31,10 @@ import java.util.Optional;
 
 public class TimelineEditor extends Editor {
     private final ObservableList<String> keywords = FXCollections.observableArrayList();
-    public CheckBox zoom;
-    public Timeline timeline;
-    public HBox keywordBox;
+    @FXML
+    CheckBox zoom;
+    @FXML
+    HBox keywordBox;
     @FXML
     Button snapshotButton;
     @FXML
@@ -50,6 +51,7 @@ public class TimelineEditor extends Editor {
     Label feedbackText;
     @FXML
     private TextField keywordInput;
+    private Timeline timeline;
     private File imageChosen;
 
     @Override
@@ -78,14 +80,15 @@ public class TimelineEditor extends Editor {
         GUIManager.mainStage.setTitle("Timeline Editor");
     }
 
-    boolean setTimeline(Timeline timeline) {
+    void setTimeline(Timeline timeline) {
         this.timeline = timeline;
         itemInEditor = timeline;
         // Check if Admin
         setOwner(GUIManager.loggedInUser.getID() == timeline.getOwnerID());
-        return populateDisplay();
+        populateDisplay();
     }
 
+    @Override
     void toggleEditable(boolean editable) {
         super.toggleEditable(editable);
 
@@ -93,7 +96,8 @@ public class TimelineEditor extends Editor {
         timeInput.setDisable(!editable);
     }
 
-    boolean populateDisplay() {
+    @Override
+    void populateDisplay() {
         super.populateDisplay(); // populate inputs common to editors
 
         if (timeline.getKeywords() != null) {
@@ -103,9 +107,9 @@ public class TimelineEditor extends Editor {
         } else
             timeline.setKeywords(FXCollections.observableArrayList());
         timeInput.getSelectionModel().select(timeline.getScale() > 0 ? timeline.getScale() - 1 : 4);
-        return true;
     }
 
+    @Override
     void updateItem() {
         super.updateItem(); // update variables common to TimelineObjects
 
@@ -139,6 +143,7 @@ public class TimelineEditor extends Editor {
         }
     }
 
+    @Override
     boolean hasChanges() {
         if (super.hasChanges())
             return true;
@@ -193,6 +198,7 @@ public class TimelineEditor extends Editor {
         }
     }
 
+    @Override
     boolean save() {
         updateItem();
         super.save();
@@ -203,7 +209,7 @@ public class TimelineEditor extends Editor {
     }
 
     @Override
-    protected String copyImage(File image, String filename) throws IOException { // Takes the file chosen and the name of it
+    String copyImage(File image, String filename) throws IOException { // Takes the file chosen and the name of it
         String imageName = filename;
         imageName = imageName.replaceAll("\\s", "_");
         InputStream is = null;
@@ -247,7 +253,7 @@ public class TimelineEditor extends Editor {
 
     // Method to check if the image folder has this name already to avoid duplicates overriding earlier uploads
     @Override
-    protected boolean folderHasImage(String path) {
+    boolean folderHasImage(String path) {
         File folder = new File("src/main/resources/images/timeline/");
         File[] listOfFiles = folder.listFiles();
         List<String> images = new ArrayList<>();
@@ -265,7 +271,7 @@ public class TimelineEditor extends Editor {
     }
 
     @Override
-    protected void uploadImage() throws IOException {
+    void uploadImage() throws IOException {
         boolean confirm = true;
         if (itemInEditor.getImagePath() != null) {
             confirm = ImageSaveConfirm();

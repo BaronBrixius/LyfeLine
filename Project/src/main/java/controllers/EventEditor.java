@@ -18,6 +18,7 @@ public class EventEditor extends Editor {
     Event event;
 
 
+    @Override
     public void initialize() {
         super.initialize();
         outPath = "src/main/resources/images/event/";
@@ -67,40 +68,40 @@ public class EventEditor extends Editor {
         }
     }
 
+    @Override
     void toggleEditable(boolean editable) {
         super.toggleEditable(editable);
         hasDuration.setDisable(!editable);
         prioritySlider.setDisable(!editable);
     }
 
-    boolean setEvent(Event event) {
+    void setEvent(Event event) {
         parentController.rightSidebar.getChildren().remove(editor);
         this.event = event;
         itemInEditor = event;
         if (this.event.getID() == 0)       //if new event, set current user as owner
             this.event.setOwnerID(GUIManager.loggedInUser.getID());
         setOwner(GUIManager.loggedInUser.getID() == this.event.getOwnerID());
-        return populateDisplay();
+        populateDisplay();
     }
 
-    boolean populateDisplay() {
+    @Override
+    void populateDisplay() {
         super.populateDisplay();    //populate inputs common to editors
 
-        if (event.getStartDate().compareTo(event.getEndDate()) != 0) {
-            hasDuration.setSelected(true);
-            toggleHasDuration();
-        }
+        hasDuration.setSelected(event.getStartDate().compareTo(event.getEndDate()) != 0);       //has no duration if start==end
+        toggleHasDuration();
 
         prioritySlider.setValue(event.getEventPriority());
-
-        return true;
     }
 
+    @Override
     void updateItem() {                 //sets object's values based on input fields' values
         super.updateItem();        //update variables common to TimelineObjects
         event.setEventPriority((int) prioritySlider.getValue());
     }
 
+    @Override
     boolean save() {
         updateItem();
         boolean newEvent = event.getID() == 0;
@@ -132,6 +133,7 @@ public class EventEditor extends Editor {
         return parentController.rightSidebar.getChildren().remove(editor);
     }
 
+    @Override
     boolean hasChanges() {
         if (!hasDuration.isSelected() && event.getStartDate().compareTo(event.getEndDate()) != 0)
             return true;
@@ -142,28 +144,20 @@ public class EventEditor extends Editor {
 
     @FXML
     boolean close() {
-        //parentController.rightSidebar.getChildren().remove(editor);
-        //parentController.rightSidebar.getChildren().add(editor);    //This moves the editor to the top of the stack pane
         if (event != null && hasChanges())
-            if (closeConfirm())          //do you wanna save and exit or just exit?
-            {
+            if (closeConfirm()) {         //save and exit or just exit?
                 if (validData())
-                {
                     save();
-                    return parentController.rightSidebar.getChildren().remove(editor);
-                }
                 else
                     return false;
             }
-
         return parentController.rightSidebar.getChildren().remove(editor);
     }
 
     @FXML
     boolean closeConfirm() {
-
-        ButtonType yes = new ButtonType("Yes", ButtonBar.ButtonData.OK_DONE);
-        ButtonType no = new ButtonType("No", ButtonBar.ButtonData.CANCEL_CLOSE);
+        ButtonType yes = new ButtonType("Confirm", ButtonBar.ButtonData.OK_DONE);
+        ButtonType no = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
 
         Alert confirmSave = new Alert(Alert.AlertType.CONFIRMATION, "Would you like to save them before closing?", yes, no);
 
@@ -172,8 +166,6 @@ public class EventEditor extends Editor {
 
         Optional<ButtonType> result = confirmSave.showAndWait();
 
-        if (result.get() == no)
-            return false;
-        return true;
+        return result.get() != no;
     }
 }

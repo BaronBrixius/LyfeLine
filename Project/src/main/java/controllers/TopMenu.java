@@ -64,42 +64,4 @@ public class TopMenu {
 
         }
     }
-
-    @FXML
-    void zoom() {
-        if (!(GUIManager.loader.getController() instanceof TimelineView))
-            return;
-
-        TextInputDialog zoomInput = new TextInputDialog("100");
-        zoomInput.setTitle("Zoom");
-        zoomInput.setHeaderText("Enter Zoom%");
-
-        Optional<String> result = zoomInput.showAndWait();
-        result.ifPresent(e -> zoomTimeline(result.get()));
-    }
-
-    private void zoomTimeline(String string) {
-        string = (string.replaceAll("[^\\d]", ""));
-        if (string.isEmpty())
-            string = "100";
-
-        double zoomValue = Double.parseDouble(string) / 100;
-        if (zoomValue > 100)
-            zoomValue = 100;
-        if (zoomValue < 0.01)
-            zoomValue = 0.01;
-
-        TimelineView view = GUIManager.loader.getController();
-
-        double Hvalue = view.mainScrollPane.getHvalue();
-        double Vvalue = view.mainScrollPane.getVvalue();
-
-        view.timelineGrid.setScaleX(zoomValue);
-        view.timelineGrid.setScaleY(zoomValue);
-
-        view.mainScrollPane.layout();
-
-        view.mainScrollPane.setHvalue(Hvalue);
-        view.mainScrollPane.setVvalue(Vvalue);
-    }
 }
