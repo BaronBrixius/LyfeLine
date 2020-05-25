@@ -8,11 +8,10 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 import org.apache.commons.io.FileUtils;
+import utils.ImageUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -93,7 +92,7 @@ public class JSONTimeline {
     }
 
     private void importTimeline() {
-        String filePath = importImage(timelineImage, timeline.getImagePath());           //save image and give its new filepath to the timeline
+        String filePath = ImageUtils.importImageFromBase64(timelineImage, timeline.getImagePath());           //save image and give its new filepath to the timeline
         timeline.setImage(filePath);
         try {
             DBM.insertIntoDB(timeline);                         //no dupe checking, if they're at this point the user may want a dupe timeline
@@ -111,7 +110,7 @@ public class JSONTimeline {
             if (eventID > 0)                                        //if identical event is in DB, pass its ID to this event and call them equal
                 eventToImport.setID(eventID);
             else {                                                  //otherwise add event to DB and pass newly generated ID to this event
-                String filePath = importImage(eventImages.get(i), timeline.getEventList().get(i).getImagePath());  //save image located in same index of imagesList, and give its new filepath to the timeline
+                String filePath = ImageUtils.importImageFromBase64(eventImages.get(i), timeline.getEventList().get(i).getImagePath());  //save image located in same index of imagesList, and give its new filepath to the timeline
                 eventToImport.setImage(filePath);
 
                 try {
@@ -163,38 +162,6 @@ public class JSONTimeline {
             System.err.println("Could not access events database");
         }
         return 0;
-    }
-
-    private String importImage(String imageContents, String filePath) {             //saves an image locally and returns its filepath
-        if (imageContents == null)
-            return null;
-        try {
-            byte[] imageFileContent = Base64.getDecoder().decode(imageContents);    //convert from Base 64
-            filePath = appendNumberIfDupe(filePath);                                //rename file if necessary
-            FileUtils.writeByteArrayToFile(new File(filePath), imageFileContent);   //and save it
-            return filePath;
-        } catch (IOException e) {
-            System.err.println("Could not create file.");
-            return null;
-        }
-    }
-
-    private String appendNumberIfDupe(String filePath) {
-        if (!Files.exists(Paths.get(filePath)))                       //quick check for the most common case, no dupes
-            return filePath;
-
-        String name = filePath.substring(0, filePath.lastIndexOf("."));
-        String extension = filePath.substring(filePath.lastIndexOf("."));
-        if (!name.matches(".+_\\d+"))                           //if file doesn't have a number appended yet, add one
-            name = name + "_1";
-
-        int indexOfNumber;
-        while (Files.exists(Paths.get(name + extension))) {     //increment number at end of file name until it's no longer a duplicate
-            indexOfNumber = name.lastIndexOf("_") + 1;
-            name = name.substring(0, indexOfNumber) + (Integer.parseInt(name.substring(indexOfNumber)) + 1);        //set name to what it was but increment the number at the end
-        }
-
-        return name + extension;
     }
 
     private int matchOwnerInDB() {                              //checks if owner is in DB, returns owner's ID if they are

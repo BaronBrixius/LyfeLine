@@ -7,7 +7,7 @@ import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
 
 //Utility class to hold a couple of date-related methods, since java.time.LocalDateTime is final and can't be extended
-public class DateUtil {
+public class DateUtils {
     public static int distanceBetween(LocalDateTime from, LocalDateTime to, int scale) {
         TemporalUnit unit = null;
         switch (scale) {

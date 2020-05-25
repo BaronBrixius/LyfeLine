@@ -156,7 +156,7 @@ public class EventEditor extends Editor {
 
     @FXML
     boolean closeConfirm() {
-        ButtonType yes = new ButtonType("Confirm", ButtonBar.ButtonData.OK_DONE);
+        ButtonType yes = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
         ButtonType no = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
 
         Alert confirmSave = new Alert(Alert.AlertType.CONFIRMATION, "Would you like to save them before closing?", yes, no);

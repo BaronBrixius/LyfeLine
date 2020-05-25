@@ -1,5 +1,6 @@
 package controllers;
 
+import database.DBM;
 import database.Event;
 import database.Timeline;
 import javafx.embed.swing.SwingFXUtils;
@@ -14,11 +15,13 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
-import utils.DateUtil;
+import utils.DateUtils;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -71,62 +74,6 @@ public class TimelineView {
         });
     }
 
-    WritableImage snapshot(boolean currentViewOnly) {
-        SnapshotParameters snapshotParams = new SnapshotParameters();
-
-        //Read the current color used for TimelineGrid background
-        Color backgroundColor = Color.decode("#" + mainScrollPane.getBackground().getFills().get(0).getFill().toString().substring(2, 8));
-        snapshotParams.setFill(mainScrollPane.getBackground().getFills().get(0).getFill());
-
-        //take snapshot, either current view or whole timeline depending on selection
-        WritableImage workingImage = currentViewOnly ? snapshotCurrentView(snapshotParams) : snapshotWholeTimeline(snapshotParams);
-
-        //add burn-in padding and return, to be sent to preview window
-        return addPadding(workingImage, backgroundColor);
-    }
-
-    private WritableImage snapshotCurrentView(SnapshotParameters snapshotParams) {
-        mainScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);     //temporarily remove scroll bars for snapshot
-        mainScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        WritableImage out = mainScrollPane.snapshot(snapshotParams, new WritableImage(
-                (int) mainScrollPane.getLayoutBounds().getWidth(), (int) mainScrollPane.getLayoutBounds().getHeight()));
-        mainScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-        mainScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-        return out;
-    }
-
-    private WritableImage snapshotWholeTimeline(SnapshotParameters snapshotParams) {
-        double currentScale = timelineGrid.getScaleX();
-        timelineGrid.setScaleX(1);                          //temporarily set scale to default for snapshot
-        timelineGrid.setScaleY(1);
-        WritableImage out = timelineGrid.snapshot(snapshotParams, new WritableImage(
-                (int) timelineGrid.getLayoutBounds().getWidth(), (int) timelineGrid.getLayoutBounds().getHeight()));
-        timelineGrid.setScaleX(currentScale);
-        timelineGrid.setScaleY(currentScale);
-        return out;
-    }
-
-    //create buffered image and add padding on top and bottom
-    private WritableImage addPadding(WritableImage workingImage, Color backgroundColor) {
-        BufferedImage fromFXImage = SwingFXUtils.fromFXImage(workingImage, null);
-
-        // Calculate width, height, offset
-        int width = fromFXImage.getWidth();
-        int height = (int) (fromFXImage.getHeight() * 1.30);
-        int offset = (int) (fromFXImage.getHeight() * 0.15);
-
-        // Create another image with new height & width
-        BufferedImage backImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-
-        Graphics2D imageOverlay = backImage.createGraphics();
-        imageOverlay.setColor(backgroundColor);
-        imageOverlay.fillRect(0, 0, width, height);                        //Fill the background with color
-        imageOverlay.drawImage(fromFXImage, 0, offset, null);         //Overlay with image from offset
-        imageOverlay.dispose();
-
-        return SwingFXUtils.toFXImage(backImage, null);
-    }
-
     // Call this method when swapping scenes
     void setActiveTimeline(Timeline t) {
         this.activeTimeline = t;
@@ -136,6 +83,12 @@ public class TimelineView {
     }
 
     void populateDisplay() {
+        try (PreparedStatement stmt = DBM.conn.prepareStatement("SELECT * FROM timelines where TimelineID = ?")) {
+            stmt.setInt(1, activeTimeline.getID());
+            activeTimeline = DBM.getFromDB(stmt, new Timeline()).get(0);
+        } catch (SQLException e) {
+            System.err.println("Could not update timeline from database.");
+        }
         timelineGrid.getChildren().clear();
         timelineGrid.getColumnConstraints().clear();
         setupMainLine();
@@ -145,7 +98,7 @@ public class TimelineView {
     private void setupMainLine() {
         Pane mainLine = new Pane();
         mainLine.getStyleClass().add("timeline");
-        int numberOfCol = DateUtil.distanceBetween(activeTimeline.getStartDate(), activeTimeline.getEndDate(),
+        int numberOfCol = DateUtils.distanceBetween(activeTimeline.getStartDate(), activeTimeline.getEndDate(),
                 activeTimeline.getScale());
         int start = 1, frequency = 1;
 
@@ -232,6 +185,63 @@ public class TimelineView {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+
+    WritableImage snapshot(boolean currentViewOnly) {
+        SnapshotParameters snapshotParams = new SnapshotParameters();
+
+        //Read the current color used for TimelineGrid background
+        Color backgroundColor = Color.decode("#" + mainScrollPane.getBackground().getFills().get(0).getFill().toString().substring(2, 8));
+        snapshotParams.setFill(mainScrollPane.getBackground().getFills().get(0).getFill());
+
+        //take snapshot, either current view or whole timeline depending on selection
+        WritableImage workingImage = currentViewOnly ? snapshotCurrentView(snapshotParams) : snapshotWholeTimeline(snapshotParams);
+
+        //add burn-in padding and return, to be sent to preview window
+        return addPadding(workingImage, backgroundColor);
+    }
+
+    private WritableImage snapshotCurrentView(SnapshotParameters snapshotParams) {
+        mainScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);     //temporarily remove scroll bars for snapshot
+        mainScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        WritableImage out = mainScrollPane.snapshot(snapshotParams, new WritableImage(
+                (int) mainScrollPane.getLayoutBounds().getWidth(), (int) mainScrollPane.getLayoutBounds().getHeight()));
+        mainScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        mainScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        return out;
+    }
+
+    private WritableImage snapshotWholeTimeline(SnapshotParameters snapshotParams) {
+        double currentScale = timelineGrid.getScaleX();
+        timelineGrid.setScaleX(1);                          //temporarily set scale to default for snapshot
+        timelineGrid.setScaleY(1);
+        WritableImage out = timelineGrid.snapshot(snapshotParams, new WritableImage(
+                (int) timelineGrid.getLayoutBounds().getWidth(), (int) timelineGrid.getLayoutBounds().getHeight()));
+        timelineGrid.setScaleX(currentScale);
+        timelineGrid.setScaleY(currentScale);
+        return out;
+    }
+
+    //create buffered image and add padding on top and bottom
+    private WritableImage addPadding(WritableImage workingImage, Color backgroundColor) {
+        BufferedImage fromFXImage = SwingFXUtils.fromFXImage(workingImage, null);
+
+        // Calculate width, height, offset
+        int width = fromFXImage.getWidth();
+        int height = (int) (fromFXImage.getHeight() * 1.30);
+        int offset = (int) (fromFXImage.getHeight() * 0.15);
+
+        // Create another image with new height & width
+        BufferedImage backImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+
+        Graphics2D imageOverlay = backImage.createGraphics();
+        imageOverlay.setColor(backgroundColor);
+        imageOverlay.fillRect(0, 0, width, height);                        //Fill the background with color
+        imageOverlay.drawImage(fromFXImage, 0, offset, null);         //Overlay with image from offset
+        imageOverlay.dispose();
+
+        return SwingFXUtils.toFXImage(backImage, null);
     }
 
     void zoom(double newScale, double scrollHvalue, double scrollVvalue) {

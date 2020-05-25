@@ -11,19 +11,17 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import javafx.stage.FileChooser;
 import javafx.util.StringConverter;
+import org.apache.commons.io.FileUtils;
+import utils.ImageUtils;
 
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
-import javax.imageio.stream.ImageInputStream;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -249,16 +247,20 @@ public abstract class Editor {
                 er.printStackTrace();
             }
         }
+
+        if (image.getImage() == null)
+            System.out.println("d");
+
         itemInEditor.setImage(imageFilePath);
 
         itemInEditor.setName(titleInput.getText());
         itemInEditor.setDescription(descriptionInput.getText().replaceAll("([^\r])\n", "$1\r\n"));
 
         itemInEditor.setStartDate(LocalDateTime.of(startInputs.get(0).getValue(), startInputs.get(1).getValue(), startInputs.get(2).getValue(),
-                startInputs.get(3).getValue(), startInputs.get(4).getValue(), startInputs.get(5).getValue(), startInputs.get(6).getValue()*1000000));
+                startInputs.get(3).getValue(), startInputs.get(4).getValue(), startInputs.get(5).getValue(), startInputs.get(6).getValue() * 1000000));
 
         itemInEditor.setEndDate(LocalDateTime.of(endInputs.get(0).getValue(), endInputs.get(1).getValue(), endInputs.get(2).getValue(),
-                endInputs.get(3).getValue(), endInputs.get(4).getValue(), endInputs.get(5).getValue(), endInputs.get(6).getValue()*1000000));
+                endInputs.get(3).getValue(), endInputs.get(4).getValue(), endInputs.get(5).getValue(), endInputs.get(6).getValue() * 1000000));
     }
 
     boolean hasChanges() {           //returns true if any input fields don't match the object's values
@@ -270,10 +272,10 @@ public abstract class Editor {
             return true;
 
         LocalDateTime readStart = LocalDateTime.of(startInputs.get(0).getValue(), startInputs.get(1).getValue(), startInputs.get(2).getValue(),
-                startInputs.get(3).getValue(), startInputs.get(4).getValue(), startInputs.get(5).getValue(), startInputs.get(6).getValue()*1000000);
+                startInputs.get(3).getValue(), startInputs.get(4).getValue(), startInputs.get(5).getValue(), startInputs.get(6).getValue() * 1000000);
 
         LocalDateTime readEnd = LocalDateTime.of(endInputs.get(0).getValue(), endInputs.get(1).getValue(), endInputs.get(2).getValue(),
-                endInputs.get(3).getValue(), endInputs.get(4).getValue(), endInputs.get(5).getValue(), endInputs.get(6).getValue()*1000000);
+                endInputs.get(3).getValue(), endInputs.get(4).getValue(), endInputs.get(5).getValue(), endInputs.get(6).getValue() * 1000000);
 
         return (
                 itemInEditor.getStartDate().compareTo(readStart) != 0
@@ -344,139 +346,49 @@ public abstract class Editor {
 
     @FXML
     void uploadImage() throws IOException {
-        boolean confirm = true;
+        if (itemInEditor.getImagePath() != null && !imageSaveConfirm())             //if item has image, ask user if they want to delete it
+            return;
 
-        if (itemInEditor.getImagePath() != null) {
-            confirm = ImageSaveConfirm();
-        }
+        File imageChosen = ImageUtils.openFileChooser();                            //use file chooser to let user open a local image
 
-        if (confirm) {
-            FileChooser chooser = new FileChooser(); //For the file directory
-            chooser.setTitle("Upload image");
-
-            chooser.getExtensionFilters().addAll(
-                    new FileChooser.ExtensionFilter("All Images", "*.jpg", "*.jpeg", "*.png", "*.bmp", "*.gif", "*.wbmp"),
-                    new FileChooser.ExtensionFilter("JPG", "*.jpg"),
-                    new FileChooser.ExtensionFilter("JPEG", "*.jpeg"),
-                    new FileChooser.ExtensionFilter("PNG", "*.png"),
-                    new FileChooser.ExtensionFilter("BMP", "*.bmp"),
-                    new FileChooser.ExtensionFilter("GIF", "*.gif"),
-                    new FileChooser.ExtensionFilter("WBMP", "*.wbmp")
-            );
-            //The current image chosen by FileChooser
-            File imageChosen = chooser.showOpenDialog(GUIManager.mainStage);
-
-            if (imageChosen != null) {
-                if (getFormat(imageChosen).matches("(JPEG|png|jpg|bmp|gif|wbmp)")) {
-                    System.out.println(getFormat(imageChosen));
-                    imageFilePath = copyImage(imageChosen, imageChosen.getName());
-                    image.setImage(new Image("File:" + imageFilePath));
-                } else {
-                    WrongFormatNotification();
-                }
-            }
-
-
+        if (validImage(imageChosen)) {                                              //if valid image
+            byte[] imageFileContent = FileUtils.readFileToByteArray(imageChosen);   //save locally and display in editor
+            imageFilePath = ImageUtils.saveImage(imageFileContent, outPath + imageChosen.getName());
+            image.setImage(new Image("File:" + imageFilePath));
         }
     }
 
-    @FXML
-    boolean ImageSaveConfirm() {
+    boolean imageSaveConfirm() {
         Alert confirmSaveImage = new Alert(Alert.AlertType.CONFIRMATION);
         confirmSaveImage.setTitle("Confirm Change");
         confirmSaveImage.setHeaderText("Replacing or removing an image will permanently delete it from the system.");
-        confirmSaveImage.setContentText("Would you like to make the change?");
+        confirmSaveImage.setContentText("Would you like to make this change?");
 
         Optional<ButtonType> result = confirmSaveImage.showAndWait();
-
         return result.get() == ButtonType.OK;
     }
 
-    //Method that returns the image format as a string i.e sun.png == "png"
-    String getFormat(File f) throws IOException {
-        ImageInputStream iis = ImageIO.createImageInputStream(f);
-        Iterator<ImageReader> imageReaders = ImageIO.getImageReaders(iis);
-        String type = "";
-        while (imageReaders.hasNext()) {
-            ImageReader reader = imageReaders.next();
-            type = reader.getFormatName();
+    boolean validImage(File imageChosen) {
+        if (imageChosen == null)                //usually only null if user cancelled out of the the fileChooser
+            return false;
+        if (!imageChosen.getName().substring(imageChosen.getName().lastIndexOf(".") + 1).matches("(JPEG|png|jpg|bmp|gif|wbmp)")) {
+            wrongFormatNotification();          //check for formats we don't support
+            return false;
         }
-        return type;
+        return true;
     }
 
-    String copyImage(File image, String filename) throws IOException { //Takes the file chosen and the name of it
-        String imageName = filename;
-        imageName = imageName.replaceAll("\\s", "_");
-        InputStream is = null;
-        OutputStream os = null;
-
-        try {
-            is = new FileInputStream(image);
-            //Path for saving, have special events folder now so if timeline guys are doing something they don't override copies
-            int duplicateDigit = 2;
-
-            while (folderHasImage(imageName)) {
-                int indexOfDot = filename.lastIndexOf(".");
-                if (imageName.matches(".*\\s\\(\\d\\)\\..*")) {
-                    int indexOfBrackets = imageName.lastIndexOf("(");
-                    imageName = imageName.substring(0, indexOfBrackets + 1) + duplicateDigit + ")" + "." + getFormat(image);
-                } else {
-                    imageName = imageName.substring(0, indexOfDot) + " (" + duplicateDigit + ")" + "." + getFormat(image);
-                }
-                duplicateDigit++;
-            }
-
-            os = new FileOutputStream(new File(outPath + imageName));
-            byte[] buffer = new byte[1024];
-            int length;
-            while ((length = is.read(buffer)) > 0) {
-                os.write(buffer, 0, length);
-            }
-        } catch (IOException e) {
-            System.out.println("Error: " + e);
-
-        } finally {
-            if (is != null)
-                is.close();
-            if (os != null)
-                os.close();
-        }
-        return outPath + imageName;
-    }
-
-    //Method to check if the image folder has this name already to avoid duplicates overriding earlier uploads
-    boolean folderHasImage(String path) {
-        File folder = new File(outPath);
-        File[] listOfFiles = folder.listFiles();
-        List<String> images = new ArrayList<>();
-
-        for (int i = 0; i < listOfFiles.length; i++) {
-            if (listOfFiles[i].isFile()) {
-                images.add(listOfFiles[i].getName());
-            }
-        }
-        for (String s : images) {
-            if (path.equalsIgnoreCase(s))
-                return true;
-        }
-        return false;
-    }
-
-    @FXML
-    void clearImage() {
-        imageFilePath = null;
-        image.setImage(null);
-    }
-
-    @FXML
-    boolean WrongFormatNotification() {
+    void wrongFormatNotification() {
         Alert formatNotification = new Alert(Alert.AlertType.CONFIRMATION);
         formatNotification.setTitle("Non-image file");
         formatNotification.setHeaderText("The picture has to be .jpg, .jpeg, .png, .bmp, .gif");
         formatNotification.setContentText("Please provide an image file");
+        formatNotification.showAndWait();
+    }
 
-        Optional<ButtonType> result = formatNotification.showAndWait();
-        return result.get() == ButtonType.OK;
-
+    @FXML
+    void clearImage() {             //wipes image from the Editor's memory
+        imageFilePath = null;       //note that the object, database, and local image file will remain until the user saves the change
+        image.setImage(null);
     }
 }

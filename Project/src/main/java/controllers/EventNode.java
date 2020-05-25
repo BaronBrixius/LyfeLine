@@ -6,7 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Pane;
-import utils.DateUtil;
+import utils.DateUtils;
 
 public class EventNode implements Comparable<EventNode> {
 
@@ -42,8 +42,8 @@ public class EventNode implements Comparable<EventNode> {
         this.activeEvent = event;
         this.parentController = parentController;
 
-        setStartColumn(DateUtil.distanceBetween(activeTimeline.getStartDate(), activeEvent.getStartDate(), activeTimeline.getScale()));
-        setColumnSpan(Math.max(DateUtil.distanceBetween(activeEvent.getStartDate(), activeEvent.getEndDate(), activeTimeline.getScale()), 1));   //instant events still need 1 whole column
+        setStartColumn(DateUtils.distanceBetween(activeTimeline.getStartDate(), activeEvent.getStartDate(), activeTimeline.getScale()));
+        setColumnSpan(Math.max(DateUtils.distanceBetween(activeEvent.getStartDate(), activeEvent.getEndDate(), activeTimeline.getScale()), 1));   //instant events still need 1 whole column
         eventNameDisplay.setText(activeEvent.getName());
     }
 
