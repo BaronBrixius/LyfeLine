@@ -6,8 +6,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
-import javafx.stage.FileChooser;
-import utils.DateUtil;
+import utils.DateUtils;
+import utils.ImageUtils;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -42,7 +42,7 @@ public class ImageExport {
     @FXML
     void saveImage() throws IOException {
         BufferedImage finalBuffer = SwingFXUtils.fromFXImage(previewImage, null);
-        File outputFile = fileChooser();
+        File outputFile = ImageUtils.saveFileChooser(activeTimeline.getName());
         if (outputFile != null)
             ImageIO.write(finalBuffer, "png", outputFile);
     }
@@ -75,7 +75,7 @@ public class ImageExport {
     }
 
     private void burnRange() {
-        String text = DateUtil.ddmmyyToString(activeTimeline);
+        String text = DateUtils.ddmmyyToString(activeTimeline);
         burnText(text, 29.0 / 30, true);
     }
 
@@ -134,18 +134,5 @@ public class ImageExport {
         g2d.drawImage(tmp, 0, 0, null);
         g2d.dispose();
         return resized;
-    }
-
-    public File fileChooser() {
-        FileChooser fileChooser = new FileChooser();                                             //removes illegal chars for file name from default name
-        fileChooser.setInitialFileName(activeTimeline.getName().replaceAll("\\s+", "_").replaceAll("[/:*?\"<>|\\\\]", ""));
-        fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("All Images", "*.jpg", "*.jpeg", "*.png", "*.bmp", "*.gif", "*.wbmp"),
-                new FileChooser.ExtensionFilter("JPG", "*.jpg"), new FileChooser.ExtensionFilter("JPEG", "*.jpeg"),
-                new FileChooser.ExtensionFilter("PNG", "*.png"), new FileChooser.ExtensionFilter("BMP", "*.bmp"),
-                new FileChooser.ExtensionFilter("GIF", "*.gif"), new FileChooser.ExtensionFilter("WBMP", "*.wbmp"));
-
-        // Show save file dialog
-        return fileChooser.showSaveDialog(GUIManager.mainStage);
     }
 }

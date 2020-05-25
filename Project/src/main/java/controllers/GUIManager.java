@@ -42,7 +42,7 @@ public class GUIManager {
     }
 
     public static void start(Stage stage) throws Exception {
-        loggedInUser = DBM.getFromDB(DBM.conn.prepareStatement("SELECT * FROM users"), new User()).get(0);  //TODO delete for final
+        //loggedInUser = DBM.getFromDB(DBM.conn.prepareStatement("SELECT * FROM users"), new User()).get(0);  //TODO delete for final
         main = new BorderPane();
         loader = new FXMLLoader(GUIManager.class.getResource("../FXML/TopMenu.fxml"));
         main.setTop(loader.load());

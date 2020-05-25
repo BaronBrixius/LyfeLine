@@ -133,7 +133,7 @@ public class EventSelector {
 
         try {
             if (eventToDelete.getID() == 0)
-                throw new IllegalArgumentException("event not in database");
+                throw new IllegalArgumentException("Event not in database.");
 
             DBM.deleteFromDB(eventToDelete);
             populateDisplay();
