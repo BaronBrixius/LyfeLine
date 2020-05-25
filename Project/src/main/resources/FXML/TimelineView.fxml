@@ -16,14 +16,14 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="mainBorderPane" prefHeight="900.0" prefWidth="1580.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.TimelineView">
+<BorderPane fx:id="mainBorderPane" minHeight="300.0" minWidth="300.0" prefHeight="900.0" prefWidth="1580.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.TimelineView">
     <fx:define>
         <fx:include fx:id="eventSelector" source="EventSelector.fxml" />
         <fx:include fx:id="eventEditor" source="EventEditor.fxml" />
         <fx:include fx:id="timelineEditor" source="TimelineEditor.fxml" />
     </fx:define>
     <bottom>
-        <HBox id="HBox" alignment="CENTER_LEFT" fillHeight="false" maxHeight="50.0" spacing="5.0" BorderPane.alignment="CENTER">
+        <HBox id="HBox" alignment="CENTER_LEFT" fillHeight="false" maxHeight="50.0" minHeight="50.0" spacing="5.0" BorderPane.alignment="CENTER">
             <padding>
                 <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
             </padding>
@@ -65,7 +65,7 @@
         <StackPane fx:id="leftSidebar" BorderPane.alignment="CENTER" />
     </left>
     <center>
-        <ScrollPane fx:id="mainScrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" styleClass="scroll-bar" BorderPane.alignment="CENTER">
+        <ScrollPane fx:id="mainScrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="600.0" minWidth="600.0" pannable="true" styleClass="scroll-bar" BorderPane.alignment="CENTER">
             <StackPane fx:id="centeringStack">
                 <Group>
                     <GridPane fx:id="timelineGrid" alignment="CENTER" minHeight="300.0" minWidth="500.0" scaleShape="false" vgap="27.0">

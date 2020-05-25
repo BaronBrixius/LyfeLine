@@ -243,7 +243,7 @@ public class TimelineView {
         mainScrollPane.setHvalue(scrollHvalue);                                     //apply (adjusted) snapshots of scrollbar positions, overriding the jumping
         mainScrollPane.setVvalue(scrollVvalue);
 
-        zoomLabel.setText((int) (newScale * 100) + "%");                  //update zoom label when zoom changes
+        zoomLabel.setText((int) (newScale * 100) + "%");                            //update zoom label when zoom changes
         zoomSlider.setValue(newScale * 100);
     }
 

@@ -51,10 +51,10 @@
          <Label styleClass="smallText" text="Title" GridPane.columnSpan="2" GridPane.rowIndex="2" GridPane.valignment="BOTTOM" />
          <TextField fx:id="titleInput" GridPane.columnSpan="2" GridPane.rowIndex="3" />
          <Label styleClass="smallText" text="Description" GridPane.columnSpan="2" GridPane.rowIndex="4" GridPane.valignment="BOTTOM" />
-         <TextArea fx:id="descriptionInput" maxHeight="1.7976931348623157E308" prefHeight="300.0" styleClass="smallText" wrapText="true" GridPane.columnSpan="2" GridPane.rowIndex="5" GridPane.vgrow="SOMETIMES" />
+         <TextArea fx:id="descriptionInput" maxHeight="1.7976931348623157E308" prefHeight="250.0" styleClass="smallText" wrapText="true" GridPane.columnSpan="2" GridPane.rowIndex="5" GridPane.vgrow="SOMETIMES" />
          <Label styleClass="smallText" text="Start:" GridPane.columnSpan="2" GridPane.rowIndex="6" GridPane.valignment="BOTTOM" />
          <FlowPane fx:id="startPane" alignment="CENTER_LEFT" hgap="5.0" prefWrapLength="340.0" GridPane.columnSpan="2" GridPane.rowIndex="7">
-            <Button alignment="CENTER" ellipsisString="" maxWidth="50.0" minWidth="60.0" mnemonicParsing="false" onAction="#toggleStartExpanded" styleClass="tinyButton" text="more..." textAlignment="CENTER">
+            <Button alignment="CENTER" ellipsisString="" maxWidth="60.0" minWidth="60.0" mnemonicParsing="false" onAction="#toggleStartExpanded" styleClass="tinyButton" text="more..." textAlignment="CENTER">
                <FlowPane.margin>
                   <Insets left="7.0" top="18.0" />
                </FlowPane.margin>
@@ -68,7 +68,7 @@
             <Label contentDisplay="RIGHT" styleClass="smallText" text="End" />
          </HBox>
          <FlowPane fx:id="endPane" alignment="CENTER_LEFT" disable="true" hgap="5.0" prefWrapLength="340.0" styleClass="DisabledAnyways" GridPane.columnSpan="2" GridPane.rowIndex="9">
-            <Button alignment="CENTER" ellipsisString="" maxWidth="50.0" minWidth="60.0" mnemonicParsing="false" onAction="#toggleEndExpanded" styleClass="tinyButton" text="more..." textAlignment="CENTER">
+            <Button alignment="CENTER" ellipsisString="" maxWidth="60.0" minWidth="60.0" mnemonicParsing="false" onAction="#toggleEndExpanded" styleClass="tinyButton" text="more..." textAlignment="CENTER">
                <FlowPane.margin>
                   <Insets left="7.0" top="18.0" />
                </FlowPane.margin>
@@ -88,19 +88,7 @@
             </tooltip>
          </Slider>
          <rowConstraints>
-            <RowConstraints />
-            <RowConstraints />
-            <RowConstraints />
-            <RowConstraints />
-            <RowConstraints />
-            <RowConstraints />
-            <RowConstraints />
-            <RowConstraints />
-            <RowConstraints />
-            <RowConstraints />
-            <RowConstraints />
-            <RowConstraints />
-            <RowConstraints />
+            <RowConstraints prefHeight="200.0" />
          </rowConstraints>
       </GridPane>
       <Region prefHeight="1.0" VBox.vgrow="SOMETIMES" />
