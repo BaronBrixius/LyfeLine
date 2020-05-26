@@ -52,7 +52,8 @@ public class TimelineView {
     @FXML
     EventEditor eventEditorController;
     Timeline activeTimeline;
-
+    
+    /*Initializes the timeline view window - sets the timeline and controller for the event selector and event editor*/
     public void initialize() {
         timelineEditorController.setParentController(this);
         eventSelectorController.setParentController(this);
@@ -74,14 +75,15 @@ public class TimelineView {
         });
     }
 
-    // Call this method when swapping scenes
+    /*Sets the active timeline (the timeline being displayd)*/
     void setActiveTimeline(Timeline t) {
         this.activeTimeline = t;
         timelineEditorController.setTimeline(t);
         eventSelectorController.setTimelineSelected(activeTimeline); // sets the selected index to the currently viewed timeline
         populateDisplay();
     }
-
+    
+    /*Pulls the timeline from the database and populates the display*/
     void populateDisplay() {
         try (PreparedStatement stmt = DBM.conn.prepareStatement("SELECT * FROM timelines where TimelineID = ?")) {
             stmt.setInt(1, activeTimeline.getID());
@@ -94,7 +96,9 @@ public class TimelineView {
         setupMainLine();
         setupEventNodes();
     }
-
+    
+    /*Calculates sets the length of the timeline itself by adding columns to the pane which holds the timeline
+     * This is computed depending on the start date, end date and the units that has been chosen for the timeline*/
     private void setupMainLine() {
         Pane mainLine = new Pane();
         mainLine.getStyleClass().add("timeline");
@@ -130,7 +134,8 @@ public class TimelineView {
             timelineGrid.add(mainLine, 0, 0, numberOfCol, 1);    //which does not work for the amount of columns
         GridPane.setMargin(mainLine, new Insets(25, 0, -25, 0));
     }
-
+    
+    /*Sets up the events in the right side bar*/
     private void setupEventNodes() {
         eventList.clear();
         EventNode newNode;
@@ -143,7 +148,8 @@ public class TimelineView {
         for (int i = 0; i < eventList.size(); i++)
             placeEvent(eventList.get(i), i);
     }
-
+    
+   
     private EventNode addEvent(Event event) {
         try {
             FXMLLoader nodeLoader = new FXMLLoader(getClass().getResource("../FXML/EventNode.fxml"));
@@ -156,7 +162,8 @@ public class TimelineView {
             return null;
         }
     }
-
+    
+    /*Places the even on the timeline in the correct column*/
     private void placeEvent(EventNode newNode, int eventsPlacedCount) {
         if (newNode.getStartColumn() < 0) {                                        //if node starts before the timeline begins, cut the beginning
             newNode.setColumnSpan(newNode.getColumnSpan() + newNode.getStartColumn());
@@ -187,7 +194,7 @@ public class TimelineView {
         }
     }
 
-
+   
     WritableImage snapshot(boolean currentViewOnly) {
         SnapshotParameters snapshotParams = new SnapshotParameters();
 
