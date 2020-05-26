@@ -75,7 +75,7 @@ public class TimelineView {
         });
     }
 
-    /*Sets the active timeline (the timeline being displayd)*/
+    /*Sets the active timeline (the timeline being displayed)*/
     void setActiveTimeline(Timeline t) {
         this.activeTimeline = t;
         timelineEditorController.setTimeline(t);
@@ -188,6 +188,9 @@ public class TimelineView {
 
     @FXML
     void returnToDashboard() {
+        if (!timelineEditorController.isOkayToLeavePage())
+            return;
+
         try {
             GUIManager.swapScene("Dashboard");
         } catch (IOException e) {
@@ -319,8 +322,6 @@ public class TimelineView {
     private double clampScale(double scale) {
         if (scale > 5)                      //max zoom is 5x
             return 5;
-        if (scale < .001)                   //min zoom is 1/100x
-            return .001;
-        return scale;
+        return Math.max(scale, .001);       //min zoom is 1/100x
     }
 }

@@ -132,10 +132,6 @@ public class TimelineCell {
             pane.getChildren().removeAll(description, keywords);
     }
 
-    public Timeline getTimeline() {
-        return timeline;
-    }
-
     public void setTimeline(Timeline timeline) {
         this.timeline = timeline;
         user = timeline.getOwner();
@@ -157,7 +153,7 @@ public class TimelineCell {
 
         Optional<ButtonType> result = confirmDeleteTimeline.showAndWait();
 
-        if (result.get() == ButtonType.CANCEL)
+        if (result.isPresent() && result.get() == ButtonType.CANCEL)
             return false;
         else {
             try {

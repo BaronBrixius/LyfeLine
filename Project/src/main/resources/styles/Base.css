@@ -50,7 +50,11 @@
     -fx-font-size: .6em;
 }
 
-.noScrollingListView .list-view .scroll-bar:vertical, .noScrollingListView .list-view .scroll-bar:horizontal, .noScrollingListView .list-view .scroll-bar:horizontal .increment-arrow, .noScrollingListView .list-view .scroll-bar:horizontal .decrement-arrow, .noScrollingListView .list-view .scroll-bar:horizontal .increment-button, .noScrollingListView .list-view .scroll-bar:horizontal .decrement-button {
+.noScrollingListView .list-view .scroll-bar:vertical, .noScrollingListView .list-view .scroll-bar:horizontal,
+.noScrollingListView .list-view .scroll-bar:horizontal .increment-arrow,
+.noScrollingListView .list-view .scroll-bar:horizontal .decrement-arrow,
+.noScrollingListView .list-view .scroll-bar:horizontal .increment-button,
+.noScrollingListView .list-view .scroll-bar:horizontal .decrement-button {
     -fx-max-height: 0;
     -fx-min-height: 0;
     -fx-opacity: 1;

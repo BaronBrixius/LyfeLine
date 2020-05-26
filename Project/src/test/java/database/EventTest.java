@@ -29,19 +29,17 @@ class EventTest {
     static void init() throws SQLException, IOException, ClassNotFoundException {
         new DBM(SCHEMA);
         DBM.setupSchema();
+        DBM.createTestData();
     }
 
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws FileNotFoundException, SQLException {
         testCount++;
         System.out.println("Test " + testCount);
 
-        try {
-            DBM.setupSchema();
-        } catch (SQLException | FileNotFoundException e) {
-            e.printStackTrace();
-        }
+        DBM.setupSchema();
+        DBM.createTestData();
     }
 
     @Test

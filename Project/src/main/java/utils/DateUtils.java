@@ -46,10 +46,11 @@ public class DateUtils {
                 break;
         }
 
+        assert unit != null;
         return (int) from.until(to, unit);
     }
 
-    public static String ddmmyyToString(Timeline activeTimeline) {  //TODO format
+    public static String ddmmyyToString(Timeline activeTimeline) {
         return activeTimeline.getStartDate().getDayOfMonth() + "."
                 + activeTimeline.getStartDate().getMonthValue() + "." + activeTimeline.getStartDate().getYear() + " - "
                 + activeTimeline.getEndDate().getDayOfMonth() + "." + activeTimeline.getEndDate().getMonthValue() + "."

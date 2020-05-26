@@ -66,7 +66,7 @@ public abstract class Editor {
     boolean endExpanded;
     TimelineView parentController;
     String imageFilePath;
-    TimelineObject itemInEditor;
+    TimelineObject<?> itemInEditor;
     String outPath;
 
     public void initialize() {
@@ -124,11 +124,16 @@ public abstract class Editor {
     }
 
     @FXML
-    void saveEditButton() {
-        if (editable && hasChanges())                   //if unsaved changes, try to save
-            if (!validData() || !saveConfirm())         //if save cancelled, don't change mode
-                return;
+    boolean saveEditButton() {
+        if (editable && hasChanges()) {
+            if (validData() && saveConfirm())           //if unsaved changes, try to save
+                save();
+            else
+                return false;                           //if save cancelled, don't change mode
+        }
+
         toggleEditable(!editable);
+        return true;
     }
 
     void toggleEditable(boolean editable) {
@@ -151,14 +156,12 @@ public abstract class Editor {
         Alert confirmSave = new Alert(Alert.AlertType.CONFIRMATION);
 
         confirmSave.setTitle("Confirm Save");
-        confirmSave.setHeaderText("This will make permanent changes!"); //TODO change text
-        confirmSave.setContentText("Would you like to save?");
+        confirmSave.setHeaderText("Would you like to save?");
+        confirmSave.setContentText("This will make permanent changes!");
 
         Optional<ButtonType> result = confirmSave.showAndWait();
 
-        if (result.get() == ButtonType.CANCEL)
-            return false;
-        return save();
+        return result.isPresent() && result.get() == ButtonType.OK;
     }
 
     boolean validData() {
@@ -187,8 +190,8 @@ public abstract class Editor {
             return false;
         } else if (!hasNoDuration && newStartDate.compareTo(newEndDate) > 0) {
             Alert confirmDelete = new Alert(Alert.AlertType.INFORMATION);
-            confirmDelete.setTitle("Invalid LocalDateTime s");
-            confirmDelete.setHeaderText("The End LocalDateTime must be after the Start LocalDateTime .");
+            confirmDelete.setTitle("Invalid Dates");
+            confirmDelete.setHeaderText("The End Date must be after the Start Date.");
             confirmDelete.setContentText("Make sure to check your dates before saving.");
 
             confirmDelete.showAndWait();
@@ -365,7 +368,7 @@ public abstract class Editor {
         confirmSaveImage.setContentText("Would you like to make this change?");
 
         Optional<ButtonType> result = confirmSaveImage.showAndWait();
-        return result.get() == ButtonType.OK;
+        return result.isPresent() && result.get() == ButtonType.OK;
     }
 
     boolean validImage(File imageChosen) {
@@ -379,7 +382,7 @@ public abstract class Editor {
     }
 
     void wrongFormatNotification() {
-        Alert formatNotification = new Alert(Alert.AlertType.CONFIRMATION);
+        Alert formatNotification = new Alert(Alert.AlertType.INFORMATION);
         formatNotification.setTitle("Non-image file");
         formatNotification.setHeaderText("The picture has to be .jpg, .jpeg, .png, .bmp, .gif");
         formatNotification.setContentText("Please provide an image file");
