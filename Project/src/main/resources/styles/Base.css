@@ -17,21 +17,6 @@
     -fx-pref-height: 60px;
 }
 
-.date-picker .label {
-    -fx-padding: 0 0 0 0;
-    -fx-pref-height: 15px;
-    -fx-pref-width: 5px;
-}
-
-.date-picker-popup .button {
-    -fx-background-insets: 0 1, 2;
-    -fx-pref-height: 15px;
-    -fx-pref-width: 55px;
-}
-
-.date-picker-popup > * > .spinner > .button:focused {
-    -fx-background-insets: -.2 1, 2, -1.4, 2.6;
-}
 
 .eventNode {
     -fx-font-size: 1em;

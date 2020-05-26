@@ -71,7 +71,7 @@
 
 .menu-bar, .menu-item, .context-menu, .list-cell:filled:hover, .menu-bar:hover, .menu-bar:selected, .menu-bar:focused,
 .list-cell:hover, .scroll-bar:vertical .increment-button, .scroll-bar:vertical .decrement-button, .list-view:focused, .listCellBackground {
-    -fx-background-color: #5E7B8A;
+    -fx-background-color: #390325;
 }
 
 .menu-item:hover, .menu:hover, .menu:showing, .menu-item:focused, .list-view:focused, .list-view:selected {

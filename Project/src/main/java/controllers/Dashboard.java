@@ -14,6 +14,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -39,6 +40,8 @@ import java.util.function.Predicate;
 public class Dashboard {
     final List<Spinner<Integer>> startInputs = new ArrayList<>();
     final List<Spinner<Integer>> endInputs = new ArrayList<>();
+    @FXML
+    BorderPane border;
     @FXML
     Label KeywordLabel;
     @FXML
@@ -120,6 +123,11 @@ public class Dashboard {
         searchRating.setCellFactory(param -> new RatingsListCell());
 
         updateDisplays();
+
+        list.widthProperty().addListener(e -> {
+            list.refresh();
+        });
+
         GUIManager.mainStage.setTitle("Dashboard");
     }
 
@@ -142,6 +150,7 @@ public class Dashboard {
     }
 
     private void simpleSearch(Observable obs) {
+        Timeline currentlySelectedTimeline = list.getSelectionModel().getSelectedItem();
         String searchText = searchInput.getText();
         if (searchText == null || searchText.isEmpty())
             filteredTimelines.setPredicate(timeline -> true);
@@ -152,9 +161,8 @@ public class Dashboard {
         Predicate<Timeline> onlyPersonal = timeline -> timeline.getOwnerID() == GUIManager.loggedInUser.getID();
         if (cbOnlyViewPersonalLines.isSelected())
             filteredTimelines.setPredicate(onlyPersonal.and(filteredTimelines.getPredicate()));
-        //TODO decide how to handle auto scrolling when searching timelines
-        list.getSelectionModel().clearSelection();
-        updateDisplays();
+
+        handleAutoSelection(currentlySelectedTimeline);
     }
 
     @FXML
@@ -275,9 +283,24 @@ public class Dashboard {
         searchCreator.clear();
         searchKeywords.clear();
         searchInput.clear();
+        searchRating.getSelectionModel().select(0);
+        startInputs.forEach(spinner -> spinner.getValueFactory().setValue(((SpinnerValueFactory.IntegerSpinnerValueFactory) spinner.getValueFactory()).getMin()));
+        endInputs.forEach(spinner -> spinner.getValueFactory().setValue(((SpinnerValueFactory.IntegerSpinnerValueFactory) spinner.getValueFactory()).getMin()));
         cbOnlyViewPersonalLines.setSelected(false);
         filteredTimelines.setPredicate(t -> true);
-        list.getSelectionModel().select(currentlySelectedTimeline);
+        handleAutoSelection(currentlySelectedTimeline);
+    }
+
+    private void handleAutoSelection(Timeline currentlySelectedTimeline) {
+        if (currentlySelectedTimeline == null)
+            list.getSelectionModel().clearSelection();
+        else if (filteredTimelines.contains(currentlySelectedTimeline))
+            list.getSelectionModel().select(currentlySelectedTimeline);
+        else
+            list.getSelectionModel().clearSelection();
+
+        list.refresh();
+        updateDisplays();
     }
 
     void sortTimelines() {
