@@ -348,28 +348,6 @@ public class Dashboard {
         }
     }
 
-    //@FXML
-    //TimelineView editTimeline() {
-    //    return openTimelineView(list.getSelectionModel().getSelectedItem(), true);
-    //}
-
-    //@FXML
-    //TimelineView openTimeline() {
-    //    return openTimelineView(list.getSelectionModel().getSelectedItem(), false);
-    //}
-
-    //private TimelineView openTimelineView(Timeline newActiveTimeline, boolean editable) {
-    //    try {
-    //        TimelineView timelineView = GUIManager.swapScene("TimelineView");
-    //        timelineView.setActiveTimeline(newActiveTimeline);
-    //        timelineView.timelineEditorController.toggleEditable(editable);
-    //        return timelineView;
-    //    } catch (IOException e) {
-    //        e.printStackTrace();
-    //        return null;
-    //    }
-    //}
-
     @FXML
     void importFromJSON() {
         FileChooser chooser = new FileChooser();                                            //open FileChooser for user to pick import .json
