@@ -21,8 +21,6 @@ import java.util.Optional;
 public class TimelineCell {
 
     @FXML
-    Button cellEditTimelineButton;
-    @FXML
     Button cellDeleteTimelineButton;
     @FXML
     Button cellViewTimelineButton;
@@ -109,7 +107,6 @@ public class TimelineCell {
             colorStarsByRating((int) Math.ceil(timeline.getRating()));
             ratingBox.setOpacity((timeline.getRating() > 1) ? 1 : 0);
             cellDeleteTimelineButton.setDisable(timeline.getOwner().getID() != GUIManager.loggedInUser.getID());
-            cellEditTimelineButton.setDisable(timeline.getOwner().getID() != GUIManager.loggedInUser.getID());
         }
     }
 
@@ -172,20 +169,10 @@ public class TimelineCell {
     }
 
     @FXML
-    TimelineView editTimeline() {
-        return openTimelineView(true);
-    }
-
-    @FXML
     TimelineView openTimeline() {
-        return openTimelineView(false);
-    }
-
-    private TimelineView openTimelineView(boolean editable) {
         try {
             TimelineView timelineView = GUIManager.swapScene("TimelineView");
             timelineView.setActiveTimeline(timeline);
-            timelineView.timelineEditorController.toggleEditable(editable);
             return timelineView;
         } catch (IOException e) {
             e.printStackTrace();

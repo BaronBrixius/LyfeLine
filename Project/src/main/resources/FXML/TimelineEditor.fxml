@@ -29,52 +29,86 @@
          <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
       </padding>
       <ScrollPane fitToWidth="true" styleClass="editorScrollPane" VBox.vgrow="SOMETIMES">
-         <content>
-            <GridPane fx:id="inputFields" alignment="CENTER_RIGHT" hgap="5" maxHeight="1.7976931348623157E308" vgap="5">
-               <columnConstraints>
-                  <ColumnConstraints maxWidth="150.0" prefWidth="150" />
-                  <ColumnConstraints maxWidth="150.0" prefWidth="150" />
-               </columnConstraints>
-               <rowConstraints>
-                  <RowConstraints prefHeight="200.0" />
-                  <RowConstraints minHeight="-Infinity" prefHeight="30.0" />
-                  <RowConstraints />
-                  <RowConstraints />
-                  <RowConstraints />
-                  <RowConstraints vgrow="SOMETIMES" />
-                  <RowConstraints />
-                  <RowConstraints />
-                  <RowConstraints minHeight="50.0" prefHeight="30.0" />
-                  <RowConstraints />
-                  <RowConstraints />
-                  <RowConstraints />
-                  <RowConstraints />
-                  <RowConstraints />
-                  <RowConstraints />
-                  <RowConstraints />
-                  <RowConstraints />
-                  <RowConstraints />
-                  <RowConstraints />
-                  <RowConstraints />
-               </rowConstraints>
-               <ImageView fx:id="image" fitHeight="200.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" GridPane.columnSpan="2" GridPane.halignment="CENTER" />
-               <Button fx:id="uploadImageButton" alignment="CENTER" onAction="#uploadImage" prefWidth="80.0" styleClass="DisabledInvisible" text="Upload img" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
+         <GridPane fx:id="inputFields" alignment="CENTER_RIGHT" hgap="5" maxHeight="1.7976931348623157E308" vgap="5">
+            <columnConstraints>
+               <ColumnConstraints maxWidth="150.0" prefWidth="150"/>
+               <ColumnConstraints maxWidth="150.0" prefWidth="150"/>
+            </columnConstraints>
+            <rowConstraints>
+               <RowConstraints prefHeight="200.0"/>
+               <RowConstraints minHeight="-Infinity" prefHeight="30.0"/>
+               <RowConstraints/>
+               <RowConstraints/>
+               <RowConstraints/>
+               <RowConstraints vgrow="SOMETIMES"/>
+               <RowConstraints/>
+               <RowConstraints/>
+               <RowConstraints minHeight="50.0" prefHeight="30.0"/>
+               <RowConstraints/>
+               <RowConstraints/>
+               <RowConstraints/>
+               <RowConstraints/>
+               <RowConstraints/>
+               <RowConstraints/>
+               <RowConstraints/>
+               <RowConstraints/>
+               <RowConstraints/>
+               <RowConstraints/>
+               <RowConstraints/>
+            </rowConstraints>
+            <ImageView fx:id="image" fitHeight="200.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true"
+                       GridPane.columnSpan="2" GridPane.halignment="CENTER"/>
+            <Button fx:id="uploadImageButton" alignment="CENTER" onAction="#uploadImage" prefWidth="80.0"
+                    styleClass="DisabledInvisible" text="Upload img" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
+               <styleClass>
+                  <String fx:value="tinyButton"/>
+                  <String fx:value="DisabledInvisible"/>
+               </styleClass>
+               <GridPane.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+               </GridPane.margin>
+            </Button>
+            <Button fx:id="deleteImageButton" alignment="CENTER" onAction="#clearImage" prefWidth="80.0"
+                    styleClass="DisabledInvisible" text="Delete img" GridPane.columnIndex="1" GridPane.rowIndex="1">
+               <styleClass>
+                  <String fx:value="tinyButton"/>
+                  <String fx:value="DisabledInvisible"/>
+               </styleClass>
+               <GridPane.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+               </GridPane.margin>
+            </Button>
+            <Label styleClass="smallText" text="Title" GridPane.columnSpan="2" GridPane.rowIndex="2"
+                   GridPane.valignment="BOTTOM"/>
+            <TextField fx:id="titleInput" GridPane.columnSpan="2" GridPane.rowIndex="3"/>
+            <Label styleClass="smallText" text="Description" GridPane.columnSpan="2" GridPane.rowIndex="4"
+                   GridPane.valignment="BOTTOM"/>
+            <TextArea fx:id="descriptionInput" maxHeight="1.7976931348623157E308" minHeight="0.0" prefHeight="250.0"
+                      styleClass="smallText" wrapText="true" GridPane.columnSpan="2" GridPane.rowIndex="5"/>
+            <Label styleClass="smallText" text="Key Words" GridPane.rowIndex="6" GridPane.valignment="BOTTOM"/>
+            <Label fx:id="feedbackText" layoutX="10.0" layoutY="629.0" style="-fx-font-weight: normal;"
+                   styleClass="smallText" GridPane.columnIndex="1" GridPane.rowIndex="6"/>
+            <HBox fx:id="keywordBox" spacing="5.0" GridPane.columnSpan="2" GridPane.rowIndex="7">
+               <TextField fx:id="keywordInput" onAction="#addKeyword" HBox.hgrow="SOMETIMES"/>
+               <Button fx:id="addKeywordButton" maxWidth="47.0" mnemonicParsing="false" onAction="#addKeyword"
+                       prefWidth="47.0" text="Add">
+                  <font>
+                     <Font size="10.0"/>
+                  </font>
                   <styleClass>
-                     <String fx:value="tinyButton" />
-                     <String fx:value="DisabledInvisible" />
+                     <String fx:value="tinyButton"/>
+                     <String fx:value="DisabledInvisible"/>
                   </styleClass>
-                  <GridPane.margin>
-                     <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                  </GridPane.margin>
                </Button>
-               <Button fx:id="deleteImageButton" alignment="CENTER" onAction="#clearImage" prefWidth="80.0" styleClass="DisabledInvisible" text="Delete img" GridPane.columnIndex="1" GridPane.rowIndex="1">
+               <Button fx:id="removeKeywordButton" maxWidth="67.0" mnemonicParsing="false" onAction="#removeKeyword"
+                       prefWidth="67.0" text="Remove">
+                  <font>
+                     <Font size="10.0"/>
+                  </font>
                   <styleClass>
-                     <String fx:value="tinyButton" />
-                     <String fx:value="DisabledInvisible" />
+                     <String fx:value="tinyButton"/>
+                     <String fx:value="DisabledInvisible"/>
                   </styleClass>
-                  <GridPane.margin>
-                     <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                  </GridPane.margin>
                </Button>
                <Label styleClass="smallText" text="Title" GridPane.columnSpan="2" GridPane.rowIndex="2" GridPane.valignment="BOTTOM" />
                <TextField fx:id="titleInput" GridPane.columnSpan="2" GridPane.rowIndex="3" />

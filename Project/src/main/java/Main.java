@@ -23,7 +23,7 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
         new DBM();                          //establish connection to the DB
         GUIManager.start(primaryStage);     //open the application
-        //DBM.dropSchema();
+        DBM.dropSchema(); // Comment this out if the database is already built.
         firstTimeSetup();                   //setup database and dummy data if needed
     }
 

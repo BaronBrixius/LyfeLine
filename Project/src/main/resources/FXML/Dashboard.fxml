@@ -23,32 +23,18 @@
     <center>
         <VBox minHeight="400.0" minWidth="600.0">
             <HBox alignment="CENTER_LEFT" spacing="10.0">
-               <Button fx:id="btnCreate" mnemonicParsing="false" onAction="#createTimeline" text="Create">
-               <styleClass>
-                  <String fx:value="dashBoard" />
-                  <String fx:value="DisabledInvisible" />
-                  <String fx:value="smallButton" />
-               </styleClass>
+               <Button fx:id="btnCreate" mnemonicParsing="false" onAction="#createTimeline" text="Create" styleClass="dashBoard, DisabledInvisible, smallButton">
                <HBox.margin>
                   <Insets />
                </HBox.margin></Button>
-            <Button fx:id="importButton" mnemonicParsing="false" onAction="#importFromJSON" text="Import">
-               <styleClass>
-                  <String fx:value="dashBoard" />
-                  <String fx:value="smallButton" />
-               </styleClass>
+            <Button fx:id="importButton" mnemonicParsing="false" onAction="#importFromJSON" text="Import" styleClass="dashBoard, smallButton">
                <HBox.margin>
                   <Insets />
                </HBox.margin></Button>
-                <Button fx:id="adminGUI" alignment="CENTER" mnemonicParsing="false" onAction="#adminScreen" prefWidth="297.0" text="Admin Manager" textAlignment="CENTER">
+                <Button fx:id="adminGUI" alignment="CENTER" mnemonicParsing="false" onAction="#adminScreen" prefWidth="297.0" text="Admin Manager" textAlignment="CENTER" styleClass="dashBoard, DisabledInvisible, smallButton">
                     <opaqueInsets>
                         <Insets />
                     </opaqueInsets>
-               <styleClass>
-                  <String fx:value="dashBoard" />
-                  <String fx:value="DisabledInvisible" />
-                  <String fx:value="smallButton" />
-               </styleClass>
                <HBox.margin>
                   <Insets />
                </HBox.margin>
