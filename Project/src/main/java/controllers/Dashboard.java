@@ -497,6 +497,11 @@ public class Dashboard {
                     cell.setTimeline(item);
             } else
                 setGraphic(null);
+
+            this.setOnMouseClicked(e->{
+                if (e.getClickCount() == 2)
+                    cell.openTimeline();
+            });
         }
     }
 }

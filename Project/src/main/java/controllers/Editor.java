@@ -3,6 +3,7 @@ package controllers;
 import database.DBM;
 import database.TimelineObject;
 import javafx.fxml.FXML;
+import javafx.geometry.Side;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -80,6 +81,19 @@ public abstract class Editor {
         setupTimeInputStartAndEnd("Minute", 0, 59, 4);
         setupTimeInputStartAndEnd("Second", 0, 59, 5);
         setupTimeInputStartAndEnd("Millisecond", 0, 999, 6);
+
+        image.scaleYProperty().bind(image.scaleXProperty());
+
+        ContextMenu fullImagePopup = new ContextMenu();
+        MenuItem fullImageContainer = new MenuItem();
+        fullImagePopup.getItems().add(fullImageContainer);              //makes full-sized image appear on double click
+        image.setOnMouseClicked(e -> {
+            if (e.getClickCount() == 2) {
+                fullImageContainer.setGraphic(new ImageView(new Image("file:" + imageFilePath)));
+                fullImagePopup.show(image, Side.BOTTOM, 0, 0);
+            }
+            e.consume();        //so event editor doesn't also receive double click and close as a result
+        });
     }
 
     @FXML

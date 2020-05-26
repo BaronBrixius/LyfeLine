@@ -73,6 +73,7 @@ public class TimelineEditor extends Editor {
 
         if (!GUIManager.loggedInUser.getAdmin())
             exportPopup.getItems().remove(exportJSONButton);        //only admins can export
+        exportButton.setContextMenu(null);                  //later we reapply context menu via onAction so it works with different buttons
 
         GUIManager.mainStage.setTitle("Timeline Editor");
     }
@@ -314,6 +315,6 @@ public class TimelineEditor extends Editor {
 
     @FXML
     void openExportMenu() {
-        exportPopup.show(exportButton, Side.TOP, 0, 0);
+        exportPopup.show(exportButton, Side.RIGHT, 0, 0);
     }
 }

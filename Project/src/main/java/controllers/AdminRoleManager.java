@@ -35,8 +35,8 @@ public class AdminRoleManager {
         sortOptions.add("User ID");
         sortOptions.add("Reverse User ID");
         sortBy.setItems(sortOptions);
-        
-        /* Define what is shown in the user list (User ID and email for now)*/ 
+
+        /* Define what is shown in the user list (User ID and email for now)*/
         userListView.setCellFactory(param -> new ListCell<>() {
             @Override
             protected void updateItem(User item, boolean empty) {
@@ -47,12 +47,19 @@ public class AdminRoleManager {
                 } else {
                     setText("ID: " + item.getID() + " - " + item.getUserEmail());
                 }
+
+                this.setOnMouseClicked(e -> {
+                    if (e.getClickCount() == 2) {
+                        toggleClicked();
+                        updateCheckBox();
+                    }
+                });
             }
         });
 
         fillListView();
         updateCheckBox();
-        
+
         /*Listener for dropdown menu, that sort the user list depending on the dropdown index*/
         userListView.getSelectionModel().selectedIndexProperty().addListener(ov -> {
 
@@ -109,9 +116,9 @@ public class AdminRoleManager {
 
     /*Updates the checkbox that shows whether a user is an admin*/
     public void updateCheckBox() {
-        toggle.setSelected(userListView.getSelectionModel().getSelectedItem().getAdmin()); 
+        toggle.setSelected(userListView.getSelectionModel().getSelectedItem().getAdmin());
     }
-    
+
     /*Sets the switches between admin and non-admin for the selected user*/
     @FXML
     void toggleClicked() {

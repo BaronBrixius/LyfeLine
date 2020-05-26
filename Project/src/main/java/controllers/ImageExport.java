@@ -2,10 +2,12 @@ package controllers;
 
 import database.Timeline;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
+import javafx.stage.Stage;
 import utils.DateUtils;
 import utils.ImageUtils;
 
@@ -45,6 +47,8 @@ public class ImageExport {
         File outputFile = ImageUtils.saveFileChooser(activeTimeline.getName());
         if (outputFile != null)
             ImageIO.write(finalBuffer, "png", outputFile);
+
+        close();
     }
 
     // execute when any checkbox is clicked
@@ -134,5 +138,10 @@ public class ImageExport {
         g2d.drawImage(tmp, 0, 0, null);
         g2d.dispose();
         return resized;
+    }
+
+    @FXML
+    void close() {
+        ((Stage) imageView.getScene().getWindow()).close();
     }
 }

@@ -50,6 +50,11 @@ public class EventEditor extends Editor {
                 }
             }
         });
+
+        editor.setOnMouseClicked(e-> {
+            if (e.getClickCount() == 2)
+                close();
+        });
     }
 
     @FXML

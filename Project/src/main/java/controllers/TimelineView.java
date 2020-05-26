@@ -52,7 +52,7 @@ public class TimelineView {
     @FXML
     EventEditor eventEditorController;
     Timeline activeTimeline;
-    
+
     /*Initializes the timeline view window - sets the timeline and controller for the event selector and event editor*/
     public void initialize() {
         timelineEditorController.setParentController(this);
@@ -73,6 +73,11 @@ public class TimelineView {
             if (!newV.matches("[\\d]*%"))
                 zoomLabel.setText(oldV);
         });
+
+        zoomLabel.setOnMouseClicked(e->{
+            if (e.getClickCount() == 2)
+                zoom(1);
+        });
     }
 
     /*Sets the active timeline (the timeline being displayed)*/
@@ -83,7 +88,7 @@ public class TimelineView {
         if (activeTimeline.getID() > 0)
             populateDisplay();
     }
-    
+
     /*Pulls the timeline from the database and populates the display*/
     void populateDisplay() {
         try (PreparedStatement stmt = DBM.conn.prepareStatement("SELECT * FROM timelines where TimelineID = ?")) {
@@ -97,7 +102,7 @@ public class TimelineView {
         setupMainLine();
         setupEventNodes();
     }
-    
+
     /*Calculates sets the length of the timeline itself by adding columns to the pane which holds the timeline
      * This is computed depending on the start date, end date and the units that has been chosen for the timeline*/
     private void setupMainLine() {
@@ -135,7 +140,7 @@ public class TimelineView {
             timelineGrid.add(mainLine, 0, 0, numberOfCol, 1);    //which does not work for the amount of columns
         GridPane.setMargin(mainLine, new Insets(25, 0, -25, 0));
     }
-    
+
     /*Sets up the events in the right side bar*/
     private void setupEventNodes() {
         eventList.clear();
@@ -149,8 +154,7 @@ public class TimelineView {
         for (int i = 0; i < eventList.size(); i++)
             placeEvent(eventList.get(i), i);
     }
-    
-   
+
     private EventNode addEvent(Event event) {
         try {
             FXMLLoader nodeLoader = new FXMLLoader(getClass().getResource("../FXML/EventNode.fxml"));
@@ -163,7 +167,7 @@ public class TimelineView {
             return null;
         }
     }
-    
+
     /*Places the even on the timeline in the correct column*/
     private void placeEvent(EventNode newNode, int eventsPlacedCount) {
         if (newNode.getStartColumn() < 0) {                                        //if node starts before the timeline begins, cut the beginning
@@ -198,7 +202,6 @@ public class TimelineView {
         }
     }
 
-   
     WritableImage snapshot(boolean currentViewOnly) {
         SnapshotParameters snapshotParams = new SnapshotParameters();
 
@@ -255,6 +258,10 @@ public class TimelineView {
         return SwingFXUtils.toFXImage(backImage, null);
     }
 
+    void zoom(double newScale){
+        zoom(newScale, mainScrollPane.getHvalue(), mainScrollPane.getVvalue());
+    }
+
     void zoom(double newScale, double scrollHvalue, double scrollVvalue) {
         timelineGrid.setScaleX(newScale);                                           //apply scaling/zooming
         timelineGrid.setScaleY(newScale);
@@ -277,23 +284,21 @@ public class TimelineView {
 
         event.consume();                                                            //consume the mouse event to prevent normal scrollbar functions
 
-        double hMousePosition = (event.getX() / centeringStack.getWidth());        //record mouse position for "zoom to mouse"
+        double hMousePosition = (event.getX() / centeringStack.getWidth());         //record mouse position for "zoom to mouse"
         double vMousePosition = (event.getY() / centeringStack.getHeight());
 
-        double adjustedHvalue = mainScrollPane.getHvalue() * oldScale / newScale    //snapshot scrollbar positions before resizing moves them
-                + hMousePosition * (1 - oldScale / newScale);                       //adjust snapshots based on mouse position, weighted average of old position and mouse position,
-        double adjustedVvalue = mainScrollPane.getVvalue() * oldScale / newScale    //while zooming in, old position is ~83% weight (1/1.2) and mouse position is ~17% (1-(1/1.2))(assuming scaleFactor is still 1.2)
-                + vMousePosition * (1 - oldScale / newScale);                       //while "zooming out away from mouse", mouse position is applied negatively. original position is 120% weight and mouse position is -20%
+        double weight = Math.pow(oldScale / newScale, 2);
+        double adjustedHvalue = mainScrollPane.getHvalue() * weight     //snapshot scrollbar positions before resizing moves them
+                + hMousePosition * (1 - weight);                        //adjust snapshots based on mouse position, weighted average of old position and mouse position,
+        double adjustedVvalue = mainScrollPane.getVvalue() * weight
+                + vMousePosition * (1 - weight);                        //weight becomes negative to zoom out "away" from mouse
 
         zoom(newScale, adjustedHvalue, adjustedVvalue);
     }
 
     private void zoomSlider() {
         double newScale = clampScale(zoomSlider.getValue() / 100);          //values are displayed as percent to user
-        double Hvalue = mainScrollPane.getHvalue();
-        double Vvalue = mainScrollPane.getVvalue();
-
-        zoom(newScale, Hvalue, Vvalue);
+        zoom(newScale);
     }
 
     @FXML
@@ -313,10 +318,7 @@ public class TimelineView {
             zoomString = "100";
 
         double newScale = clampScale(Double.parseDouble(zoomString) / 100);          //values are displayed as percent to user
-        double Hvalue = mainScrollPane.getHvalue();
-        double Vvalue = mainScrollPane.getVvalue();
-
-        zoom(newScale, Hvalue, Vvalue);
+        zoom(newScale);
     }
 
     private double clampScale(double scale) {
