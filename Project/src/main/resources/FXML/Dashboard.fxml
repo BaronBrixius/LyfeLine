@@ -23,6 +23,15 @@
     <center>
         <VBox minHeight="400.0" minWidth="600.0">
             <HBox fx:id="Simple" alignment="CENTER_LEFT" spacing="10.0">
+               <Button fx:id="btnCreate" mnemonicParsing="false" onAction="#createTimeline" text="Create">
+               <styleClass>
+                  <String fx:value="dashBoard" />
+                  <String fx:value="DisabledInvisible" />
+                  <String fx:value="smallButton" />
+               </styleClass>
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin></Button>
             <Button fx:id="importButton" mnemonicParsing="false" onAction="#importFromJSON" text="Import">
                <styleClass>
                   <String fx:value="dashBoard" />
@@ -44,15 +53,6 @@
                   <Insets />
                </HBox.margin>
                 </Button>
-               <Button fx:id="btnCreate" mnemonicParsing="false" onAction="#createTimeline" text="Create">
-               <styleClass>
-                  <String fx:value="dashBoard" />
-                  <String fx:value="DisabledInvisible" />
-                  <String fx:value="smallButton" />
-               </styleClass>
-               <HBox.margin>
-                  <Insets />
-               </HBox.margin></Button>
             <Region prefHeight="0.0" prefWidth="1.0" HBox.hgrow="ALWAYS" />
                  <GridPane hgap="5.0" vgap="5.0">
                      <columnConstraints>
@@ -213,14 +213,12 @@
    <right>
        <StackPane fx:id="rightStack" BorderPane.alignment="CENTER_LEFT">
            <padding>
-               <Insets left="-20.0" right="10.0"/>
+               <Insets left="-20.0" right="10.0" />
            </padding>
            <VBox fx:id="greetingBox" alignment="CENTER" prefWidth="275.0" StackPane.alignment="CENTER_LEFT">
-               <Label alignment="CENTER"
-                      text="Welcome to LyfeLine! Browse any of our user made Timelines from the list here, or look for a specific one in the top left."
-                      wrapText="true">
+               <Label alignment="CENTER" text="Welcome to LyfeLine! Browse any of our user made Timelines from the list here, or look for a specific one in the top left." wrapText="true">
                    <VBox.margin>
-                       <Insets left="5.0"/>
+                       <Insets left="5.0" />
                    </VBox.margin>
                </Label>
            </VBox>

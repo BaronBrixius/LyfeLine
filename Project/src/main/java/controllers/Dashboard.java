@@ -11,11 +11,15 @@ import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import org.apache.commons.io.FileUtils;
 
@@ -26,53 +30,61 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
 import java.util.function.Predicate;
 
 public class Dashboard {
     final List<Spinner<Integer>> startInputs = new ArrayList<>();
     final List<Spinner<Integer>> endInputs = new ArrayList<>();
-    public Timeline timeline;
-    public Label KeywordLabel;
-    public Label RatingLabel;
-    public StackPane stack;
-    public ScrollPane listScrollPane;
-    public Button importButton;
-    public VBox greetingBox;
-    public StackPane rightStack;
     @FXML
-    protected Button adminGUI;
+    Label KeywordLabel;
     @FXML
-    protected Button btnCreate;
+    Label RatingLabel;
     @FXML
-    protected Button searchButton;
+    StackPane stack;
     @FXML
-    protected ListView<Timeline> list;
+    ScrollPane listScrollPane;
     @FXML
-    protected TextField searchInput;
+    Button importButton;
     @FXML
-    protected TextField searchTimelineName;
+    VBox greetingBox;
     @FXML
-    protected TextField searchCreator;
+    StackPane rightStack;
     @FXML
-    protected TextField searchKeywords;
+    Button adminGUI;
     @FXML
-    protected ComboBox<Integer> searchRating;
+    Button btnCreate;
     @FXML
-    protected Button clearButton;
+    Button searchButton;
     @FXML
-    protected CheckBox cbOnlyViewPersonalLines;
+    ListView<Timeline> list;
     @FXML
-    protected ComboBox<String> sortBy;
+    TextField searchInput;
     @FXML
-    protected GridPane advancedSearchView;
+    TextField searchTimelineName;
     @FXML
-    protected GridPane startDates;
+    TextField searchCreator;
     @FXML
-    protected GridPane endDates;
-    protected Timeline activeTimeline;
-    protected FilteredList<Timeline> filteredTimelines;
-    protected SortedList<Timeline> sortedTimelines;
+    TextField searchKeywords;
+    @FXML
+    ComboBox<Integer> searchRating;
+    @FXML
+    Button clearButton;
+    @FXML
+    CheckBox cbOnlyViewPersonalLines;
+    @FXML
+    ComboBox<String> sortBy;
+    @FXML
+    GridPane advancedSearchView;
+    @FXML
+    GridPane startDates;
+    @FXML
+    GridPane endDates;
+    FilteredList<Timeline> filteredTimelines;
+    SortedList<Timeline> sortedTimelines;
 
     public void initialize() {
         //Set Up the Spinners for Start/End Inputs, would have bloated the .fxml and variable list a ton if these were in fxml
@@ -91,19 +103,16 @@ public class Dashboard {
         list.setCellFactory((ListView<Timeline> ls) -> new TimelineCellListCell());
 
         // Add sorting options
-        sortBy.getItems().setAll("Alphabetically", "Reverse-Alphabetically", "Most Recent", "Oldest");
+        sortBy.getItems().setAll("Alphabetically", "Reverse-Alphabetically", "Most Recent", "Oldest", "Rating");
         // Sort order selection events
         sortBy.getSelectionModel().selectedIndexProperty().addListener(ov -> sortTimelines());
-        sortBy.getSelectionModel().select(0);
+        sortBy.getSelectionModel().select(4);
 
         // Search field
         cbOnlyViewPersonalLines.selectedProperty().addListener(this::simpleSearch);
         searchInput.textProperty().addListener(this::simpleSearch);
 
-        list.getSelectionModel().selectedIndexProperty().addListener(e -> {
-            activeTimeline = list.getSelectionModel().getSelectedItem();
-            updateDisplays();
-        });
+        list.getSelectionModel().selectedIndexProperty().addListener(e -> updateDisplays());
 
         //Ratings combobox in advanced search
         searchRating.getItems().setAll(Arrays.asList(0, 1, 2, 3, 4, 5));
@@ -122,7 +131,7 @@ public class Dashboard {
             sortedTimelines = new SortedList<>(filteredTimelines);
             list.setItems(sortedTimelines);
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.err.println("Could not read timelines from database.");
         }
     }
 
@@ -149,37 +158,27 @@ public class Dashboard {
     }
 
     @FXML
-    void searchAdvanced() {         //get list of IDs that satisfy search conditions, and apply as predicate to filteredlist
-        ResultSet data = advancedResultSet();
-        try {
-            List<Integer> listOfIDs = parseResultsForAdvancedSearch(data);
-            filteredTimelines.setPredicate(timeline -> listOfIDs.contains(timeline.getID()));
+    void searchAdvanced() {
+        try (ResultSet data = DBM.conn.prepareStatement(                                        //get searchable info from database
+                "SELECT t.*, u.UserName, COALESCE(AVG(r.Rating), 0) as Rating FROM timelines t " +
+                        "INNER JOIN users u ON t.TimelineOwner = u.UserID " +
+                        "LEFT JOIN ratings r ON t.TimelineID = r.TimeLineID " +
+                        "GROUP BY t.TimelineID").executeQuery()) {
+
+            List<Integer> listOfIDs = parseResultsForAdvancedSearch(data);                      //check for matches against search criteria
+            filteredTimelines.setPredicate(timeline -> listOfIDs.contains(timeline.getID()));   //apply matches as filter to timeline list
             list.getSelectionModel().clearSelection();
             updateDisplays();
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.err.println("Could not read timelines from database.");
         }
-    }
-
-    ResultSet advancedResultSet() {     //pull the relevant data from the database and pass back to search
-        try {
-            PreparedStatement stmt = DBM.conn.prepareStatement("SELECT t.*, u.UserName, COALESCE(AVG(r.Rating), 0) as Rating FROM timelines t " +
-                    "INNER JOIN users u ON t.TimelineOwner = u.UserID " +
-                    "LEFT JOIN ratings r ON t.TimelineID = r.TimeLineID " +
-                    "GROUP BY t.TimelineID");
-            return stmt.executeQuery();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 
     List<Integer> parseResultsForAdvancedSearch(ResultSet data) throws SQLException {
         List<Integer> out = new ArrayList<>();
         boolean addToList = true;
 
-        while (data.next()) {
-            //if the search box is filled, but doesn't match DB contents, don't add to list. check for each box
+        while (data.next()) {   //if the search input has an entry, but doesn't match DB contents, then not a match. check for each input
             //Timeline Name
             if (!searchTimelineName.getText().isEmpty() && !data.getString("TimelineName").toLowerCase().contains(searchTimelineName.getText().toLowerCase())) {
                 addToList = false;
@@ -295,24 +294,35 @@ public class Dashboard {
             case 3:
                 sortedTimelines.setComparator(Comparator.comparing(Timeline::getCreationDate));
                 break;
+            case 4:
+                sortedTimelines.setComparator(Comparator.comparing(Timeline::getRating).reversed());
+                break;
         }
     }
 
     @FXML
     void adminScreen() throws IOException {
-        GUIManager.swapScene("AdminRoleManager");
+        Stage adminManagerStage = new Stage();
+        adminManagerStage.setTitle("Admin Manager");
+        adminManagerStage.initOwner(GUIManager.mainStage);         //These two lines make sure you can't click back to the timeline window,
+        adminManagerStage.initModality(Modality.WINDOW_MODAL);     //so you can't have 10 windows open at once.
+
+        Parent root = FXMLLoader.load(GUIManager.class.getResource("../FXML/AdminRoleManager.fxml"));
+        adminManagerStage.setScene(new Scene(root));
+        adminManagerStage.getScene().getStylesheets().addAll(GUIManager.mainStage.getScene().getStylesheets());
+        adminManagerStage.show();
     }
 
     @FXML
     TimelineView createTimeline() {
         Timeline t = new Timeline();
-        t.setOwnerID(GUIManager.loggedInUser.getID());
+        t.setOwner(GUIManager.loggedInUser);
         return openTimelineView(t, true);
     }
 
     @FXML
     TimelineView editTimeline() {
-        return openTimelineView(this.activeTimeline, true);
+        return openTimelineView(list.getSelectionModel().getSelectedItem(), true);
     }
 
     @FXML
@@ -337,7 +347,7 @@ public class Dashboard {
         FileChooser chooser = new FileChooser();                                            //open FileChooser for user to pick import .json
         chooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("JSON", "*.json"));
         File fileChosen = chooser.showOpenDialog(GUIManager.mainStage);
-        if (fileChosen == null)
+        if (fileChosen == null)             //usually only the case if the user cancels out of the file chooser
             return;
 
         try {
@@ -345,13 +355,9 @@ public class Dashboard {
             Gson gson = JSONTimeline.getGson();
             JSONTimeline readJson = gson.fromJson(inJSON, JSONTimeline.class);              //parse Json with GSON object
             readJson.importToDB();                                                          //add imported data to database
-
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);                           //inform user of success
-            alert.setTitle("File Import");
-            alert.setHeaderText("File has been successfully imported.");
-            alert.showAndWait();
+            populateTimelineList();
         } catch (IOException e) {
-            e.printStackTrace();     //TODO better exception handling after dev work
+            System.err.println("Could not read file.");
         }
     }
 
@@ -435,7 +441,7 @@ public class Dashboard {
         @Override
         protected void updateItem(Integer item, boolean empty) {
             super.updateItem(item, empty);
-            if (empty || item == null || item == 0) {           //zero treated as blank/unused
+            if (empty || item == null || item == 0) {                   //zero treated as blank/unused
                 setText(null);
             } else {
                 setText(item.toString());
@@ -443,7 +449,6 @@ public class Dashboard {
         }
     }
 
-    //approach from https://stackoverflow.com/a/27439026
     private class TimelineCellListCell extends ListCell<Timeline> {         //for displaying timelines
         private Node cellNode;
         private TimelineCell cell;

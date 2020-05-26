@@ -7,33 +7,26 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
 
-import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Comparator;
 import java.util.List;
 
 public class AdminRoleManager {
-
     @FXML
-    private Text userText;
+    Text userText;
     @FXML
-    private ListView<User> listView;
+    ListView<User> userListView;
     @FXML
-    private CheckBox toggle;
+    CheckBox toggle;
     @FXML
-    private ComboBox<String> sortBy;
+    ComboBox<String> sortBy;
     @FXML
-    protected TextField searchInput;
-
+    TextField searchInput;
     final ObservableList<User> userList = FXCollections.observableArrayList();
 
-    public AdminRoleManager() {
-        GUIManager.mainStage.setTitle("Admin Role Manager");
-    }
-
-    @FXML
     public void initialize() {
         // ComboBox items (observable list)
         final ObservableList<String> sortOptions = FXCollections.observableArrayList();
@@ -43,8 +36,7 @@ public class AdminRoleManager {
         sortOptions.add("Reverse User ID");
         sortBy.setItems(sortOptions);
 
-        // approach adapted from https://stackoverflow.com/a/36657553
-        listView.setCellFactory(param -> new ListCell<User>() {
+        userListView.setCellFactory(param -> new ListCell<User>() {
             @Override
             protected void updateItem(User item, boolean empty) {
                 super.updateItem(item, empty);
@@ -60,10 +52,10 @@ public class AdminRoleManager {
         fillListView();
         updateCheckBox();
 
-        listView.getSelectionModel().selectedIndexProperty().addListener(ov -> {
+        userListView.getSelectionModel().selectedIndexProperty().addListener(ov -> {
 
-            if (listView.getSelectionModel().getSelectedIndex() >= 0) {
-                userText.setText(userList.get(listView.getSelectionModel().getSelectedIndex()).getUserEmail());
+            if (userListView.getSelectionModel().getSelectedIndex() >= 0) {
+                userText.setText(userList.get(userListView.getSelectionModel().getSelectedIndex()).getUserEmail());
                 updateCheckBox();
             }
         });
@@ -90,48 +82,44 @@ public class AdminRoleManager {
     @FXML
     void search() {
         try {
-            String sql = "SELECT * FROM users WHERE UserName LIKE '" + searchInput.getText() + "%' OR UserEmail LIKE'" + searchInput.getText() + "%'";
+            String sql = "SELECT * FROM users WHERE UserName LIKE '%" + searchInput.getText() + "%' OR UserEmail LIKE'%" + searchInput.getText() + "%'";
             PreparedStatement search = DBM.conn.prepareStatement(sql);
-            List<User> userlist = DBM.getFromDB(search, new User());
-            listView.setItems(FXCollections.observableArrayList(userlist));
+            List<User> userList = DBM.getFromDB(search, new User());
+            userListView.setItems(FXCollections.observableArrayList(userList));
         } catch (SQLException e) {
             System.err.println("Could not access users database.");
         }
     }
 
-    public void fillListView() {
+    void fillListView() {
         try {
             List<User> usersFromDB = DBM.getFromDB(DBM.conn.prepareStatement("SELECT * FROM users "), new User());
             userList.addAll(usersFromDB);
         } catch (SQLException e) {
             System.err.println("Could not access users database.");
         }
-        listView.setItems(userList);
-        listView.getSelectionModel().select(0);
+        userListView.setItems(userList);
+        userListView.getSelectionModel().select(0);
     }
 
     public void updateCheckBox() {
-        toggle.setSelected(listView.getSelectionModel().getSelectedItem().getAdmin());    //get admin status from selected item
+        toggle.setSelected(userListView.getSelectionModel().getSelectedItem().getAdmin());    //get admin status from selected item
     }
 
     @FXML
-    public void toggleClicked() {
-        listView.getSelectionModel().getSelectedItem().toggleAdmin();
+    void toggleClicked() {
+        userListView.getSelectionModel().getSelectedItem().toggleAdmin();
 
         try {
-            DBM.updateInDB(listView.getSelectionModel().getSelectedItem());
+            DBM.updateInDB(userListView.getSelectionModel().getSelectedItem());
         } catch (SQLException e) {
             System.err.println("Could not access users database.");
         }
     }
 
     @FXML
-    public void back() {
-        try {
-            GUIManager.swapScene("Dashboard");
-        } catch (IOException e) {
-            System.err.println("Could not access Dashboard.fxml");
-        }
+    void back() {
+        ((Stage) userListView.getScene().getWindow()).close();
     }
 
 }

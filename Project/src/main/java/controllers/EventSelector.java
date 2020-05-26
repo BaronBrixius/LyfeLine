@@ -133,7 +133,7 @@ public class EventSelector {
 
         try {
             if (eventToDelete.getID() == 0)
-                throw new IllegalArgumentException("event not in database");
+                throw new IllegalArgumentException("Event not in database.");
 
             DBM.deleteFromDB(eventToDelete);
             populateDisplay();
@@ -224,10 +224,6 @@ public class EventSelector {
             return e -> (timelineEventLinks.stream().anyMatch(                                          //checks the junction table
                     te -> te.get(0) == timelineComboBox.getSelectionModel().getSelectedItem().getID()   //filters by the selected timeline
                             && e.getID() == te.get(1)));                                                //and returns whether each event is on that timeline
-    }
-
-    public void close() {
-        parentController.rightSidebar.getChildren().remove(selector);
     }
 
     public void addToTimeline() {   //TODO make this work with multiple selections?

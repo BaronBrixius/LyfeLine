@@ -162,7 +162,7 @@ public class Timeline extends TimelineObject<Timeline> {
         return DBM.conn.prepareStatement("DELETE FROM `timelines` WHERE (`TimelineID` = ?)");
     }
 
-    public void deleteImage(){
+    public void deleteImage() {
         if (getImagePath() != null) {
             try {
                 Files.deleteIfExists(Paths.get(getImagePath()));
@@ -293,6 +293,10 @@ public class Timeline extends TimelineObject<Timeline> {
 
     public User getOwner() {
         return owner;
+    }
+    
+    public void setOwner(User owner) {
+        this.owner = owner;
     }
 
     public int getScale() {
