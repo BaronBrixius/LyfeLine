@@ -6,6 +6,7 @@ import database.JSONTimeline;
 import database.Timeline;
 import javafx.beans.Observable;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
@@ -132,8 +133,8 @@ public class Dashboard {
     private void populateTimelineList() {
         try {
             PreparedStatement stmt = DBM.conn.prepareStatement("SELECT * FROM timelines");
-            var foo = FXCollections.observableList(DBM.getFromDB(stmt, new Timeline()));
-            filteredTimelines = new FilteredList<>(foo);
+            ObservableList<Timeline> timelineList = FXCollections.observableList(DBM.getFromDB(stmt, new Timeline()));
+            filteredTimelines = new FilteredList<>(timelineList);
             sortedTimelines = new SortedList<>(filteredTimelines);
             list.setItems(sortedTimelines);
         } catch (SQLException e) {

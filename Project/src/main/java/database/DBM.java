@@ -17,47 +17,41 @@ public class DBM {
     private static String PASS = "AJnuHA^8VKHht=uB";
     private static String SCHEMA = "project";
 
-    public DBM() throws ClassNotFoundException, SQLException {                                                         //Connect to server with default settings
+    public DBM() {                                                         //Connect to server with default settings
         this(SCHEMA);
     }
 
-    public DBM(String SCHEMA) throws ClassNotFoundException, SQLException {                                            //Connect to server with alternate schema
+    public DBM(String SCHEMA) {                                            //Connect to server with alternate schema name
         this(DB_URL, USER, PASS, SCHEMA);
     }
 
-    public DBM(String DB_URL, String USER, String PASS) throws ClassNotFoundException, SQLException {                  //Connect to alternate server
+    public DBM(String DB_URL, String USER, String PASS) {                  //Connect to alternate server
         this(DB_URL, USER, PASS, SCHEMA);
     }
 
-    public DBM(String DB_URL, String USER, String PASS, String SCHEMA) throws ClassNotFoundException, SQLException {   //Connect to server with alternate settings
+    public DBM(String DB_URL, String USER, String PASS, String SCHEMA) {   //Connect to server with alternate settings
         close();                        //if connection is already open, close it before making a new one
 
         DBM.DB_URL = DB_URL;
         DBM.USER = USER;
         DBM.PASS = PASS;
         DBM.SCHEMA = SCHEMA;
+        try {
+            //Register JDBC driver
+            Class.forName(JDBC_DRIVER);
 
-        //Register JDBC driver
-        Class.forName(JDBC_DRIVER);
+            //Open a connection
+            System.out.println("Connecting to selected database...");
+            conn = DriverManager.getConnection(DB_URL, USER, PASS);
 
-        //Open a connection
-        System.out.println("Connecting to selected database...");
-        conn = DriverManager.getConnection(DB_URL, USER, PASS);
-
-        //Connect to schema
-        useSchema(SCHEMA);
-
-        System.out.println("Connected to database successfully.");
-    }
-
-    public static void useSchema(String SCHEMA) throws SQLException {
-        System.out.println("Connecting to schema...");
-        try (Statement stmt = conn.createStatement()) {
-            if (!stmt.executeQuery("SHOW DATABASES LIKE '" + SCHEMA + "';").next()) //swaps to a different schema, creating it if it doesn't exist
-                stmt.execute("CREATE SCHEMA `" + SCHEMA + "`");                     //note: you may want to rerun setupSchema() if on a brand new schema
-            stmt.execute("USE " + SCHEMA);
-            DBM.SCHEMA = SCHEMA;
+            //Connect to schema
+            useSchema(SCHEMA);
+        } catch (ClassNotFoundException e) {
+            System.err.println("Could not access JDBC drivers");
+        } catch (SQLException e) {
+            System.err.println("Could not connect to database.");
         }
+        System.out.println("Connected to database successfully.");
     }
 
     public static void setupSchema() throws SQLException, FileNotFoundException {   //creates schema from default script
@@ -68,7 +62,7 @@ public class DBM {
         String oldScript = creationScript;
         creationScript = newScript;
         try {
-            System.out.println("Deleting and recreating schema...");
+            System.out.println("Creating schema...");
             dropSchema();
             useSchema(SCHEMA);
 
@@ -79,6 +73,16 @@ public class DBM {
         } catch (SQLException | FileNotFoundException e) {
             creationScript = oldScript;          //return to old creation script if new script fails
             throw e;
+        }
+    }
+
+    public static void useSchema(String SCHEMA) throws SQLException {
+        System.out.println("Attempting to connect to schema...");
+        try (Statement stmt = conn.createStatement()) {
+            if (!stmt.executeQuery("SHOW DATABASES LIKE '" + SCHEMA + "';").next()) //swaps to a different schema, creating it if it doesn't exist
+                stmt.execute("CREATE SCHEMA `" + SCHEMA + "`");                     //note: you may want to rerun setupSchema() if on a brand new schema
+            stmt.execute("USE " + SCHEMA);
+            DBM.SCHEMA = SCHEMA;
         }
     }
 
@@ -230,10 +234,14 @@ public class DBM {
         conn.createStatement().execute("DROP DATABASE IF EXISTS " + SCHEMA);
     }
 
-    public static void close() throws SQLException {                                           //close the connection when you're done please
-        if (conn != null) {
-            conn.close();
-            conn = null;
+    public static void close() {                                           //close the connection when you're done please
+        try {
+            if (conn != null) {
+                conn.close();
+                conn = null;
+            }
+        } catch (SQLException e) {
+            System.err.println("Could not close database.");
         }
     }
 }
