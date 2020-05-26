@@ -244,7 +244,7 @@ public class EventSelector {
         timelineComboBox.getSelectionModel().select(-1);
     }
 
-    private static class EventListCell extends ListCell<Event> {         //changes how Events are displayed (name only)
+    private class EventListCell extends ListCell<Event> {         //changes how Events are displayed (name only)
         @Override
         protected void updateItem(Event item, boolean empty) {
             super.updateItem(item, empty);
@@ -253,6 +253,11 @@ public class EventSelector {
             } else {
                 setText(item.getName());
             }
+
+            this.setOnMouseClicked(e -> {
+                if (e.getClickCount() == 2)
+                    openEditor(item, false);
+            });
         }
     }
 

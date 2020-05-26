@@ -55,7 +55,7 @@
             </padding></Button>
          <TextField fx:id="zoomLabel" alignment="CENTER" maxHeight="20.0" minHeight="20.0" minWidth="-Infinity" onAction="#zoomLabel" prefHeight="20.0" prefWidth="50.0" text="100%">
             <tooltip>
-               <Tooltip text="Zoom level. Click to enter a value (1%-500%)" />
+               <Tooltip text="Zoom level. Click to enter a value (1%-500%)&#10;Double click to reset zoom level." />
             </tooltip></TextField>
          <Region HBox.hgrow="SOMETIMES" />
          <Region prefHeight="200.0" prefWidth="200.0" styleClass="smallButton" visible="false" />
