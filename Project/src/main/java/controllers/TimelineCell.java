@@ -108,6 +108,8 @@ public class TimelineCell {
             setBGImage();
             colorStarsByRating((int) Math.ceil(timeline.getRating()));
             ratingBox.setOpacity((timeline.getRating() > 1) ? 1 : 0);
+            cellDeleteTimelineButton.setDisable(timeline.getOwner().getID() != GUIManager.loggedInUser.getID());
+            cellEditTimelineButton.setDisable(timeline.getOwner().getID() != GUIManager.loggedInUser.getID());
         }
     }
 

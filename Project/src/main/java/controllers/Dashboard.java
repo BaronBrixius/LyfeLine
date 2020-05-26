@@ -281,6 +281,8 @@ public class Dashboard {
     }
 
     void sortTimelines() {
+        //Timeline t = list.getSelectionModel().getSelectedItem();
+
         switch (sortBy.getSelectionModel().getSelectedIndex()) {
             case 0:
                 sortedTimelines.setComparator((t1, t2) -> (t1.getName().compareToIgnoreCase(t2.getName())));
@@ -298,6 +300,8 @@ public class Dashboard {
                 sortedTimelines.setComparator(Comparator.comparing(Timeline::getRating).reversed());
                 break;
         }
+        //if (t != null)
+        //    list.getSelectionModel().select(t);
     }
 
     @FXML
@@ -474,12 +478,9 @@ public class Dashboard {
                 if (cell.timeline != null) {
                     cell.setBGImage();
 
-                    if (newValue) {
+                    if (newValue)
                         cell.pane.add(cell.cellButtonBox, 1, 0);
-                        boolean notOwnedByUser = (cell.timeline.getOwnerID() != GUIManager.loggedInUser.getID());
-                        cell.cellDeleteTimelineButton.setDisable(notOwnedByUser);
-                        cell.cellEditTimelineButton.setDisable(notOwnedByUser);
-                    } else
+                    else
                         cell.pane.getChildren().remove(cell.cellButtonBox);
                 }
             });
