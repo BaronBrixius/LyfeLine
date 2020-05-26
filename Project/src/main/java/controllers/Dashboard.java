@@ -124,9 +124,7 @@ public class Dashboard {
 
         updateDisplays();
 
-        list.widthProperty().addListener(e -> {
-            list.refresh();
-        });
+        list.widthProperty().addListener(e -> list.refresh());
 
         GUIManager.mainStage.setTitle("Dashboard");
     }

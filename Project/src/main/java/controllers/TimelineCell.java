@@ -171,7 +171,7 @@ public class TimelineCell {
                 e.printStackTrace();
             }
             filteredTimelines.getSource().remove(timeline);
-            list.getSelectionModel().select(0);
+            list.getSelectionModel().clearSelection();
             return true;
         }
     }
