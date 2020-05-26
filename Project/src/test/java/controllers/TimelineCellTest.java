@@ -40,11 +40,7 @@ class TimelineCellTest {
 
 	@BeforeAll
 	public static void beforeAll() {
-		try {
-			new DBM("test");
-		} catch (SQLException | ClassNotFoundException e) {
-			e.printStackTrace();
-		}
+		new DBM("test");
 	}
 
 	@Start

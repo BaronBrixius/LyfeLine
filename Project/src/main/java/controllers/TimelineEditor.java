@@ -65,7 +65,7 @@ public class TimelineEditor extends Editor {
 
         // Get list of scales
         try {
-            PreparedStatement state = DBM.conn.prepareStatement("SELECT unit FROM scale_lookup");
+            PreparedStatement state = DBM.conn.prepareStatement("SELECT Unit FROM scales");
             timeInput.setItems(FXCollections.observableArrayList(DBM.getFromDB(state, rs -> rs.getString("unit"))));
         } catch (SQLException e) {
             e.printStackTrace();

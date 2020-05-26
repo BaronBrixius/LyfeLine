@@ -80,7 +80,8 @@ public class TimelineView {
         this.activeTimeline = t;
         timelineEditorController.setTimeline(t);
         eventSelectorController.setTimelineSelected(activeTimeline); // sets the selected index to the currently viewed timeline
-        populateDisplay();
+        if (activeTimeline.getID() > 0)
+            populateDisplay();
     }
     
     /*Pulls the timeline from the database and populates the display*/
