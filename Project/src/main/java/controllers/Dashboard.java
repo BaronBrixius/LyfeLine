@@ -291,13 +291,10 @@ public class Dashboard {
     }
 
     private void handleAutoSelection(Timeline currentlySelectedTimeline) {
-        if (currentlySelectedTimeline == null)
+        if (currentlySelectedTimeline == null || !filteredTimelines.contains(currentlySelectedTimeline))
             list.getSelectionModel().clearSelection();
         else if (filteredTimelines.contains(currentlySelectedTimeline))
             list.getSelectionModel().select(currentlySelectedTimeline);
-        else
-            list.getSelectionModel().clearSelection();
-
         list.refresh();
         updateDisplays();
     }
@@ -339,24 +336,11 @@ public class Dashboard {
     TimelineView createTimeline() {
         Timeline t = new Timeline();
         t.setOwner(GUIManager.loggedInUser);
-        return openTimelineView(t, true);
-    }
 
-    @FXML
-    TimelineView editTimeline() {
-        return openTimelineView(list.getSelectionModel().getSelectedItem(), true);
-    }
-
-    @FXML
-    TimelineView openTimeline() {
-        return openTimelineView(list.getSelectionModel().getSelectedItem(), false);
-    }
-
-    private TimelineView openTimelineView(Timeline newActiveTimeline, boolean editable) {
         try {
             TimelineView timelineView = GUIManager.swapScene("TimelineView");
-            timelineView.setActiveTimeline(newActiveTimeline);
-            timelineView.timelineEditorController.toggleEditable(editable);
+            timelineView.setActiveTimeline(t);
+            timelineView.timelineEditorController.toggleEditable(true);
             return timelineView;
         } catch (IOException e) {
             e.printStackTrace();
@@ -386,8 +370,7 @@ public class Dashboard {
     @FXML
     private void updateDisplays() {
         list.setPrefHeight((list.getItems().size() * 84) + (322 * list.getSelectionModel().getSelectedIndices().size()));
-        if (list.getSelectionModel().getSelectedItem() != null)  //If a timeline is selected
-            //Scroll to the timeline directly above the selected one
+        if (list.getSelectionModel().getSelectedItem() != null)  //If a timeline is selected, scroll to the timeline directly above the selected one
             listScrollPane.setVvalue((84 / (list.getHeight() - listScrollPane.getHeight())) * (list.getSelectionModel().getSelectedIndex() - 1));
     }
 
