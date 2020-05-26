@@ -85,6 +85,10 @@
     -fx-fill: #FFF;
 }
 
+.menu-item .label{
+    -fx-text-fill: white;
+}
+
 .scroll-bar:horizontal .increment-button, .scroll-bar:horizontal .decrement-button {
     -fx-background-color: #4E4B42;
     -fx-background-radius: 10px;

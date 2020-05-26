@@ -37,7 +37,7 @@ public class AdminRoleManager {
         sortBy.setItems(sortOptions);
         
         /* Define what is shown in the user list (User ID and email for now)*/ 
-        userListView.setCellFactory(param -> new ListCell<User>() {
+        userListView.setCellFactory(param -> new ListCell<>() {
             @Override
             protected void updateItem(User item, boolean empty) {
                 super.updateItem(item, empty);

@@ -10,8 +10,8 @@ import java.util.Scanner;
 //Database manager class for easier connecting and interacting
 public class DBM {
     private static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
+    private static final String creationScript = "src/main/resources/Database_Creation_Script.sql";
     public static Connection conn = null;
-    public static String creationScript = "src/main/resources/Database_Creation_Script.sql";
     private static String DB_URL = "jdbc:mysql://localhost?useTimezone=true&serverTimezone=UTC";
     private static String USER = "root";
     private static String PASS = "AJnuHA^8VKHht=uB";
@@ -50,17 +50,12 @@ public class DBM {
             System.err.println("Could not access JDBC drivers");
         } catch (SQLException e) {
             System.err.println("Could not connect to database.");
+            e.printStackTrace();
         }
         System.out.println("Connected to database successfully.");
     }
 
-    public static void setupSchema() throws SQLException, FileNotFoundException {   //creates schema from default script
-        setupSchema(creationScript);
-    }
-
-    public static void setupSchema(String newScript) throws FileNotFoundException, SQLException {  //creates schema from alternate script
-        String oldScript = creationScript;
-        creationScript = newScript;
+    public static void setupSchema() {   //creates schema from default script
         try {
             System.out.println("Creating schema...");
             dropSchema();
@@ -71,8 +66,7 @@ public class DBM {
             runScript(creationScript);
             System.out.println("Schema created successfully.");
         } catch (SQLException | FileNotFoundException e) {
-            creationScript = oldScript;          //return to old creation script if new script fails
-            throw e;
+            e.printStackTrace();System.err.println("Could not run Database_Creation_Script");
         }
     }
 
@@ -86,8 +80,12 @@ public class DBM {
         }
     }
 
-    private static void runScript(String creationScript) throws FileNotFoundException, SQLException {      //private read-in method for DB creation script
-        File sql = new File(creationScript);
+    public static void createTestData() throws FileNotFoundException, SQLException {    //for testing
+        runScript("src/main/resources/Dummy_Data_Setup.sql");
+    }
+
+    private static void runScript(String script) throws FileNotFoundException, SQLException {      //private read-in method for DB creation script
+        File sql = new File(script);
         Statement stmt = conn.createStatement();
         Scanner sqlScan = new Scanner(sql);
         sqlScan.useDelimiter(";[\\r\\n]{3,}");
@@ -96,7 +94,7 @@ public class DBM {
         while (sqlScan.hasNext()) {
             query = sqlScan.next();
             if (stmt != null && !query.isEmpty())
-                stmt.execute(query);
+                stmt.execute(query);                //technically SQL-injectable but by the time someone can edit the script they can do anything
         }
 
         sqlScan.close();
@@ -124,6 +122,7 @@ public class DBM {
         insertIntoDB(asArray(insert));
     }
 
+    @SafeVarargs
     public static <T> void insertIntoDB(DBObject<T>... insert) throws SQLException {    //DON'T INSERT OBJECTS OF DIFFERENT TYPES
         PreparedStatement stmt = null;
         ResultSet rs = null;
@@ -165,6 +164,7 @@ public class DBM {
         updateInDB(asArray(update));
     }
 
+    @SafeVarargs
     public static <T> void updateInDB(DBObject<T>... update) throws SQLException {      //DON'T INSERT OBJECTS OF DIFFERENT TYPES
         PreparedStatement stmt = null;
         try {
@@ -193,6 +193,7 @@ public class DBM {
         deleteFromDB(asArray(delete));
     }
 
+    @SafeVarargs
     public static <T> void deleteFromDB(DBObject<T>... delete) throws SQLException {           //DON'T INSERT OBJECTS OF DIFFERENT TYPES
         PreparedStatement stmt = null;
         try {
@@ -230,8 +231,13 @@ public class DBM {
         }
     }
 
-    public static void dropSchema() throws SQLException {                                      //drop current schema
-        conn.createStatement().execute("DROP DATABASE IF EXISTS " + SCHEMA);
+    public static void dropSchema() {                                      //drop current schema
+        try (PreparedStatement stmt = conn.prepareStatement("DROP DATABASE IF EXISTS " + SCHEMA)) {
+            stmt.execute();
+        } catch (SQLException e) {
+            System.err.println("Could not drop database " + SCHEMA);
+        }
+
     }
 
     public static void close() {                                           //close the connection when you're done please

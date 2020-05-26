@@ -7,6 +7,7 @@ import javafx.stage.Stage;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.sql.DatabaseMetaData;
@@ -30,15 +31,22 @@ public class Main extends Application {
     public void stop() {
         DBM.close();        //closes the database connection when mainStage is closed
     }
-    private void firstTimeSetup() throws IOException, SQLException {    //check if tables exist in DB, if not then create them and import dummy data
-        DatabaseMetaData schemaCheck = DBM.conn.getMetaData();
 
-        try (ResultSet tableList = schemaCheck.getTables(null, null, "timelines", null)) {
-            if (tableList.next() && (tableList.getString("TABLE_NAME").equals("timelines")))
-                return;
+    private void firstTimeSetup() throws FileNotFoundException, SQLException {    //check if tables exist in DB, if not then create them and import dummy data
+        try {
+            DatabaseMetaData schemaCheck = DBM.conn.getMetaData();
+
+            try (ResultSet tableList = schemaCheck.getTables("project", null, "timelines", null)) {
+                if (tableList.next() && (tableList.getString("TABLE_NAME").equals("timelines")))
+                    return;
+            }
+        } catch (SQLException e) {
+            System.err.println("Could not determine whether database tables are set up.");
         }
+
         System.out.println("Beginning first time setup...");
         DBM.setupSchema();
+        DBM.createTestData();
         System.out.println("\nTip: default admin login is Admin@gmail.com using password 'Passw0rd!' Will not show after first time setup.");
 
         Gson gson = JSONTimeline.getGson();

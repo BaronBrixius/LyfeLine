@@ -58,7 +58,7 @@
                <Tooltip text="Zoom level. Click to enter a value (1%-500%)" />
             </tooltip></TextField>
          <Region HBox.hgrow="SOMETIMES" />
-         <Region prefHeight="200.0" prefWidth="200.0" styleClass="smallButton" />
+         <Region prefHeight="200.0" prefWidth="200.0" styleClass="smallButton" visible="false" />
         </HBox>
     </bottom>
     <left>

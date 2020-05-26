@@ -2,10 +2,8 @@ package controllers;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Menu;
-import javafx.scene.control.TextInputDialog;
 
 import java.io.IOException;
-import java.util.Optional;
 
 
 public class TopMenu {
@@ -61,7 +59,8 @@ public class TopMenu {
         try {
             GUIManager.swapScene("LoginAndRegistration");
         } catch (IOException e) {
-
+            System.err.println("Could not load Login Screen.");
+            System.exit(1);
         }
     }
 }

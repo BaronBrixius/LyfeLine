@@ -56,7 +56,7 @@ public class EventSelector {
         populateDisplay();
 
 
-        sortBy.getItems().setAll("Alphabetic", "Reverse Alphabetic", "Creation LocalDateTime ", "Reverse Creation LocalDateTime ", "Priority");
+        sortBy.getItems().setAll("Alphabetic", "Reverse Alphabetic", "Creation Date", "Reverse Creation Date", "Priority");
         sortBy.getSelectionModel().selectedIndexProperty().addListener(ov -> sortEvents(sortBy.getSelectionModel().getSelectedIndex()));
 
         //formatting for timeline and event selectors
@@ -71,7 +71,7 @@ public class EventSelector {
         timelineComboBox.getSelectionModel().selectedIndexProperty().addListener(event -> {     //on selecting a different timeline, clear the event selection and disable event controls
             setFilter();
             eventListView.getSelectionModel().clearSelection();
-            disableEventControlButtons(true);
+            disableEventControlButtons();
         });
 
         eventListView.getSelectionModel().selectedIndexProperty().addListener(e -> {
@@ -89,13 +89,13 @@ public class EventSelector {
         });
     }
 
-    private void disableEventControlButtons(boolean disable) {
-        viewButton.setDisable(disable);
-        addToTimelineButton.setDisable(disable);
-        deleteButton.setDisable(disable);
+    private void disableEventControlButtons() {
+        viewButton.setDisable(true);
+        addToTimelineButton.setDisable(true);
+        deleteButton.setDisable(true);
     }
 
-    void setParentController(TimelineView parentController) {             //TODO delete this inelegant solution
+    void setParentController(TimelineView parentController) {
         this.parentController = parentController;
     }
 
@@ -226,7 +226,7 @@ public class EventSelector {
                             && e.getID() == te.get(1)));                                                //and returns whether each event is on that timeline
     }
 
-    public void addToTimeline() {   //TODO make this work with multiple selections?
+    public void addToTimeline() {
         try {
             if (eventListView.getSelectionModel().getSelectedItem().addToTimeline(parentController.activeTimeline.getID())) {
                 parentController.activeTimeline.getEventList().add(eventListView.getSelectionModel().getSelectedItem());

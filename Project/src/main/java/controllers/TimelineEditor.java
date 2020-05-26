@@ -8,6 +8,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Side;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
@@ -28,13 +29,7 @@ import java.util.Optional;
 public class TimelineEditor extends Editor {
     private final ObservableList<String> keywords = FXCollections.observableArrayList();
     @FXML
-    CheckBox zoom;
-    @FXML
     HBox keywordBox;
-    @FXML
-    Button snapshotButton;
-    @FXML
-    Button exportButton;
     @FXML
     ComboBox<String> timeInput;
     @FXML
@@ -46,9 +41,14 @@ public class TimelineEditor extends Editor {
     @FXML
     Label feedbackText;
     @FXML
+    Button exportButton;
+    @FXML
+    ContextMenu exportPopup;
+    @FXML
+    MenuItem exportJSONButton;
+    @FXML
     private TextField keywordInput;
     private Timeline timeline;
-    private File imageChosen;
 
     @Override
     public void initialize() {
@@ -71,7 +71,8 @@ public class TimelineEditor extends Editor {
             e.printStackTrace();
         }
 
-        exportButton.setDisable(!GUIManager.loggedInUser.getAdmin());        //only admins can export
+        if (!GUIManager.loggedInUser.getAdmin())
+            exportPopup.getItems().remove(exportJSONButton);        //only admins can export
 
         GUIManager.mainStage.setTitle("Timeline Editor");
     }
@@ -79,8 +80,8 @@ public class TimelineEditor extends Editor {
     void setTimeline(Timeline timeline) {
         this.timeline = timeline;
         itemInEditor = timeline;
-        // Check if Admin
-        setOwner(GUIManager.loggedInUser.getID() == timeline.getOwnerID());
+
+        setOwner(GUIManager.loggedInUser.getID() == timeline.getOwnerID());        // Check if Admin
         populateDisplay();
     }
 
@@ -112,6 +113,8 @@ public class TimelineEditor extends Editor {
         timeline.getKeywords().clear();
         timeline.getKeywords().addAll(keywords);
 
+        feedbackText.setText("");
+
         timeline.setScale((timeInput.getSelectionModel().getSelectedIndex()) + 1);
         parentController.setActiveTimeline(timeline);
         parentController.eventSelectorController.populateTimelineList();
@@ -126,7 +129,7 @@ public class TimelineEditor extends Editor {
 
         Optional<ButtonType> result = confirmDelete.showAndWait();
 
-        if (result.get() == ButtonType.CANCEL)
+        if (result.isPresent() && result.get() == ButtonType.CANCEL)
             return false;
 
         try {
@@ -159,7 +162,6 @@ public class TimelineEditor extends Editor {
         for (String s : keywords) {
             if (k.equalsIgnoreCase(s))
                 return false;
-
         }
         return true;
     }
@@ -204,12 +206,21 @@ public class TimelineEditor extends Editor {
         return true;
     }
 
+    boolean isOkayToLeavePage() {
+        if (editable && hasChanges() && saveConfirm())      //when admin tries to leave, ask if they want to save changes
+            if (validData())                                //if data is valid, save, otherwise prevent leaving
+                return save();
+            else
+                return false;
+        return true;                                        //if they don't want to save, just let them leave
+    }
+
     @Override
     boolean validData() {
         if (timeInput.getSelectionModel().getSelectedIndex() >= 0)
             return super.validData();
         else {
-            Alert confirmDelete = new Alert(Alert.AlertType.CONFIRMATION);
+            Alert confirmDelete = new Alert(Alert.AlertType.INFORMATION);
             confirmDelete.setTitle("Invalid Units");
             confirmDelete.setHeaderText("A time unit must be selected.");
             confirmDelete.setContentText("Make sure to selected a time unit appropriate for your timeline before saving.");
@@ -249,20 +260,34 @@ public class TimelineEditor extends Editor {
         resolutionSaveImage.showAndWait();
     }
 
+
     @FXML
-    void imageExport() throws IOException {
+    void snapshotEntireTimeline() {
+        imageExport(false);
+    }
+
+    @FXML
+    void snapshotCurrentView() {
+        imageExport(true);
+    }
+
+    private void imageExport(boolean currentViewOnly) {
         Stage imageExport = new Stage();
         imageExport.setTitle("Export Image");
         imageExport.initOwner(GUIManager.mainStage);         //These two lines make sure you can't click back to the timeline window,
         imageExport.initModality(Modality.WINDOW_MODAL);     //so you can't have 10 windows open at once.
 
-        FXMLLoader loader = new FXMLLoader(GUIManager.class.getResource("../FXML/ImageExport.fxml"));
-        imageExport.setScene(new Scene(loader.load()));
-        ImageExport imageExportObject = loader.getController();
-        imageExportObject.setUp(parentController.snapshot(zoom.isSelected()), parentController.activeTimeline);
+        try {
+            FXMLLoader loader = new FXMLLoader(GUIManager.class.getResource("../FXML/ImageExport.fxml"));
+            imageExport.setScene(new Scene(loader.load()));
+            ImageExport imageExportObject = loader.getController();
+            imageExportObject.setUp(parentController.snapshot(currentViewOnly), parentController.activeTimeline);
 
-        imageExport.getScene().getStylesheets().addAll(GUIManager.mainStage.getScene().getStylesheets());
-        imageExport.show();
+            imageExport.getScene().getStylesheets().addAll(GUIManager.mainStage.getScene().getStylesheets());
+            imageExport.show();
+        } catch (IOException e) {
+            System.err.println("Could not start image export");
+        }
     }
 
     @FXML
@@ -285,5 +310,10 @@ public class TimelineEditor extends Editor {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @FXML
+    void openExportMenu() {
+        exportPopup.show(exportButton, Side.TOP, 0, 0);
     }
 }

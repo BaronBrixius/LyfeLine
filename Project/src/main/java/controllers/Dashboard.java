@@ -209,7 +209,7 @@ public class Dashboard {
             }
 
             if (dateSearchedBy(startInputs)) {
-                //Start LocalDateTime
+                //StartDate
                 LocalDateTime startDateSpinner = readTimeInputs(startInputs);
                 LocalDateTime startDateInDB = LocalDateTime.of(data.getInt("StartYear"), data.getInt("StartMonth"), data.getInt("StartDay"),
                         data.getInt("StartHour"), data.getInt("StartMinute"), data.getInt("StartSecond"), data.getInt("StartMillisecond"));
@@ -220,7 +220,7 @@ public class Dashboard {
             }
 
             if (dateSearchedBy(endInputs)) {
-                //End LocalDateTime
+                //EndDate
                 LocalDateTime endDateSpinner = readTimeInputs(endInputs);
                 LocalDateTime endDateInDB = LocalDateTime.of(data.getInt("EndYear"), data.getInt("EndMonth"), data.getInt("EndDay"),
                         data.getInt("EndHour"), data.getInt("EndMinute"), data.getInt("EndSecond"), data.getInt("EndMillisecond"));

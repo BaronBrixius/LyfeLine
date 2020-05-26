@@ -4,14 +4,12 @@ import database.DBM;
 import database.Timeline;
 import org.junit.jupiter.api.*;
 
-import java.io.FileNotFoundException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TimelineViewTest {
 
@@ -36,9 +34,7 @@ public class TimelineViewTest {
 
     @BeforeEach
     void setUp() {
-        try {
-            DBM.setupSchema();
-        } catch (SQLException | FileNotFoundException e) {e.printStackTrace();}
+        DBM.setupSchema();
         System.out.println("Test " + ++testCount);
     }
 

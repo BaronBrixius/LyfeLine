@@ -82,10 +82,8 @@ CREATE TABLE `scales`
 
 
 INSERT INTO `scales`
-(
- `ID`,
- `Unit`
- )
+(`ID`,
+ `Unit`)
 VALUES (1, 'Milliseconds'),
        (2, 'Seconds'),
        (3, 'Minutes'),
@@ -204,4 +202,7 @@ INSERT INTO `users`
 (`UserID`, `UserName`, `UserEmail`, `Password`, `Salt`, `Admin`, `Theme`)
 VALUES ('1', 'Admin', 'Admin@gmail.com',
         'FPUpkk14h2EWAX9J7q18Ue6QJ/VSrs5ulnaw/Tggo23smYvqcLKihIUARNQcxUpDSGXOGBsGo4gjKTikDfrpxw==',
-        'hXEFj6Yy9hanXVOUyACANrUi1eZs4f', '1', 'Default');
+        'hXEFj6Yy9hanXVOUyACANrUi1eZs4f', '1', 'Default'),
+       ('2', 'NonAdmin', 'NonAdmin@gmail.com',
+        'bXKyPFQD//MW1XtOlVrgEDvEXIm9xzT+z4wBrMKR7DTHeETUPFlYpcuvanM/I2dPZSa5fQEnKc4E2D6ZD7sOiA==',
+        'Q48XUaFIG4LITasAYZzSNUHskubTw5', '0', 'Default');

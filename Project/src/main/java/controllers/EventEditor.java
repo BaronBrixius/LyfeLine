@@ -55,11 +55,12 @@ public class EventEditor extends Editor {
     @FXML
     void toggleHasDuration() {              //toggles whether the event has a distinct end date, as opposed to being instant
         endPane.setDisable(!hasDuration.isSelected());
+
         setExpansion(endPane, endBoxes, hasDuration.isSelected() && endExpanded, parentController.activeTimeline.getScale());   //compresses if duration is disabled, if enabled leave it as user wanted
 
         if (hasDuration.isSelected()) {
             populateEndInputs();
-            endPane.getStyleClass().remove("DisabledAnyways");
+            endPane.getStyleClass().clear();
         } else {
             for (int i = 0; i < 7; i++) {
                 endInputs.get(i).getValueFactory().setValue(startInputs.get(i).getValue());
@@ -98,6 +99,9 @@ public class EventEditor extends Editor {
     @Override
     void updateItem() {                 //sets object's values based on input fields' values
         super.updateItem();        //update variables common to TimelineObjects
+        if (!hasDuration.isSelected())
+            event.setEndDate(event.getStartDate());
+
         event.setEventPriority((int) prioritySlider.getValue());
     }
 
@@ -159,13 +163,13 @@ public class EventEditor extends Editor {
         ButtonType yes = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
         ButtonType no = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
 
-        Alert confirmSave = new Alert(Alert.AlertType.CONFIRMATION, "Would you like to save them before closing?", yes, no);
+        Alert confirmSave = new Alert(Alert.AlertType.CONFIRMATION, "Would you like to save changes before closing?", yes, no);
 
         confirmSave.setTitle("Confirm Close");
-        confirmSave.setHeaderText("You have made unsaved changes!"); //TODO change text
+        confirmSave.setHeaderText("You have unsaved changes!");
 
         Optional<ButtonType> result = confirmSave.showAndWait();
 
-        return result.get() != no;
+        return result.isPresent() && result.get() != no;
     }
 }
