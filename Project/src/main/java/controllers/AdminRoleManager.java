@@ -36,7 +36,7 @@ public class AdminRoleManager {
         sortOptions.add("Reverse User ID");
         sortBy.setItems(sortOptions);
 
-        userListView.setCellFactory(param -> new ListCell<User>() {
+        userListView.setCellFactory(param -> new ListCell<>() {
             @Override
             protected void updateItem(User item, boolean empty) {
                 super.updateItem(item, empty);
@@ -55,7 +55,7 @@ public class AdminRoleManager {
         userListView.getSelectionModel().selectedIndexProperty().addListener(ov -> {
 
             if (userListView.getSelectionModel().getSelectedIndex() >= 0) {
-                userText.setText(userList.get(userListView.getSelectionModel().getSelectedIndex()).getUserEmail());
+                userText.setText(userListView.getSelectionModel().getSelectedItem().getUserEmail());
                 updateCheckBox();
             }
         });
@@ -86,6 +86,7 @@ public class AdminRoleManager {
             PreparedStatement search = DBM.conn.prepareStatement(sql);
             List<User> userList = DBM.getFromDB(search, new User());
             userListView.setItems(FXCollections.observableArrayList(userList));
+            //userListView.refresh();
         } catch (SQLException e) {
             System.err.println("Could not access users database.");
         }

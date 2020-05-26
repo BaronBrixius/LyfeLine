@@ -1,9 +1,16 @@
+import com.google.gson.Gson;
 import controllers.GUIManager;
 import database.DBM;
+import database.JSONTimeline;
 import javafx.application.Application;
 import javafx.stage.Stage;
+import org.apache.commons.io.FileUtils;
 
-import java.io.FileNotFoundException;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class Main extends Application {
@@ -13,23 +20,38 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        // Used to establish connection to the DB.
-        try {
-            new DBM();//
-            DBM.setupSchema();
-        } catch (SQLException | ClassNotFoundException | FileNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        GUIManager.start(primaryStage);
+        new DBM();                          //establish connection to the DB
+        GUIManager.start(primaryStage);     //open the application
+        firstTimeSetup();                   //setup database and dummy data if needed
     }
 
     @Override
     public void stop() {
-        try {
-            DBM.close();        //closes the database connection when mainStage is closed
-        } catch (SQLException e) {
-            e.printStackTrace();
+        DBM.close();        //closes the database connection when mainStage is closed
+    }
+    private void firstTimeSetup() throws IOException, SQLException {    //check if tables exist in DB, if not then create them and import dummy data
+        DatabaseMetaData schemaCheck = DBM.conn.getMetaData();
+
+        try (ResultSet tableList = schemaCheck.getTables(null, null, "timelines", null)) {
+            if (tableList.next() && (tableList.getString("TABLE_NAME").equals("timelines")))
+                return;
+        }
+        System.out.println("Beginning first time setup...");
+        DBM.setupSchema();
+        System.out.println("\nTip: default admin login is Admin@gmail.com using password 'Passw0rd!' Will not show after first time setup.");
+
+        Gson gson = JSONTimeline.getGson();
+        String inJSON;
+
+        File directory = new File("src/main/resources/dummy_data/");
+        if (directory.listFiles() == null)
+            return;
+        for (File f : directory.listFiles()) {
+            try {
+                inJSON = FileUtils.readFileToString(f, (Charset) null);             //import Json from file
+                gson.fromJson(inJSON, JSONTimeline.class).importToDB();             //parse Json with GSON object and import it to the DB
+            } catch (IOException ignore) {                                          //if one fails to read, skip it
+            }
         }
     }
 }

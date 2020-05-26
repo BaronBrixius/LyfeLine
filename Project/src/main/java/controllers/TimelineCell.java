@@ -117,7 +117,6 @@ public class TimelineCell {
         title.setText("Title: " + timeline.getName());
         author.setText("By: " + user.getUserName());
         description.setText("Description: " + timeline.getDescription());
-        //TODO start and end date here
 
         StringBuilder keyWords = new StringBuilder();
         keyWords.append("Keywords: ");
@@ -177,12 +176,12 @@ public class TimelineCell {
     }
 
     @FXML
-    public TimelineView editTimeline() {
+    TimelineView editTimeline() {
         return openTimelineView(true);
     }
 
     @FXML
-    public TimelineView openTimeline() {
+    TimelineView openTimeline() {
         return openTimelineView(false);
     }
 
