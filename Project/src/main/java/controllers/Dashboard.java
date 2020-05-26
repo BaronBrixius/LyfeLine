@@ -474,12 +474,9 @@ public class Dashboard {
                 if (cell.timeline != null) {
                     cell.setBGImage();
 
-                    if (newValue) {
+                    if (newValue)
                         cell.pane.add(cell.cellButtonBox, 1, 0);
-                        boolean notOwnedByUser = (cell.timeline.getOwnerID() != GUIManager.loggedInUser.getID());
-                        cell.cellDeleteTimelineButton.setDisable(notOwnedByUser);
-                        cell.cellEditTimelineButton.setDisable(notOwnedByUser);
-                    } else
+                    else
                         cell.pane.getChildren().remove(cell.cellButtonBox);
                 }
             });
