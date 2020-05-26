@@ -35,8 +35,9 @@ public class AdminRoleManager {
         sortOptions.add("User ID");
         sortOptions.add("Reverse User ID");
         sortBy.setItems(sortOptions);
-
-        userListView.setCellFactory(param -> new ListCell<>() {
+        
+        /* Define what is shown in the user list (User ID and email for now)*/ 
+        userListView.setCellFactory(param -> new ListCell<User>() {
             @Override
             protected void updateItem(User item, boolean empty) {
                 super.updateItem(item, empty);
@@ -51,7 +52,8 @@ public class AdminRoleManager {
 
         fillListView();
         updateCheckBox();
-
+        
+        /*Listener for dropdown menu, that sort the user list depending on the dropdown index*/
         userListView.getSelectionModel().selectedIndexProperty().addListener(ov -> {
 
             if (userListView.getSelectionModel().getSelectedIndex() >= 0) {
@@ -79,6 +81,7 @@ public class AdminRoleManager {
         });
     }
 
+    /*Searches the database for input matches, currently supports username and email*/
     @FXML
     void search() {
         try {
@@ -92,6 +95,7 @@ public class AdminRoleManager {
         }
     }
 
+    /*Fills the user list with the users from the database*/
     void fillListView() {
         try {
             List<User> usersFromDB = DBM.getFromDB(DBM.conn.prepareStatement("SELECT * FROM users "), new User());
@@ -103,10 +107,12 @@ public class AdminRoleManager {
         userListView.getSelectionModel().select(0);
     }
 
+    /*Updates the checkbox that shows whether a user is an admin*/
     public void updateCheckBox() {
-        toggle.setSelected(userListView.getSelectionModel().getSelectedItem().getAdmin());    //get admin status from selected item
+        toggle.setSelected(userListView.getSelectionModel().getSelectedItem().getAdmin()); 
     }
-
+    
+    /*Sets the switches between admin and non-admin for the selected user*/
     @FXML
     void toggleClicked() {
         userListView.getSelectionModel().getSelectedItem().toggleAdmin();
@@ -118,6 +124,7 @@ public class AdminRoleManager {
         }
     }
 
+    /*Connects the admin GUI and to the dashboard*/
     @FXML
     void back() {
         ((Stage) userListView.getScene().getWindow()).close();
