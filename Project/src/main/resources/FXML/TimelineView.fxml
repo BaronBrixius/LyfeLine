@@ -62,7 +62,7 @@
         </HBox>
     </bottom>
     <left>
-        <StackPane fx:id="leftSidebar" BorderPane.alignment="CENTER" />
+        <StackPane fx:id="leftSidebar" minWidth="1.0" BorderPane.alignment="CENTER" />
     </left>
     <center>
         <ScrollPane fx:id="mainScrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="600.0" minWidth="600.0" pannable="true" styleClass="scroll-bar" BorderPane.alignment="CENTER">

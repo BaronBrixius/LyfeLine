@@ -27,16 +27,7 @@
 .scroll-bar:vertical .increment-button:pressed, .scroll-bar:vertical .decrement-button:pressed,
 .spinner .increment-arrow-button, .spinner .decrement-arrow-button,
 .smallText .thumb, .check-box:selected .box, .listCellBackground {
-    -fx-background-color: #4E4B42;
-}
-
-.date-picker-popup .button {
-    -fx-background-color: 0 0 0;
-    -fx-color: transparent;
-}
-
-.date-picker-popup > * > .spinner > .button:hover, .date-picker-popup > * > .spinner > .button:armed {
-    -fx-color: 0;
+    -fx-background-color: rgb(108, 105, 96);
 }
 
 .eventEditor {
@@ -125,8 +116,12 @@
 }
 
 .text-field, .text-area .content, .smallTextArea, .list-view, .list-cell:even, .list-cell:odd,
-.scroll-pane .viewport, .scroll-bar {
+.scroll-pane, .scroll-bar, .viewport {
     -fx-background-color: #DAD4BB;
+}
+
+.editorScrollPane, .editorScrollPane > .scroll-bar, .editorScrollPane > .viewport {
+    -fx-background-color: transparent !important;
 }
 
 .textStyle, .smallText {

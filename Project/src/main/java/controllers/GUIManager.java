@@ -7,6 +7,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import java.io.FileInputStream;
@@ -44,6 +45,8 @@ public class GUIManager {
     public static void start(Stage stage) throws Exception {
         //loggedInUser = DBM.getFromDB(DBM.conn.prepareStatement("SELECT * FROM users"), new User()).get(0);  //TODO delete for final
         main = new BorderPane();
+        main.setPrefWidth(Screen.getPrimary().getBounds().getWidth() - 30);
+        main.setPrefHeight(Screen.getPrimary().getBounds().getHeight() - 90);
         loader = new FXMLLoader(GUIManager.class.getResource("../FXML/TopMenu.fxml"));
         main.setTop(loader.load());
         menu = loader.getController();
@@ -58,6 +61,7 @@ public class GUIManager {
         FileInputStream icon = new FileInputStream("src/main/resources/LogoIcon.png");
         mainStage.getIcons().add(new Image(icon));
         icon.close();
+        mainStage.setMaximized(true);
         mainStage.show();
     }
 }
