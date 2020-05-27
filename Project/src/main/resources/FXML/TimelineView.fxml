@@ -68,17 +68,12 @@
         <ScrollPane fx:id="mainScrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="600.0" minWidth="600.0" pannable="true" styleClass="scroll-bar" BorderPane.alignment="CENTER">
             <StackPane fx:id="centeringStack">
                 <Group>
-                    <GridPane fx:id="timelineGrid" alignment="CENTER" minHeight="300.0" minWidth="500.0" scaleShape="false" vgap="27.0">
+                    <GridPane fx:id="timelineGrid" alignment="CENTER" minHeight="300.0" minWidth="500.0" scaleShape="false" vgap="17.0">
                         <columnConstraints>
                             <ColumnConstraints hgrow="SOMETIMES" minWidth="-Infinity" prefWidth="100.0" />
                         </columnConstraints>
                         <rowConstraints>
-                            <RowConstraints minHeight="10.0" prefHeight="25.0" vgrow="NEVER" />
-                            <RowConstraints minHeight="10.0" prefHeight="10.0" vgrow="NEVER" />
-                            <RowConstraints minHeight="10.0" prefHeight="10.0" vgrow="NEVER" />
-                            <RowConstraints minHeight="10.0" prefHeight="10.0" vgrow="NEVER" />
-                            <RowConstraints minHeight="10.0" prefHeight="10.0" vgrow="NEVER" />
-                            <RowConstraints minHeight="10.0" prefHeight="10.0" vgrow="NEVER" />
+                            <RowConstraints minHeight="-Infinity" prefHeight="50.0" vgrow="NEVER" />
                         </rowConstraints>
                         <opaqueInsets>
                             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

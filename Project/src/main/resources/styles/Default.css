@@ -139,7 +139,7 @@
 
 .eventNode {
     -fx-background-color: #4E4B42;
-    -fx-effect: dropshadow(one-pass-box, #635F54, 4, 0, 0, 0);
+    -fx-effect: dropshadow(one-pass-box, #898376, 4, 0, 0, 0);
     -fx-font-weight: bold;
     -fx-text-fill: white;
 }

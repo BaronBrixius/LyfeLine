@@ -77,6 +77,8 @@ public class EventNode implements Comparable<EventNode> {
 
     @Override
     public int compareTo(EventNode o) {     //sorts by highest priority first, then earlier start, then by longest span as tiebreakers
+        if (this.row != o.row)              //sort by row first to speed up finding conflicts
+            return this.row - o.row;
         if (this.activeEvent.getEventPriority() != o.activeEvent.getEventPriority())
             return o.activeEvent.getEventPriority() - this.activeEvent.getEventPriority();
         if (this.startColumn != o.startColumn)

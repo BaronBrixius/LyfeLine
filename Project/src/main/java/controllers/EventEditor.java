@@ -95,7 +95,7 @@ public class EventEditor extends Editor {
     void populateDisplay() {
         super.populateDisplay();    //populate inputs common to editors
 
-        hasDuration.setSelected(event.getStartDate().compareTo(event.getEndDate()) != 0);       //has no duration if start==end
+        hasDuration.setSelected(event.getStartDate().compareTo(event.getEndDate()) < 0);       //has no duration if start==end
         toggleHasDuration();
 
         prioritySlider.setValue(event.getEventPriority());

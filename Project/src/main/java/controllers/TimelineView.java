@@ -74,7 +74,7 @@ public class TimelineView {
                 zoomLabel.setText(oldV);
         });
 
-        zoomLabel.setOnMouseClicked(e->{
+        zoomLabel.setOnMouseClicked(e -> {
             if (e.getClickCount() == 2)
                 zoom(1);
         });
@@ -107,6 +107,7 @@ public class TimelineView {
      * This is computed depending on the start date, end date and the units that has been chosen for the timeline*/
     private void setupMainLine() {
         Pane mainLine = new Pane();
+        mainLine.setMaxHeight(25);
         mainLine.getStyleClass().add("timeline");
         int numberOfCol = DateUtils.distanceBetween(activeTimeline.getStartDate(), activeTimeline.getEndDate(),
                 activeTimeline.getScale());
@@ -179,12 +180,19 @@ public class TimelineView {
         if (newNode.getColumnSpan() < 1)                                            //if, after cutting, nothing remains, don't display it at all
             return;
 
-        int row = 1;
-        for (int i = 0; i < eventsPlacedCount; i++) {                                //check previous nodes to see if they occupy desired columns
-            if (row == eventList.get(i).getRow()
-                    && eventList.get(i).getStartColumn() < newNode.getStartColumn() + newNode.getColumnSpan()            //if a previous node on current row starts before the new one would end
-                    && eventList.get(i).getStartColumn() + eventList.get(i).getColumnSpan() > newNode.getStartColumn()) //and it ends after the new one starts
-                row++;                                                                                                    // try next row
+        boolean[] usedRows = new boolean[timelineGrid.getRowCount()];               //array to mark rows as occupied or not to the given event node
+        EventNode eventBeingChecked;
+        for (int i = 0; i < eventsPlacedCount; i++) {                               //check previous nodes to see if they occupy desired columns
+            eventBeingChecked = eventList.get(i);
+            if (eventBeingChecked.getStartColumn() < newNode.getStartColumn() + newNode.getColumnSpan()                     //if a previous node on current row starts before the new one would end
+                    && eventBeingChecked.getStartColumn() + eventBeingChecked.getColumnSpan() > newNode.getStartColumn())   //and it ends after the new one starts
+                usedRows[eventBeingChecked.getRow()] = true;                                                                //then mark that row as occupied for the desired columns
+        }
+
+        int row;
+        for (row = 1; row < usedRows.length; row++) {           //find the first unoccupied (unmarked) row and place the new event there
+            if (!usedRows[row])                                 //storing occupied rows in an array and traversing that is far faster than re-traversing the eventList for larger timelines
+                break;
         }
         newNode.setRow(row);
         timelineGrid.add(newNode.getDisplayPane(), newNode.getStartColumn(), row, newNode.getColumnSpan(), 1);
@@ -258,7 +266,7 @@ public class TimelineView {
         return SwingFXUtils.toFXImage(backImage, null);
     }
 
-    void zoom(double newScale){
+    void zoom(double newScale) {
         zoom(newScale, mainScrollPane.getHvalue(), mainScrollPane.getVvalue());
     }
 
