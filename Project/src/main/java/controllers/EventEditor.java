@@ -52,8 +52,8 @@ public class EventEditor extends Editor {
         });
 
         editor.setOnMouseClicked(e-> {
-            if (e.getClickCount() == 2)
-                close();
+            if (e.getClickCount() == 2 && GUIManager.loggedInUser.getID() == this.event.getOwnerID())
+                saveEditButton();
         });
     }
 

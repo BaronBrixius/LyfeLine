@@ -82,8 +82,6 @@ public abstract class Editor {
         setupTimeInputStartAndEnd("Second", 0, 59, 5);
         setupTimeInputStartAndEnd("Millisecond", 0, 999, 6);
 
-        image.scaleYProperty().bind(image.scaleXProperty());
-
         ContextMenu fullImagePopup = new ContextMenu();
         MenuItem fullImageContainer = new MenuItem();
         fullImagePopup.getItems().add(fullImageContainer);              //makes full-sized image appear on double click
