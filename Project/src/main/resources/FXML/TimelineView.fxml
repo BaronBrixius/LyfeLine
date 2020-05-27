@@ -39,7 +39,7 @@
             <padding>
                <Insets bottom="-5.0" left="-5.0" right="-5.0" top="-7.0" />
             </padding></Button>
-         <Slider fx:id="zoomSlider" majorTickUnit="10.0" max="500.0" min="1.0" minorTickCount="0" value="100.0">
+         <Slider fx:id="zoomSlider" majorTickUnit="10.0" max="500.0" min="1.0" minorTickCount="0" styleClass="smallText" value="100.0">
             <tooltip>
                <Tooltip text="Zoom" />
             </tooltip></Slider>
