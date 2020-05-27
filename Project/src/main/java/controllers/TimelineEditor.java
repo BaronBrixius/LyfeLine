@@ -245,9 +245,9 @@ public class TimelineEditor extends Editor {
     private boolean validResolution(File file) {
         try {
             BufferedImage imageToCheck = ImageIO.read(file);
-            if (imageToCheck.getHeight() < 576)
+            if (imageToCheck.getHeight() < 600)
                 return false;
-            return (imageToCheck.getWidth() > 1024);
+            return (imageToCheck.getWidth() >= 800);
         } catch (IOException e) {
             System.err.println("Could not read image.");
             return false;
@@ -257,7 +257,7 @@ public class TimelineEditor extends Editor {
     private void ImageResolutionNotification() {
         Alert resolutionSaveImage = new Alert(Alert.AlertType.INFORMATION);
         resolutionSaveImage.setTitle("Too low resolution for timeline image");
-        resolutionSaveImage.setHeaderText("Resolution of the picture is too low. Minimum resolution is 1280x720");
+        resolutionSaveImage.setHeaderText("Resolution of the picture is too low. Minimum resolution is 800x600");
         resolutionSaveImage.showAndWait();
     }
 

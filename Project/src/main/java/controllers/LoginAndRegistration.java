@@ -143,7 +143,7 @@ public class LoginAndRegistration {
                 }
             }
         } catch (SQLException | IOException e) {
-            errorMessage.setText(e.getMessage());
+            e.printStackTrace();
         }
     }
 
