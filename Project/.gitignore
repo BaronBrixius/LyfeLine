@@ -51,3 +51,6 @@ buildNumber.properties
 .flattened-pom.xml
 
 
+src\main\resources\images\timelines\*
+src\main\resources\images\events\*
+
