@@ -51,7 +51,7 @@
 .label {
     -fx-fill: white;
     -fx-font-weight: bold;
-    -fx-text-fill: #36449e;
+    -fx-text-fill: black;
 }
 
 .list-cell:filled:hover, .list-cell:filled:selected:focused, .list-cell:filled:selected,
@@ -114,7 +114,7 @@
 }
 
 .slider .axis, .check-box {
-    -fx-text-fill: #5980ff;
+    -fx-text-fill: black;
 }
 
 .smallButton, .popupButton {
@@ -122,7 +122,7 @@
 }
 
 .smallText .track {
-    -fx-background-color: #B4AF9A;
+    -fx-background-color: black;
 }
 
 .text-field, .text-area .content, .smallTextArea, .list-view, .list-cell:even, .list-cell:odd,
@@ -131,7 +131,7 @@
 }
 
 .textStyle, .smallText {
-    -fx-fill: #36449e;
+    -fx-fill: black;
 }
 
 .timeline {
