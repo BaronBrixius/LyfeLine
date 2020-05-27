@@ -77,15 +77,12 @@ public class EventSelector {
         eventListView.getSelectionModel().selectedIndexProperty().addListener(e -> {
             viewButton.setDisable(eventListView.getSelectionModel().getSelectedIndex() < 0);    //if no event selected, disable view button
 
-            if (GUIManager.loggedInUser.getAdmin()) {           //if admin, allow editing events
-                addToTimelineButton.setDisable(eventListView.getSelectionModel().getSelectedIndex() < 0);
-
-                if (timelineComboBox.getSelectionModel().getSelectedIndex() < 0) {     //no deleting from null timeline
-                    deleteButton.setDisable(true);
-                } else {        //only owner can delete
-                    deleteButton.setDisable(GUIManager.loggedInUser.getID() != timelineComboBox.getSelectionModel().getSelectedItem().getOwnerID());
-                }
+            if (eventListView.getSelectionModel().getSelectedIndex() >= 0) {
+                deleteButton.setDisable(GUIManager.loggedInUser.getID() != eventListView.getSelectionModel().getSelectedItem().getOwnerID());
+                addToTimelineButton.setDisable(GUIManager.loggedInUser.getID() != parentController.activeTimeline.getOwnerID()
+                || GUIManager.loggedInUser.getID() != eventListView.getSelectionModel().getSelectedItem().getOwnerID());        //TODO clean
             }
+
         });
     }
 
