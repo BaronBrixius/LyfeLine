@@ -386,7 +386,7 @@ public abstract class Editor {
     boolean validImage(File imageChosen) {
         if (imageChosen == null)                //usually only null if user cancelled out of the the fileChooser
             return false;
-        if (!imageChosen.getName().substring(imageChosen.getName().lastIndexOf(".") + 1).matches("(JPEG|png|jpg|bmp|gif|wbmp)")) {
+        if (!imageChosen.getName().substring(imageChosen.getName().lastIndexOf(".") + 1).matches("(jpeg|JPEG|png|jpg|bmp|gif|wbmp)")) {
             wrongFormatNotification();          //check for formats we don't support
             return false;
         }

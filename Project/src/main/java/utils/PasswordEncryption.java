@@ -33,7 +33,7 @@ public class PasswordEncryption {
     //The hash method t
     public static byte[] hash(char[] password, byte[] salt) {
         //https://docs.oracle.com/javase/9/docs/api/javax/crypto/spec/PBEKeySpec.html
-        PBEKeySpec spec = new PBEKeySpec(password, salt, 10000, 512); //Create a 256 bi key by hashing 10000 times, making brute-force slow
+        PBEKeySpec spec = new PBEKeySpec(password, salt, 10000, 512); //Create a 512 bi key by hashing 10000 times, making brute-force slow
         try {
             //https://docs.oracle.com/javase/7/docs/api/javax/crypto/SecretKeyFactory.html
             SecretKeyFactory skf = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA512"); //Use PBKDF2 with SHA 512 algorithm to generate byte version of 512 bit long hash
