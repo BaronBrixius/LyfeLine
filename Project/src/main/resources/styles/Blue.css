@@ -7,7 +7,6 @@
     -fx-background-color: #5980ff;
     -fx-font-weight: bold;
     -fx-text-fill: white;
-    -fx-border-radius: 20px;
 }
 
 .button:hover, .toggle-button:hover, .toggle-button:selected, .menu-item:hover, .menu:hover, .menu:showing,
@@ -28,7 +27,7 @@
 .scroll-bar:vertical .increment-button:pressed, .scroll-bar:vertical .decrement-button:pressed,
 .spinner .increment-arrow-button, .spinner .decrement-arrow-button,
 .smallText .thumb, .check-box:selected .box, .listCellBackground {
-    -fx-background-color: #5980ff;
+    -fx-background-color: #5980aa;
 }
 
 .date-picker-popup .button {
@@ -122,12 +121,14 @@
 }
 
 .smallText .track {
-    -fx-background-color: black;
+    -fx-background-color: gray;
 }
 
-.text-field, .text-area .content, .smallTextArea, .list-view, .list-cell:even, .list-cell:odd,
-.scroll-pane .viewport, .scroll-bar {
+.list-view, .list-cell:even, .list-cell:odd, .scroll-pane .viewport, .scroll-bar {
     -fx-background-color: #bfd0ff;
+}
+.text-field, .text-area .conten, .smallTextArea{
+	-fx-background-color: #b8c8f5
 }
 
 .textStyle, .smallText {
