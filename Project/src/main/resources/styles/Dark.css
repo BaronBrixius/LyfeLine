@@ -169,3 +169,12 @@ stack-pane {
     -fx-font-weight:bold;
     -fx-text-fill:white;
 }
+
+.spinner, .spinner .text-field, .slider .thumb{
+    -fx-background-color: rgb(76, 76, 76);
+}
+
+.slider .track {
+    -fx-background-color: #e5e5e5;
+    -fx-scale-y: .75;
+}
