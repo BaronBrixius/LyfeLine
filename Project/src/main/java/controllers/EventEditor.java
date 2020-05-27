@@ -104,8 +104,10 @@ public class EventEditor extends Editor {
     @Override
     void updateItem() {                 //sets object's values based on input fields' values
         super.updateItem();        //update variables common to TimelineObjects
-        if (!hasDuration.isSelected())
+        if (!hasDuration.isSelected()) {
             event.setEndDate(event.getStartDate());
+            populateEndInputs();
+        }
 
         event.setEventPriority((int) prioritySlider.getValue());
     }

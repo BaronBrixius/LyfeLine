@@ -263,9 +263,6 @@ public abstract class Editor {
             }
         }
 
-        if (image.getImage() == null)
-            System.out.println("d");
-
         itemInEditor.setImage(imageFilePath);
 
         itemInEditor.setName(titleInput.getText());
