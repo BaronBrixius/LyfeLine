@@ -124,11 +124,11 @@
     -fx-background-color: gray;
 }
 
-.text-field, .text-area .content, .smallTextArea, .list-view, .list-cell:even, .list-cell:odd,
+.list-view, .list-cell:even, .list-cell:odd,
 .scroll-pane .viewport, .scroll-bar {
     -fx-background-color: #bfd0ff;
 }
-.text-field, .text-area .content{
+.text-field, .text-area .conten, .smallTextArea{
 	-fx-background-color: #b8c8f5
 }
 
