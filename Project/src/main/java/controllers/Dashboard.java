@@ -15,6 +15,8 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
@@ -41,6 +43,8 @@ import java.util.function.Predicate;
 public class Dashboard {
     final List<Spinner<Integer>> startInputs = new ArrayList<>();
     final List<Spinner<Integer>> endInputs = new ArrayList<>();
+    @FXML
+    ImageView logoView;
     @FXML
     BorderPane border;
     @FXML
@@ -87,8 +91,10 @@ public class Dashboard {
     GridPane startDates;
     @FXML
     GridPane endDates;
-    FilteredList<Timeline> filteredTimelines;
-    SortedList<Timeline> sortedTimelines;
+    ObservableList<Timeline> timelineList = FXCollections.observableArrayList();
+    FilteredList<Timeline> filteredTimelines = new FilteredList<>(timelineList);
+    SortedList<Timeline> sortedTimelines = new SortedList<>(filteredTimelines);
+
 
     public void initialize() {
         //Set Up the Spinners for Start/End Inputs, would have bloated the .fxml and variable list a ton if these were in fxml
@@ -104,6 +110,7 @@ public class Dashboard {
 
         // Fill ListView with the timelines
         populateTimelineList();
+        list.setItems(sortedTimelines);
         list.setCellFactory((ListView<Timeline> ls) -> new TimelineCellListCell());
 
         // Add sorting options
@@ -133,10 +140,7 @@ public class Dashboard {
     private void populateTimelineList() {
         try {
             PreparedStatement stmt = DBM.conn.prepareStatement("SELECT * FROM timelines");
-            ObservableList<Timeline> timelineList = FXCollections.observableList(DBM.getFromDB(stmt, new Timeline()));
-            filteredTimelines = new FilteredList<>(timelineList);
-            sortedTimelines = new SortedList<>(filteredTimelines);
-            list.setItems(sortedTimelines);
+            timelineList.setAll(DBM.getFromDB(stmt, new Timeline()));
         } catch (SQLException e) {
             System.err.println("Could not read timelines from database.");
         }
@@ -365,6 +369,8 @@ public class Dashboard {
         } catch (IOException e) {
             System.err.println("Could not read file.");
         }
+        list.getSelectionModel().clearSelection();
+        updateDisplays();
     }
 
     @FXML
