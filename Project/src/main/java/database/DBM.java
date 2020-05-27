@@ -1,10 +1,16 @@
 package database;
 
+import com.google.gson.Gson;
+import org.apache.commons.io.FileUtils;
+
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.charset.Charset;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Scanner;
 
 //Database manager class for easier connecting and interacting
@@ -237,7 +243,37 @@ public class DBM {
         } catch (SQLException e) {
             System.err.println("Could not drop database " + SCHEMA);
         }
+    }
 
+    public static void firstTimeSetup() {    //check if tables exist in DB, if not then create them and import dummy data
+        try {
+            DatabaseMetaData schemaCheck = conn.getMetaData();
+
+            try (ResultSet tableList = schemaCheck.getTables("project", null, "timelines", null)) {
+                if (tableList.next() && (tableList.getString("TABLE_NAME").equals("timelines")))
+                    return;
+            }
+        } catch (SQLException e) {
+            System.err.println("Could not determine whether database tables are set up.");
+        }
+
+        System.out.println("Beginning first time setup...");
+        setupSchema();
+        System.out.println("\nTip: default admin login is Admin@gmail.com using password 'Passw0rd!' Will not show after first time setup.");
+
+        Gson gson = JSONTimeline.getGson();
+        String inJSON;
+
+        File directory = new File("src/main/resources/dummy_data/");
+        if (directory.listFiles() == null)
+            return;
+        for (File f : Objects.requireNonNull(directory.listFiles())) {
+            try {
+                inJSON = FileUtils.readFileToString(f, (Charset) null);             //import Json from file
+                gson.fromJson(inJSON, JSONTimeline.class).importToDB();             //parse Json with GSON object and import it to the DB
+            } catch (IOException ignore) {                                          //if one fails to read, skip it
+            }
+        }
     }
 
     public static void close() {                                           //close the connection when you're done please
