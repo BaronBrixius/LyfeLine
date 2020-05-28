@@ -239,7 +239,7 @@ public class JSONTimeline {
     }
 
     public static TypeAdapter<LocalDateTime> getDateSerializer() {
-        return new TypeAdapter<>() {
+        return new TypeAdapter<LocalDateTime>() {
             @Override
             public void write(JsonWriter jsonWriter, LocalDateTime localDateTime) throws IOException {
                 jsonWriter.value(localDateTime.toString());
