@@ -318,7 +318,7 @@ public abstract class Editor {
         int initValue = (timeSpinnerLabel.equals("Year")) ? 0 : minValue;   //initial value is equal to minimum, except in the case of years
 
         SpinnerValueFactory.IntegerSpinnerValueFactory valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(minValue, maxValue, initValue);
-        valueFactory.setConverter(new StringConverter<>() {                 //makes spinners revert to default values in case of invalid input
+        valueFactory.setConverter(new StringConverter<Integer>() {                 //makes spinners revert to default values in case of invalid input
             @Override
             public String toString(Integer value) {     //called by spinner to update the displayed value in the box
                 if (value == null)
