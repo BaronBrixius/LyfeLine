@@ -21,7 +21,6 @@ public class EventEditor extends Editor {
     @Override
     public void initialize() {
         super.initialize();
-        outPath = "src/main/resources/images/event/";
 
         //set up priority slider labels
         prioritySlider.setLabelFormatter(new StringConverter<>() {
@@ -49,11 +48,6 @@ public class EventEditor extends Editor {
                         return 0d;
                 }
             }
-        });
-
-        editor.setOnMouseClicked(e-> {
-            if (e.getClickCount() == 2 && GUIManager.loggedInUser.getID() == this.event.getOwnerID())
-                saveEditButton();
         });
     }
 

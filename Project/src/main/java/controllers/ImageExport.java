@@ -107,7 +107,7 @@ public class ImageExport {
     private void burnLogo() {
         try {
             //Logo settings
-            BufferedImage logoBuffer = resize(ImageIO.read(new File("src/main/resources/Logo.png")));
+            BufferedImage logoBuffer = resize(ImageIO.read(new File(String.valueOf(GUIManager.class.getClassLoader().getResource("Logo.png")))));
 
             //initializes necessary graphic properties
             BufferedImage originalBuffer = SwingFXUtils.fromFXImage(previewImage, null);

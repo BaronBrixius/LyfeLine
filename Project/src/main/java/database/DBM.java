@@ -1,11 +1,13 @@
 package database;
 
 import com.google.gson.Gson;
+import controllers.GUIManager;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.sql.*;
 import java.util.ArrayList;
@@ -16,7 +18,7 @@ import java.util.Scanner;
 //Database manager class for easier connecting and interacting
 public class DBM {
     private static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
-    private static final String creationScript = "src/main/resources/Database_Creation_Script.sql";
+    private static final URL creationScript = GUIManager.class.getClassLoader().getResource("Database_Creation_Script.sql");
     public static Connection conn = null;
     private static String DB_URL = "jdbc:mysql://localhost?useTimezone=true&serverTimezone=UTC";
     private static String USER = "root";
@@ -87,11 +89,11 @@ public class DBM {
     }
 
     public static void createTestData() throws FileNotFoundException, SQLException {    //for testing
-        runScript("src/main/resources/Dummy_Data_Setup.sql");
+        runScript(GUIManager.class.getClassLoader().getResource("Dummy_Data_Setup.sql"));
     }
 
-    private static void runScript(String script) throws FileNotFoundException, SQLException {      //private read-in method for DB creation script
-        File sql = new File(script);
+    private static void runScript(URL script) throws FileNotFoundException, SQLException {      //private read-in method for DB creation script
+        File sql = new File(String.valueOf(script));
         Statement stmt = conn.createStatement();
         Scanner sqlScan = new Scanner(sql);
         sqlScan.useDelimiter(";[\\r\\n]{3,}");

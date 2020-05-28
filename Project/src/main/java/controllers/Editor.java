@@ -18,6 +18,7 @@ import utils.ImageUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.SQLException;
@@ -68,7 +69,6 @@ public abstract class Editor {
     TimelineView parentController;
     String imageFilePath;
     TimelineObject<?> itemInEditor;
-    String outPath;
 
     public void initialize() {
         editor.getStylesheets().add("styles/DisabledViewable.css");
@@ -91,6 +91,11 @@ public abstract class Editor {
                 fullImagePopup.show(image, Side.BOTTOM, 0, 0);
             }
             e.consume();        //so event editor doesn't also receive double click and close as a result
+        });
+
+        editor.setOnMouseClicked(e-> {
+            if (e.getClickCount() == 2 && GUIManager.loggedInUser.getID() == itemInEditor.getOwnerID())
+                saveEditButton();
         });
     }
 
@@ -224,6 +229,7 @@ public abstract class Editor {
             image.setImage(null);
 
         imageFilePath = itemInEditor.getImagePath();
+        System.out.println(image.getImage().getUrl());
 
         titleInput.setText(itemInEditor.getName());
         descriptionInput.setText(itemInEditor.getDescription());
@@ -365,7 +371,7 @@ public abstract class Editor {
 
         if (validImage(imageChosen)) {                                              //if valid image
             byte[] imageFileContent = FileUtils.readFileToByteArray(imageChosen);   //save locally and display in editor
-            imageFilePath = ImageUtils.saveImage(imageFileContent, outPath + imageChosen.getName());
+            imageFilePath = ImageUtils.saveImage(imageFileContent, "images/"+ imageChosen.getName());
             image.setImage(new Image("File:" + imageFilePath));
         }
     }

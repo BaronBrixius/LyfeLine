@@ -53,7 +53,6 @@ public class TimelineEditor extends Editor {
     @Override
     public void initialize() {
         super.initialize();
-        outPath = "src/main/resources/images/timeline/";
 
         toggleEditable(false);
         keywordView.setItems(keywords);
@@ -279,7 +278,7 @@ public class TimelineEditor extends Editor {
         imageExport.initModality(Modality.WINDOW_MODAL);     //so you can't have 10 windows open at once.
 
         try {
-            FXMLLoader loader = new FXMLLoader(GUIManager.class.getResource("../FXML/ImageExport.fxml"));
+            FXMLLoader loader = new FXMLLoader(GUIManager.class.getClassLoader().getResource("FXML/ImageExport.fxml"));
             imageExport.setScene(new Scene(loader.load()));
             ImageExport imageExportObject = loader.getController();
             imageExportObject.setUp(parentController.snapshot(currentViewOnly), parentController.activeTimeline);

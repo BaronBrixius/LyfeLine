@@ -330,7 +330,7 @@ public class Dashboard {
         adminManagerStage.initOwner(GUIManager.mainStage);         //These two lines make sure you can't click back to the timeline window,
         adminManagerStage.initModality(Modality.WINDOW_MODAL);     //so you can't have 10 windows open at once.
 
-        Parent root = FXMLLoader.load(GUIManager.class.getResource("../FXML/AdminRoleManager.fxml"));
+        Parent root = FXMLLoader.load(GUIManager.class.getClassLoader().getResource("FXML/AdminRoleManager.fxml"));
         adminManagerStage.setScene(new Scene(root));
         adminManagerStage.getScene().getStylesheets().addAll(GUIManager.mainStage.getScene().getStylesheets());
         adminManagerStage.show();
@@ -466,7 +466,7 @@ public class Dashboard {
 
         public TimelineCellListCell() {
             super();
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("../FXML/TimelineCell.fxml"));
+            FXMLLoader loader = new FXMLLoader(GUIManager.class.getClassLoader().getResource("FXML/TimelineCell.fxml"));
             try {
                 cellNode = loader.load();
                 cell = loader.getController();

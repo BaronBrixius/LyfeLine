@@ -1,7 +1,6 @@
 package controllers;
 
 import database.DBM;
-import database.Timeline;
 import database.User;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -24,14 +23,14 @@ public class GUIManager {
     public static FXMLLoader loader;
 
     public static <T> T swapScene(String fxml) throws IOException {
-        loader = new FXMLLoader(GUIManager.class.getResource("../FXML/" + fxml + ".fxml"));
+        loader = new FXMLLoader(GUIManager.class.getClassLoader().getResource("FXML/" + fxml + ".fxml"));
         main.setCenter(loader.load());
         return loader.getController();
     }
 
     public static void applyStyle(String style) {
         mainStage.getScene().getStylesheets().remove(1);
-        mainStage.getScene().getStylesheets().add("File:src/main/resources/styles/" + style + ".css");
+        mainStage.getScene().getStylesheets().add("styles/" + style + ".css");
         if (loggedInUser != null) {
             loggedInUser.setTheme(style);
             try {
@@ -47,7 +46,7 @@ public class GUIManager {
         main = new BorderPane();
         main.setPrefWidth(Screen.getPrimary().getBounds().getWidth() - 30);
         main.setPrefHeight(Screen.getPrimary().getBounds().getHeight() - 90);
-        loader = new FXMLLoader(GUIManager.class.getResource("../FXML/TopMenu.fxml"));
+        loader = new FXMLLoader(GUIManager.class.getClassLoader().getResource("FXML/TopMenu.fxml"));
         main.setTop(loader.load());
         menu = loader.getController();
 
@@ -56,11 +55,11 @@ public class GUIManager {
         swapScene("LoginAndRegistration");
         //TimelineView systemUnderDevelopment = swapScene("TimelineView");        //TODO delete for final
         //systemUnderDevelopment.setActiveTimeline(DBM.getFromDB(DBM.conn.prepareStatement("SELECT * FROM timelines"), new Timeline()).get(0));
-        mainStage.getScene().getStylesheets().add("File:src/main/resources/styles/Base.css");
-        mainStage.getScene().getStylesheets().add("File:src/main/resources/styles/Default.css");
-        FileInputStream icon = new FileInputStream("src/main/resources/LogoIcon.png");
-        mainStage.getIcons().add(new Image(icon));
-        icon.close();
+        mainStage.getScene().getStylesheets().add("styles/Base.css");
+        mainStage.getScene().getStylesheets().add("styles/Default.css");
+        //FileInputStream icon = new FileInputStream(String.valueOf(GUIManager.class.getClassLoader().getResource("LogoIcon.png")));
+        //mainStage.getIcons().add(new Image(icon));
+        //icon.close();
         mainStage.setMaximized(true);
         mainStage.show();
     }

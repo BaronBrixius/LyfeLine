@@ -158,7 +158,7 @@ public class TimelineView {
 
     private EventNode addEvent(Event event) {
         try {
-            FXMLLoader nodeLoader = new FXMLLoader(getClass().getResource("../FXML/EventNode.fxml"));
+            FXMLLoader nodeLoader = new FXMLLoader(GUIManager.class.getClassLoader().getResource("FXML/EventNode.fxml"));
             nodeLoader.load();
             EventNode newNode = nodeLoader.getController();
             newNode.setActiveEvent(event, activeTimeline, this);

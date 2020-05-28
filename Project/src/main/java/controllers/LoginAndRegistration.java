@@ -45,7 +45,7 @@ public class LoginAndRegistration {
         loginStage.initOwner(GUIManager.mainStage);         //These two lines make sure you can't click back to the Start Window,
         loginStage.initModality(Modality.WINDOW_MODAL);     //so you can't have 10 Login Windows open at once.
 
-        Parent root = FXMLLoader.load(GUIManager.class.getResource("../FXML/Login.fxml"));
+        Parent root = FXMLLoader.load(GUIManager.class.getClassLoader().getResource("FXML/Login.fxml"));
         loginStage.setScene(new Scene(root));
         loginStage.getScene().getStylesheets().addAll(GUIManager.mainStage.getScene().getStylesheets());
         loginStage.show();
@@ -59,7 +59,7 @@ public class LoginAndRegistration {
         registerStage.initOwner(GUIManager.mainStage);      //These are the same as before, prevents the window from losing focus until closed.
         registerStage.initModality(Modality.WINDOW_MODAL);  //I don't actually know what Modality is, Google just said this works and it does.
 
-        registerStage.setScene(new Scene(FXMLLoader.load(GUIManager.class.getResource("../FXML/Register.fxml"))));
+        registerStage.setScene(new Scene(FXMLLoader.load(GUIManager.class.getClassLoader().getResource("FXML/Register.fxml"))));
         registerStage.getScene().getStylesheets().addAll(GUIManager.mainStage.getScene().getStylesheets());
         registerStage.show();
 
