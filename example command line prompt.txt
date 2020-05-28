@@ -1,1 +1,1 @@
-"c:\Program Files\Java\jdk-14\bin\java.exe" -jar "C:\Users\Max\Documents\School\1DV508\Project\target\Project-1.0-jar-with-dependencies.jar"
+"c:\Program Files\Java\jdk-14\bin\java.exe" -jar "C:\Users\Max\Documents\School\1DV508\Project-1.0-jar-with-dependencies.jar"
