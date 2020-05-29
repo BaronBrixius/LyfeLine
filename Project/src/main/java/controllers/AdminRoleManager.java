@@ -117,11 +117,14 @@ public class AdminRoleManager {
     /*Updates the checkbox that shows whether a user is an admin*/
     public void updateCheckBox() {
         toggle.setSelected(userListView.getSelectionModel().getSelectedItem().getAdmin());
+        toggle.setDisable(userListView.getSelectionModel().getSelectedItem().getID() <= 2);
     }
 
     /*Sets the switches between admin and non-admin for the selected user*/
     @FXML
     void toggleClicked() {
+        if (userListView.getSelectionModel().getSelectedItem().getID() <= 2)
+            return;
         userListView.getSelectionModel().getSelectedItem().toggleAdmin();
 
         try {

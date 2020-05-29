@@ -173,15 +173,16 @@ public class Timeline extends TimelineObject<Timeline> {
     }
 
     public void deleteOrphans() throws SQLException {
-        PreparedStatement out = DBM.conn.prepareStatement("DELETE e.* FROM `timelines` t " +
+        try (PreparedStatement stmt = DBM.conn.prepareStatement("DELETE e.* FROM `timelines` t " +
                 "LEFT JOIN timelineevents te " +
-                "ON t.TimelineID = te.TimelineID " +                //destroys orphaned events (i.e. events where there are no
+                "ON t.TimelineID = te.TimelineID " +                //destroys this timeline's about-to-be orphaned events (i.e. events where there are no
                 "LEFT JOIN events e " +                             //junction table records for them with a different TimelineID
                 "ON te.EventID = e.EventID AND e.EventID NOT IN (SELECT EventID FROM timelineevents WHERE TimelineID != ?) " +
-                "WHERE t.TimelineID = ? AND e.EventID IS NOT NULL");
-
-        out.setInt(1, timelineID);
-        out.setInt(2, timelineID);
+                "WHERE t.TimelineID = ? AND e.EventID IS NOT NULL")) {
+            stmt.setInt(1, timelineID);
+            stmt.setInt(2, timelineID);
+            stmt.execute();
+        }
     }
 
     public void rateTimeline(int index) throws SQLException {
@@ -294,7 +295,7 @@ public class Timeline extends TimelineObject<Timeline> {
     public User getOwner() {
         return owner;
     }
-    
+
     public void setOwner(User owner) {
         this.owner = owner;
     }
