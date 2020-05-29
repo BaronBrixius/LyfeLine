@@ -20,24 +20,14 @@ import java.util.Optional;
 
 public class TimelineCell {
 
-    @FXML
-    Button cellDeleteTimelineButton;
-    @FXML
-    Button cellViewTimelineButton;
-    @FXML
-    VBox cellButtonBox;
-    @FXML
-    GridPane pane;
-    @FXML
-    HBox ratingBox;
-    @FXML
-    Label title;
-    @FXML
-    Label description;
-    @FXML
-    Label keywords;
-    @FXML
-    Label author;
+    @FXML Button cellDeleteTimelineButton;
+    @FXML VBox cellButtonBox;
+    @FXML GridPane pane;
+    @FXML HBox ratingBox;
+    @FXML Label title;
+    @FXML Label description;
+    @FXML Label keywords;
+    @FXML Label author;
     List<Polygon> ratingButtons;
     Timeline timeline;
     protected FilteredList<Timeline> filteredTimelines;
@@ -100,7 +90,7 @@ public class TimelineCell {
         }
     }
 
-    public void update() {
+    void update() {
         if (timeline != null) {
             populateTimelineDetails();
             setBGImage();
@@ -110,7 +100,7 @@ public class TimelineCell {
         }
     }
 
-    public void populateTimelineDetails() {
+    void populateTimelineDetails() {
         title.setText("Title: " + timeline.getName());
         author.setText("By: " + user.getUserName());
         description.setText("Description: " + timeline.getDescription());
@@ -132,13 +122,13 @@ public class TimelineCell {
             pane.getChildren().removeAll(description, keywords);
     }
 
-    public void setTimeline(Timeline timeline) {
+    void setTimeline(Timeline timeline) {
         this.timeline = timeline;
         user = timeline.getOwner();
         this.update();
     }
 
-    public void setBGImage() {
+    void setBGImage() {
         String imageURL = timeline.getImagePath() != null ? "url(file:" + timeline.getImagePath() + ")" : null;
         int height = focused ? 400 : 80;
         pane.setStyle(" -fx-padding: 5px; -fx-background-image: " + imageURL + "; -fx-pref-width: " + (list.getWidth() - 6) + "px; -fx-pref-height: " + height + "px;  -fx-background-size: " + (list.getWidth() - 6) + "px, stretch;");

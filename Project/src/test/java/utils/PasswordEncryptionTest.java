@@ -39,7 +39,7 @@ class PasswordEncryptionTest {
             String salt = PasswordEncryption.getSalt(30);
             salts.add(salt);
         }
-        String[] saltArray = salts.toArray(new String[salts.size()]);
+        String[] saltArray = salts.toArray(new String[0]);
         String password = "#Johnny69";
         for(int i = 0; i<salts.size(); i++){
             String uniquePass = PasswordEncryption.generateSecurePassword(password,saltArray[i]);

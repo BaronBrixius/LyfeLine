@@ -2,7 +2,6 @@ package controllers;
 
 import database.Timeline;
 import javafx.embed.swing.SwingFXUtils;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.image.ImageView;
@@ -19,16 +18,11 @@ import java.io.File;
 import java.io.IOException;
 
 public class ImageExport {
-    @FXML
-    CheckBox cbName;
-    @FXML
-    CheckBox cbRange;
-    @FXML
-    CheckBox cbCreator;
-    @FXML
-    CheckBox cbLogo;
-    @FXML
-    ImageView imageView;
+    @FXML CheckBox checkboxName;
+    @FXML CheckBox checkboxRange;
+    @FXML CheckBox checkboxCreator;
+    @FXML CheckBox checkboxLogo;
+    @FXML ImageView imageView;
     private Timeline activeTimeline;
     private WritableImage originalImage;
     private WritableImage previewImage;
@@ -56,13 +50,13 @@ public class ImageExport {
     void burnIn() {
         previewImage = originalImage;
 
-        if (cbName.isSelected())
+        if (checkboxName.isSelected())
             burnName();
-        if (cbRange.isSelected())
+        if (checkboxRange.isSelected())
             burnRange();
-        if (cbCreator.isSelected())
+        if (checkboxCreator.isSelected())
             burnCreator();
-        if (cbLogo.isSelected())
+        if (checkboxLogo.isSelected())
             burnLogo();
 
         imageView.setImage(previewImage);

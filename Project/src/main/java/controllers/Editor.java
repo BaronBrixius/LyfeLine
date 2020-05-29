@@ -8,10 +8,8 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
 import javafx.util.StringConverter;
 import org.apache.commons.io.FileUtils;
 import utils.ImageUtils;
@@ -31,37 +29,16 @@ public abstract class Editor {
     final List<Spinner<Integer>> startInputs = new ArrayList<>();
     final List<VBox> endBoxes = new ArrayList<>();
     final List<Spinner<Integer>> endInputs = new ArrayList<>();
-
-    @FXML
-    Button deleteImageButton;
-    @FXML
-    Button uploadImageButton;
-    @FXML
-    ImageView image;
-    @FXML
-    HBox editor;
-    @FXML
-    TextField titleInput = new TextField();
-    @FXML
-    TextArea descriptionInput = new TextArea();
-    @FXML
-    Button saveEditButton;
-    @FXML
-    Button deleteButton;
-    @FXML
-    Text errorMessage;
-    @FXML
-    Button moreStart;
-    @FXML
-    Button moreEnd;
-    @FXML
-    FlowPane startPane;
-    @FXML
-    FlowPane endPane;
-    @FXML
-    GridPane inputFields;
-    @FXML
-    GridPane controlButtons;
+    @FXML Button deleteImageButton;
+    @FXML Button uploadImageButton;
+    @FXML ImageView image;
+    @FXML HBox editor;
+    @FXML TextField titleInput = new TextField();
+    @FXML TextArea descriptionInput = new TextArea();
+    @FXML Button saveEditButton;
+    @FXML Button deleteButton;
+    @FXML FlowPane startPane;
+    @FXML FlowPane endPane;
     boolean editable = true;
     boolean startExpanded;
     boolean endExpanded;
@@ -90,18 +67,18 @@ public abstract class Editor {
                 fullImageContainer.setGraphic(new ImageView(new Image("file:" + imageFilePath)));
                 fullImagePopup.show(image, Side.BOTTOM, 0, 0);
             }
-            e.consume();        //so event editor doesn't also receive double click and close as a result
+            e.consume();        //so editor doesn't also receive double click
         });
     }
 
     @FXML
-    void toggleStartExpanded() {
+    void toggleStartExpanded() {        //toggles whether the spinners for inputting start date are expanded
         startExpanded = !startExpanded;
         setExpansion(startPane, startBoxes, startExpanded, parentController.activeTimeline.getScale());
     }
 
     @FXML
-    void toggleEndExpanded() {
+    void toggleEndExpanded() {        //toggles whether the spinners for inputting end date are expanded
         endExpanded = !endExpanded;
         setExpansion(endPane, endBoxes, endExpanded, parentController.activeTimeline.getScale());
     }

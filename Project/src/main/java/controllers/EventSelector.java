@@ -23,24 +23,15 @@ public class EventSelector {
     private final ObservableList<Event> eventList = FXCollections.observableArrayList();
     private final FilteredList<Event> filterableEventList = new FilteredList<>(eventList);
     private final SortedList<Event> sortableEventList = new SortedList<>(filterableEventList);
-    @FXML
-    GridPane selector;
-    @FXML
-    ComboBox<Timeline> timelineComboBox;
-    @FXML
-    Button viewButton;
-    @FXML
-    ComboBox<String> sortBy;
-    @FXML
-    Button deleteButton;
-    @FXML
-    TextField searchInput;
-    @FXML
-    Button newButton;
-    @FXML
-    Button addToRemoveFromTimelineButton;
-    @FXML
-    ListView<Event> eventListView;
+    @FXML GridPane selector;
+    @FXML ComboBox<Timeline> timelineComboBox;
+    @FXML Button viewButton;
+    @FXML ComboBox<String> sortBy;
+    @FXML Button deleteButton;
+    @FXML TextField searchInput;
+    @FXML Button newButton;
+    @FXML Button addToRemoveFromTimelineButton;
+    @FXML ListView<Event> eventListView;
     private TimelineView parentController;
     private List<List<Integer>> timelineEventLinks;
 
@@ -74,9 +65,7 @@ public class EventSelector {
             setEventControlButtons();
         });
 
-        eventListView.getSelectionModel().selectedIndexProperty().addListener(e -> {
-            setEventControlButtons();
-        });
+        eventListView.getSelectionModel().selectedIndexProperty().addListener(e -> setEventControlButtons());
     }
 
     private void setEventControlButtons() {

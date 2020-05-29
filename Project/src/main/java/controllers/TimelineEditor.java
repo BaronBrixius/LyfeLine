@@ -28,26 +28,14 @@ import java.util.Optional;
 
 public class TimelineEditor extends Editor {
     private final ObservableList<String> keywords = FXCollections.observableArrayList();
-    @FXML
-    HBox keywordBox;
-    @FXML
-    ComboBox<String> timeInput;
-    @FXML
-    Button addKeywordButton;
-    @FXML
-    Button removeKeywordButton;
-    @FXML
-    ListView<String> keywordView;
-    @FXML
-    Label feedbackText;
-    @FXML
-    Button exportButton;
-    @FXML
-    ContextMenu exportPopup;
-    @FXML
-    MenuItem exportJSONButton;
-    @FXML
-    private TextField keywordInput;
+    @FXML HBox keywordBox;
+    @FXML ComboBox<String> timeInput;
+    @FXML ListView<String> keywordView;
+    @FXML Label feedbackText;
+    @FXML Button exportButton;
+    @FXML ContextMenu exportPopup;
+    @FXML MenuItem exportJSONButton;
+    @FXML TextField keywordInput;
     private Timeline timeline;
 
     @Override
@@ -260,7 +248,6 @@ public class TimelineEditor extends Editor {
         resolutionSaveImage.setHeaderText("Resolution of the picture is too low. Minimum resolution is 800x600");
         resolutionSaveImage.showAndWait();
     }
-
 
     @FXML
     void snapshotEntireTimeline() {

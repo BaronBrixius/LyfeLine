@@ -1,7 +1,6 @@
 package controllers;
 
 import database.DBM;
-import database.Timeline;
 import database.User;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -20,10 +19,9 @@ public class GUIManager extends Application {
     public static Stage mainStage;
     static TopMenu menu;
     static BorderPane mainPane;
-    static FXMLLoader loader;
 
     public static <T> T swapScene(String fxml) throws IOException {
-        loader = new FXMLLoader(GUIManager.class.getResource("../FXML/" + fxml + ".fxml"));
+        FXMLLoader loader = new FXMLLoader(GUIManager.class.getResource("../FXML/" + fxml + ".fxml"));
         mainPane.setCenter(loader.load());
         return loader.getController();
     }
@@ -43,28 +41,30 @@ public class GUIManager extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        mainPane = new BorderPane();
+        mainPane = new BorderPane();        //set up the pane in which all the scenes are placed
         mainPane.setPrefWidth(Screen.getPrimary().getBounds().getWidth() - 30);
         mainPane.setPrefHeight(Screen.getPrimary().getBounds().getHeight() - 90);
-        loader = new FXMLLoader(GUIManager.class.getResource("../FXML/TopMenu.fxml"));
+
+        FXMLLoader loader = new FXMLLoader(GUIManager.class.getResource("../FXML/TopMenu.fxml"));  //set up menu bar at top
         mainPane.setTop(loader.load());
         menu = loader.getController();
 
         mainStage = stage;
-        mainStage.setScene(new Scene(mainPane));
+        mainStage.setScene(new Scene(mainPane));    //launch the starting page
         swapScene("LoginAndRegistration");
         mainStage.getScene().getStylesheets().add("File:src/main/resources/styles/Base.css");
         mainStage.getScene().getStylesheets().add("File:src/main/resources/styles/Default.css");
 
-        FileInputStream icon = new FileInputStream("src/main/resources/LogoIcon.png");
+        FileInputStream icon = new FileInputStream("src/main/resources/LogoIcon.png");  //set logo as icon in tray
         mainStage.getIcons().add(new Image(icon));
         icon.close();
 
         mainStage.setMaximized(true);
-        mainStage.show();
+        mainStage.show();                   //begin!
 
-        DBM.dropSchema();                 //deletes database, useful to reset sometimes   //TODO delete for final
-        DBM.firstTimeSetup();               //setup database and dummy data if needed, better after window loads so user feels feedback faster
+        new DBM();                          //establish connection to the DB, better after window loads so launching gives feedback faster
+        //DBM.dropSchema();                 //deletes database, useful to reset sometimes
+        DBM.firstTimeSetup();               //setup database and demo data if needed
     }
 
     @Override

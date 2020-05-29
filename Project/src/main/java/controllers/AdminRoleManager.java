@@ -15,16 +15,11 @@ import java.util.Comparator;
 import java.util.List;
 
 public class AdminRoleManager {
-    @FXML
-    Text userText;
-    @FXML
-    ListView<User> userListView;
-    @FXML
-    CheckBox toggle;
-    @FXML
-    ComboBox<String> sortBy;
-    @FXML
-    TextField searchInput;
+    @FXML Text userText;
+    @FXML ListView<User> userListView;
+    @FXML CheckBox toggle;
+    @FXML ComboBox<String> sortBy;
+    @FXML TextField searchInput;
     final ObservableList<User> userList = FXCollections.observableArrayList();
 
     public void initialize() {
@@ -115,7 +110,7 @@ public class AdminRoleManager {
     }
 
     /*Updates the checkbox that shows whether a user is an admin*/
-    public void updateCheckBox() {
+    void updateCheckBox() {
         toggle.setSelected(userListView.getSelectionModel().getSelectedItem().getAdmin());
         toggle.setDisable(userListView.getSelectionModel().getSelectedItem().getID() <= 2);
     }

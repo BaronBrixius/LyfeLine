@@ -137,13 +137,12 @@ public class Event extends TimelineObject<Event> {
         return out.executeUpdate() > 0;
     }
 
-    public boolean removeFromTimeline(int timelineID) throws SQLException {
+    public void removeFromTimeline(int timelineID) throws SQLException {
         PreparedStatement stmt = DBM.conn.prepareStatement("DELETE FROM `timelineevents` WHERE EventID = ? AND TimelineID = ?");
         stmt.setInt(1, eventID);
         stmt.setInt(2, timelineID);
-        boolean out = stmt.executeUpdate() > 0;
+        stmt.executeUpdate();
         deleteIfOrphan();
-        return out;
     }
 
     public void deleteIfOrphan() throws SQLException {    //destroy if orphaned (i.e. not present on any timeline)
@@ -204,7 +203,7 @@ public class Event extends TimelineObject<Event> {
     }
 
     @Override
-    public boolean equals(Object o){
+    public boolean equals(Object o) {
         if (!(o instanceof Event))
             return false;
         if (this.getID() <= 0)

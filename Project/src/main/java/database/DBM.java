@@ -1,7 +1,6 @@
 package database;
 
 import com.google.gson.Gson;
-import controllers.GUIManager;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import org.apache.commons.io.FileUtils;
@@ -75,7 +74,8 @@ public class DBM {
             runScript(creationScript);
             System.out.println("Schema created successfully.");
         } catch (SQLException | FileNotFoundException e) {
-            e.printStackTrace();System.err.println("Could not run Database_Creation_Script");
+            e.printStackTrace();
+            System.err.println("Could not run Database_Creation_Script");
         }
     }
 
@@ -265,10 +265,10 @@ public class DBM {
 
         Alert notifyOfAdmin = new Alert(Alert.AlertType.INFORMATION);        //warn about admin login
         notifyOfAdmin.setTitle("Welcome to LyfeLine!");
-        notifyOfAdmin.setHeaderText("Tip: default admin login is Admin@gmail.com using password 'Passw0rd!'");
-        notifyOfAdmin.setContentText("Will not show after first time setup.");
+        notifyOfAdmin.setHeaderText("The default admin login is Admin@gmail.com using password 'Passw0rd!'");
+        notifyOfAdmin.setContentText("This message will not show after first time setup.");
         notifyOfAdmin.showAndWait();
-        System.out.println("\nTip: default admin login is Admin@gmail.com using password 'Passw0rd!' Will not show after first time setup.");
+        System.out.println("\nWelcome to LyfeLine! The default admin login is Admin@gmail.com using password 'Passw0rd!' This message will not show after first time setup.");
 
         Alert confirmLoad = new Alert(Alert.AlertType.CONFIRMATION);        //ask if user wants dummy data
         confirmLoad.setTitle("Demonstration Data");

@@ -8,12 +8,15 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.SnapshotParameters;
-import javafx.scene.control.*;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.ScrollEvent;
-import javafx.scene.layout.*;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import utils.DateUtils;
 
@@ -22,33 +25,21 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 public class TimelineView {
     private final List<EventNode> eventList = new ArrayList<>();
-    @FXML
-    Slider zoomSlider;
-    @FXML
-    TextField zoomLabel;
-    @FXML
-    GridPane timelineGrid;
-    @FXML
-    ScrollPane mainScrollPane;
-    @FXML
-    BorderPane mainBorderPane;
-    @FXML
-    StackPane rightSidebar;
-    @FXML
-    StackPane leftSidebar;
-    @FXML
-    StackPane centeringStack;
-    @FXML
-    TimelineEditor timelineEditorController;
-    @FXML
-    EventSelector eventSelectorController;
-    @FXML
-    EventEditor eventEditorController;
+    @FXML Slider zoomSlider;
+    @FXML TextField zoomLabel;
+    @FXML GridPane timelineGrid;
+    @FXML ScrollPane mainScrollPane;
+    @FXML StackPane rightSidebar;
+    @FXML StackPane leftSidebar;
+    @FXML StackPane centeringStack;
+    @FXML TimelineEditor timelineEditorController;
+    @FXML EventSelector eventSelectorController;
+    @FXML EventEditor eventEditorController;
     Timeline activeTimeline;
 
     /*Initializes the timeline view window - sets the timeline and controller for the event selector and event editor*/
@@ -105,7 +96,7 @@ public class TimelineView {
     private void setupTimeline() {
         int numberOfCol = DateUtils.distanceBetween(activeTimeline.getStartDate(), activeTimeline.getEndDate(), activeTimeline.getScale());
         if (numberOfCol > 1000 && !timelineTooBigAskIfContinueAnyways())         //if timeline is too large and will likely crash, offer to not load it visually
-                return;
+            return;
 
         Pane mainLine = new Pane();
         mainLine.setMaxHeight(25);

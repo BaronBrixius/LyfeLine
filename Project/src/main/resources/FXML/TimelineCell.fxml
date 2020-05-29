@@ -55,8 +55,8 @@
         <GridPane.margin>
             <Insets />
         </GridPane.margin>
-        <Button fx:id="cellViewTimelineButton" mnemonicParsing="false" onAction="#openTimeline" style="-fx-pref-height: 10" text="View" />
-        <Button fx:id="cellDeleteTimelineButton" mnemonicParsing="false" onAction="#deleteTimeline" style="-fx-pref-height: 10" styleClass="DisabledInvisible" text="Delete" />
+        <Button onAction="#openTimeline" style="-fx-pref-height: 10" text="View" />
+        <Button fx:id="cellDeleteTimelineButton" onAction="#deleteTimeline" style="-fx-pref-height: 10" styleClass="DisabledInvisible" text="Delete" />
     </VBox>
    <opaqueInsets>
       <Insets left="5.0" />
