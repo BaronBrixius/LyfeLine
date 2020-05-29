@@ -1,50 +1,48 @@
 package database;
 
-import com.google.gson.*;
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 import org.apache.commons.io.FileUtils;
+import utils.ImageUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Type;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.List;
+import java.util.*;
 
 //Convenience class that gathers all relevant information about a timeline for easy JSON export/import
 public class JSONTimeline {
     private final Timeline timeline;            //Timelines hold their events in their own list, no need to duplicate here
-    private List<Rating> ratings;
-    private User owner;
+    private final Map<String, Integer> ratings;
     private final String timelineImage;
-    private List<String> eventImages;
+    private final List<String> eventImages;
 
-    public JSONTimeline(Timeline timeline) {
+    public JSONTimeline(Timeline timeline) {    //gathers information about passed timeline for export
         this.timeline = timeline;
         this.timelineImage = toBase64(timeline.getImagePath());
-        makeEventImages();
-        makeRatings();
-        makeOwner();
+        eventImages = makeEventImages();
+        ratings = makeRatings();
     }
 
     //////////////////////////EXPORT METHODS//////////////////////////
 
-    private void makeEventImages() {
-        eventImages = new ArrayList<>(timeline.getEventList().size());
+    private List<String> makeEventImages() {
+        List<String> out = new ArrayList<>(timeline.getEventList().size());
 
         String imageContent;
         for (int i = 0; i < timeline.getEventList().size(); i++) {
             imageContent = timeline.getEventList().get(i).getImagePath();       //for each event, get their image
-            eventImages.add(toBase64(imageContent));                            //convert to base64, and add that to the list
+            out.add(toBase64(imageContent));                            //convert to base64, and add that to the list
         }
+        return out;
     }
 
     private String toBase64(String filePath) {          //read a file from its path and convert it to a Base 64 string
@@ -61,24 +59,19 @@ public class JSONTimeline {
         }
     }
 
-    private void makeRatings() {                        //grab all ratings for this timeline from DB and store in List
+    private Map<String, Integer> makeRatings() {                        //grab all ratings for this timeline from DB and store in List
+        Map<String, Integer> out = new TreeMap<>();
         try (PreparedStatement stmt = DBM.conn.prepareStatement("SELECT u.UserEmail, r.Rating FROM ratings r " +
-                "INNER JOIN users u ON r.UserID = u.UserID " +
-                "WHERE TimelineID = ?")) {
+                "INNER JOIN users u ON r.UserID = u.UserID " +      //can't just use calcRatings() in Timeline because that stores by ID
+                "WHERE r.TimelineID = ?")) {
             stmt.setInt(1, timeline.getID());
-            ratings = DBM.getFromDB(stmt, rs -> new Rating(rs.getString("UserEmail"), rs.getInt("Rating")));
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next())
+                out.put(rs.getString("UserEmail"), rs.getInt("Rating"));
         } catch (SQLException e) {
             System.err.println("Could not read ratings from database.");
         }
-    }
-
-    private void makeOwner() {                          //grab this timeline's owner
-        try (PreparedStatement stmt = DBM.conn.prepareStatement("SELECT * FROM users WHERE UserID = ?")) {
-            stmt.setInt(1, timeline.getOwnerID());
-            owner = DBM.getFromDB(stmt, new User()).get(0);
-        } catch (SQLException e) {
-            System.err.println("Could not read ratings from database.");
-        }
+        return out;
     }
 
     //////////////////////////IMPORT METHODS//////////////////////////
@@ -90,7 +83,7 @@ public class JSONTimeline {
             setOwnership(ownerID);
         else {                                  //otherwise add them to DB and pass newly generated ID to other objects
             importOwner();
-            setOwnership(owner.getUserID());
+            setOwnership(timeline.getOwner().getID());
         }
 
         importTimeline();
@@ -99,7 +92,7 @@ public class JSONTimeline {
     }
 
     private void importTimeline() {
-        String filePath = importImage(timelineImage, timeline.getImagePath());           //save image and give its new filepath to the timeline
+        String filePath = ImageUtils.importImageFromBase64(timelineImage, timeline.getImagePath());           //save image and give its new filepath to the timeline
         timeline.setImage(filePath);
         try {
             DBM.insertIntoDB(timeline);                         //no dupe checking, if they're at this point the user may want a dupe timeline
@@ -117,7 +110,7 @@ public class JSONTimeline {
             if (eventID > 0)                                        //if identical event is in DB, pass its ID to this event and call them equal
                 eventToImport.setID(eventID);
             else {                                                  //otherwise add event to DB and pass newly generated ID to this event
-                String filePath = importImage(eventImages.get(i), timeline.getEventList().get(i).getImagePath());  //save image located in same index of imagesList, and give its new filepath to the timeline
+                String filePath = ImageUtils.importImageFromBase64(eventImages.get(i), timeline.getEventList().get(i).getImagePath());  //save image located in same index of imagesList, and give its new filepath to the timeline
                 eventToImport.setImage(filePath);
 
                 try {
@@ -135,13 +128,14 @@ public class JSONTimeline {
         }
     }
 
-    private int matchEventInDB(Event eventToImport) {                              //checks if event is in DB, returns event's ID if it is
+    private int matchEventInDB(Event eventToImport) {                              //checks if identical event is in DB, returns event's ID if it is
         try (PreparedStatement stmt = DBM.conn.prepareStatement("SELECT e.EventID FROM events e " +
                 "INNER JOIN users u ON e.EventOwner = u.UserID " +
-                "WHERE u.UserEmail = ? AND e.EventName = ? AND e.EventDescription = ? " +
-                "AND e.StartYear = ? AND StartMonth = ? AND  `StartDay` = ? AND  `StartHour` = ? AND  `StartMinute` = ? AND  " +
-                "`StartSecond` = ? AND  `StartMillisecond` = ? AND    `EndYear` = ? AND  `EndMonth` = ? AND  `EndDay` = ? AND  `EndHour` = ? AND  `EndMinute` = ? AND  `EndSecond` = ? AND  `EndMillisecond` = ? ")) {
-            stmt.setString(1, owner.getUserEmail());
+                "WHERE u.UserEmail = ? AND e.EventName = ? AND e.EventDescription = ? AND e.StartYear = ? AND " +
+                "StartMonth = ? AND `StartDay` = ? AND `StartHour` = ? AND `StartMinute` = ? AND `StartSecond` = ? AND " +
+                "`StartMillisecond` = ? AND `EndYear` = ? AND `EndMonth` = ? AND `EndDay` = ? AND `EndHour` = ? AND " +
+                "`EndMinute` = ? AND `EndSecond` = ? AND `EndMillisecond` = ? ")) {
+            stmt.setString(1, timeline.getOwner().getUserEmail());      //timeline and its events have same owner
             stmt.setString(2, eventToImport.getName());
             stmt.setString(3, eventToImport.getDescription());
             stmt.setInt(4, eventToImport.getStartDate().getYear());
@@ -150,14 +144,14 @@ public class JSONTimeline {
             stmt.setInt(7, eventToImport.getStartDate().getHour());
             stmt.setInt(8, eventToImport.getStartDate().getMinute());
             stmt.setInt(9, eventToImport.getStartDate().getSecond());
-            stmt.setInt(10, eventToImport.getStartDate().getNano());
+            stmt.setInt(10, eventToImport.getStartDate().getNano() / 1000000);
             stmt.setInt(11, eventToImport.getEndDate().getYear());
             stmt.setInt(12, eventToImport.getEndDate().getMonthValue());
             stmt.setInt(13, eventToImport.getEndDate().getDayOfMonth());
             stmt.setInt(14, eventToImport.getEndDate().getHour());
             stmt.setInt(15, eventToImport.getEndDate().getMinute());
             stmt.setInt(16, eventToImport.getEndDate().getSecond());
-            stmt.setInt(17, eventToImport.getEndDate().getNano() * 1000000);
+            stmt.setInt(17, eventToImport.getEndDate().getNano() / 1000000);
 
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
@@ -170,50 +164,9 @@ public class JSONTimeline {
         return 0;
     }
 
-    private String importImage(String imageContents, String filePath) {          //saves an image locally and returns its filepath
-        if (imageContents == null)
-            return null;
-        try {
-            byte[] imageFileContent = Base64.getDecoder().decode(imageContents);    //convert from Base 64
-            filePath = appendNumberIfDupe(filePath);                                //rename file if necessary
-            FileUtils.writeByteArrayToFile(new File(filePath), imageFileContent);   //and save it
-            return filePath;
-        } catch (IOException e) {
-            System.err.println("Could not create file.");
-            return null;
-        }
-    }
-
-    private String appendNumberIfDupe(String filePath) {
-        if (!Files.exists(Paths.get(filePath)))                       //quick check for the most common case, no dupes
-            return filePath;
-
-        String name = filePath.substring(0, filePath.lastIndexOf("."));
-        String extension = filePath.substring(filePath.lastIndexOf("."));
-        if (!name.matches(".+_\\d+"))                           //if file doesn't have a number appended yet, add one
-            name = name + "_1";
-
-        int indexOfNumber;
-        while (Files.exists(Paths.get(name + extension))) {     //increment number at end of file name until it's no longer a duplicate
-            indexOfNumber = name.lastIndexOf("_") + 1;
-            name = name.substring(0, indexOfNumber) + Integer.parseInt(name.substring(indexOfNumber)) + 1;        //set name to what it was but increment the number at the end
-        }
-
-        return name + extension;
-    }
-
-
-    private void importOwner() {
-        try {
-            DBM.insertIntoDB(owner);
-        } catch (SQLException e) {
-            System.err.println("Could not access users database");
-        }
-    }
-
     private int matchOwnerInDB() {                              //checks if owner is in DB, returns owner's ID if they are
         try (PreparedStatement stmt = DBM.conn.prepareStatement("SELECT UserID FROM users WHERE `UserEmail` = ?")) {
-            stmt.setString(1, owner.getUserEmail());
+            stmt.setString(1, timeline.getOwner().getUserEmail());
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 return rs.getInt(1);
@@ -225,51 +178,58 @@ public class JSONTimeline {
         return 0;
     }
 
-    public void importRatings() {
-        try (PreparedStatement stmt = DBM.conn.prepareStatement("SELECT UserID, UserEmail FROM users")) {
-            ResultSet rs = stmt.executeQuery();
-
-            for (Rating rating : ratings) {     //Iterating through the resultset turned out slightly faster than creating a Map object for quick lookup
-                while (rs.next()) {
-                    if (rating.userEmail.equals(rs.getString("UserEmail"))) {
-                        timeline.addRating(rating.rating, rs.getInt("UserID"));
-                        break;
-                    }
-                }
-                rs.beforeFirst();
-            }
-            rs.close();
-
-            //TODO run some tests to see if creating a Map makes things much faster; large amounts of ratings becomes a massive slowdown, but preminary testing shows very extremely minor differences
-            //TODO probably smarter to just calculate all the valid ratings in a batch and then insert them all at once, DB interactions are slow.
-            //TODO maybe do above in the actual DBM.insertIntoDB method? It'd be a benefit everywhere, but would take some mild refactoring
-            /*
-            Map<String, Integer> emailList = new TreeMap<>();
-            while (rs.next())                       //adds each user's email address alongside user's ID
-                emailList.put(rs.getString("UserEmail"), rs.getInt("UserID"));
-
-            for (Rating rating : ratings) {
-                Integer userIDForRating = emailList.get(rating.userEmail);
-                if (userIDForRating == null)        //if user with that email is not found in local DB, don't add their rating
-                    continue;
-                timeline.addRating(rating.rating, userIDForRating);
-            }*/
-        } catch (SQLException e) {                  //if we can't access the database to match users to local IDs, no point trying to add ratings
-            //System.err.println("Could not access users database");
-            e.printStackTrace();
+    private void importOwner() {
+        try {
+            DBM.insertIntoDB(timeline.getOwner());
+        } catch (SQLException e) {
+            System.err.println("Could not access users database");
         }
     }
 
-    private void setOwnership(int ownerID) {                //sets ownerID of all objects to the inserted value
-        owner.setID(ownerID);
+    private void setOwnership(int ownerID) {                //sets ownerID of all objects to the passed value
+        timeline.getOwner().setID(ownerID);
         timeline.setOwnerID(ownerID);
         for (int i = 0; i < timeline.getEventList().size(); i++) {
             timeline.getEventList().get(i).setOwnerID(ownerID);
         }
     }
 
+    public void importRatings() {
+        try (PreparedStatement readStmt = DBM.conn.prepareStatement("SELECT UserID, UserEmail FROM users");
+             PreparedStatement writeStmt = DBM.conn.prepareStatement("INSERT INTO ratings (`Rating`, `UserId`, `TimeLineID`) VALUES (?, ?, ?)")) {
+            writeStmt.setInt(3, timeline.getID());
+            DBM.conn.setAutoCommit(false);
 
-    /////////JSON Serializers/Deserializers/////////////////
+            ResultSet rs = readStmt.executeQuery();
+
+            Map<String, Integer> emailList = new TreeMap<>();
+            while (rs.next())                       //adds each user's email address alongside user's ID
+                emailList.put(rs.getString("UserEmail"), rs.getInt("UserID"));
+
+            ratings.keySet().retainAll(emailList.keySet());     //if user with that email is not found in local DB, don't add their rating
+
+            for (String rater : ratings.keySet()) {
+                writeStmt.setInt(1, ratings.get(rater));
+                writeStmt.setInt(2, emailList.get(rater));
+                writeStmt.addBatch();
+            }
+
+            rs.close();
+
+            writeStmt.executeBatch();
+        } catch (SQLException e) {                  //if we can't access the database to match users to local IDs, no point trying to add ratings
+            e.printStackTrace();//System.err.println("Could not access ratings database");
+        } finally {
+            try {
+                DBM.conn.setAutoCommit(true);
+            } catch (SQLException e) {
+                System.err.println("Could not access database.");
+            }
+        }
+    }
+
+
+    /////////////////JSON Serializers/Deserializers/////////////////
     public static Gson getGson() {
         return new GsonBuilder()
                 .setPrettyPrinting()
@@ -295,16 +255,5 @@ public class JSONTimeline {
                 return LocalDateTime.parse(jsonReader.nextString());
             }
         };
-    }
-
-    //Tiny private class to hold a rating with who rated it, email as identifier
-    private static class Rating {
-        private final String userEmail;
-        private final int rating;
-
-        private Rating(String userEmail, int rating) {
-            this.userEmail = userEmail;
-            this.rating = rating;
-        }
     }
 }

@@ -11,6 +11,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
+
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -19,26 +20,14 @@ import java.util.Optional;
 
 public class TimelineCell {
 
-    @FXML
-    Button cellEditTimelineButton;
-    @FXML
-    Button cellDeleteTimelineButton;
-    @FXML
-    Button cellViewTimelineButton;
-    @FXML
-    VBox cellButtonBox;
-    @FXML
-    GridPane pane;
-    @FXML
-    HBox ratingBox;
-    @FXML
-    Label title;
-    @FXML
-    Label description;
-    @FXML
-    Label keywords;
-    @FXML
-    Label author;
+    @FXML Button cellDeleteTimelineButton;
+    @FXML VBox cellButtonBox;
+    @FXML GridPane pane;
+    @FXML HBox ratingBox;
+    @FXML Label title;
+    @FXML Label description;
+    @FXML Label keywords;
+    @FXML Label author;
     List<Polygon> ratingButtons;
     Timeline timeline;
     protected FilteredList<Timeline> filteredTimelines;
@@ -72,46 +61,49 @@ public class TimelineCell {
         double angle = 0;
         double distance;
 
-        for (int i = 0; i < numPoints * 2; i++) {   // calculate position of each point on star, starting from top and going clockwise
+        for (int i = 0; i < numPoints * 2; i++) {   //calculate position of each point on star, starting from top and going clockwise
             if (i % 2 == 0)
                 distance = starSize;                //tips stick out further
             else
                 distance = starSize / 2;            //intersections don't stick out as much, increase number to increase how "sharp" the star is
 
-            button.getPoints().addAll(Math.sin(angle) * distance, // trig to find point position, easier to adjust than manual point placement
+            button.getPoints().addAll(Math.sin(angle) * distance, //trig to find point position, easier to adjust than manual point placement
                     Math.cos(angle) * distance * -1);
 
-            angle += Math.PI / numPoints;            // simplified (2*PI / numPoints*2), rotates angle to calculate next tip/intersection
+            angle += Math.PI / numPoints;            //simplified (2*PI / numPoints*2), rotates angle to calculate next tip or intersection
         }
 
-        button.setOnMouseClicked(e -> {
-            timeline.rateTimeline(index + 1);       //click a star to submit a rating and update its display value
-            timeline.updateRatingFromDB();
+        button.setOnMouseClicked(event -> {
+            try {
+                timeline.rateTimeline(index + 1);       //click a star to submit a rating and update its display value
+                timeline.updateRatingFromDB();
+            } catch (SQLException exception) {
+                System.err.println("Could not access rating from database.");
+            }
             colorStarsByRating((int) Math.ceil(timeline.getRating()));
         });
     }
 
     private void colorStarsByRating(int rating) {
         for (int i = 0; i < 5; i++) {
-            Color starColor = i < rating ? Color.YELLOW : Color.GREY;   // yellow fill for lower stars
-            ratingButtons.get(i).setFill(starColor);                    // grey fill for stars above timeline's rank
+            ratingButtons.get(i).setFill((i < rating) ? Color.YELLOW : Color.GREY);   //yellow stars until rating reached, then grey
         }
     }
 
-    public void update() {
+    void update() {
         if (timeline != null) {
             populateTimelineDetails();
             setBGImage();
             colorStarsByRating((int) Math.ceil(timeline.getRating()));
             ratingBox.setOpacity((timeline.getRating() > 1) ? 1 : 0);
+            cellDeleteTimelineButton.setDisable(timeline.getOwner().getID() != GUIManager.loggedInUser.getID());
         }
     }
 
-    public void populateTimelineDetails() {
+    void populateTimelineDetails() {
         title.setText("Title: " + timeline.getName());
         author.setText("By: " + user.getUserName());
         description.setText("Description: " + timeline.getDescription());
-        //TODO start and end date here
 
         StringBuilder keyWords = new StringBuilder();
         keyWords.append("Keywords: ");
@@ -130,24 +122,20 @@ public class TimelineCell {
             pane.getChildren().removeAll(description, keywords);
     }
 
-    public Timeline getTimeline() {
-        return timeline;
-    }
-
-    public void setTimeline(Timeline timeline) {
+    void setTimeline(Timeline timeline) {
         this.timeline = timeline;
         user = timeline.getOwner();
         this.update();
     }
 
-    public void setBGImage() {
+    void setBGImage() {
         String imageURL = timeline.getImagePath() != null ? "url(file:" + timeline.getImagePath() + ")" : null;
         int height = focused ? 400 : 80;
-        pane.setStyle(" -fx-background-image: " + imageURL + "; -fx-pref-width: 1200px; -fx-pref-height: " + height + "px; -fx-background-size: 1270px, stretch;");
+        pane.setStyle(" -fx-padding: 5px; -fx-background-image: " + imageURL + "; -fx-pref-width: " + (list.getWidth() - 6) + "px; -fx-pref-height: " + height + "px;  -fx-background-size: " + (list.getWidth() - 6) + "px, stretch;");
     }
 
     @FXML
-    public boolean deleteTimeline() {
+    boolean deleteTimeline() {
         Alert confirmDeleteTimeline = new Alert(Alert.AlertType.CONFIRMATION);
         confirmDeleteTimeline.setTitle("Confirm Deletion");
         confirmDeleteTimeline.setHeaderText("Are you sure you want to delete " + timeline.getName() + "?");
@@ -155,7 +143,7 @@ public class TimelineCell {
 
         Optional<ButtonType> result = confirmDeleteTimeline.showAndWait();
 
-        if (result.get() == ButtonType.CANCEL)
+        if (result.isPresent() && result.get() == ButtonType.CANCEL)
             return false;
         else {
             try {
@@ -165,26 +153,16 @@ public class TimelineCell {
                 e.printStackTrace();
             }
             filteredTimelines.getSource().remove(timeline);
-            list.getSelectionModel().select(0);
+            list.getSelectionModel().clearSelection();
             return true;
         }
     }
 
     @FXML
-    public TimelineView editTimeline() {
-        return openTimelineView(true);
-    }
-
-    @FXML
-    public TimelineView openTimeline() {
-        return openTimelineView(false);
-    }
-
-    private TimelineView openTimelineView(boolean editable) {
+    TimelineView openTimeline() {
         try {
             TimelineView timelineView = GUIManager.swapScene("TimelineView");
             timelineView.setActiveTimeline(timeline);
-            timelineView.timelineEditorController.toggleEditable(editable);
             return timelineView;
         } catch (IOException e) {
             e.printStackTrace();

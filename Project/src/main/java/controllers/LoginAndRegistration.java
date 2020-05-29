@@ -21,19 +21,13 @@ import java.util.List;
 
 public class LoginAndRegistration {
 
-    @FXML
-    public PasswordField confirmPasswordInput;
-    @FXML
-    private TextField usernameInput;
-    @FXML
-    private PasswordField passwordInput;
-    @FXML
-    private Text errorMessage;
-    @FXML
-    private TextField emailInput;
+    @FXML PasswordField confirmPasswordInput;
+    @FXML TextField usernameInput;
+    @FXML PasswordField passwordInput;
+    @FXML Text errorMessage;
+    @FXML TextField emailInput;
 
-
-    public LoginAndRegistration() {
+    public void initialize() {
         GUIManager.mainStage.setTitle("Welcome Screen");
     }
 
@@ -66,12 +60,12 @@ public class LoginAndRegistration {
     }
 
     @FXML
-    public void close(ActionEvent event) {
+    void close(ActionEvent event) {
         ((Node) (event.getSource())).getScene().getWindow().hide();
     }
 
     @FXML
-    public void registerUser(ActionEvent event) {
+    void registerUser(ActionEvent event) {
 
         //Reset the error message if the input fields match after getting the error
         errorMessage.setText("");
@@ -104,7 +98,7 @@ public class LoginAndRegistration {
     }
 
     @FXML
-    public void loginUser(ActionEvent event) {
+    void loginUser(ActionEvent event) {
         // Reset the error message if the input fields match after getting the error
         errorMessage.setText("");
 
@@ -143,7 +137,7 @@ public class LoginAndRegistration {
                 }
             }
         } catch (SQLException | IOException e) {
-            errorMessage.setText(e.getMessage());
+            e.printStackTrace();
         }
     }
 

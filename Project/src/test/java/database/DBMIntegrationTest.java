@@ -28,20 +28,17 @@ public class DBMIntegrationTest {
 
     @AfterAll
     static void finish() throws SQLException {
-        DBM.conn.createStatement().execute("DROP DATABASE IF EXISTS test");
+        DBM.conn.createStatement().execute("DROP DATABASE IF EXISTS " + SCHEMA);
         DBM.conn.close();
     }
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws FileNotFoundException, SQLException {
         testCount++;
         System.out.println("Test " + testCount);
 
-        try {
-            DBM.setupSchema();
-        } catch (SQLException | FileNotFoundException e) {
-            e.printStackTrace();
-        }
+        DBM.setupSchema();
+        DBM.createTestData();
     }
 
     @Test
@@ -81,7 +78,7 @@ public class DBMIntegrationTest {
 
     @Test
     void insertNulls() throws SQLException {
-        int expected = 6;
+        int expected = 1 + DBM.getFromDB(DBM.conn.prepareStatement("SELECT COUNT(*) FROM events"), rs -> rs.getInt(1)).get(0);
 
         Event[] events = new Event[3];
         events[1] = new Event();
@@ -96,7 +93,7 @@ public class DBMIntegrationTest {
     }
 
     @Test
-    void insertDuplicateThrowsException() throws SQLException {
+    void insertDuplicateThrowsException() {
         //Event event = new Event(1, 2020, 4, 9);
         //DBM.insertIntoDB(event);
 
@@ -150,17 +147,5 @@ public class DBMIntegrationTest {
         List<User> userList = DBM.getFromDB(DBM.conn.prepareStatement("SELECT * FROM users"), new User());
 
         assertFalse(userList.get(0).getAdmin());
-    }
-
-    @Test
-    void setupSchemaFailureReturnsToOldList() throws SQLException {
-        String expected = "src/main/resources/Database Creation Script.sql";
-        try {
-            DBM.setupSchema("NonexistentFile.sql");
-        } catch (FileNotFoundException ignore) {
-        }
-        String actual = DBM.creationScript;
-
-        assertEquals(expected, actual);
     }
 }

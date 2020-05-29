@@ -24,8 +24,7 @@ class TimelineTest {
 		sut = new DBM("jdbc:mysql://localhost?useTimezone=true&serverTimezone=UTC", "root", "AJnuHA^8VKHht=uB",
 				"project");
 		DBM.setupSchema();
-		createTestDB(); // Adds some rows to the database tables and exports them to .xml, don't need to
-		// run this often
+		DBM.createTestData();
 	}
 
 	static void createTestDB() throws SQLException {
@@ -68,18 +67,13 @@ class TimelineTest {
 		DBM.conn.close();
 	}
 
-	// int TimeLineID, String TimelineName, String TimelineDescription, int Scale,
-	// String Theme,
-	// LocalDateTime StartDate, LocalDateTime Enddate, LocalDateTime LocalDateTime Created, int TimelineOwner,
-	// List<String> keywords, List<Event> eventList
-
 	@Test
 	void getInsertQueryTest() throws SQLException {
 		// method turns default values to "** NOT SPECIFIED **" so this fails, full fake
 		// data in test class
 		String sql = "INSERT INTO `timelines` ( `Scale`,`TimelineName`, `TimelineDescription`, `Theme`,`StartYear`,`StartMonth`,`StartDay`,`StartHour`"
 				+ ",`StartMinute`,`StartSecond`,`StartMillisecond`,`EndYear`,`EndMonth`,`EndDay`,`EndHour`,`EndMinute`,`EndSecond`,"
-				+ "`EndMillisecond`,`Private`,`TimelineOwner`,`Keywords`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+				+ "`EndMillisecond`,`TimelineOwner`,`Keywords`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		PreparedStatement out = DBM.conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 		for (int i = 0; i < timelines.length; i++) {
 			assertEquals(out.toString(), timelines[i].getInsertQuery().toString());
@@ -143,14 +137,6 @@ class TimelineTest {
 			timelines[i].setName("A Different name");
 			assertFalse(oldName.equals(timelines[i].getName()));
 		}
-	}
-
-	@Test
-	void validNameTest() throws SQLException {
-		// validName is private in timeline, need to see if can be public and refactord
-		// to validTimelineName
-		Boolean actual = timelines[0].validName("Normal name", 1);
-		assertFalse(actual);
 	}
 
 	@Test

@@ -2,22 +2,18 @@ package database;
 
 import java.time.LocalDateTime;
 
+//Holds the shared variables between Timeline.java and Event.java, mostly used by the Editor abstract class
 public abstract class TimelineObject<T> implements DBObject<T> {
-    transient int ownerID;
-    LocalDateTime startDate = LocalDateTime.of(0,1,1,0,0,0,0);
-    LocalDateTime endDate = LocalDateTime.of(0,1,1,0,0,0,0);
+    LocalDateTime startDate = LocalDateTime.of(0, 1, 1, 0, 0, 0, 0);
+    LocalDateTime endDate = LocalDateTime.of(0, 1, 1, 0, 0, 0, 0);
     LocalDateTime creationDate;
     String imagePath;
 
     public abstract int getID();
 
-    public int getOwnerID() {
-        return ownerID;
-    }
+    public abstract int getOwnerID();
 
-    public void setOwnerID(int ownerID) {
-        this.ownerID = ownerID;
-    }
+    public abstract void setOwnerID(int ownerID);
 
     public LocalDateTime getStartDate() {
         return this.startDate;

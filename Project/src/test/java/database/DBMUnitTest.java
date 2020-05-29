@@ -6,7 +6,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -20,9 +19,10 @@ class DBMUnitTest {
     static private ResultSet rs;
 
     @BeforeAll
-    static void init() throws SQLException, IOException, ClassNotFoundException {
+    static void init() throws FileNotFoundException, SQLException {
         new DBM(SCHEMA);
         DBM.setupSchema();
+        DBM.createTestData();
     }
 
     @AfterAll
@@ -32,47 +32,16 @@ class DBMUnitTest {
     }
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws FileNotFoundException, SQLException {
         testCount++;
         System.out.println("Test " + testCount);
 
-        try {
-            DBM.setupSchema();
-        } catch (SQLException | FileNotFoundException e) {
-            e.printStackTrace();
-        }
+        DBM.setupSchema();
+        DBM.createTestData();
     }
 
     @Test
-    void createDB() {
-    }
-
-    @Test
-    void testCreateDB() {
-    }
-
-    @Test
-    void getFromDB() {
-    }
-
-    @Test
-    void updateInDB() {
-    }
-
-    @Test
-    void insertIntoDB() {
-    }
-
-    @Test
-    void useSchema() {
-    }
-
-    @Test
-    void dropSchema() {
-    }
-
-    @Test
-    void close() throws SQLException, ClassNotFoundException {
+    void close() throws SQLException {
         DBM.conn.close();
 
         assertThrows(SQLException.class, () -> DBM.conn.createStatement());

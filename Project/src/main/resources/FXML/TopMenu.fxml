@@ -1,41 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Menu?>
-<?import javafx.scene.control.MenuBar?>
-<?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
-<HBox xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.TopMenu">
+<HBox xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.TopMenu">
     <MenuBar maxHeight="25.0">
-        <Menu fx:id="fileMenu" mnemonicParsing="false" text="File">
-            <MenuItem fx:id="saveButton" mnemonicParsing="false" onAction="#saveFile" text="Save" />
-            <MenuItem mnemonicParsing="false" text="Delete" />
-            <MenuItem mnemonicParsing="false" onAction="#zoom" text="Zoom" />
-            <MenuItem mnemonicParsing="false" onAction="#importFromJSON" text="Import" />
+        <Menu fx:id="loggedInStatus" text="Not logged in">
+            <MenuItem onAction="#logOutPressed" text="Log Out" />
         </Menu>
-        <Menu mnemonicParsing="false" text="Edit">
-            <MenuItem mnemonicParsing="false" text="Edit Mode" />
-        </Menu>
-        <Menu mnemonicParsing="false" text="View">
-          <MenuItem mnemonicParsing="false" text="View Mode" />
-         <Menu mnemonicParsing="false" text="Theme">
-           <items>
-             <MenuItem mnemonicParsing="false" onAction="#styleDefaultPressed" text="Default" />
-               <MenuItem mnemonicParsing="false" onAction="#styleBeigePressed" text="Beige" />
-               <MenuItem mnemonicParsing="false" onAction="#styleBluePressed" text="Blue" />
-               <MenuItem mnemonicParsing="false" onAction="#styleDarkPressed" text="Dark" />
-               <MenuItem mnemonicParsing="false" onAction="#styleMaroonPressed" text="Maroon" />
-           </items>
-         </Menu>
-        </Menu>
-    </MenuBar>
-    <MenuBar nodeOrientation="RIGHT_TO_LEFT" prefHeight="25.0" prefWidth="334.0" HBox.hgrow="SOMETIMES">
-        <HBox.margin>
-            <Insets />
-        </HBox.margin>
-        <Menu fx:id="loggedInStatus" mnemonicParsing="false" text="Not logged in">
-            <MenuItem mnemonicParsing="false" onAction="#logOutPressed" text="Log Out" />
+        <Menu text="Theme">
+            <MenuItem onAction="#styleDefaultPressed" text="Default"/>
+            <MenuItem onAction="#styleLightPressed" text="Light"/>
+            <MenuItem onAction="#styleDarkPressed" text="Dark"/>
+            <MenuItem onAction="#styleBluePressed" text="Blue"/>
+            <MenuItem onAction="#styleMaroonPressed" text="Maroon"/>
         </Menu>
     </MenuBar>
 </HBox>

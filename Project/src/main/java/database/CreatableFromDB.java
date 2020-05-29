@@ -5,5 +5,5 @@ import java.sql.SQLException;
 
 @FunctionalInterface
 public interface CreatableFromDB<T> {
-     T createFromDB(ResultSet rs) throws SQLException;
+    T createFromDB(ResultSet rs) throws SQLException;
 }

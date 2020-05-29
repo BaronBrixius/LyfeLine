@@ -41,7 +41,7 @@
     <PasswordField fx:id="passwordInput" onAction="#registerUser" GridPane.columnIndex="2" GridPane.rowIndex="2" />
     <PasswordField fx:id="confirmPasswordInput" onAction="#registerUser" GridPane.columnIndex="2" GridPane.rowIndex="3" />
     <HBox prefHeight="100.0" prefWidth="200.0" spacing="10.0" GridPane.columnIndex="2" GridPane.rowIndex="4">
-        <Button mnemonicParsing="false" onAction="#registerUser" styleClass="smallButton" text="Register" />
-        <Button mnemonicParsing="false" onAction="#close" styleClass="smallButton" text="Close" />
+        <Button onAction="#registerUser" styleClass="smallButton" text="Register" />
+        <Button onAction="#close" styleClass="smallButton" text="Close" />
     </HBox>
 </GridPane>
