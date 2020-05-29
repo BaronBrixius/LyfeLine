@@ -27,12 +27,12 @@ public class EventEditor extends Editor {
         prioritySlider.setLabelFormatter(new StringConverter<>() {
             @Override
             public String toString(Double n) {
-                if (n < 0.5) return "Not set";
+                if (n < 0.5) return "None";
                 if (n < 1.5) return "Low";
                 if (n < 2.5) return "Medium";
                 if (n < 3.5) return "High";
 
-                return "Not set";
+                return "None";
             }
 
             //probably not used but required for the override

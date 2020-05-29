@@ -1,7 +1,6 @@
 package controllers;
 
 import database.DBM;
-import database.Timeline;
 import database.User;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -63,7 +62,8 @@ public class GUIManager extends Application {
         mainStage.setMaximized(true);
         mainStage.show();
 
-        DBM.dropSchema();                 //deletes database, useful to reset sometimes   //TODO delete for final
+        new DBM(/*userName, password*/);    //establish connection to the DB
+        //DBM.dropSchema();                 //deletes database, useful to reset sometimes
         DBM.firstTimeSetup();               //setup database and dummy data if needed, better after window loads so user feels feedback faster
     }
 

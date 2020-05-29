@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Group?>
 <?import javafx.scene.control.Button?>
@@ -65,7 +66,7 @@
         <StackPane fx:id="leftSidebar" minWidth="1.0" BorderPane.alignment="CENTER" />
     </left>
     <center>
-        <ScrollPane fx:id="mainScrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="600.0" minWidth="600.0" pannable="true" styleClass="scroll-bar" BorderPane.alignment="CENTER">
+        <ScrollPane fx:id="mainScrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="600.0" minWidth="600.0" pannable="true" BorderPane.alignment="CENTER">
             <StackPane fx:id="centeringStack">
                 <Group>
                     <GridPane fx:id="timelineGrid" alignment="CENTER" minHeight="300.0" minWidth="500.0" scaleShape="false" vgap="17.0">
@@ -81,6 +82,10 @@
                     </GridPane>
                 </Group>
             </StackPane>
+         <styleClass>
+            <String fx:value="scroll-bar" />
+            <String fx:value="timelineView" />
+         </styleClass>
         </ScrollPane>
     </center>
     <right>

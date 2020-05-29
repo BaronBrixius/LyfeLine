@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
@@ -28,10 +29,15 @@
                <HBox.margin>
                   <Insets />
                </HBox.margin></Button>
-            <Button fx:id="importButton" mnemonicParsing="false" onAction="#importFromJSON" styleClass="dashBoard, smallButton" text="Import">
+            <Button fx:id="importButton" mnemonicParsing="false" onAction="#importFromJSON" text="Import">
                <HBox.margin>
                   <Insets />
-               </HBox.margin></Button>
+               </HBox.margin>
+               <styleClass>
+                  <String fx:value="dashBoard" />
+                  <String fx:value="DisabledInvisible" />
+                  <String fx:value="smallButton" />
+               </styleClass></Button>
                 <Button fx:id="adminGUI" alignment="CENTER" mnemonicParsing="false" onAction="#adminScreen" prefWidth="297.0" styleClass="dashBoard, DisabledInvisible, smallButton" text="Admin Manager" textAlignment="CENTER">
                     <opaqueInsets>
                         <Insets />
@@ -191,7 +197,7 @@
        <StackPane fx:id="rightStack" BorderPane.alignment="CENTER_LEFT">
            <VBox fx:id="greetingBox" alignment="CENTER" prefWidth="275.0" StackPane.alignment="CENTER_LEFT">
             <ImageView fx:id="logoView" fitHeight="259.0" fitWidth="259.0" pickOnBounds="true" preserveRatio="true">
-               <Image url="@../Logo.png" />
+               <Image url="@../LogoIcon.png" />
             </ImageView>
                <Label alignment="CENTER" text="Welcome to LyfeLine! Browse and rate any of our user made Timelines from the list here, or narrow down your search with the tools on the top of the screen." wrapText="true">
                    <VBox.margin>

@@ -51,10 +51,6 @@ public abstract class Editor {
     @FXML
     Text errorMessage;
     @FXML
-    Button moreStart;
-    @FXML
-    Button moreEnd;
-    @FXML
     FlowPane startPane;
     @FXML
     FlowPane endPane;
@@ -90,18 +86,18 @@ public abstract class Editor {
                 fullImageContainer.setGraphic(new ImageView(new Image("file:" + imageFilePath)));
                 fullImagePopup.show(image, Side.BOTTOM, 0, 0);
             }
-            e.consume();        //so event editor doesn't also receive double click and close as a result
+            e.consume();        //so editor doesn't also receive double click
         });
     }
 
     @FXML
-    void toggleStartExpanded() {
+    void toggleStartExpanded() {        //toggles whether the spinners for inputting start date are expanded
         startExpanded = !startExpanded;
         setExpansion(startPane, startBoxes, startExpanded, parentController.activeTimeline.getScale());
     }
 
     @FXML
-    void toggleEndExpanded() {
+    void toggleEndExpanded() {        //toggles whether the spinners for inputting end date are expanded
         endExpanded = !endExpanded;
         setExpansion(endPane, endBoxes, endExpanded, parentController.activeTimeline.getScale());
     }

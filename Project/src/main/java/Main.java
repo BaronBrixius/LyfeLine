@@ -1,10 +1,8 @@
 import controllers.GUIManager;
-import database.DBM;
 import javafx.application.Application;
 
 public class Main {
     public static void main(String[] args) {
-        new DBM(/*userName, password*/);          //establish connection to the DB
-        Application.launch(GUIManager.class);     //open the application
+        Application.launch(GUIManager.class);     //open the application, only runs from main so VMOptions aren't needed
     }
 }

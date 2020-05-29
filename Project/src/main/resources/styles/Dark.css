@@ -90,13 +90,16 @@
     -fx-cursor:AUTO;
 }
 
-.scroll-pane .viewport,.list-view .corner,border-pane,.smallTextArea,.list-view,.list-view .list-cell:even,
+.scroll-pane .viewport{
+    -fx-background-color:#2c2c2c;
+}
+
+.timelineView .viewport,.list-view .corner,border-pane,.smallTextArea,.list-view,.list-view .list-cell:even,
 .list-view .list-cell:odd,.scroll-bar:vertical,.scroll-bar:horizontal,.check-box:selected .mark,.paneBG {
     -fx-background-color:#81817e;
 }
 
 .scroll-pane,.text-area {
-    -fx-background-color:#81817e;       /*used to be transparent, #81817e, transparent, #81817e but that was messing with attempts to read it in java*/
     -fx-background-insets:0;
     -fx-background-radius:0 0 0 0;
     -fx-border-width:-1;
@@ -107,7 +110,6 @@
 }
 
 .scroll-pane:focused,.text-area:focused {
-    -fx-background-color:#81817e;       /*used to be transparent, #81817e, transparent, #81817e but that was messing with attempts to read it in java*/
     -fx-background-insets:0;
     -fx-background-radius:0 0 0 0;
     -fx-border-width:-1;

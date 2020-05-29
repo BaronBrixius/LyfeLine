@@ -4,9 +4,9 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.ContextMenu?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
-<?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextArea?>
@@ -23,7 +23,6 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<?import javafx.scene.control.ContextMenu?>
 <HBox fx:id="editor" alignment="CENTER" minWidth="1.0" prefHeight="1200.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.TimelineEditor">
     <VBox alignment="CENTER" spacing="5.0">
         <padding>
@@ -84,7 +83,7 @@
                 <Label fx:id="feedbackText" layoutX="10.0" layoutY="629.0" style="-fx-font-weight: normal;" styleClass="smallText" GridPane.columnIndex="1" GridPane.rowIndex="6" />
                 <HBox fx:id="keywordBox" spacing="5.0" GridPane.columnSpan="2" GridPane.rowIndex="7">
                     <TextField fx:id="keywordInput" onAction="#addKeyword" HBox.hgrow="SOMETIMES" />
-                    <Button fx:id="addKeywordButton" maxWidth="47.0" mnemonicParsing="false" onAction="#addKeyword" prefWidth="47.0" text="Add">
+                    <Button maxWidth="47.0" mnemonicParsing="false" onAction="#addKeyword" prefWidth="47.0" text="Add">
                         <font>
                             <Font size="10.0" />
                         </font>
@@ -93,7 +92,7 @@
                             <String fx:value="DisabledInvisible" />
                         </styleClass>
                     </Button>
-                    <Button fx:id="removeKeywordButton" maxWidth="67.0" mnemonicParsing="false" onAction="#removeKeyword" prefWidth="67.0" text="Remove">
+                    <Button maxWidth="67.0" mnemonicParsing="false" onAction="#removeKeyword" prefWidth="67.0" text="Remove">
                         <font>
                             <Font size="10.0" />
                         </font>
@@ -106,7 +105,7 @@
                 <ListView fx:id="keywordView" minHeight="50.0" prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="2" GridPane.rowIndex="8" GridPane.vgrow="SOMETIMES" />
                 <Label styleClass="smallText" text="Start:" GridPane.columnSpan="2" GridPane.rowIndex="9" GridPane.valignment="BOTTOM" />
                 <FlowPane fx:id="startPane" alignment="CENTER_LEFT" hgap="5.0" GridPane.columnSpan="2" GridPane.rowIndex="10">
-                    <Button fx:id="moreStart" alignment="CENTER" ellipsisString="" maxWidth="60.0" minWidth="60.0" mnemonicParsing="false" onAction="#toggleStartExpanded" styleClass="tinyButton" text="more..." textAlignment="CENTER">
+                    <Button alignment="CENTER" ellipsisString="" maxWidth="60.0" minWidth="60.0" mnemonicParsing="false" onAction="#toggleStartExpanded" styleClass="tinyButton" text="more..." textAlignment="CENTER">
                         <FlowPane.margin>
                             <Insets left="7.0" top="18.0" />
                         </FlowPane.margin>
@@ -119,7 +118,7 @@
                     <Label contentDisplay="RIGHT" styleClass="smallText" text="End" />
                 </HBox>
                 <FlowPane fx:id="endPane" alignment="CENTER_LEFT" hgap="5.0" GridPane.columnSpan="2" GridPane.rowIndex="12">
-                    <Button fx:id="moreEnd" alignment="CENTER" ellipsisString="" maxWidth="60.0" minWidth="60.0" mnemonicParsing="false" onAction="#toggleEndExpanded" styleClass="tinyButton" text="more..." textAlignment="CENTER">
+                    <Button alignment="CENTER" ellipsisString="" maxWidth="60.0" minWidth="60.0" mnemonicParsing="false" onAction="#toggleEndExpanded" styleClass="tinyButton" text="more..." textAlignment="CENTER">
                         <FlowPane.margin>
                             <Insets left="7.0" top="18.0" />
                         </FlowPane.margin>

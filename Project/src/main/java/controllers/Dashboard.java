@@ -147,9 +147,11 @@ public class Dashboard {
     }
 
     private void initializeButtons() {
+        boolean admin = !GUIManager.loggedInUser.getAdmin();
         stack.getChildren().remove(advancedSearchView);
-        btnCreate.setDisable(!GUIManager.loggedInUser.getAdmin());
-        adminGUI.setDisable(!GUIManager.loggedInUser.getAdmin());
+        btnCreate.setDisable(admin);
+        importButton.setDisable(admin);
+        adminGUI.setDisable(admin);
     }
 
     private void simpleSearch(Observable obs) {

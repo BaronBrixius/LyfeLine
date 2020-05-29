@@ -33,10 +33,6 @@ public class TimelineEditor extends Editor {
     @FXML
     ComboBox<String> timeInput;
     @FXML
-    Button addKeywordButton;
-    @FXML
-    Button removeKeywordButton;
-    @FXML
     ListView<String> keywordView;
     @FXML
     Label feedbackText;
@@ -260,7 +256,6 @@ public class TimelineEditor extends Editor {
         resolutionSaveImage.setHeaderText("Resolution of the picture is too low. Minimum resolution is 800x600");
         resolutionSaveImage.showAndWait();
     }
-
 
     @FXML
     void snapshotEntireTimeline() {

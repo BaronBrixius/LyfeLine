@@ -30,15 +30,6 @@
     -fx-background-color: #5980aa;
 }
 
-.date-picker-popup .button {
-    -fx-background-color: 0 0 0;
-    -fx-color: transparent;
-}
-
-.date-picker-popup > * > .spinner > .button:hover, .date-picker-popup > * > .spinner > .button:armed {
-    -fx-color: 0;
-}
-
 .eventEditor {
     -fx-background-color: #9abfff;
 }
@@ -112,8 +103,13 @@
     -fx-border-radius: 2.5em;
 }
 
-.slider .axis, .check-box {
+.check-box {
     -fx-text-fill: black;
+}
+
+.slider .axis{
+    -fx-text-fill: black;
+    -fx-tick-label-fill: black;
 }
 
 .smallButton, .popupButton {
