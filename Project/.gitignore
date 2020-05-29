@@ -49,8 +49,3 @@ dependency-reduced-pom.xml
 buildNumber.properties
 .mvn/*
 .flattened-pom.xml
-
-
-Project\src\main\resources\images\timeline\*
-Project\src\main\resources\images\event\*
-

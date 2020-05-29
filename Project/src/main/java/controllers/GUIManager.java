@@ -16,17 +16,15 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 public class GUIManager extends Application {
-
-    //currently logged in user, null if no log in
-    public static User loggedInUser;
+    public static User loggedInUser;    //currently logged in user, null if no log in
     public static Stage mainStage;
-    public static TopMenu menu;
-    public static BorderPane main;
-    public static FXMLLoader loader;
+    static TopMenu menu;
+    static BorderPane mainPane;
+    static FXMLLoader loader;
 
     public static <T> T swapScene(String fxml) throws IOException {
         loader = new FXMLLoader(GUIManager.class.getResource("../FXML/" + fxml + ".fxml"));
-        main.setCenter(loader.load());
+        mainPane.setCenter(loader.load());
         return loader.getController();
     }
 
@@ -45,24 +43,23 @@ public class GUIManager extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        //loggedInUser = DBM.getFromDB(DBM.conn.prepareStatement("SELECT * FROM users"), new User()).get(0);  //TODO delete for final
-        main = new BorderPane();
-        main.setPrefWidth(Screen.getPrimary().getBounds().getWidth() - 30);
-        main.setPrefHeight(Screen.getPrimary().getBounds().getHeight() - 90);
+        mainPane = new BorderPane();
+        mainPane.setPrefWidth(Screen.getPrimary().getBounds().getWidth() - 30);
+        mainPane.setPrefHeight(Screen.getPrimary().getBounds().getHeight() - 90);
         loader = new FXMLLoader(GUIManager.class.getResource("../FXML/TopMenu.fxml"));
-        main.setTop(loader.load());
+        mainPane.setTop(loader.load());
         menu = loader.getController();
 
         mainStage = stage;
-        mainStage.setScene(new Scene(main));
+        mainStage.setScene(new Scene(mainPane));
         swapScene("LoginAndRegistration");
-        //TimelineView systemUnderDevelopment = swapScene("TimelineView");        //TODO delete for final
-        //systemUnderDevelopment.setActiveTimeline(DBM.getFromDB(DBM.conn.prepareStatement("SELECT * FROM timelines"), new Timeline()).get(0));
         mainStage.getScene().getStylesheets().add("File:src/main/resources/styles/Base.css");
         mainStage.getScene().getStylesheets().add("File:src/main/resources/styles/Default.css");
+
         FileInputStream icon = new FileInputStream("src/main/resources/LogoIcon.png");
         mainStage.getIcons().add(new Image(icon));
         icon.close();
+
         mainStage.setMaximized(true);
         mainStage.show();
 

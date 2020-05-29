@@ -38,7 +38,7 @@ public class EventSelector {
     @FXML
     Button newButton;
     @FXML
-    Button addToTimelineButton;
+    Button addToRemoveFromTimelineButton;
     @FXML
     ListView<Event> eventListView;
     private TimelineView parentController;
@@ -48,7 +48,7 @@ public class EventSelector {
         if (!GUIManager.loggedInUser.getAdmin()) {
             newButton.setVisible(false);
             deleteButton.setVisible(false);
-            addToTimelineButton.setVisible(false);
+            addToRemoveFromTimelineButton.setVisible(false);
         }
 
         eventListView.setItems(sortableEventList);
@@ -71,25 +71,27 @@ public class EventSelector {
         timelineComboBox.getSelectionModel().selectedIndexProperty().addListener(event -> {     //on selecting a different timeline, clear the event selection and disable event controls
             setFilter();
             eventListView.getSelectionModel().clearSelection();
-            disableEventControlButtons();
+            setEventControlButtons();
         });
 
         eventListView.getSelectionModel().selectedIndexProperty().addListener(e -> {
-            viewButton.setDisable(eventListView.getSelectionModel().getSelectedIndex() < 0);    //if no event selected, disable view button
-
-            if (eventListView.getSelectionModel().getSelectedIndex() >= 0) {
-                deleteButton.setDisable(GUIManager.loggedInUser.getID() != eventListView.getSelectionModel().getSelectedItem().getOwnerID());
-                addToTimelineButton.setDisable(GUIManager.loggedInUser.getID() != parentController.activeTimeline.getOwnerID()
-                || GUIManager.loggedInUser.getID() != eventListView.getSelectionModel().getSelectedItem().getOwnerID());        //TODO clean
-            }
-
+            setEventControlButtons();
         });
     }
 
-    private void disableEventControlButtons() {
-        viewButton.setDisable(true);
-        addToTimelineButton.setDisable(true);
-        deleteButton.setDisable(true);
+    private void setEventControlButtons() {
+        boolean hasSelection = eventListView.getSelectionModel().getSelectedIndex() >= 0;
+        boolean owner = hasSelection && GUIManager.loggedInUser.getID() == eventListView.getSelectionModel().getSelectedItem().getOwnerID();    //logged in user is owner of selected event
+
+        viewButton.setDisable(!hasSelection);           //uses !hasSelection because setDISABLE, it's an annoying double-negative
+        deleteButton.setDisable(!owner);
+        addToRemoveFromTimelineButton.setDisable(!owner ||
+                GUIManager.loggedInUser.getID() != eventListView.getSelectionModel().getSelectedItem().getOwnerID());   //also check if owner of timeline
+
+        if (owner && parentController.activeTimeline.getEventList().contains(eventListView.getSelectionModel().getSelectedItem()))
+            addToRemoveFromTimelineButton.setText("Remove From Timeline");          //if selected event is on the active timeline, button removes it
+        else
+            addToRemoveFromTimelineButton.setText("Add To Timeline");               //otherwise, button adds it to active timeline (may be disabled if no selection)
     }
 
     void setParentController(TimelineView parentController) {
@@ -162,6 +164,7 @@ public class EventSelector {
             eventList.setAll(DBM.getFromDB(DBM.conn.prepareStatement("SELECT * FROM events"), new Event()));
             timelineEventLinks = DBM.getFromDB(DBM.conn.prepareStatement("SELECT * FROM timelineevents"),
                     rs -> Arrays.asList(rs.getInt("TimelineID"), rs.getInt("EventID")));
+            setFilter();
         } catch (SQLException e) {
             System.out.println("Could not access events database.");
         }
@@ -223,21 +226,38 @@ public class EventSelector {
                             && e.getID() == te.get(1)));                                                //and returns whether each event is on that timeline
     }
 
-    public void addToTimeline() {
+    @FXML
+    void addRemoveTimeline() {
+        if (addToRemoveFromTimelineButton.getText().equals("Remove From Timeline"))
+            removeFromTimeline();
+        else
+            addToTimeline();
+    }
+
+    private void addToTimeline() {
         try {
-            if (eventListView.getSelectionModel().getSelectedItem().addToTimeline(parentController.activeTimeline.getID())) {
-                parentController.activeTimeline.getEventList().add(eventListView.getSelectionModel().getSelectedItem());
-                populateEventList();
-                parentController.populateDisplay();
-                System.out.println("Event added to " + parentController.activeTimeline + " timeline."); // remove this later once more user feedback is implemented
-            } else
-                System.out.println("Event is already on " + parentController.activeTimeline + " timeline.");
+            eventListView.getSelectionModel().getSelectedItem().addToTimeline(parentController.activeTimeline.getID());
+            parentController.activeTimeline.getEventList().add(eventListView.getSelectionModel().getSelectedItem());
+            populateEventList();
+            parentController.populateDisplay();
         } catch (SQLException e) {
             System.out.println("Timeline not found.");
         }
     }
 
-    public void clearSelectedTimeline() {
+    private void removeFromTimeline() {
+        try {
+            eventListView.getSelectionModel().getSelectedItem().removeFromTimeline(parentController.activeTimeline.getID());
+            parentController.activeTimeline.getEventList().remove(eventListView.getSelectionModel().getSelectedItem());
+            populateEventList();
+            parentController.populateDisplay();
+        } catch (SQLException e) {
+            System.out.println("Timeline not found.");
+        }
+    }
+
+    @FXML
+    void clearTimelineSelection() {
         timelineComboBox.getSelectionModel().select(-1);
     }
 

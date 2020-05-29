@@ -137,6 +137,24 @@ public class Event extends TimelineObject<Event> {
         return out.executeUpdate() > 0;
     }
 
+    public boolean removeFromTimeline(int timelineID) throws SQLException {
+        PreparedStatement stmt = DBM.conn.prepareStatement("DELETE FROM `timelineevents` WHERE EventID = ? AND TimelineID = ?");
+        stmt.setInt(1, eventID);
+        stmt.setInt(2, timelineID);
+        boolean out = stmt.executeUpdate() > 0;
+        deleteIfOrphan();
+        return out;
+    }
+
+    public void deleteIfOrphan() throws SQLException {    //destroy if orphaned (i.e. not present on any timeline)
+        try (PreparedStatement stmt = DBM.conn.prepareStatement("DELETE e FROM events e " +
+                "LEFT JOIN timelineevents t on e.EventID = t.EventID " +
+                "WHERE t.TimelineID IS NULL AND e.EventID = ?;")) {
+            stmt.setInt(1, eventID);
+            stmt.execute();
+        }
+    }
+
     @Override
     public int getID() {
         return this.eventID;
@@ -183,6 +201,15 @@ public class Event extends TimelineObject<Event> {
 
     public void setEventPriority(int eventPriority) {
         this.eventPriority = eventPriority;
+    }
+
+    @Override
+    public boolean equals(Object o){
+        if (!(o instanceof Event))
+            return false;
+        if (this.getID() <= 0)
+            return false;
+        return this.getID() == ((Event) o).getID();
     }
 
     @Override

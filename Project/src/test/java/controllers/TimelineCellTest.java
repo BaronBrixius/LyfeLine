@@ -95,7 +95,7 @@ class TimelineCellTest {
 
     @Test
     void EmptyRatingInDBTest() throws SQLException {
-        GUIManager.main = new BorderPane(); // Avoids a null pointer?
+        GUIManager.mainPane = new BorderPane(); // Avoids a null pointer?
         ArrayList<Timeline> timelinesList = new ArrayList<>(dash.list.getItems());
         int listSize = timelinesList.size();
         for (int i = 0; i < listSize - 1; i++) {
@@ -110,7 +110,7 @@ class TimelineCellTest {
     @Test
     void RatingTest() throws SQLException {
         // Rating 1-5 for each timeline
-        GUIManager.main = new BorderPane(); // Avoids a null pointer?
+        GUIManager.mainPane = new BorderPane(); // Avoids a null pointer?
         ArrayList<Timeline> timelinesList = new ArrayList<>(dash.list.getItems());
         int listSize = timelinesList.size();
         for (int i = 0; i < listSize - 1; i++) {

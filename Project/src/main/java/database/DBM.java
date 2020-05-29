@@ -1,6 +1,7 @@
 package database;
 
 import com.google.gson.Gson;
+import controllers.GUIManager;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import org.apache.commons.io.FileUtils;
@@ -261,9 +262,15 @@ public class DBM {
 
         System.out.println("Beginning first time setup...");
         setupSchema();
+
+        Alert notifyOfAdmin = new Alert(Alert.AlertType.INFORMATION);        //warn about admin login
+        notifyOfAdmin.setTitle("Welcome to LyfeLine!");
+        notifyOfAdmin.setHeaderText("Tip: default admin login is Admin@gmail.com using password 'Passw0rd!'");
+        notifyOfAdmin.setContentText("Will not show after first time setup.");
+        notifyOfAdmin.showAndWait();
         System.out.println("\nTip: default admin login is Admin@gmail.com using password 'Passw0rd!' Will not show after first time setup.");
 
-        Alert confirmLoad = new Alert(Alert.AlertType.CONFIRMATION);        //as if user wants dummy data
+        Alert confirmLoad = new Alert(Alert.AlertType.CONFIRMATION);        //ask if user wants dummy data
         confirmLoad.setTitle("Demonstration Data");
         confirmLoad.setHeaderText("The database is empty.");
         confirmLoad.setContentText("Would you like to load some demonstration data?");

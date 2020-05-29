@@ -444,7 +444,7 @@ public class DashboardTest {
 
     @Test
     void testCreateTimelineButton() throws InterruptedException {
-        GUIManager.main = new BorderPane(); //Avoids a null pointer
+        GUIManager.mainPane = new BorderPane(); //Avoids a null pointer
         GUIManager.loggedInUser.setAdmin(true);
         addNewTimelineToDBByOwnerId(loginUser);
         reinitializeDashboard();
@@ -488,7 +488,7 @@ public class DashboardTest {
 
     @Test
     void testEditTimelineButton() throws InterruptedException {
-        GUIManager.main = new BorderPane(); //Avoids a null pointer
+        GUIManager.mainPane = new BorderPane(); //Avoids a null pointer
         GUIManager.loggedInUser.setAdmin(true);
 
         Timeline newTimeline = new Timeline();
@@ -544,7 +544,7 @@ public class DashboardTest {
 
     @Test
     void testViewTimelineButton() throws InterruptedException {
-        GUIManager.main = new BorderPane(); //Avoids a null pointer
+        GUIManager.mainPane = new BorderPane(); //Avoids a null pointer
         GUIManager.loggedInUser.setAdmin(false);    //Makes sure that non admins can still view timelines
 
         //Select the first timeline in the list
