@@ -317,7 +317,7 @@ public class DashboardTest {
 
         Platform.runLater(() -> {
             sut.initialize();
-            sut.cbOnlyViewPersonalLines.setSelected(true);
+            sut.checkboxOnlyViewPersonalLines.setSelected(true);
         });
         waitForRunLater();
 
@@ -344,7 +344,7 @@ public class DashboardTest {
 
         Platform.runLater(() -> {       //View only personal timelines
             sut.initialize();
-            sut.cbOnlyViewPersonalLines.setSelected(true);
+            sut.checkboxOnlyViewPersonalLines.setSelected(true);
         });
         waitForRunLater();
 
@@ -373,7 +373,7 @@ public class DashboardTest {
         assertEquals(expected, actual);    //Make sure that only the User's timelines are on the list
 
         Platform.runLater(() -> {       //View all timelines again
-            sut.cbOnlyViewPersonalLines.setSelected(false);
+            sut.checkboxOnlyViewPersonalLines.setSelected(false);
         });
         waitForRunLater();
 
@@ -459,7 +459,7 @@ public class DashboardTest {
 
             //Check all timeline attributes to make sure that it is a blank timeline
             String actualString = testView.activeTimeline.getName();
-            String expectedString = "";
+            String expectedString = "New Timeline";
             assertEquals(expectedString, actualString);
 
             actualString = testView.activeTimeline.getDescription();
@@ -657,7 +657,7 @@ public class DashboardTest {
     void testSimpleSearchByTimelineNamePersonalOnly() throws InterruptedException {
         addNewTimelineToDBByOwnerIdAndName("Please don't make a timeline with this name it will ruin my tests", loginUser);
         Platform.runLater(() -> {
-            sut.cbOnlyViewPersonalLines.setSelected(true);
+            sut.checkboxOnlyViewPersonalLines.setSelected(true);
             sut.initialize();
             sut.searchInput.setText("me"); //Checks that searching for something in the middle of the name still counts
         });
@@ -673,7 +673,7 @@ public class DashboardTest {
     void testSimpleSearchByTimelineNameCaseInsensitivePersonalOnly() throws InterruptedException {
         addNewTimelineToDBByOwnerIdAndName("Please don't make a timeline with this name it will ruin my tests", loginUser);
         Platform.runLater(() -> {
-            sut.cbOnlyViewPersonalLines.setSelected(true);
+            sut.checkboxOnlyViewPersonalLines.setSelected(true);
             sut.initialize();
             sut.searchInput.setText("ME");
         });
@@ -689,7 +689,7 @@ public class DashboardTest {
     void testSimpleSearchByWeirdTimelineNamePersonalOnly() throws InterruptedException {
         addNewTimelineToDBByOwnerIdAndName("☺☻♥♦♣♠", loginUser);
         Platform.runLater(() -> {
-            sut.cbOnlyViewPersonalLines.setSelected(true);
+            sut.checkboxOnlyViewPersonalLines.setSelected(true);
             sut.initialize();
             sut.searchInput.setText("♦");
         });
@@ -705,7 +705,7 @@ public class DashboardTest {
     void testSimpleSearchByTimelineNamePersonalOnlyFailure() throws InterruptedException {
         addNewTimelineToDBByOwnerIdAndName("Please don't make a timeline with this name it will ruin my tests", loginUser);
         Platform.runLater(() -> {
-            sut.cbOnlyViewPersonalLines.setSelected(true);
+            sut.checkboxOnlyViewPersonalLines.setSelected(true);
             sut.initialize();
             sut.searchInput.setText("Please x"); //Checks that searching for something not in the name actually removes it from the list
         });
@@ -719,7 +719,7 @@ public class DashboardTest {
     void testSimpleSearchByTimelineNamePersonalOnlyIDFailure() throws InterruptedException {
         addNewTimelineToDBByOwnerIdAndName("Please don't make a timeline with this name it will ruin my tests", new User());
         Platform.runLater(() -> {
-            sut.cbOnlyViewPersonalLines.setSelected(true);
+            sut.checkboxOnlyViewPersonalLines.setSelected(true);
             sut.initialize();
             sut.searchInput.setText("Please"); //Checks that searching for something not in the name actually removes it from the list
         });
@@ -733,7 +733,7 @@ public class DashboardTest {
     void testSimpleSearchByKeyWordPersonalOnly() throws InterruptedException {
         addNewTimelineToDBByOwnerIdAndKeyword(loginUser,"Please don't make a timeline with this keyword it will ruin my tests");
         Platform.runLater(() -> {
-            sut.cbOnlyViewPersonalLines.setSelected(true);
+            sut.checkboxOnlyViewPersonalLines.setSelected(true);
             sut.initialize();
             sut.searchInput.setText("t mak"); //Checks that searching for something in the middle of the key word still counts
         });
@@ -800,7 +800,7 @@ public class DashboardTest {
         addNewTimelineToDBByOwnerIdAndName("ePlease don't make a timeline with this name it will ruin my tests", new User());
 
         Platform.runLater(() -> {
-            sut.cbOnlyViewPersonalLines.setSelected(true);
+            sut.checkboxOnlyViewPersonalLines.setSelected(true);
             sut.initialize();
             sut.searchInput.setText("Please don't make a timeline with this name it will ruin my tests");
             sut.sortBy.getSelectionModel().clearAndSelect(0);    //Alphabetically

@@ -10,12 +10,9 @@ import utils.DateUtils;
 
 public class EventNode implements Comparable<EventNode> {
 
-    @FXML
-    Pane displayPane;
-    @FXML
-    Label eventNameDisplay;
-    @FXML
-    Tooltip hoverFlag;
+    @FXML Pane displayPane;
+    @FXML Label eventNameDisplay;
+    @FXML Tooltip hoverFlag;
     private TimelineView parentController;
     private Event activeEvent;
     private int startColumn;
@@ -26,18 +23,6 @@ public class EventNode implements Comparable<EventNode> {
         hoverFlag.setShowDelay(hoverFlag.getShowDelay().divide(8));
     }
 
-    Pane getDisplayPane() {
-        return displayPane;
-    }
-
-    void setStartColumn(int startColumn) {
-        this.startColumn = startColumn;
-    }
-
-    void setColumnSpan(int columnSpan) {
-        this.columnSpan = columnSpan;
-    }
-
     void setActiveEvent(Event event, Timeline activeTimeline, TimelineView parentController) {
         this.activeEvent = event;
         this.parentController = parentController;
@@ -45,26 +30,6 @@ public class EventNode implements Comparable<EventNode> {
         setStartColumn(DateUtils.distanceBetween(activeTimeline.getStartDate(), activeEvent.getStartDate(), activeTimeline.getScale()));
         setColumnSpan(Math.max(DateUtils.distanceBetween(activeEvent.getStartDate(), activeEvent.getEndDate(), activeTimeline.getScale()), 1));   //instant events still need 1 whole column
         eventNameDisplay.setText(activeEvent.getName());
-    }
-
-    int getRow() {
-        return row;
-    }
-
-    void setRow(int row) {
-        this.row = row;
-    }
-
-    int getStartColumn() {
-        return startColumn;
-    }
-
-    int getColumnSpan() {
-        return columnSpan;
-    }
-
-    @FXML
-    void openDetails() {
         hoverFlag.setText(activeEvent.getName() + "\n" + activeEvent.getDescription());
     }
 
@@ -84,5 +49,33 @@ public class EventNode implements Comparable<EventNode> {
         if (this.columnSpan != o.columnSpan)
             return o.columnSpan - this.columnSpan;
         return this.activeEvent.getID() - o.activeEvent.getID();        //if events are basically identical, at least force consistent placement by sorting by ID
+    }
+
+    Pane getDisplayPane() {
+        return displayPane;
+    }
+
+    void setStartColumn(int startColumn) {
+        this.startColumn = startColumn;
+    }
+
+    void setColumnSpan(int columnSpan) {
+        this.columnSpan = columnSpan;
+    }
+
+    int getRow() {
+        return row;
+    }
+
+    void setRow(int row) {
+        this.row = row;
+    }
+
+    int getStartColumn() {
+        return startColumn;
+    }
+
+    int getColumnSpan() {
+        return columnSpan;
     }
 }

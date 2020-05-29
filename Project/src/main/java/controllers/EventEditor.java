@@ -11,10 +11,8 @@ import java.util.Optional;
 public class EventEditor extends Editor {
 
 
-    @FXML
-    CheckBox hasDuration = new CheckBox();
-    @FXML
-    Slider prioritySlider;
+    @FXML CheckBox hasDuration = new CheckBox();
+    @FXML Slider prioritySlider;
     Event event;
 
 
@@ -51,7 +49,7 @@ public class EventEditor extends Editor {
             }
         });
 
-        editor.setOnMouseClicked(e-> {
+        editor.setOnMouseClicked(e -> {
             if (e.getClickCount() == 2 && GUIManager.loggedInUser.getID() == this.event.getOwnerID())
                 saveEditButton();
         });

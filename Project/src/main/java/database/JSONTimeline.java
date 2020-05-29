@@ -256,8 +256,4 @@ public class JSONTimeline {
             }
         };
     }
-
-    public Timeline getTimeline() {
-        return timeline;
-    }
 }

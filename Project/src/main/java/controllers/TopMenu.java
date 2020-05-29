@@ -8,8 +8,7 @@ import java.io.IOException;
 
 public class TopMenu {
 
-    @FXML
-    Menu loggedInStatus = new Menu();
+    @FXML Menu loggedInStatus = new Menu();
 
     public void initialize() {
         updateLoggedInStatus();
@@ -41,7 +40,7 @@ public class TopMenu {
     }
 
     @FXML
-    public void updateLoggedInStatus() {
+    void updateLoggedInStatus() {
         if (GUIManager.loggedInUser == null) {
             loggedInStatus.setText("Not logged in");
             loggedInStatus.setDisable(true);

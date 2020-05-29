@@ -35,7 +35,7 @@
          <String fx:value="textStyle" />
       </styleClass></Text>
     <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0" GridPane.columnIndex="2" GridPane.rowIndex="2">
-        <Button defaultButton="true" mnemonicParsing="false" onAction="#loginUser" styleClass="smallButton" text="Login" />
-        <Button mnemonicParsing="false" onAction="#close" styleClass="smallButton" text="Cancel" />
+        <Button defaultButton="true" onAction="#loginUser" styleClass="smallButton" text="Login" />
+        <Button onAction="#close" styleClass="smallButton" text="Cancel" />
     </HBox>
 </GridPane>

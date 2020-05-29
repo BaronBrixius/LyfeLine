@@ -15,9 +15,6 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -43,58 +40,26 @@ import java.util.function.Predicate;
 public class Dashboard {
     final List<Spinner<Integer>> startInputs = new ArrayList<>();
     final List<Spinner<Integer>> endInputs = new ArrayList<>();
-    @FXML
-    ImageView logoView;
-    @FXML
-    BorderPane border;
-    @FXML
-    Label KeywordLabel;
-    @FXML
-    Label RatingLabel;
-    @FXML
-    StackPane stack;
-    @FXML
-    ScrollPane listScrollPane;
-    @FXML
-    Button importButton;
-    @FXML
-    VBox greetingBox;
-    @FXML
-    StackPane rightStack;
-    @FXML
-    Button adminGUI;
-    @FXML
-    Button btnCreate;
-    @FXML
-    Button searchButton;
-    @FXML
-    ListView<Timeline> list;
-    @FXML
-    TextField searchInput;
-    @FXML
-    TextField searchTimelineName;
-    @FXML
-    TextField searchCreator;
-    @FXML
-    TextField searchKeywords;
-    @FXML
-    ComboBox<Integer> searchRating;
-    @FXML
-    Button clearButton;
-    @FXML
-    CheckBox cbOnlyViewPersonalLines;
-    @FXML
-    ComboBox<String> sortBy;
-    @FXML
-    GridPane advancedSearchView;
-    @FXML
-    GridPane startDates;
-    @FXML
-    GridPane endDates;
-    ObservableList<Timeline> timelineList = FXCollections.observableArrayList();
-    FilteredList<Timeline> filteredTimelines = new FilteredList<>(timelineList);
-    SortedList<Timeline> sortedTimelines = new SortedList<>(filteredTimelines);
-
+    final ObservableList<Timeline> timelineList = FXCollections.observableArrayList();
+    final FilteredList<Timeline> filteredTimelines = new FilteredList<>(timelineList);
+    final SortedList<Timeline> sortedTimelines = new SortedList<>(filteredTimelines);
+    @FXML ScrollPane listScrollPane;
+    @FXML Button importButton;
+    @FXML VBox greetingBox;
+    @FXML StackPane rightStack;
+    @FXML Button adminGUI;
+    @FXML Button btnCreate;
+    @FXML ListView<Timeline> list;
+    @FXML TextField searchInput;
+    @FXML TextField searchTimelineName;
+    @FXML TextField searchCreator;
+    @FXML TextField searchKeywords;
+    @FXML ComboBox<Integer> searchRating;
+    @FXML CheckBox checkboxOnlyViewPersonalLines;
+    @FXML ComboBox<String> sortBy;
+    @FXML GridPane advancedSearchView;
+    @FXML GridPane startDates;
+    @FXML GridPane endDates;
 
     public void initialize() {
         //Set Up the Spinners for Start/End Inputs, would have bloated the .fxml and variable list a ton if these were in fxml
@@ -120,7 +85,7 @@ public class Dashboard {
         sortBy.getSelectionModel().select(4);
 
         // Search field
-        cbOnlyViewPersonalLines.selectedProperty().addListener(this::simpleSearch);
+        checkboxOnlyViewPersonalLines.selectedProperty().addListener(this::simpleSearch);
         searchInput.textProperty().addListener(this::simpleSearch);
 
         list.getSelectionModel().selectedIndexProperty().addListener(e -> updateDisplays());
@@ -148,7 +113,7 @@ public class Dashboard {
 
     private void initializeButtons() {
         boolean admin = !GUIManager.loggedInUser.getAdmin();
-        stack.getChildren().remove(advancedSearchView);
+        rightStack.getChildren().remove(advancedSearchView);
         btnCreate.setDisable(admin);
         importButton.setDisable(admin);
         adminGUI.setDisable(admin);
@@ -164,7 +129,7 @@ public class Dashboard {
                     || timeline.getKeywords().stream().anyMatch(k -> k.toLowerCase().contains(searchText.toLowerCase())));
 
         Predicate<Timeline> onlyPersonal = timeline -> timeline.getOwnerID() == GUIManager.loggedInUser.getID();
-        if (cbOnlyViewPersonalLines.isSelected())
+        if (checkboxOnlyViewPersonalLines.isSelected())
             filteredTimelines.setPredicate(onlyPersonal.and(filteredTimelines.getPredicate()));
 
         handleAutoSelection(currentlySelectedTimeline);
@@ -272,12 +237,12 @@ public class Dashboard {
         if (rightStack.getChildren().contains(advancedSearchView)) {
             rightStack.getChildren().set(0, greetingBox);
             searchInput.setDisable(false);
-            cbOnlyViewPersonalLines.setDisable(false);
+            checkboxOnlyViewPersonalLines.setDisable(false);
         } else {
             clearAdvancedSearch();
             rightStack.getChildren().set(0, advancedSearchView);
             searchInput.setDisable(true);
-            cbOnlyViewPersonalLines.setDisable(true);
+            checkboxOnlyViewPersonalLines.setDisable(true);
         }
     }
 
@@ -291,7 +256,7 @@ public class Dashboard {
         searchRating.getSelectionModel().select(0);
         startInputs.forEach(spinner -> spinner.getValueFactory().setValue(((SpinnerValueFactory.IntegerSpinnerValueFactory) spinner.getValueFactory()).getMin()));
         endInputs.forEach(spinner -> spinner.getValueFactory().setValue(((SpinnerValueFactory.IntegerSpinnerValueFactory) spinner.getValueFactory()).getMin()));
-        cbOnlyViewPersonalLines.setSelected(false);
+        checkboxOnlyViewPersonalLines.setSelected(false);
         filteredTimelines.setPredicate(t -> true);
         handleAutoSelection(currentlySelectedTimeline);
     }
@@ -480,7 +445,7 @@ public class Dashboard {
 
             this.setStyle("-fx-padding: 0px; -fx-border-width: 2px; -fx-border-color: transparent; -fx-border-style: solid;");
 
-            this.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            this.selectedProperty().addListener((observable, oldValue, newValue) -> {
                 cell.focused = newValue;
                 cell.ratingBox.setDisable(!newValue);
 
@@ -506,7 +471,7 @@ public class Dashboard {
             } else
                 setGraphic(null);
 
-            this.setOnMouseClicked(e->{
+            this.setOnMouseClicked(e -> {
                 if (e.getClickCount() == 2)
                     cell.openTimeline();
             });
