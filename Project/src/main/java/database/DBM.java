@@ -1,6 +1,8 @@
 package database;
 
 import com.google.gson.Gson;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -8,10 +10,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Scanner;
+import java.util.*;
 
 //Database manager class for easier connecting and interacting
 public class DBM {
@@ -29,6 +28,10 @@ public class DBM {
 
     public DBM(String SCHEMA) {                                            //Connect to server with alternate schema name
         this(DB_URL, USER, PASS, SCHEMA);
+    }
+
+    public DBM(String USER, String PASS) {                                 //Connect to server with alternate login
+        this(DB_URL, USER, PASS);
     }
 
     public DBM(String DB_URL, String USER, String PASS) {                  //Connect to alternate server
@@ -56,7 +59,6 @@ public class DBM {
             System.err.println("Could not access JDBC drivers");
         } catch (SQLException e) {
             System.err.println("Could not connect to database.");
-            e.printStackTrace();
         }
         System.out.println("Connected to database successfully.");
     }
@@ -87,7 +89,7 @@ public class DBM {
     }
 
     public static void createTestData() throws FileNotFoundException, SQLException {    //for testing
-        runScript("src/main/resources/Dummy_Data_Setup.sql");
+        runScript("src/main/resources/Test_Data_Setup.sql");
     }
 
     private static void runScript(String script) throws FileNotFoundException, SQLException {      //private read-in method for DB creation script
@@ -249,7 +251,7 @@ public class DBM {
         try {
             DatabaseMetaData schemaCheck = conn.getMetaData();
 
-            try (ResultSet tableList = schemaCheck.getTables("project", null, "timelines", null)) {
+            try (ResultSet tableList = schemaCheck.getTables(SCHEMA, null, "timelines", null)) {
                 if (tableList.next() && (tableList.getString("TABLE_NAME").equals("timelines")))
                     return;
             }
@@ -261,9 +263,16 @@ public class DBM {
         setupSchema();
         System.out.println("\nTip: default admin login is Admin@gmail.com using password 'Passw0rd!' Will not show after first time setup.");
 
+        Alert confirmLoad = new Alert(Alert.AlertType.CONFIRMATION);        //as if user wants dummy data
+        confirmLoad.setTitle("Demonstration Data");
+        confirmLoad.setHeaderText("The database is empty.");
+        confirmLoad.setContentText("Would you like to load some demonstration data?");
+        Optional<ButtonType> result = confirmLoad.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.CANCEL)
+            return;
+
         Gson gson = JSONTimeline.getGson();
         String inJSON;
-
         File directory = new File("src/main/resources/dummy_data/");
         if (directory.listFiles() == null)
             return;

@@ -8,8 +8,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.SnapshotParameters;
+import javafx.scene.control.*;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.ScrollEvent;
@@ -22,9 +22,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.*;
 import java.util.List;
 
 public class TimelineView {
@@ -99,18 +97,20 @@ public class TimelineView {
         }
         timelineGrid.getChildren().clear();
         timelineGrid.getColumnConstraints().clear();
-        setupMainLine();
-        setupEventNodes();
+        setupTimeline();
     }
 
     /*Calculates sets the length of the timeline itself by adding columns to the pane which holds the timeline
      * This is computed depending on the start date, end date and the units that has been chosen for the timeline*/
-    private void setupMainLine() {
+    private void setupTimeline() {
+        int numberOfCol = DateUtils.distanceBetween(activeTimeline.getStartDate(), activeTimeline.getEndDate(), activeTimeline.getScale());
+        if (numberOfCol > 1000 && !timelineTooBigAskIfContinueAnyways())         //if timeline is too large and will likely crash, offer to not load it visually
+                return;
+
         Pane mainLine = new Pane();
         mainLine.setMaxHeight(25);
         mainLine.getStyleClass().add("timeline");
-        int numberOfCol = DateUtils.distanceBetween(activeTimeline.getStartDate(), activeTimeline.getEndDate(),
-                activeTimeline.getScale());
+
         int start = 1, frequency = 1;
 
         switch (activeTimeline.getScale()) {
@@ -140,6 +140,18 @@ public class TimelineView {
         if (numberOfCol >= 1)                                                               //if the start date is later than the end date, numberOfCol would be negative,
             timelineGrid.add(mainLine, 0, 0, numberOfCol, 1);    //which does not work for the amount of columns
         GridPane.setMargin(mainLine, new Insets(25, 0, -25, 0));
+
+        setupEventNodes();
+    }
+
+    private boolean timelineTooBigAskIfContinueAnyways() {
+        Alert confirmLoad = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmLoad.setTitle("Size Warning!");
+        confirmLoad.setHeaderText("This timeline is very large and may fail to load!");
+        confirmLoad.setContentText("Would you like to load the view anyways?");
+        Optional<ButtonType> result = confirmLoad.showAndWait();
+
+        return result.isPresent() && result.get() == ButtonType.OK;
     }
 
     /*Sets up the events in the right side bar*/
@@ -151,7 +163,7 @@ public class TimelineView {
             if (newNode != null)
                 eventList.add(newNode);
         }
-        Collections.sort(eventList);            //sort so that earlier events are placed first (longer comes first in case of tie)
+        Collections.sort(eventList);            //sort in order of priority, then earlier events first, then longer events
         for (int i = 0; i < eventList.size(); i++)
             placeEvent(eventList.get(i), i);
     }

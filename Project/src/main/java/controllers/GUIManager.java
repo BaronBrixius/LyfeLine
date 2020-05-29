@@ -66,7 +66,7 @@ public class GUIManager extends Application {
         mainStage.setMaximized(true);
         mainStage.show();
 
-        DBM.dropSchema();                 //deletes database, useful to reset sometimes   //TODO delete for final version
+        DBM.dropSchema();                 //deletes database, useful to reset sometimes   //TODO delete for final
         DBM.firstTimeSetup();               //setup database and dummy data if needed, better after window loads so user feels feedback faster
     }
 
