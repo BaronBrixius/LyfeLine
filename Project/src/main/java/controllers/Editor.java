@@ -69,6 +69,11 @@ public abstract class Editor {
             }
             e.consume();        //so editor doesn't also receive double click
         });
+        
+        editor.setOnMouseClicked(e -> {
+            if (e.getClickCount() == 2 && GUIManager.loggedInUser.getID() == this.itemInEditor.getOwnerID())
+                saveEditButton();
+        });
     }
 
     @FXML
